@@ -1,12 +1,15 @@
 {
-  "version": "0.3.0",
-  "revision": "0.3.0-663ad4ffe1db",
+  "version": "0.4.0",
+  "revision": "0.4.0-f3ce9999b077",
   "generation": "procedural",
   "level": "E1M1 geometric reference plan",
   "mapGenerator": "sector contour sweep",
   "importedMediaFiles": 0,
   "worldBillboards": 0,
   "worldRepresentation": "instanced procedural 3D triangle meshes",
-  "runtimeModules": 19,
+  "runtimeModules": 20,
+  "worldDetailLevels": 3,
+  "proceduralSurfaceMaterials": true,
+  "modelGpuCacheMiB": 64,
   "ferroVersion": "0.3.33"
 }

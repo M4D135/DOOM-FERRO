@@ -1,4 +1,4 @@
-# Références visuelles de la version 0.3.0
+# Références visuelles des versions 0.3.0 et 0.4.0
 
 La demande est de conserver les designs reconnaissables du premier Doom et de les construire par le code, avec des objets et personnages réellement en 3D. Les recettes s’appuient sur les assets PC de l’archive de recherche et sur des captures publiques du jeu. Aucun pixel extrait, modèle externe, atlas encodé ou lecteur WAD n’entre dans le graphe runtime.
 
@@ -33,8 +33,16 @@ Une [longplay de Doom de 1993](https://www.youtube.com/watch?v=OiwsGy70OII) a é
 
 ## Portée de la reconstruction
 
-Les dessins de personnages de Doom fournissent plusieurs projections d’une silhouette. Ils ne constituent pas des modèles 3D que l’on pourrait reprendre tels quels. Les volumes entre ces vues, les articulations et certaines surfaces masquées doivent être reconstruits. Le résultat vise les mêmes designs et couleurs, avec une géométrie volontairement compacte, sans revendiquer une correspondance pixel par pixel.
+Les dessins de personnages de Doom fournissent plusieurs projections d’une silhouette. Ils ne constituent pas des modèles 3D que l’on pourrait reprendre tels quels. Les volumes entre ces vues, les articulations et certaines surfaces masquées doivent être reconstruits. Le résultat vise les mêmes designs et couleurs, sans revendiquer une correspondance pixel par pixel. La version 0.4.0 enrichit les formes proches et conserve des variantes plus compactes à distance.
 
 Le maillage d’un personnage reste identique lorsque la caméra en fait le tour. Seuls sa position, son orientation propre et sa pose d’animation le transforment. Les effets, cadavres, objets et armes en main suivent le même principe de volumes triangulés. Le HUD conserve son rôle d’interface 2D.
 
 Les images de `docs/qa/` sont produites par les shaders et données de production dans un contexte natif EGL/Mesa. Elles servent à examiner la géométrie et les matériaux ; elles ne prouvent pas une session interactive dans un navigateur ni les performances d’un appareil physique.
+
+## Reprise du détail en 0.4.0
+
+L’examen porte maintenant sur les portraits, les vues de profil et de dos, les petits objets en trois quarts et les armes pendant le tir et le pompage. Le détail est construit dans les volumes : profils du torse et du crâne, paupières, cavités buccales, dents séparées, doigts, plis, coutures, chanfreins, collerettes et mécanismes. Les textures de murs, le plan et la palette de référence n’ont pas été remplacés pour cette reprise.
+
+L’éclairage tient compte des normales, de la rugosité et du caractère métallique des surfaces. Les petits motifs de matière sont calculés dans le repère local de chaque primitive ; ils suivent donc les pièces animées. L’usure reste légère pour préserver la lecture des designs originaux. Les images de contrôle sont calculées en 960 × 600 pour examiner ces détails ; le jeu garde un budget inférieur sur les appareils à pointeur grossier.
+
+Les trois niveaux de géométrie reprennent les mêmes proportions, la même pose et la même orientation. Les contrôles automatisés complètent l’examen des images en vérifiant les normales, les volumes, les matériaux, le maintien des ancrages et les limites de mémoire. L’ajout de triangles ne constitue pas à lui seul un critère de fidélité ; la comparaison des silhouettes et des détails distinctifs reste nécessaire.

@@ -1,4 +1,4 @@
-import { collectModelBatches, viewWeaponBatch } from './procedural-models.js';
+import { collectModelBatches, viewWeaponBatch, MODEL_VERTEX_STRIDE } from './procedural-models.js';
 /**
  * DOOM host adapter for canonical FERRO 0.3.33.
  *
@@ -213,8 +213,10 @@ layout(location=0) in vec3 aPosition;
 layout(location=1) in vec3 aNormal;
 layout(location=2) in vec3 aColor;
 layout(location=3) in float aEmission;
-layout(location=4) in vec4 aOriginYaw;
-layout(location=5) in vec4 aScaleLight;
+layout(location=4) in vec4 aMaterial;
+layout(location=5) in vec3 aSurface;
+layout(location=6) in vec4 aOriginYaw;
+layout(location=7) in vec4 aScaleLight;
 uniform mat4 uVP;
 uniform vec3 uEye;
 uniform vec3 uRight;
@@ -226,6 +228,8 @@ out vec3 vNormal;
 out vec3 vColor;
 out float vEmission;
 out float vLight;
+out vec3 vSurface;
+flat out vec4 vMaterial;
 flat out int vSpecial;
 void main(){
  vec3 local=aPosition*aScaleLight.x;
@@ -239,6 +243,7 @@ void main(){
   vNormal=vec3(s*aNormal.x+c*aNormal.y,aNormal.z,c*aNormal.x-s*aNormal.y);
  }
  vColor=aColor;vEmission=aEmission;vLight=aScaleLight.y;vSpecial=int(aScaleLight.z+.5);
+ vSurface=aSurface;vMaterial=aMaterial;
  gl_Position=uVP*vec4(vPosition,1.0);
 }`;
 const MODEL_FRAGMENT = `#version 300 es
@@ -254,8 +259,17 @@ in vec3 vNormal;
 in vec3 vColor;
 in float vEmission;
 in float vLight;
+in vec3 vSurface;
+flat in vec4 vMaterial;
 flat in int vSpecial;
 out vec4 fragColor;
+float hash3(vec3 p){p=fract(p*.1031);p+=dot(p,p.yzx+33.33);return fract((p.x+p.y)*p.z);}
+float noise3(vec3 p){
+ vec3 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);
+ return mix(mix(mix(hash3(i),hash3(i+vec3(1,0,0)),f.x),mix(hash3(i+vec3(0,1,0)),hash3(i+vec3(1,1,0)),f.x),f.y),
+ mix(mix(hash3(i+vec3(0,0,1)),hash3(i+vec3(1,0,1)),f.x),mix(hash3(i+vec3(0,1,1)),hash3(i+vec3(1,1,1)),f.x),f.y),f.z);
+}
+float filteredLine(float phase){float width=fwidth(phase);return sin(phase)*exp(-width*width*.18);}
 void main(){
  float light=vLight;
  if(vSpecial==1){light*=fract(sin(floor(uTime*12.0)+float(vSpecial))*173.19)>.72?.4:1.0;}
@@ -263,15 +277,56 @@ void main(){
  if(vSpecial==3||vSpecial==13){light*=mod(uTime,.5)<.17?1.0:.35;}
  if(vSpecial==8){light*=.68+.32*sin(uTime*2.6);}
  float distanceShade=vLight>1.1?1.0:max(.08,light-length(vPosition-uEye)*.005);
- float relief=.58+.42*max(0.0,dot(normalize(vNormal),normalize(vec3(-.35,.8,.45))));
- float intensity=mix(min(1.0,distanceShade+uFlash*.16)*relief,1.0,clamp(vEmission,0.0,1.0));
- vec3 color=vColor*intensity*uBrightness;
+ vec3 p=vSurface*max(.01,vMaterial.w),albedo=vColor;
+ int kind=int(vMaterial.z+.5);
+ float roughness=clamp(vMaterial.x,.08,1.0),metalness=clamp(vMaterial.y,0.0,1.0);
+ float coarse=noise3(p*.48),grain=(noise3(p*7.0)-.5)*exp(-length(fwidth(p))*2.5);
+ float height=0.0;
+ if(kind==1){ // Skin: broad colour variation and fine pores, fixed to each volume.
+  albedo*=.93+coarse*.12+grain*.065;roughness=clamp(roughness+grain*.12,.24,.85);height=grain*.00065;
+ }else if(kind==2){ // Cloth: woven fibres and soft irregular wear.
+  float weave=filteredLine(p.x*38.0)*filteredLine(p.z*42.0);
+  albedo*=.91+coarse*.13+weave*.045+grain*.045;roughness=max(.76,roughness);height=weave*.00035;
+ }else if(kind==3){ // Leather: fine creases, mottling and restrained oily highlights.
+  float creases=pow(1.0-abs(noise3(p*1.8)*2.0-1.0),13.0);
+  albedo*=.90+coarse*.18-creases*.08+grain*.07;roughness=clamp(roughness+grain*.18,.25,.9);height=(grain-creases*.35)*.0007;
+ }else if(kind==4){ // Machined metal: brushed grain, tiny pits and scratches.
+  float brushed=filteredLine(p.z*51.0+noise3(p*.7)*5.0);
+  albedo*=.95+grain*.09+brushed*.035;roughness=clamp(roughness+coarse*.12+brushed*.025,.12,.72);height=brushed*.00012;
+ }else if(kind==5){ // Painted metal: fine, sparse wear without large camouflage-like stains.
+  float chip=smoothstep(.88,.97,noise3(p*4.7))*exp(-length(fwidth(p))*3.0);
+  albedo=mix(albedo*(.97+coarse*.055+grain*.025),vec3(.16,.165,.15),chip*.24);
+  roughness=clamp(roughness+grain*.10,.23,.84);height=grain*.0004;
+ }else if(kind==6){
+  float fibre=filteredLine(p.z*16.0+noise3(p*.9)*4.0);
+  albedo*=.91+coarse*.12+fibre*.035;roughness=clamp(roughness,.25,.8);height=fibre*.0002;
+ }else if(kind==7){roughness=min(roughness,.17);albedo*=.94+coarse*.08;
+ }else if(kind==8){ // Wood grain follows the primitive, including the moving pump.
+  float rings=filteredLine(length(p.xy)*5.0+noise3(vec3(p.xy*.5,p.z*.07))*6.0);
+  albedo*=.85+coarse*.14+rings*.13+grain*.05;roughness=clamp(roughness,.3,.8);height=rings*.0003;
+ }else if(kind==9){albedo*=.86+coarse*.18;roughness=min(roughness,.27);height=grain*.0003;
+ }else if(kind==10){albedo*=.94+coarse*.09;}
+ vec3 n=normalize(vNormal),dx=dFdx(vPosition),dy=dFdy(vPosition);
+ vec3 tx=cross(dy,n),ty=cross(n,dx);float det=dot(dx,tx);
+ vec3 bump=sign(det)*(dFdx(height)*tx+dFdy(height)*ty)/max(abs(det),.000001);
+ n=normalize(n-clamp(bump,vec3(-.12),vec3(.12)));
+ vec3 V=normalize(uEye-vPosition),L=normalize(vec3(-.38,.83,.44)),H=normalize(L+V);
+ float ndl=max(0.0,dot(n,L)),ndv=max(0.0,dot(n,V));
+ float relief=.43+.16*max(n.y,0.0)+.43*ndl+.14*ndv;
+ float exponent=mix(7.0,115.0,pow(1.0-roughness,2.0));
+ vec3 f0=mix(vec3(kind==7?.12:.035),albedo,metalness);
+ vec3 fresnel=f0+(1.0-f0)*pow(1.0-ndv,5.0);
+ float specular=pow(max(dot(n,H),0.0),exponent)*(1.0-roughness*.72)*(.3+.7*ndl);
+ vec3 reflected=reflect(-V,n);
+ vec3 environment=mix(vec3(.09,.065,.035),vec3(.49,.56,.62),clamp(reflected.y*.5+.5,0.0,1.0));
+ vec3 lit=albedo*relief*(1.0-metalness*.17)+f0*specular*1.15+environment*fresnel*pow(1.0-roughness,2.0)*.33;
+ vec3 color=mix(lit*min(1.0,distanceShade+uFlash*.16),albedo,clamp(vEmission,0.0,1.0))*uBrightness;
  color=mix(color,vec3(.65,.015,.005),clamp(uDamage,0.0,.55));
  fragColor=vec4(color,1.0);
 }`;
 
 export class FerroDoomRenderer {
-  constructor(canvas,resources,map,{maxPixels=640*400,brightness=1.25}={}) {
+  constructor(canvas,resources,map,{maxPixels=960*600,brightness=1.25}={}) {
     this.canvas=canvas;this.resources=resources;this.map=map;this.brightness=brightness;
     this.engine=globalThis.FERRO.render.create(canvas,{
       resolution:'native',maxPixels,renderScale:1,reflections:false,msaa:0,
@@ -284,6 +339,7 @@ export class FerroDoomRenderer {
     this.engine.setWorld([],[],null);
     this.leaves=buildSubsectorPolygons(map);
     this.textureCache=new Map();this.meshes=new Map();this.modelMeshes=new Map();
+    this.modelBytes=0;this.modelCacheLimit=64*1024*1024;this.lodState=new WeakMap();
     this.generation=-1;this.sectorHeights='';this.frame={entities:[],time:0};
     this.camera={pos:[0,1.3,0],yaw:0,pitch:0,fov:70,near:.025,far:400};
     this.hook={couleur:(gl,view)=>this._renderPass(gl,view)};
@@ -301,7 +357,7 @@ export class FerroDoomRenderer {
     for(const n of ['uTexture','uForward','uRight','uUp','uFov']) this.skyUniforms[n]=gl.getUniformLocation(this.skyProgram,n);
     for(const n of ['uVP','uEye','uRight','uForward','uUp','uViewModel','uTime','uBrightness','uDamage','uFlash'])this.modelUniforms[n]=gl.getUniformLocation(this.modelProgram,n);
     this.skyVao=gl.createVertexArray();
-    this.textureCache.clear();this.meshes.clear();this.modelMeshes.clear();this.sectorHeights='';
+    this.textureCache.clear();this.meshes.clear();this.modelMeshes.clear();this.modelBytes=0;this.lodState=new WeakMap();this.sectorHeights='';
     this._texture('wall','SKY1');
     for(const name of ['NUKAGE1','NUKAGE2','NUKAGE3'])this._texture('flat',name);
   }
@@ -366,22 +422,50 @@ export class FerroDoomRenderer {
     const gl=this.gl,source=batch.mesh;
     let mesh=this.modelMeshes.get(source.key);
     if(!mesh){
-      mesh={buffer:gl.createBuffer(),instancesBuffer:gl.createBuffer(),vao:gl.createVertexArray(),capacity:0,count:source.vertices.length/10};
+      this._trimModelCache(source.vertices.byteLength+batch.instances.byteLength);
+      mesh={buffer:gl.createBuffer(),instancesBuffer:gl.createBuffer(),vao:gl.createVertexArray(),capacity:0,bytes:source.vertices.byteLength,count:source.vertices.length/MODEL_VERTEX_STRIDE};
       gl.bindVertexArray(mesh.vao);gl.bindBuffer(gl.ARRAY_BUFFER,mesh.buffer);
       gl.bufferData(gl.ARRAY_BUFFER,source.vertices,gl.STATIC_DRAW);
-      for(const [index,size,offset] of [[0,3,0],[1,3,12],[2,3,24],[3,1,36]]){
-        gl.enableVertexAttribArray(index);gl.vertexAttribPointer(index,size,gl.FLOAT,false,40,offset);
+      for(const [index,size,offset] of [[0,3,0],[1,3,12],[2,3,24],[3,1,36],[4,4,40],[5,3,56]]){
+        gl.enableVertexAttribArray(index);gl.vertexAttribPointer(index,size,gl.FLOAT,false,MODEL_VERTEX_STRIDE*4,offset);
       }
       gl.bindBuffer(gl.ARRAY_BUFFER,mesh.instancesBuffer);
-      for(const [index,offset] of [[4,0],[5,16]]){
+      for(const [index,offset] of [[6,0],[7,16]]){
         gl.enableVertexAttribArray(index);gl.vertexAttribPointer(index,4,gl.FLOAT,false,32,offset);gl.vertexAttribDivisor(index,1);
       }
-      this.modelMeshes.set(source.key,mesh);
+      this.modelBytes+=mesh.bytes;
     }
+    this.modelMeshes.delete(source.key);this.modelMeshes.set(source.key,mesh);
+    if(batch.instances.byteLength>mesh.capacity)this._trimModelCache(batch.instances.byteLength-mesh.capacity,source.key);
     gl.bindVertexArray(mesh.vao);gl.bindBuffer(gl.ARRAY_BUFFER,mesh.instancesBuffer);
-    if(batch.instances.byteLength>mesh.capacity){gl.bufferData(gl.ARRAY_BUFFER,batch.instances,gl.DYNAMIC_DRAW);mesh.capacity=batch.instances.byteLength;}
+    if(batch.instances.byteLength>mesh.capacity){gl.bufferData(gl.ARRAY_BUFFER,batch.instances,gl.DYNAMIC_DRAW);this.modelBytes+=batch.instances.byteLength-mesh.capacity;mesh.capacity=batch.instances.byteLength;}
     else gl.bufferSubData(gl.ARRAY_BUFFER,0,batch.instances);
     mesh.instances=batch.count;return mesh;
+  }
+
+  _trimModelCache(incoming,protectedKey=null) {
+    while(this.modelMeshes.size&&this.modelBytes+incoming>this.modelCacheLimit){
+      const entry=[...this.modelMeshes].find(([key])=>key!==protectedKey);
+      if(!entry)break; // One authored mesh always fits; never delete the active draw's buffers.
+      const [key,mesh]=entry;
+      this.gl.deleteBuffer(mesh.buffer);this.gl.deleteBuffer(mesh.instancesBuffer);this.gl.deleteVertexArray(mesh.vao);
+      this.modelBytes-=mesh.bytes+mesh.capacity;this.modelMeshes.delete(key);
+    }
+  }
+
+  /** Build shared actor/weapon pieces and first flash during the loading screen.
+   * Yield between recipes so the browser can paint; later poses only transform
+   * the shared pieces. The normal byte limits also apply to these warm entries. */
+  async prepareModels() {
+    for(const kind of ['pistol','shotgun','fist'])for(const phase of [Infinity,0]){
+      await new Promise(resolve=>globalThis.requestAnimationFrame(resolve));
+      this._uploadModel(viewWeaponBatch({kind,phase}));
+    }
+    for(const family of ['POSS','SPOS','TROO']){
+      await new Promise(resolve=>globalThis.requestAnimationFrame(resolve));
+      const actor={id:family,base:family,sprite:family+'A1',enemy:true,alive:true,state:'idle',x:0,y:0,z:0};
+      for(const batch of collectModelBatches(this.map,[actor],0))this._uploadModel(batch);
+    }
   }
 
   _drawModels(gl,view) {
@@ -393,7 +477,8 @@ export class FerroDoomRenderer {
     gl.uniform1f(u.uDamage,this.frame.damage||0);gl.uniform1f(u.uFlash,this.frame.flash||0);
     gl.uniform1i(u.uViewModel,0);
     let calls=0,triangles=0,instances=0;
-    for(const batch of collectModelBatches(this.map,this.frame.entities,time)){
+    const batches=collectModelBatches(this.map,this.frame.entities,time,view,this.lodState);
+    for(const batch of batches){
       const mesh=this._uploadModel(batch);
       gl.drawArraysInstanced(gl.TRIANGLES,0,mesh.count,mesh.instances);
       calls++;triangles+=mesh.count*mesh.instances/3;instances+=mesh.instances;
@@ -407,6 +492,8 @@ export class FerroDoomRenderer {
     }
     this.stats.modelTriangles=triangles;this.stats.modelInstances=instances;
     this.stats.modelDrawCalls=calls;this.stats.generatedModels=this.modelMeshes.size;this.stats.worldBillboards=0;
+    this.stats.modelBytes=this.modelBytes;this.stats.modelCacheLimit=this.modelCacheLimit;
+    this.stats.modelCulled=batches.summary.culled;this.stats.modelLods=batches.summary.lods;
     return {calls,triangles,instances};
   }
 

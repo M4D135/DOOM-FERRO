@@ -3,7 +3,7 @@
  * Geometry, coherent noise and lighting produce every runtime pixel. The original
  * archive is a visual research reference only; these are not pixel-identical art.
  */
-import { Raster, clamp, mix, shade, seedOf, noise, smoothNoise } from './procedural-raster.js?v=0.3.0-663ad4ffe1db';
+import { Raster, clamp, mix, shade, seedOf, noise, smoothNoise } from './procedural-raster.js?v=0.4.0-f3ce9999b077';
 
 // Measured metadata, not sampled artwork.
 export const TEXTURE_DIMENSIONS = Object.freeze({

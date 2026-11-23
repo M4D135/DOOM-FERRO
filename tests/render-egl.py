@@ -26,18 +26,19 @@ SOURCE_FILES = [
     'src/procedural-resources.js', 'src/procedural-map.js', 'src/e1m1-plan.js',
     'src/procedural-materials.js', 'src/procedural-interface.js', 'src/procedural-raster.js',
     'src/procedural-mesh.js', 'src/procedural-models.js', 'src/procedural-characters.js',
-    'src/procedural-objects.js', 'src/game.js', 'src/ferro-doom-renderer.js', 'src/app.js'
+    'src/procedural-objects.js', 'src/procedural-weapons.js', 'src/game.js',
+    'src/ferro-doom-renderer.js', 'src/app.js'
 ]
 
 
 def source_hashes():
-    return {name: hashlib.sha256((ROOT / name).read_bytes()).hexdigest() for name in SOURCE_FILES}
+    return {name: hashlib.sha256((ROOT / name).read_bytes()).hexdigest() for name in SOURCE_FILES if (ROOT / name).is_file()}
 
 EXTRACT = r"""
 import fs from 'node:fs';
 import {ProceduralResources} from './src/procedural-resources.js';
 import {DoomGame} from './src/game.js';
-import {collectModelBatches,viewWeaponBatch} from './src/procedural-models.js';
+import {collectModelBatches,viewWeaponBatch,modelForEntity,MODEL_VERTEX_STRIDE} from './src/procedural-models.js';
 import {buildMapGeometry} from './src/ferro-doom-renderer.js';
 const source=fs.readFileSync('src/ferro-doom-renderer.js','utf8'),shaders={};
 for(const name of ['WORLD_VERTEX','WORLD_FRAGMENT','SKY_VERTEX','SKY_FRAGMENT','MODEL_VERTEX','MODEL_FRAGMENT']){
@@ -50,7 +51,7 @@ const bytes=x=>Buffer.from(x.buffer,x.byteOffset,x.byteLength).toString('base64'
 function tex(kind,name){const key=kind+':'+name,t=kind==='flat'?resources.flat(name):resources.texture(name);
  if(!t)throw Error('Missing generated material '+key);if(!textures.has(key))textures.set(key,{key,width:t.width,height:t.height,pixels:bytes(t.pixels)});}
 function pack(batch){if(!batch)return null;const m=batch.mesh;
- if(!catalog.has(m.key))catalog.set(m.key,{key:m.key,vertices:bytes(m.vertices),count:m.vertices.length/10,bounds:m.bounds});
+ if(!catalog.has(m.key))catalog.set(m.key,{key:m.key,vertices:bytes(m.vertices),stride:m.stride,count:m.vertices.length/m.stride,bounds:m.bounds});
  return {key:m.key,instances:bytes(batch.instances),count:batch.count};}
 for(const g of groups)tex(g.kind,g.name);tex('wall','SKY1');
 const scenes=[{name:'base',groups}];
@@ -59,13 +60,27 @@ const cases=[{name:'spawn-north',x:1056,y:-3616,z:41,angle:Math.PI/2,weapon:'pis
  {name:'courtyard',x:2488,y:-3504,z:-15,angle:Math.PI,weapon:'pistol'},
  {name:'start-hall',x:1110.8979591836735,y:-2957.224489795918,z:41,angle:-Math.PI/2,weapon:'fist'},
  {name:'shotgun-reload',x:1056,y:-3616,z:41,angle:Math.PI/2,weapon:'shotgun',phase:.3},
- {name:'pistol-fire',x:1056,y:-3616,z:41,angle:Math.PI/2,weapon:'pistol',phase:.03}];
+ {name:'pistol-fire',x:1056,y:-3616,z:41,angle:Math.PI/2,weapon:'pistol',phase:.03},
+ {name:'shotgun-fire',x:1056,y:-3616,z:41,angle:Math.PI/2,weapon:'shotgun',phase:.03},
+ {name:'fist-punch',x:1056,y:-3616,z:41,angle:Math.PI/2,weapon:'fist',phase:.12}];
 // Same generated mesh, fixed actor heading; the camera alone orbits it.
 for(const family of ['POSS','SPOS','TROO'])for(const [view,dx,dy,angle] of [
  ['front',0,88,-Math.PI/2],['side',88,0,Math.PI],['back',0,-88,Math.PI/2]]){
  cases.push({name:family.toLowerCase()+'-'+view,x:1056+dx,y:-3616+dy,z:28,angle,studio:true,
   fixture:{scope:'One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.',
-   entity:{id:family,base:family,enemy:true,sprite:family+'A1',alive:true,state:'idle',x:1056,y:-3616,z:0,angle:Math.PI/2}}});
+   entity:{id:family,base:family,enemy:true,sprite:family+'A1',alive:true,state:'idle',fullbright:true,x:1056,y:-3616,z:0,angle:Math.PI/2}}});
+}
+for(const family of ['POSS','SPOS','TROO']){
+ cases.push({name:family.toLowerCase()+'-portrait',x:1062,y:-3589,z:49,angle:Math.atan2(-27,-6),studio:true,
+  fixture:{scope:'Close study of actual generated head geometry and procedural surface materials.',
+   entity:{id:family,base:family,enemy:true,sprite:family+'A1',alive:true,state:'idle',fullbright:true,x:1056,y:-3616,z:0,angle:Math.PI/2}}});
+}
+for(const [family,type] of [['BAR1',2035],['COLU',2028],['ELEC',48],['MEDI',2012],['BON1',2014],['BON2',2015],['ARM1',2018],['SBOX',2049]]){
+ const entity={id:family,type,sprite:family+'A0',fullbright:true,x:1056,y:-3616,z:0,angle:Math.PI/2};
+ const mesh=modelForEntity(entity),h=mesh.bounds.max[2],w=Math.max(mesh.bounds.max[0]-mesh.bounds.min[0],mesh.bounds.max[1]-mesh.bounds.min[1]);
+ const distance=Math.max(h*.82,w*.82)+w*.35,dx=distance*.6,dy=distance*.8,z=h*.72;
+ cases.push({name:family.toLowerCase()+'-detail',x:entity.x+dx,y:entity.y+dy,z,angle:Math.atan2(-dy,-dx),pitch:Math.atan2(h*.5-z,distance),studio:true,
+  fixture:{scope:'Close three-quarter view of an actual generated prop; uniform studio sector light.',entity}});
 }
 const door=game.lines[151],sector=map.sectors[door.back];game._openDoor(door);let ticks=0;
 while(game.actions.get(door.back)?.phase==='up'&&ticks<140){game._updateActions(1/70);ticks++;}
@@ -80,9 +95,12 @@ cases.push({...camera,name:'door151-open',fixture:{scope:'Door opened by product
 for(const [pose,angle] of [['front',Math.PI],['side',Math.PI/2]])cases.push({...camera,name:'door151-model-'+pose,
  fixture:{scope:'3D imp deliberately centred in doorway for an occlusion/anchor check; not a reproduced player encounter.',door:doorway,
  entity:{id:'door-model',base:'TROO',enemy:true,sprite:'TROOA1',alive:true,state:'idle',...center,z:sector.floor,angle}}});
-const width=640,height=400,views=[];
-for(const camera of cases){
- const position=[camera.x/32,camera.z/32,-camera.y/32],axes=FRender.shared.cameraAxes({yaw:Math.PI/2-camera.angle,pitch:0});
+const requested=(process.env.DOOM_QA_VIEWS||'').split(',').filter(Boolean),wanted=new Set(requested);
+for(const name of requested)if(!cases.some(camera=>camera.name===name))throw Error('Unknown QA view: '+name);
+if(requested.some(name=>name.startsWith('door151-model-')))wanted.add('door151-open');
+const width=960,height=600,views=[];
+for(const camera of cases.filter(camera=>!wanted.size||wanted.has(camera.name))){
+ const position=[camera.x/32,camera.z/32,-camera.y/32],axes=FRender.shared.cameraAxes({yaw:Math.PI/2-camera.angle,pitch:camera.pitch||0});
  const r=axes.right,u=axes.up,f=axes.forward;
  const v=new Float32Array([r[0],u[0],-f[0],0,r[1],u[1],-f[1],0,r[2],u[2],-f[2],0,
   -(r[0]*position[0]+r[1]*position[1]+r[2]*position[2]),-(u[0]*position[0]+u[1]*position[1]+u[2]*position[2]),f[0]*position[0]+f[1]*position[1]+f[2]*position[2],1]);
@@ -90,14 +108,15 @@ for(const camera of cases){
  p[0]=focal/(width/height);p[5]=focal;p[10]=(far+near)/(near-far);p[11]=-1;p[14]=2*far*near/(near-far);FRender.shared.multiply(p,v,vp);
  const project=(x,y,z)=>{const point=[x/32,z/32,-y/32,1],c=Array.from({length:4},(_,row)=>point.reduce((sum,value,col)=>sum+value*vp[col*4+row],0));return{x:(c[0]/c[3]+1)*width/2,y:(1-c[1]/c[3])*height/2};};
  const entities=camera.fixture?(camera.fixture.entity?[camera.fixture.entity]:[]):game.entities;
- const models=collectModelBatches(map,entities,0).map(pack);
+ const renderView={oeil:position,avant:f,droite:r,haut:u,tangente:1/focal,largeur:width,hauteur:height};
+ const batches=collectModelBatches(map,entities,0,renderView),models=batches.map(pack);
  if(camera.fixture?.entity){const e=camera.fixture.entity;camera.fixture.anchorScreen=project(e.x,e.y,e.z);camera.fixture.meshKeys=models.map(m=>m.key);}
  if(camera.fixture?.door){const d=camera.fixture.door;camera.fixture.portalScreen=d.endpoints.flatMap(p=>[project(p.x,p.y,d.floor),project(p.x,p.y,d.ceiling)]);}
- views.push({scene:'base',...camera,position,right:r,up:u,forward:f,tangent:1/focal,vp:Array.from(vp),models,
+ views.push({scene:'base',...camera,position,right:r,up:u,forward:f,tangent:1/focal,vp:Array.from(vp),models,visibility:batches.summary,
   weaponModel:pack(viewWeaponBatch(camera.weapon?{kind:camera.weapon,phase:camera.phase??Infinity}:null,0))});
 }
 console.log(JSON.stringify({width,height,shaders,models:[...catalog.values()],scenes:scenes.map(s=>({name:s.name,groups:s.groups.map(g=>({key:g.key,vertices:bytes(g.vertices),count:g.vertices.length/7}))})),textures:[...textures.values()],views,
- engineVersion:FERRO.version,sectors:map.sectors.length,subsectors:map.subsectors.length,mapGenerator:map.generator,resources:resources.stats()}));
+ engineVersion:FERRO.version,sectors:map.sectors.length,subsectors:map.subsectors.length,mapGenerator:map.generator,resources:resources.stats(),modelVertexStride:MODEL_VERTEX_STRIDE}));
 """
 
 
@@ -196,10 +215,10 @@ class Context:
         g.glGenVertexArrays(1,C.byref(vao));g.glBindVertexArray(vao)
         g.glGenBuffers(1,C.byref(vertex));g.glBindBuffer(0x8892,vertex)
         data=C.create_string_buffer(base64.b64decode(model['vertices']));g.glBufferData(0x8892,len(data)-1,data,0x88E4)
-        for index,size,offset in [(0,3,0),(1,3,12),(2,3,24),(3,1,36)]:
-            g.glEnableVertexAttribArray(index);g.glVertexAttribPointer(index,size,0x1406,0,40,C.c_void_p(offset))
+        for index,size,offset in [(0,3,0),(1,3,12),(2,3,24),(3,1,36),(4,4,40),(5,3,56)]:
+            g.glEnableVertexAttribArray(index);g.glVertexAttribPointer(index,size,0x1406,0,model['stride']*4,C.c_void_p(offset))
         g.glGenBuffers(1,C.byref(instances));g.glBindBuffer(0x8892,instances)
-        for index,offset in [(4,0),(5,16)]:
+        for index,offset in [(6,0),(7,16)]:
             g.glEnableVertexAttribArray(index);g.glVertexAttribPointer(index,4,0x1406,0,32,C.c_void_p(offset));g.glVertexAttribDivisor(index,1)
         return {**model,'vao':vao.value,'buffer':vertex.value,'instancesBuffer':instances.value}
 
@@ -239,9 +258,14 @@ class Context:
 
 
 def main():
-    parser=argparse.ArgumentParser();parser.add_argument('--output',type=Path,default=ROOT/'docs/qa');args=parser.parse_args();args.output.mkdir(parents=True,exist_ok=True)
+    parser=argparse.ArgumentParser();parser.add_argument('--output',type=Path,default=ROOT/'docs/qa')
+    parser.add_argument('--views',default='',help='Comma-separated view names for focused visual iteration; omit for full qualification.')
+    args=parser.parse_args();args.output.mkdir(parents=True,exist_ok=True)
     initial_hashes=source_hashes()
-    data=json.loads(subprocess.check_output(['node','--input-type=module','-e',EXTRACT],cwd=ROOT,text=True))
+    extraction=subprocess.run(['node','--input-type=module','-e',EXTRACT],cwd=ROOT,text=True,capture_output=True,env={**os.environ,'DOOM_QA_VIEWS':args.views})
+    if extraction.returncode:
+        raise SystemExit('Production model extraction failed:\n'+extraction.stderr)
+    data=json.loads(extraction.stdout)
     context=Context(data['width'],data['height']);s=data['shaders']
     world=context.program(s['WORLD_VERTEX'],s['WORLD_FRAGMENT']);sky=context.program(s['SKY_VERTEX'],s['SKY_FRAGMENT'])
     model_program=context.program(s['MODEL_VERTEX'],s['MODEL_FRAGMENT']);models={m['key']:context.model(m) for m in data['models']}
@@ -252,7 +276,8 @@ def main():
         pixels=context.render(world,sky,model_program,textures,meshes[view['scene']],models,view);path=args.output/(view['name']+'-egl.png');Image.fromarray(pixels).save(path)
         rendered[view['name']]=pixels
         unique=np.unique(pixels.reshape(-1,3),axis=0).shape[0];assert unique>(30 if view.get('studio') else 500),'Expected visible shaded geometry'
-        result={'name':view['name'],'image':path.name,'camera':{k:view[k] for k in ['x','y','z','angle']},'uniqueColors':unique,'meanRGB':pixels.mean(axis=(0,1)).tolist()}
+        result={'name':view['name'],'image':path.name,'camera':{k:view.get(k,0) for k in ['x','y','z','angle','pitch']},'uniqueColors':unique,'meanRGB':pixels.mean(axis=(0,1)).tolist(),
+            'visibility':view['visibility'],'submittedModelTriangles':sum(models[batch['key']]['count']//3*batch['count'] for batch in view['models'])}
         if 'fixture' in view:result['fixture']=view['fixture']
         if view['name'].startswith('door151-model-'):
             # Difference against an identical camera/geometry baseline isolates
@@ -270,6 +295,7 @@ def main():
     report={'passed':True,'scope':'Native llvmpipe EGL renders of unchanged production host shaders, procedurally constructed map/materials and instanced 3D models and FERRO camera helpers. No WAD or reference asset is loaded. Not a browser gameplay capture, full FERRO frame execution, or hardware FPS measurement.',
         'environment':context.info,'size':[data['width'],data['height']],'ferroVersion':data['engineVersion'],'sectors':data['sectors'],'subsectors':data['subsectors'],
         'mapGenerator':data['mapGenerator'],'resources':data['resources'],'modelMeshes':len(models),'worldBillboards':0,
+        'modelVertexStride':data['modelVertexStride'],'materialCoordinates':'primitive-local surface coordinates preserved through pose transforms',
         'shaderCompilation':'6 unmodified GLSL ES 3.00 production shaders compiled; 3 programs linked','mapTriangles':sum(m['count']//3 for m in data['scenes'][0]['groups']),
         'sceneTriangles':{scene['name']:sum(m['count']//3 for m in scene['groups']) for scene in data['scenes']},
         'adapterSha256':initial_hashes['src/ferro-doom-renderer.js'],'sourceSha256':initial_hashes,

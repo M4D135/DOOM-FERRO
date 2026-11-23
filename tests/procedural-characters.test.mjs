@@ -4,8 +4,9 @@ import {mkdtemp, copyFile, writeFile, rm} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {spawnSync} from 'node:child_process';
-import {MeshBuilder} from '../src/procedural-mesh.js';
-import {characterMesh} from '../src/procedural-characters.js';
+import {MeshBuilder,MESH_VERTEX_STRIDE} from '../src/procedural-mesh.js';
+import {characterMesh,proceduralCharacterCacheStats} from '../src/procedural-characters.js';
+const S=MESH_VERTEX_STRIDE;
 
 const FAMILIES = [
   {type:3004, base:'POSS', alive:'ABCDEFG', dead:'HIJKL'},
@@ -20,13 +21,13 @@ const span = (mesh,axis) => mesh.bounds.max[axis]-mesh.bounds.min[axis];
 
 /** Check the renderer contract and signed volume, including every triangle. */
 function inspect(mesh) {
-  assert.equal(mesh.stride,10);
+  assert.equal(mesh.stride,S);
   assert.ok(mesh.vertices instanceof Float32Array);
-  assert.equal(mesh.vertices.length,mesh.triangles*30);
+  assert.equal(mesh.vertices.length,mesh.triangles*S*3);
   const actualMin = [Infinity,Infinity,Infinity], actualMax = [-Infinity,-Infinity,-Infinity];
   let signedVolume = 0;
-  for (let i=0;i<mesh.vertices.length;i+=30) {
-    const vertices = [0,1,2].map(vertex => Array.from(mesh.vertices.slice(i+vertex*10,i+vertex*10+10)));
+  for (let i=0;i<mesh.vertices.length;i+=S*3) {
+    const vertices = [0,1,2].map(vertex => Array.from(mesh.vertices.slice(i+vertex*S,i+vertex*S+S)));
     const points = vertices.map(vertex => vertex.slice(0,3));
     const face = cross(subtract(points[1],points[0]),subtract(points[2],points[0]));
     assert.ok(Math.hypot(...face)>1e-7,`${mesh.key}: degenerate triangle`);
@@ -36,7 +37,9 @@ function inspect(mesh) {
       const normal=vertex.slice(3,6);
       assert.ok(Math.abs(Math.hypot(...normal)-1)<1e-5,`${mesh.key}: normal length`);
       assert.ok(dot(face,normal)>0,`${mesh.key}: winding opposes normal`);
-      assert.ok(vertex.slice(6).every(value=>value>=0&&value<=1),`${mesh.key}: color or emission outside [0,1]`);
+      assert.ok(vertex.slice(6,12).every(value=>value>=0&&value<=1),`${mesh.key}: bounded color/material channel`);
+      assert.ok(Number.isInteger(vertex[12])&&vertex[12]>=0&&vertex[12]<=10);
+      assert.ok(vertex[13]>0);
       for (let k=0;k<3;k++) { actualMin[k]=Math.min(actualMin[k],vertex[k]); actualMax[k]=Math.max(actualMax[k],vertex[k]); }
     }
   }
@@ -63,18 +66,18 @@ test('composition preserves volume and normals under rotation, nonuniform scale,
   const source=new MeshBuilder().box([0,0,0],[2,4,6],[64,128,255],{emissive:.4}).finish('source');
   const transformed=new MeshBuilder().add(source,{translation:[7,-3,9],rotation:[.3,-.7,1.1],scale:[-2,.5,3]}).finish('transformed');
   assert.ok(Math.abs(inspect(transformed)-144)<1e-4);
-  for (let i=0;i<transformed.vertices.length;i+=10) {
+  for (let i=0;i<transformed.vertices.length;i+=S) {
     assert.ok(Math.abs(transformed.vertices[i+6]-64/255)<1e-7);
     assert.ok(Math.abs(transformed.vertices[i+9]-.4)<1e-7);
   }
   assert.throws(()=>new MeshBuilder().add(source,{scale:[1,0,1]}),/scale/);
 });
 
-test('every authored actor frame is a grounded volume below the 2000-triangle budget', () => {
-  for (const family of FAMILIES) for (const frame of family.alive+family.dead) {
-    const mesh=characterMesh(actor(family,frame));
+test('all authored actor poses remain grounded detailed volumes at three geometric levels', () => {
+  for (let detail=0;detail<3;detail++) for (const family of FAMILIES) for (const frame of family.alive+family.dead) {
+    const mesh=characterMesh(actor(family,frame),0,detail);
     assert.ok(inspect(mesh)>5000,`${mesh.key}: expected a closed body volume`);
-    assert.ok(mesh.triangles>1000&&mesh.triangles<=2000,`${mesh.key}: triangle budget`);
+    assert.ok(mesh.triangles>1000&&mesh.triangles<=[2100,5600,12000][detail],`${mesh.key}: triangle budget ${mesh.triangles}`);
     assert.equal(mesh.bounds.min[2],0,`${mesh.key}: feet/corpse must meet floor`);
     assert.ok(span(mesh,0)>20&&span(mesh,1)>12,`${mesh.key}: cannot be a billboard`);
     if (family.alive.includes(frame)) assert.ok(span(mesh,2)>=53&&span(mesh,2)<=58,`${mesh.key}: Doom actor height`);
@@ -107,7 +110,7 @@ test('attack poses move actual arms and guns, with a volumetric human muzzle fla
       assert.ok(aim.bounds.max[0]>walk.bounds.max[0]+5);
     } else {
       assert.ok(aim.bounds.max[1]>walk.bounds.max[1]+10);
-      const emissiveVertices=mesh=>Array.from(mesh.vertices).filter((value,index)=>index%10===9&&value>.8).length;
+      const emissiveVertices=mesh=>Array.from(mesh.vertices).filter((value,index)=>index%S===9&&value>.8).length;
       assert.equal(emissiveVertices(aim),0);
       assert.ok(emissiveVertices(fire)>50);
       assert.ok(fire.triangles>aim.triangles);
@@ -157,4 +160,35 @@ test('character generation runs with only its two source modules, without refere
     `],{cwd:folder,encoding:'utf8'});
     assert.equal(result.status,0,result.stderr);
   } finally { await rm(folder,{recursive:true,force:true}); }
+});
+
+
+test('close views contain materially distinct small anatomy and details removed at distance',()=>{
+  for(const family of FAMILIES){
+    const high=characterMesh(actor(family,'A',{state:'idle'}),0,2);
+    const middle=characterMesh(actor(family,'A',{state:'idle'}),0,1);
+    const far=characterMesh(actor(family,'A',{state:'idle'}),0,0);
+    assert.ok(high.triangles>middle.triangles*1.6);
+    assert.ok(middle.triangles>far.triangles*2);
+    for(let axis=0;axis<3;axis++){
+      assert.ok(Math.abs(high.bounds.min[axis]-far.bounds.min[axis])<2.1,'LOD preserves rig origin/silhouette');
+      assert.ok(Math.abs(high.bounds.max[axis]-far.bounds.max[axis])<2.1,'LOD preserves rig origin/silhouette');
+    }
+    const materials=new Set();let detailedFace=0,frontFace=0;
+    for(let i=0;i<high.vertices.length;i+=S){
+      materials.add(high.vertices[i+12]);
+      if(high.vertices[i+2]>47&&high.vertices[i+1]>2){detailedFace++;if(high.vertices[i+4]>.3)frontFace++;}
+    }
+    assert.ok(detailedFace>900&&frontFace>300,'sculpted face retains meaningful surface geometry');
+    for(const kind of family.base==='TROO'?[1,6,7]:[1,2,3,4,6,7,9])assert.ok(materials.has(kind),`missing material ${kind}`);
+  }
+});
+
+test('pose cache stays bounded and regeneration remains deterministic under all LODs',()=>{
+  const original=characterMesh(actor(FAMILIES[0],'A')).vertices.slice();
+  for(let detail=0;detail<3;detail++)for(const family of FAMILIES)for(const frame of family.alive+family.dead)characterMesh(actor(family,frame),0,detail);
+  const stats=proceduralCharacterCacheStats();
+  assert.ok(stats.entries<=stats.limit);assert.ok(stats.bytes<=stats.byteLimit);
+  assert.ok(stats.byteLimit<=32*1024*1024);
+  assert.deepEqual(characterMesh(actor(FAMILIES[0],'A')).vertices,original);
 });

@@ -4,7 +4,7 @@ import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {ProceduralResources} from '../src/procedural-resources.js';
 import {createE1M1Map} from '../src/procedural-map.js';
-import { collectModelBatches, viewWeaponBatch } from '../src/procedural-models.js';
+import { collectModelBatches, viewWeaponBatch, MODEL_VERTEX_STRIDE } from '../src/procedural-models.js';
 import { DoomGame } from '../src/game.js';
 import {FerroDoomRenderer,buildSubsectorPolygons,buildMapGeometry} from '../src/ferro-doom-renderer.js';
 
@@ -84,7 +84,8 @@ test('world entities are instanced 3D volumes at the simulation origin and headi
   assert.equal(batches.reduce((n,b)=>n+b.count,0),game.entities.filter(e=>!e.removed).length);
   for(const batch of batches){
     const mesh=batch.mesh;
-    assert.equal(mesh.vertices.length%30,0,'complete position/normal/color/emission triangles');
+    assert.equal(mesh.stride,MODEL_VERTEX_STRIDE);
+    assert.equal(mesh.vertices.length%(3*MODEL_VERTEX_STRIDE),0,'complete geometry, material and surface-coordinate triangles');
     assert.ok(mesh.triangles>12,'geometry cannot collapse to a billboard');
     for(const axis of [0,1,2])assert.ok(mesh.bounds.max[axis]-mesh.bounds.min[axis]>.1,'volume along all three axes');
     for(let i=0;i<batch.count;i++){

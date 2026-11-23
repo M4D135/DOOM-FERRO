@@ -4,7 +4,7 @@
  * font bitmap, encoded image, world sprite or first-person weapon is stored here.
  * These recipes preserve measured bounds; they are not pixel-identical copies.
  */
-import { Raster, clamp, mix, shade, noise, smoothNoise } from './procedural-raster.js?v=0.3.0-663ad4ffe1db';
+import { Raster, clamp, mix, shade, noise, smoothNoise } from './procedural-raster.js?v=0.4.0-f3ce9999b077';
 
 const cache = new Map();
 

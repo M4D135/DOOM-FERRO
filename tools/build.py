@@ -69,6 +69,7 @@ def main():
                 'level': 'E1M1 geometric reference plan', 'mapGenerator': 'sector contour sweep',
                 'importedMediaFiles': 0, 'worldBillboards': 0,
                 'worldRepresentation': 'instanced procedural 3D triangle meshes', 'runtimeModules': len(graph),
+                'worldDetailLevels': 3, 'proceduralSurfaceMaterials': True, 'modelGpuCacheMiB': 64,
                 'ferroVersion': manifest['version']}
     (DEST / 'build-info.json').write_text(json.dumps(metadata, ensure_ascii=False, indent=2) + '\n')
     total = sum(p.stat().st_size for p in DEST.rglob('*') if p.is_file())

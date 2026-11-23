@@ -266,7 +266,7 @@ function tick(timestamp) {
       if (pickupFlash > 0) { ctx.fillStyle = `rgba(220,179,40,${pickupFlash * 0.45})`; ctx.fillRect(0, 0, overlay.width, overlay.height); }
       if (++frames % 20 === 0) {
         const stats = renderer.stats, sector = map.sectorAt(p.x, p.y);
-        $('perf').textContent = `${Math.round(fps)} FPS · FERRO ${stats.ferroVersion}\n${stats.width || world.width} × ${stats.height || world.height} · ${stats.mapTriangles} triangles carte\n${stats.drawCalls || 0} appels · secteur ${sector?.id ?? '?'}\nPosition ${Math.round(p.x)}, ${Math.round(p.y)}, ${Math.round(p.z)} · angle ${Math.round(p.angle * 180 / Math.PI)}°\n3D procédurale · ${stats.modelInstances || 0} modèles · ${stats.modelTriangles || 0} triangles objets`;
+        $('perf').textContent = `${Math.round(fps)} FPS · FERRO ${stats.ferroVersion}\n${stats.width || world.width} × ${stats.height || world.height} · ${stats.mapTriangles} triangles carte\n${stats.drawCalls || 0} appels · secteur ${sector?.id ?? '?'}\nPosition ${Math.round(p.x)}, ${Math.round(p.y)}, ${Math.round(p.z)} · angle ${Math.round(p.angle * 180 / Math.PI)}°\n3D procédurale · ${stats.modelInstances || 0} modèles · ${stats.modelTriangles || 0} triangles objets\nDétails proche/moyen/loin ${(stats.modelLods || [0,0,0]).slice().reverse().join('/')} · ${stats.modelCulled || 0} hors champ · ${((stats.modelBytes || 0)/1048576).toFixed(1)} Mio GPU`;
         $('accessibleStatus').textContent = `${mode}. Secteur ${sector?.id}, santé ${Math.round(p.health)}, munitions ${p.ammo}.`;
         world.dataset.sector = String(sector?.id); world.dataset.triangles = String(stats.mapTriangles); world.dataset.engine = `FERRO ${stats.ferroVersion}`; world.dataset.generation = 'procedural';
       }
@@ -346,7 +346,8 @@ async function boot() {
     map = resources.map('E1M1');
     audio = new ProceduralAudio();
     game = new DoomGame(map, { skill: 2, onSound: playSound, onMessage: message, onComplete: complete });
-    renderer = new FerroDoomRenderer(world, resources, map, { maxPixels: 640 * 400, brightness: 1.2 });
+    renderer = new FerroDoomRenderer(world, resources, map, { maxPixels: matchMedia('(pointer: coarse)').matches ? 640 * 400 : 960 * 600, brightness: 1.2 });
+    await renderer.prepareModels?.();
     const logo = image('M_DOOM'); $('doomLogo').width = logo.width; $('doomLogo').height = logo.height; $('doomLogo').getContext('2d').drawImage(logo.canvas, 0, 0);
     resize(); screen('title'); $('loading').hidden = true; $('menuActions').hidden = false;
     requestAnimationFrame(tick);
