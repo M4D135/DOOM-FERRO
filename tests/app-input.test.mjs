@@ -2,13 +2,12 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
-import {Wad} from '../src/wad.js';
+import {ProceduralResources} from '../src/procedural-resources.js';
 import {DoomGame} from '../src/game.js';
 import {GamepadControls} from '../src/input.js';
 
 const appSource = readFileSync(new URL('../src/app.js', import.meta.url), 'utf8');
 const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
-const wadBytes = readFileSync(new URL('../assets/doom1.wad', import.meta.url));
 const flush = () => new Promise(resolve => setImmediate(resolve));
 
 class Element {
@@ -73,12 +72,12 @@ async function browser({coarse = false, touchPoints = 0} = {}) {
   class Renderer { constructor() { this.stats = {}; } resize() {} draw() {} }
   h.navigator = {maxTouchPoints: touchPoints, getGamepads: () => h.pads};
   const context = vm.createContext({
-    document, window, Wad, DoomGame: ObservedGame, GamepadControls, DoomAudio: Audio, FerroDoomRenderer: Renderer,
+    document, window, ProceduralResources, DoomGame: ObservedGame, GamepadControls, ProceduralAudio: Audio, FerroDoomRenderer: Renderer,
     navigator: h.navigator,
     matchMedia: () => ({matches: coarse}), performance: {now: () => h.now},
     ImageData: class {}, console: {error: error => h.errors.push(error)},
     requestAnimationFrame: callback => h.frames.push(callback),
-    fetch: async () => ({ok: true, arrayBuffer: async () => wadBytes.buffer.slice(wadBytes.byteOffset, wadBytes.byteOffset + wadBytes.byteLength)})
+    fetch: () => { throw new Error('The procedural game must boot without requesting any asset.'); }
   });
   // Keep every production handler intact; replace module wiring and await boot only.
   vm.runInContext(appSource.replace(/^import[^\n]*\n/gm, '').replace(/boot\(\);\s*$/, 'globalThis.appReady = boot();'), context);

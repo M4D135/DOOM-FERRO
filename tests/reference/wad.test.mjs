@@ -2,9 +2,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
-import {Wad, pointOnNodeSide} from '../src/wad.js';
+import {Wad, pointOnNodeSide} from '../../reference/wad.js';
 
-const source = readFileSync(new URL('../assets/doom1.wad', import.meta.url));
+const source = readFileSync(new URL('../../reference/doom1.wad', import.meta.url));
 const wad = new Wad(source);
 
 function makeWad(lumps, kind = 'PWAD') {
@@ -53,7 +53,7 @@ function textureLumps() {
   return [['PNAMES', names], ['TEXTURE1', texture]];
 }
 
-test('bundled source is the complete authentic Doom v1.9 shareware IWAD', () => {
+test('research reference is the complete authentic Doom v1.9 shareware IWAD', () => {
   assert.equal(source.length, 4196020);
   assert.equal(createHash('md5').update(source).digest('hex'), 'f0cefca49926d00903cf57551d901abe');
   assert.equal(createHash('sha256').update(source).digest('hex'), '1d7d43be501e67d927e415e0b8f3e29c3bf33075e859721816f652a526cac771');

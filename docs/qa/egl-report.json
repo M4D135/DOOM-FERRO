@@ -1,6 +1,6 @@
 {
   "passed": true,
-  "scope": "Native llvmpipe EGL renders of production host shaders, real WAD geometry/textures/sprites and FERRO camera helpers. Not a browser gameplay capture, full FERRO frame execution, or hardware FPS measurement.",
+  "scope": "Native llvmpipe EGL renders of unchanged production host shaders, procedurally constructed map/materials/sprites and FERRO camera helpers. No WAD or reference asset is loaded. Not a browser gameplay capture, full FERRO frame execution, or hardware FPS measurement.",
   "environment": {
     "renderer": "llvmpipe (LLVM 19.1.7, 256 bits)",
     "version": "4.5 (Core Profile) Mesa 25.0.7-2+deb13u1",
@@ -12,10 +12,31 @@
   ],
   "ferroVersion": "0.3.33",
   "sectors": 85,
-  "subsectors": 237,
+  "subsectors": 295,
+  "mapGenerator": "sector-trapezoid-sweep-v1",
+  "resources": {
+    "mode": "procedural",
+    "generatedImages": 78,
+    "rgbaBytes": 2681224,
+    "importedAssets": 0
+  },
   "shaderCompilation": "4 unmodified GLSL ES 3.00 production shaders compiled; 2 programs linked",
-  "mapTriangles": 1844,
-  "adapterSha256": "f7ae073d8596b95ce63ea816845b795398cb9f3e21c6e8b6f466d5cc4feba15e",
+  "mapTriangles": 2025,
+  "sceneTriangles": {
+    "base": 2025,
+    "door-open": 2029
+  },
+  "adapterSha256": "0da3540b3d12d82fae2d108b516a95b97b442de2de465b257da68839c1e4ed84",
+  "sourceSha256": {
+    "src/procedural-resources.js": "48b8799f135411655c203fc532be43c77ea6c5078cf43f28c574ab05712ee4d7",
+    "src/procedural-map.js": "1437769cd25117db4c9e9a7b067c193381dc3d85147e661f72ba4fbf58c3a06b",
+    "src/e1m1-plan.js": "41c8ed8ce81db64bb5117cb6011b6c693c3745d5708f46a05681900393cce521",
+    "src/procedural-materials.js": "abc7d3efbfb0a222d94eb477a50e0dc9eb50d27586fe1f9926c932f618a94df6",
+    "src/procedural-sprites.js": "bed9a296182162bf75a5274fc6d59cd3b5b241bdf7b8613c3af39cd824122b5a",
+    "src/procedural-raster.js": "3b372674f3004fbe0de245ae359f5895ce72a4bc48a515e4e3a55acbebe7bdb5",
+    "src/game.js": "c7eab7a0c76b0dbd468209f76561b1cb17e250e88b0eb636a8c41838be4cd88f",
+    "src/ferro-doom-renderer.js": "0da3540b3d12d82fae2d108b516a95b97b442de2de465b257da68839c1e4ed84"
+  },
   "shaderSha256": {
     "WORLD_VERTEX": "ccbad7fea38950df95408f4cb72052cf6009729480cd3c6b0b8af05e2488a92a",
     "WORLD_FRAGMENT": "1a23d865a45f27884ede18576fbdc7e3f39e2f6b0c4ab4949c4b78f30d85dd30",
@@ -32,11 +53,11 @@
         "z": 41,
         "angle": 1.5707963267948966
       },
-      "uniqueColors": 1529,
+      "uniqueColors": 6790,
       "meanRGB": [
-        39.86851953125,
-        37.9795078125,
-        37.164859375
+        54.99769921875,
+        57.86629296875,
+        49.3466171875
       ]
     },
     {
@@ -48,11 +69,11 @@
         "z": 41,
         "angle": 3.141592653589793
       },
-      "uniqueColors": 772,
+      "uniqueColors": 3385,
       "meanRGB": [
-        48.6661640625,
-        43.99857421875,
-        39.2722109375
+        55.46956640625,
+        52.94563671875,
+        41.9873515625
       ]
     },
     {
@@ -64,11 +85,11 @@
         "z": -15,
         "angle": 3.141592653589793
       },
-      "uniqueColors": 1834,
+      "uniqueColors": 9332,
       "meanRGB": [
-        85.5730703125,
-        73.53638671875,
-        56.39059765625
+        109.91330078125,
+        101.03042578125,
+        79.6648046875
       ]
     },
     {
@@ -80,11 +101,11 @@
         "z": 41,
         "angle": -1.5707963267948966
       },
-      "uniqueColors": 1674,
+      "uniqueColors": 8140,
       "meanRGB": [
-        42.974546875,
-        39.61840625,
-        43.68049609375
+        57.842796875,
+        61.2877109375,
+        53.669203125
       ]
     },
     {
@@ -96,14 +117,14 @@
         "z": 41,
         "angle": 1.5707963267948966
       },
-      "uniqueColors": 1419,
+      "uniqueColors": 6589,
       "meanRGB": [
-        40.357765625,
-        38.23595703125,
-        36.76928125
+        56.0489921875,
+        57.48064453125,
+        48.5278515625
       ],
       "fixture": {
-        "scope": "Isolated original-WAD sprite anchor regression; not a played game.",
+        "scope": "Isolated procedurally generated sprite anchor fixture; not a played game.",
         "entity": {
           "sprite": "TROOH2H8",
           "x": 1056,
@@ -114,14 +135,14 @@
           "fullbright": false
         },
         "patch": {
-          "width": 31,
-          "height": 56,
-          "leftOffset": 6,
-          "topOffset": 51
+          "width": 80,
+          "height": 72,
+          "leftOffset": 40,
+          "topOffset": 70
         },
         "horizontalBoundsDoom": [
-          -6,
-          25
+          -40,
+          40
         ],
         "anchorScreen": {
           "x": 319.99990463256836,
@@ -138,14 +159,14 @@
         "z": 41,
         "angle": 1.5707963267948966
       },
-      "uniqueColors": 1382,
+      "uniqueColors": 6600,
       "meanRGB": [
-        40.39755078125,
-        38.2936796875,
-        36.84514453125
+        56.0448046875,
+        57.47001171875,
+        48.53815625
       ],
       "fixture": {
-        "scope": "Isolated original-WAD sprite anchor regression; not a played game.",
+        "scope": "Isolated procedurally generated sprite anchor fixture; not a played game.",
         "entity": {
           "sprite": "TROOH2H8",
           "x": 1056,
@@ -156,18 +177,269 @@
           "fullbright": false
         },
         "patch": {
-          "width": 31,
-          "height": 56,
-          "leftOffset": 6,
-          "topOffset": 51
+          "width": 80,
+          "height": 72,
+          "leftOffset": 40,
+          "topOffset": 70
         },
         "horizontalBoundsDoom": [
-          -25,
-          6
+          -40,
+          40
         ],
         "anchorScreen": {
           "x": 319.99990463256836,
           "y": 321.98764483133954
+        }
+      }
+    },
+    {
+      "name": "door151-open",
+      "image": "door151-open-egl.png",
+      "camera": {
+        "x": 1408,
+        "y": -2496,
+        "z": 41,
+        "angle": 0
+      },
+      "uniqueColors": 6737,
+      "meanRGB": [
+        89.41041796875,
+        84.4028984375,
+        64.3691484375
+      ],
+      "fixture": {
+        "scope": "Door 151 opened with the production door action; actors omitted for a rendering baseline.",
+        "door": {
+          "line": 151,
+          "sector": 4,
+          "floor": 0,
+          "ceiling": 68,
+          "endpoints": [
+            {
+              "x": 1536,
+              "y": -2432
+            },
+            {
+              "x": 1536,
+              "y": -2560
+            }
+          ],
+          "center": {
+            "x": 1544,
+            "y": -2496
+          },
+          "openingTicks": 68,
+          "stepSeconds": 0.014285714285714285
+        },
+        "portalScreen": [
+          {
+            "x": 177.18511581420873,
+            "y": 291.4907336235048
+          },
+          {
+            "x": 177.18511581420873,
+            "y": 139.75000530481327
+          },
+          {
+            "x": 462.81471252441435,
+            "y": 291.4907336235048
+          },
+          {
+            "x": 462.81471252441435,
+            "y": 139.75000530481327
+          }
+        ]
+      }
+    },
+    {
+      "name": "door151-actor-normal",
+      "image": "door151-actor-normal-egl.png",
+      "camera": {
+        "x": 1408,
+        "y": -2496,
+        "z": 41,
+        "angle": 0
+      },
+      "uniqueColors": 7354,
+      "meanRGB": [
+        90.62837890625,
+        84.610890625,
+        64.18134375
+      ],
+      "fixture": {
+        "scope": "Generated actor placed at the centre of the open doorway for a controlled anchor check. Not a reproduced gameplay encounter.",
+        "door": {
+          "line": 151,
+          "sector": 4,
+          "floor": 0,
+          "ceiling": 68,
+          "endpoints": [
+            {
+              "x": 1536,
+              "y": -2432
+            },
+            {
+              "x": 1536,
+              "y": -2560
+            }
+          ],
+          "center": {
+            "x": 1544,
+            "y": -2496
+          },
+          "openingTicks": 68,
+          "stepSeconds": 0.014285714285714285
+        },
+        "entity": {
+          "sprite": "TROOH2H8",
+          "x": 1544,
+          "y": -2496,
+          "z": 0,
+          "flip": false,
+          "scale": 1,
+          "fullbright": false
+        },
+        "patch": {
+          "width": 80,
+          "height": 72,
+          "leftOffset": 40,
+          "topOffset": 70
+        },
+        "horizontalBoundsDoom": [
+          -40,
+          40
+        ],
+        "anchorScreen": {
+          "x": 319.99991921817553,
+          "y": 286.1089257632986
+        },
+        "portalScreen": [
+          {
+            "x": 177.18511581420873,
+            "y": 291.4907336235048
+          },
+          {
+            "x": 177.18511581420873,
+            "y": 139.75000530481327
+          },
+          {
+            "x": 462.81471252441435,
+            "y": 291.4907336235048
+          },
+          {
+            "x": 462.81471252441435,
+            "y": 139.75000530481327
+          }
+        ],
+        "visibleActor": {
+          "pixels": 5008,
+          "boundsXY": [
+            286,
+            156,
+            348,
+            285
+          ],
+          "centroidXY": [
+            318.189696485623,
+            221.4442891373802
+          ],
+          "check": "Visible pixels compared with the identical open-door view without actors; fixed placement, not a combat or AI test."
+        }
+      }
+    },
+    {
+      "name": "door151-actor-mirrored",
+      "image": "door151-actor-mirrored-egl.png",
+      "camera": {
+        "x": 1408,
+        "y": -2496,
+        "z": 41,
+        "angle": 0
+      },
+      "uniqueColors": 7369,
+      "meanRGB": [
+        90.62221484375,
+        84.60388671875,
+        64.16221875
+      ],
+      "fixture": {
+        "scope": "Generated actor placed at the centre of the open doorway for a controlled anchor check. Not a reproduced gameplay encounter.",
+        "door": {
+          "line": 151,
+          "sector": 4,
+          "floor": 0,
+          "ceiling": 68,
+          "endpoints": [
+            {
+              "x": 1536,
+              "y": -2432
+            },
+            {
+              "x": 1536,
+              "y": -2560
+            }
+          ],
+          "center": {
+            "x": 1544,
+            "y": -2496
+          },
+          "openingTicks": 68,
+          "stepSeconds": 0.014285714285714285
+        },
+        "entity": {
+          "sprite": "TROOH2H8",
+          "x": 1544,
+          "y": -2496,
+          "z": 0,
+          "flip": true,
+          "scale": 1,
+          "fullbright": false
+        },
+        "patch": {
+          "width": 80,
+          "height": 72,
+          "leftOffset": 40,
+          "topOffset": 70
+        },
+        "horizontalBoundsDoom": [
+          -40,
+          40
+        ],
+        "anchorScreen": {
+          "x": 319.99991921817553,
+          "y": 286.1089257632986
+        },
+        "portalScreen": [
+          {
+            "x": 177.18511581420873,
+            "y": 291.4907336235048
+          },
+          {
+            "x": 177.18511581420873,
+            "y": 139.75000530481327
+          },
+          {
+            "x": 462.81471252441435,
+            "y": 291.4907336235048
+          },
+          {
+            "x": 462.81471252441435,
+            "y": 139.75000530481327
+          }
+        ],
+        "visibleActor": {
+          "pixels": 5008,
+          "boundsXY": [
+            291,
+            156,
+            353,
+            285
+          ],
+          "centroidXY": [
+            320.810303514377,
+            221.4442891373802
+          ],
+          "check": "Visible pixels compared with the identical open-door view without actors; fixed placement, not a combat or AI test."
         }
       }
     }

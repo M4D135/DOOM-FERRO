@@ -51,6 +51,7 @@ def main():
                                 cwd=ROOT, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         if status.returncode or status.stdout.strip():
             raise SystemExit('Committed dist does not match the fresh build:\n' + status.stdout)
+    info = json.loads((ROOT / 'dist/build-info.json').read_text())
     measured = {
         'version': json.loads((ROOT / 'package.json').read_text())['version'],
         'nodeTests': counts['tests'],
@@ -58,6 +59,10 @@ def main():
         'nodeSkipped': counts['skipped'],
         'reproducibleBuild': True,
         'buildFiles': len(second),
+        'generation': info['generation'],
+        'buildRevision': info['revision'],
+        'importedMediaFiles': info['importedMediaFiles'],
+        'buildBytes': sum(path.stat().st_size for path in (ROOT / 'dist').rglob('*') if path.is_file()),
         'testFiles': tests,
         'testLogSha256': hashlib.sha256(result.stdout.encode()).hexdigest(),
     }

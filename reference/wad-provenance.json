@@ -1,6 +1,6 @@
 {
   "source": "https://ftp.fu-berlin.de/pc/games/idgames/idstuff/doom/win95/doom95.zip",
-  "wadFile": "/workspace/scratch/4b08ed8ed841/doom-research/doom1.wad",
+  "wadFile": "reference/doom1.wad",
   "size": 4196020,
   "md5": "f0cefca49926d00903cf57551d901abe",
   "sha1": "5b2e249b9c5133ec987b3ea77596381dc0d6bc1d",

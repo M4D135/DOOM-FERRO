@@ -1,49 +1,78 @@
 #!/usr/bin/env python3
-"""Build the self-contained, network-independent static game."""
+"""Build the procedural game from its ES-module graph, without imported media."""
 import hashlib
 import json
 import pathlib
+import re
 import shutil
-import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 DEST = ROOT / 'dist'
-WAD_SHA256 = '1d7d43be501e67d927e415e0b8f3e29c3bf33075e859721816f652a526cac771'
+IMPORT = re.compile(r'''(?m)^(?P<before>\s*(?:import|export)\s+(?:[^;\n]*?\s+from\s+)?['"])(?P<path>\.{1,2}/[^'"]+\.m?js)(?P<after>['"])''')
+
+
+def runtime_graph():
+    pending = [ROOT / 'src/app.js']
+    graph = {}
+    while pending:
+        path = pending.pop().resolve()
+        if path in graph:
+            continue
+        if not path.is_relative_to(ROOT) or not path.is_file():
+            raise SystemExit('Invalid runtime dependency: ' + str(path))
+        relative = path.relative_to(ROOT)
+        if relative.parts[0] not in ('src', 'vendor') or path.suffix != '.js':
+            raise SystemExit('Only generated game code and FERRO belong to the runtime: ' + str(relative))
+        source = path.read_text()
+        graph[path] = source
+        for match in IMPORT.finditer(source):
+            pending.append(path.parent / match['path'])
+    if any(path.name in ('wad.js', 'audio.js') for path in graph):
+        raise SystemExit('The legacy WAD/audio importer must not enter the procedural build.')
+    return graph
+
 
 def main():
-    wad = ROOT / 'assets' / 'doom1.wad'
-    if not wad.is_file():
-        raise SystemExit('Missing assets/doom1.wad. Run python3 tools/fetch-shareware.py first.')
-    if hashlib.sha256(wad.read_bytes()).hexdigest() != WAD_SHA256:
-        raise SystemExit('DOOM1.WAD hash mismatch; expected authentic shareware 1.9.')
     manifest = json.loads((ROOT / 'vendor/ferro/manifest.json').read_text())
-    files = manifest.get('files', manifest.get('modules', []))
-    if isinstance(files, dict):
-        files = [{'path': key, **value} if isinstance(value, dict) else {'path': key, 'sha256': value} for key, value in files.items()]
-    for record in files:
-        filename = record.get('path', record.get('file', record.get('name')))
-        path = ROOT / filename
-        if not path.exists():
-            path = ROOT / 'vendor/ferro' / filename
-        expected = record.get('sha256')
-        if expected and hashlib.sha256(path.read_bytes()).hexdigest() != expected:
-            raise SystemExit(f'Canonical FERRO module changed: {filename}')
-    # dist is generated output. A fresh tree prevents removed sources from
-    # surviving in subsequent builds and makes reproducibility meaningful.
+    for record in manifest['modules']:
+        path = ROOT / 'vendor/ferro' / record['file']
+        if hashlib.sha256(path.read_bytes()).hexdigest() != record['sha256']:
+            raise SystemExit('Canonical FERRO module changed: ' + record['file'])
+    graph = runtime_graph()
+    version = json.loads((ROOT / 'package.json').read_text())['version']
+    # The whole module graph participates in the tag, so a deployment cannot
+    # combine a cached adapter with a new map or collision implementation.
+    digest = hashlib.sha256()
+    for path, source in sorted(graph.items()):
+        digest.update(str(path.relative_to(ROOT)).encode())
+        digest.update(source.encode())
+    revision = version + '-' + digest.hexdigest()[:12]
     if DEST.exists():
         shutil.rmtree(DEST)
     DEST.mkdir()
-    for name in ('index.html', 'style.css'):
-        shutil.copy2(ROOT / name, DEST / name)
-    for name in ('src', 'assets', 'vendor'):
-        shutil.copytree(ROOT / name, DEST / name, dirs_exist_ok=True)
-    hosting = ROOT / '.openai' / 'hosting.json'
-    if hosting.is_file():
-        (DEST / '.openai').mkdir()
-        shutil.copy2(hosting, DEST / '.openai' / 'hosting.json')
+    index = (ROOT / 'index.html').read_text()
+    index = index.replace('src="src/app.js"', 'src="src/app.js?v=' + revision + '"')
+    index = index.replace('href="style.css"', 'href="style.css?v=' + revision + '"')
+    (DEST / 'index.html').write_text(index)
+    shutil.copy2(ROOT / 'style.css', DEST / 'style.css')
+    for path, source in sorted(graph.items()):
+        relative = path.relative_to(ROOT)
+        target = DEST / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if relative.parts[0] == 'vendor':
+            shutil.copy2(path, target)  # FERRO stays byte-for-byte canonical.
+        else:
+            source = IMPORT.sub(lambda m: m['before'] + m['path'] + '?v=' + revision + m['after'], source)
+            target.write_text(source)
+    shutil.copy2(ROOT / 'vendor/ferro/manifest.json', DEST / 'vendor/ferro/manifest.json')
+    metadata = {'version': version, 'revision': revision, 'generation': 'procedural',
+                'level': 'E1M1 geometric reference plan', 'mapGenerator': 'sector contour sweep',
+                'importedMediaFiles': 0, 'runtimeModules': len(graph),
+                'ferroVersion': manifest['version']}
+    (DEST / 'build-info.json').write_text(json.dumps(metadata, ensure_ascii=False, indent=2) + '\n')
     total = sum(p.stat().st_size for p in DEST.rglob('*') if p.is_file())
-    version = json.loads((ROOT / 'package.json').read_text())['version']
-    print(json.dumps({'build': 'dist/index.html', 'version': version, 'wad_sha256': WAD_SHA256, 'bytes': total, 'network_at_runtime': 'same-origin assets only'}))
+    print(json.dumps({'build': 'dist/index.html', **metadata, 'bytes': total}))
+
 
 if __name__ == '__main__':
     main()

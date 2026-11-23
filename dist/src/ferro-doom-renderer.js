@@ -2,14 +2,14 @@
  * DOOM host adapter for canonical FERRO 0.3.33.
  *
  * FERRO owns the WebGL context, frame lifecycle, projection, camera, render
- * target, resolution budget, shader compilation and statistics. WAD surfaces
+ * target, resolution budget, shader compilation and statistics. Generated surfaces
  * enter its documented host geometry hook (fx.foule.couleur); no engine source
  * is patched, no second renderer/context is hidden behind the FERRO name.
  */
-import '../vendor/ferro/fmath.js';
-import '../vendor/ferro/surface.js';
-import '../vendor/ferro/renderer.js';
-import '../vendor/ferro/engine.js';
+import '../vendor/ferro/fmath.js?v=0.2.0-38b94775e87e';
+import '../vendor/ferro/surface.js?v=0.2.0-38b94775e87e';
+import '../vendor/ferro/renderer.js?v=0.2.0-38b94775e87e';
+import '../vendor/ferro/engine.js?v=0.2.0-38b94775e87e';
 
 const SCALE = 1 / 32;
 const EPSILON = 0.00001;
@@ -37,8 +37,9 @@ function clipPolygon(points, x, y, dx, dy, side) {
   });
 }
 
-/** Convex leaf polygons reconstructed from the WAD's original BSP. */
+/** Procedural cells, or the archival BSP adapter used by reference tests. */
 export function buildSubsectorPolygons(map) {
+  if (map.floorPolygons) return map.floorPolygons;
   const xs = map.vertices.map(v => v.x), ys = map.vertices.map(v => v.y);
   const lowX = Math.min(...xs) - 128, highX = Math.max(...xs) + 128;
   const lowY = Math.min(...ys) - 128, highY = Math.max(...ys) + 128;
@@ -67,13 +68,13 @@ export function buildSubsectorPolygons(map) {
   return leaves.filter(Boolean);
 }
 
-function textureSize(wad, name, kind) {
-  const t = kind === 'flat' ? wad.flat(name) : wad.texture(name);
+function textureSize(resources, name, kind) {
+  const t = kind === 'flat' ? resources.flat(name) : resources.texture(name);
   return t || { width:64, height:64 };
 }
 
 /** Geometry is rebuilt only while sector heights actually change. */
-export function buildMapGeometry(wad, map, leaves = buildSubsectorPolygons(map)) {
+export function buildMapGeometry(resources, map, leaves = buildSubsectorPolygons(map)) {
   const groups = new Map();
   const group = (kind,name) => {
     const key = kind+':'+name;
@@ -100,7 +101,7 @@ export function buildMapGeometry(wad, map, leaves = buildSubsectorPolygons(map))
   }
   function wall(a,b,bottom,top,name,kind,side,sector,line,back) {
     if (!name || name==='-' || top <= bottom+EPSILON) return;
-    const dimensions=textureSize(wad,name,'wall'), out=group('wall',name);
+    const dimensions=textureSize(resources,name,'wall'), out=group('wall',name);
     const length=Math.hypot(b.x-a.x,b.y-a.y);
     const u0=side.xOffset/dimensions.width,u1=(side.xOffset+length)/dimensions.width;
     let textureTop=sector.ceiling;
@@ -206,15 +207,15 @@ float u=atan(d.z,d.x)*.6366197724;float v=clamp(.61-d.y/max(.01,length(d.xz))*.6
 fragColor=vec4(texture(uTexture,vec2(u,v)).rgb,1.0);}`;
 
 export class FerroDoomRenderer {
-  constructor(canvas,wad,map,{maxPixels=640*400,brightness=1.25}={}) {
-    this.canvas=canvas;this.wad=wad;this.map=map;this.brightness=brightness;
+  constructor(canvas,resources,map,{maxPixels=640*400,brightness=1.25}={}) {
+    this.canvas=canvas;this.resources=resources;this.map=map;this.brightness=brightness;
     this.engine=globalThis.FERRO.render.create(canvas,{
       resolution:'native',maxPixels,renderScale:1,reflections:false,msaa:0,
       vignette:1,composition:false,cullMargin:0
     });
     if (!this.engine.gl) {this.engine.dispose();throw new Error('Cette version de Doom FERRO nécessite WebGL 2.');}
     this.gl=this.engine.gl;this.stats=this.engine.stats;
-    this.stats.host='doom-wad';this.stats.ferroVersion=globalThis.FERRO.version;
+    this.stats.host='procedural-e1m1';this.stats.ferroVersion=globalThis.FERRO.version;
     this.engine.resize('low');
     this.engine.setWorld([],[],null);
     this.leaves=buildSubsectorPolygons(map);
@@ -243,7 +244,7 @@ export class FerroDoomRenderer {
     const key=kind+':'+name;
     if(this.textureCache.has(key))return this.textureCache.get(key);
     const gl=this.gl, texture=gl.createTexture();
-    let source=kind==='flat'?this.wad.flat(name):kind==='sprite'?this.wad.patch(name):this.wad.texture(name);
+    let source=kind==='flat'?this.resources.flat(name):kind==='sprite'?this.resources.patch(name):this.resources.texture(name);
     if(!source){
       source={width:2,height:2,leftOffset:1,topOffset:2,pixels:new Uint8Array([120,100,90,255,80,65,55,255,80,65,55,255,120,100,90,255])};
     }
@@ -279,7 +280,7 @@ export class FerroDoomRenderer {
     if(signature===this.sectorHeights)return;
     this.sectorHeights=signature;
     for(const mesh of this.meshes.values())mesh.count=0;
-    const groups=buildMapGeometry(this.wad,this.map,this.leaves);
+    const groups=buildMapGeometry(this.resources,this.map,this.leaves);
     let triangles=0;
     for(const group of groups){
       const mesh=this._upload(this.meshes,group.key,group.vertices);
@@ -348,7 +349,7 @@ export class FerroDoomRenderer {
       gl.bindVertexArray(mesh.vao);gl.drawArrays(gl.TRIANGLES,0,mesh.count);calls++;triangles+=mesh.count/3;
     }
     gl.bindVertexArray(null);
-    this.stats.wadTextures=this.textureCache.size;
+    this.stats.generatedTextures=this.textureCache.size;
     return {appels:calls,triangles,instances:this.frame.entities?.length||0};
   }
 

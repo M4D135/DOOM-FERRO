@@ -1,0 +1,10 @@
+{
+  "version": "0.2.0",
+  "revision": "0.2.0-38b94775e87e",
+  "generation": "procedural",
+  "level": "E1M1 geometric reference plan",
+  "mapGenerator": "sector contour sweep",
+  "importedMediaFiles": 0,
+  "runtimeModules": 15,
+  "ferroVersion": "0.3.33"
+}

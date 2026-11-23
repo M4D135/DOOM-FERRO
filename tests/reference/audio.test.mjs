@@ -1,10 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {Wad} from '../src/wad.js';
-import {DoomAudio, parseMus} from '../src/audio.js';
+import {Wad} from '../../reference/wad.js';
+import {DoomAudio, parseMus} from '../../reference/audio.js';
 
-const wad = new Wad(readFileSync(new URL('../assets/doom1.wad', import.meta.url)));
+const wad = new Wad(readFileSync(new URL('../../reference/doom1.wad', import.meta.url)));
 function score(events, instruments = []) {
   const start = 16 + instruments.length * 2;
   const bytes = Buffer.alloc(start + events.length);

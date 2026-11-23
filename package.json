@@ -1,9 +1,9 @@
 {
   "name": "doom-ferro",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
-  "description": "E1M1 Hangar du Doom shareware, rendu par FERRO.",
+  "description": "E1M1 reconstruit par des générateurs de géométrie, matériaux, personnages et audio, rendu par FERRO.",
   "scripts": {
     "build": "python3 tools/build.py",
     "test": "node --test tests/*.test.mjs",

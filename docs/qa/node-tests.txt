@@ -2,315 +2,357 @@ TAP version 13
 # Subtest: DOM mouse start on a touch-capable PC locks before audio settles and preserves walk/run
 ok 1 - DOM mouse start on a touch-capable PC locks before audio settles and preserves walk/run
   ---
-  duration_ms: 60.349001
+  duration_ms: 130.853313
   type: 'test'
   ...
 # Subtest: DOM Escape repeats, pointer loss and focus loss pause once and release captured inputs
 ok 2 - DOM Escape repeats, pointer loss and focus loss pause once and release captured inputs
   ---
-  duration_ms: 43.497381
+  duration_ms: 18.871253
   type: 'test'
   ...
 # Subtest: DOM touch move, look and fire track separate fingers and handle cancellation
 ok 3 - DOM touch move, look and fire track separate fingers and handle cancellation
   ---
-  duration_ms: 31.514299
+  duration_ms: 12.913725
   type: 'test'
   ...
 # Subtest: DOM difficulty stays within its options and denied gamepad access preserves keyboard play
 ok 4 - DOM difficulty stays within its options and denied gamepad access preserves keyboard play
   ---
-  duration_ms: 22.452278
+  duration_ms: 26.299643
   type: 'test'
   ...
 # Subtest: DOM first keyboard or touch gesture enables audio after gamepad start without duplicate resumes
 ok 5 - DOM first keyboard or touch gesture enables audio after gamepad start without duplicate resumes
   ---
-  duration_ms: 25.466849
+  duration_ms: 105.186308
   type: 'test'
   ...
-# Subtest: original E1M1 MUS preserves the complete 96-second score
-ok 6 - original E1M1 MUS preserves the complete 96-second score
+# Subtest: production builds from code alone and ships a complete versioned module graph without imported media
+ok 6 - production builds from code alone and ships a complete versioned module graph without imported media
   ---
-  duration_ms: 18.609903
+  duration_ms: 108.870067
   type: 'test'
   ...
-# Subtest: MUS velocity inheritance is per-channel and variable time uses 140 Hz
-ok 7 - MUS velocity inheritance is per-channel and variable time uses 140 Hz
+# Subtest: E1M1 solo flags, procedural entity sprites, player start and three secrets
+ok 7 - E1M1 solo flags, procedural entity sprites, player start and three secrets
   ---
-  duration_ms: 0.791429
-  type: 'test'
-  ...
-# Subtest: program, pitch, controls and system messages are retained
-ok 8 - program, pitch, controls and system messages are retained
-  ---
-  duration_ms: 0.5254
-  type: 'test'
-  ...
-# Subtest: truncated, malformed and unbounded MUS event streams fail safely
-ok 9 - truncated, malformed and unbounded MUS event streams fail safely
-  ---
-  duration_ms: 1.201907
-  type: 'test'
-  ...
-# Subtest: audio waits for unlock, caps total voices, pauses and resumes at the saved time
-ok 10 - audio waits for unlock, caps total voices, pauses and resumes at the saved time
-  ---
-  duration_ms: 21.472475
-  type: 'test'
-  ...
-# Subtest: original solo skill flags, entity sprites, player start and three secrets
-ok 11 - original solo skill flags, entity sprites, player start and three secrets
-  ---
-  duration_ms: 52.572853
+  duration_ms: 169.095651
   type: 'test'
   ...
 # Subtest: swept player movement cannot tunnel through a wall or diagonal corner
-ok 12 - swept player movement cannot tunnel through a wall or diagonal corner
+ok 8 - swept player movement cannot tunnel through a wall or diagonal corner
   ---
-  duration_ms: 46.926235
+  duration_ms: 56.716233
   type: 'test'
   ...
 # Subtest: all four original manual doors block, open, and allow the player through
-ok 13 - all four original manual doors block, open, and allow the player through
+ok 9 - all four original manual doors block, open, and allow the player through
   ---
-  duration_ms: 64.35986
+  duration_ms: 33.531835
   type: 'test'
   ...
 # Subtest: closing door reopens when a player radius overlaps its boundary
-ok 14 - closing door reopens when a player radius overlaps its boundary
+ok 10 - closing door reopens when a player radius overlaps its boundary
   ---
-  duration_ms: 6.858229
+  duration_ms: 6.07228
   type: 'test'
   ...
 # Subtest: closed doors block line of sight and hitscan, then open their portals
-ok 15 - closed doors block line of sight and hitscan, then open their portals
+ok 11 - closed doors block line of sight and hitscan, then open their portals
   ---
-  duration_ms: 5.671755
+  duration_ms: 10.236622
   type: 'test'
   ...
 # Subtest: crossing original line308 lowers the tagged secret floor once
-ok 16 - crossing original line308 lowers the tagged secret floor once
+ok 12 - crossing original line308 lowers the tagged secret floor once
   ---
-  duration_ms: 8.788149
+  duration_ms: 5.963607
   type: 'test'
   ...
 # Subtest: crossing original line195 cycles the tagged secret lift down, waits, returns
-ok 17 - crossing original line195 cycles the tagged secret lift down, waits, returns
+ok 13 - crossing original line195 cycles the tagged secret lift down, waits, returns
   ---
-  duration_ms: 10.716027
+  duration_ms: 10.292354
   type: 'test'
   ...
 # Subtest: acid damages a grounded player; secrets count each original sector only once
-ok 18 - acid damages a grounded player; secrets count each original sector only once
+ok 14 - acid damages a grounded player; secrets count each original sector only once
   ---
-  duration_ms: 7.226542
+  duration_ms: 7.22964
   type: 'test'
   ...
 # Subtest: pistol, fists and original shotgun pickup use the correct ammunition pools
-ok 19 - pistol, fists and original shotgun pickup use the correct ammunition pools
+ok 15 - pistol, fists and original shotgun pickup use the correct ammunition pools
   ---
-  duration_ms: 9.282502
+  duration_ms: 36.850405
   type: 'test'
   ...
 # Subtest: real E1M1 enemy can be shot, dies once and drops ammunition
-ok 20 - real E1M1 enemy can be shot, dies once and drops ammunition
+ok 16 - real E1M1 enemy can be shot, dies once and drops ammunition
   ---
-  duration_ms: 8.56171
+  duration_ms: 22.534846
   type: 'test'
   ...
-# Subtest: barrel explosion damages nearby actors and resolves to valid original sprites
-ok 21 - barrel explosion damages nearby actors and resolves to valid original sprites
+# Subtest: barrel explosion damages nearby actors and resolves to valid procedural sprites
+ok 17 - barrel explosion damages nearby actors and resolves to valid procedural sprites
   ---
-  duration_ms: 3.721144
+  duration_ms: 35.090509
   type: 'test'
   ...
 # Subtest: original solid lamp blocks an imp fireball and protects the player behind it
-ok 22 - original solid lamp blocks an imp fireball and protects the player behind it
+ok 18 - original solid lamp blocks an imp fireball and protects the player behind it
   ---
-  duration_ms: 4.199772
+  duration_ms: 12.746875
   type: 'test'
   ...
 # Subtest: original nonsolid candle and corpse allow a fireball to reach the player
-ok 23 - original nonsolid candle and corpse allow a fireball to reach the player
+ok 19 - original nonsolid candle and corpse allow a fireball to reach the player
   ---
-  duration_ms: 8.168278
+  duration_ms: 6.01946
   type: 'test'
   ...
 # Subtest: fireballs still impact and damage living enemies and barrels
-ok 24 - fireballs still impact and damage living enemies and barrels
+ok 20 - fireballs still impact and damage living enemies and barrels
   ---
-  duration_ms: 4.888738
+  duration_ms: 6.521376
   type: 'test'
   ...
 # Subtest: only an aimed nearby exit switch completes E1M1 and restart restores everything
-ok 25 - only an aimed nearby exit switch completes E1M1 and restart restores everything
+ok 21 - only an aimed nearby exit switch completes E1M1 and restart restores everything
   ---
-  duration_ms: 2.642232
+  duration_ms: 2.87975
   type: 'test'
   ...
 # Subtest: armor bonuses restore basic protection after blue armor is exhausted
-ok 26 - armor bonuses restore basic protection after blue armor is exhausted
+ok 22 - armor bonuses restore basic protection after blue armor is exhausted
   ---
-  duration_ms: 3.132228
+  duration_ms: 2.225526
   type: 'test'
   ...
 # Subtest: same input sequence and random seed produce the same simulation
-ok 27 - same input sequence and random seed produce the same simulation
+ok 23 - same input sequence and random seed produce the same simulation
   ---
-  duration_ms: 68.2929
+  duration_ms: 83.19899
   type: 'test'
   ...
 # Subtest: complete main route from authentic spawn with real movement and door use, no teleport
-ok 28 - complete main route from authentic spawn with real movement and door use, no teleport
+ok 24 - complete main route from authentic spawn with real movement and door use, no teleport
   ---
-  duration_ms: 66.442119
+  duration_ms: 71.234842
   type: 'test'
   ...
 # Subtest: controller can select difficulty and start from the menu without firing
-ok 29 - controller can select difficulty and start from the menu without firing
+ok 25 - controller can select difficulty and start from the menu without firing
   ---
-  duration_ms: 1.747687
+  duration_ms: 1.497711
   type: 'test'
   ...
 # Subtest: pause and resume require a new button press and cannot leak held triggers
-ok 30 - pause and resume require a new button press and cannot leak held triggers
+ok 26 - pause and resume require a new button press and cannot leak held triggers
   ---
-  duration_ms: 0.357948
+  duration_ms: 0.361434
   type: 'test'
   ...
 # Subtest: axes implement deadzone, forward, right strafe and radian look deltas
-ok 31 - axes implement deadzone, forward, right strafe and radian look deltas
+ok 27 - axes implement deadzone, forward, right strafe and radian look deltas
   ---
-  duration_ms: 0.33941
+  duration_ms: 0.366271
   type: 'test'
   ...
 # Subtest: use, map and weapon commands are edges while firing is held
-ok 32 - use, map and weapon commands are edges while firing is held
+ok 28 - use, map and weapon commands are edges while firing is held
   ---
-  duration_ms: 0.207252
+  duration_ms: 0.257267
   type: 'test'
   ...
 # Subtest: disconnect resets motion and explicit clears require releasing pressed buttons
-ok 33 - disconnect resets motion and explicit clears require releasing pressed buttons
+ok 29 - disconnect resets motion and explicit clears require releasing pressed buttons
   ---
-  duration_ms: 0.304608
+  duration_ms: 0.294823
+  type: 'test'
+  ...
+# Subtest: every gameplay sound is synthesized, finite, bounded and distinct without resources
+ok 30 - every gameplay sound is synthesized, finite, bounded and distinct without resources
+  ---
+  duration_ms: 247.679562
+  type: 'test'
+  ...
+# Subtest: procedural PCM is repeatable by seed and adapts duration to the sample rate
+ok 31 - procedural PCM is repeatable by seed and adapts duration to the sample rate
+  ---
+  duration_ms: 47.551925
+  type: 'test'
+  ...
+# Subtest: the original generated score is deterministic, changes with its seed and contains all instruments
+ok 32 - the original generated score is deterministic, changes with its seed and contains all instruments
+  ---
+  duration_ms: 8.376935
+  type: 'test'
+  ...
+# Subtest: distance and listener heading determine stereo pan without nonfinite parameters
+ok 33 - distance and listener heading determine stereo pan without nonfinite parameters
+  ---
+  duration_ms: 0.385439
+  type: 'test'
+  ...
+# Subtest: autoplay waits for unlock and compatibility names never read external audio
+ok 34 - autoplay waits for unlock and compatibility names never read external audio
+  ---
+  duration_ms: 13.651445
+  type: 'test'
+  ...
+# Subtest: voice limits, cached generation and completion clean up all connected nodes
+ok 35 - voice limits, cached generation and completion clean up all connected nodes
+  ---
+  duration_ms: 10.76102
+  type: 'test'
+  ...
+# Subtest: turning and moving update active spatial sounds, while relative interface sounds stay centered
+ok 36 - turning and moving update active spatial sounds, while relative interface sounds stay centered
+  ---
+  duration_ms: 4.448969
+  type: 'test'
+  ...
+# Subtest: music pause, mute and resume preserve elapsed position and dispose clears its scheduler
+ok 37 - music pause, mute and resume preserve elapsed position and dispose clears its scheduler
+  ---
+  duration_ms: 10.854875
+  type: 'test'
+  ...
+# Subtest: the scheduler loops and skips expired beats after a long interruption
+ok 38 - the scheduler loops and skips expired beats after a long interruption
+  ---
+  duration_ms: 2.863886
+  type: 'test'
+  ...
+# Subtest: procedural E1M1 constructs independent deterministic geometry from layout parameters
+ok 39 - procedural E1M1 constructs independent deterministic geometry from layout parameters
+  ---
+  duration_ms: 35.282713
+  type: 'test'
+  ...
+# Subtest: generated convex cells cover each sector contour exactly and drive sector queries
+ok 40 - generated convex cells cover each sector contour exactly and drive sector queries
+  ---
+  duration_ms: 24.441368
+  type: 'test'
+  ...
+# Subtest: all placements and mechanism IDs resolve against the generated footprint
+ok 41 - all placements and mechanism IDs resolve against the generated footprint
+  ---
+  duration_ms: 16.523673
+  type: 'test'
+  ...
+# Subtest: the procedural sweep preserves holes and disconnected parts of a sector
+ok 42 - the procedural sweep preserves holes and disconnected parts of a sector
+  ---
+  duration_ms: 2.790135
+  type: 'test'
+  ...
+# Subtest: all eight door faces become passable while advancing, with every enemy and object present
+ok 43 - all eight door faces become passable while advancing, with every enemy and object present
+  ---
+  duration_ms: 349.378457
+  type: 'test'
+  ...
+# Subtest: generated E1M1 is traversable from spawn to the exit with active opponents and no teleport
+ok 44 - generated E1M1 is traversable from spawn to the exit with active opponents and no teleport
+  ---
+  duration_ms: 362.248938
+  type: 'test'
+  ...
+# Subtest: all named level surface families produce complete opaque procedural materials
+ok 45 - all named level surface families produce complete opaque procedural materials
+  ---
+  duration_ms: 570.513465
+  type: 'test'
+  ...
+# Subtest: floors, animated acid and switch states remain visually distinguishable
+ok 46 - floors, animated acid and switch states remain visually distinguishable
+  ---
+  duration_ms: 36.512537
+  type: 'test'
+  ...
+# Subtest: fresh generators reproduce identical bytes without a seed file or image resource
+ok 47 - fresh generators reproduce identical bytes without a seed file or image resource
+  ---
+  duration_ms: 169.73661
+  type: 'test'
+  ...
+# Subtest: volumetric actors have stable centered foot origins across views and animation
+ok 48 - volumetric actors have stable centered foot origins across views and animation
+  ---
+  duration_ms: 62.832018
+  type: 'test'
+  ...
+# Subtest: pickups, blockers and effects have visible silhouettes and valid world anchors
+ok 49 - pickups, blockers and effects have visible silhouettes and valid world anchors
+  ---
+  duration_ms: 14.125848
+  type: 'test'
+  ...
+# Subtest: first-person weapons fit the logical viewport with neutral UI offsets
+ok 50 - first-person weapons fit the logical viewport with neutral UI offsets
+  ---
+  duration_ms: 12.710921
+  type: 'test'
+  ...
+# Subtest: procedural status bar, digits, face and title satisfy the live HUD layout
+ok 51 - procedural status bar, digits, face and title satisfy the live HUD layout
+  ---
+  duration_ms: 2.684676
+  type: 'test'
+  ...
+# Subtest: visual generator sources contain no external loading or stored bitmap mechanism
+ok 52 - visual generator sources contain no external loading or stored bitmap mechanism
+  ---
+  duration_ms: 0.842947
   type: 'test'
   ...
 # Subtest: FERRO canonical sources retain upstream bytes and locked hashes
-ok 34 - FERRO canonical sources retain upstream bytes and locked hashes
+ok 53 - FERRO canonical sources retain upstream bytes and locked hashes
   ---
-  duration_ms: 3.245889
+  duration_ms: 3.789557
   type: 'test'
   ...
-# Subtest: BSP triangulation covers every original E1M1 subsector and sector
-ok 35 - BSP triangulation covers every original E1M1 subsector and sector
+# Subtest: generated floor triangulation covers every E1M1 cell and sector
+ok 54 - generated floor triangulation covers every E1M1 cell and sector
   ---
-  duration_ms: 28.563513
+  duration_ms: 13.952848
   type: 'test'
   ...
-# Subtest: E1M1 render mesh uses original WAD materials and finite geometry
-ok 36 - E1M1 render mesh uses original WAD materials and finite geometry
+# Subtest: E1M1 render mesh uses generated materials and finite geometry
+ok 55 - E1M1 render mesh uses generated materials and finite geometry
   ---
-  duration_ms: 33.626759
+  duration_ms: 352.635755
   type: 'test'
   ...
 # Subtest: opening closed sectors rebuilds door surfaces from mutable heights
-ok 37 - opening closed sectors rebuilds door surfaces from mutable heights
+ok 56 - opening closed sectors rebuilds door surfaces from mutable heights
   ---
-  duration_ms: 15.747594
+  duration_ms: 11.179028
   type: 'test'
   ...
-# Subtest: type48 computer walls encode GPU scrolling without changing WAD offsets
-ok 38 - type48 computer walls encode GPU scrolling without changing WAD offsets
+# Subtest: type48 computer walls encode GPU scrolling without changing plan offsets
+ok 57 - type48 computer walls encode GPU scrolling without changing plan offsets
   ---
-  duration_ms: 8.118904
+  duration_ms: 15.183608
   type: 'test'
   ...
-# Subtest: mirrored directional sprites reflect around the original thing anchor
-ok 39 - mirrored directional sprites reflect around the original thing anchor
+# Subtest: mirrored procedural sprites reflect around their thing anchor, including asymmetric crops
+ok 58 - mirrored procedural sprites reflect around their thing anchor, including asymmetric crops
   ---
-  duration_ms: 1.411662
+  duration_ms: 2.511196
   type: 'test'
   ...
-# Subtest: bundled source is the complete authentic Doom v1.9 shareware IWAD
-ok 40 - bundled source is the complete authentic Doom v1.9 shareware IWAD
-  ---
-  duration_ms: 12.855093
-  type: 'test'
-  ...
-# Subtest: E1M1 retains every original map record and its exact player spawn
-ok 41 - E1M1 retains every original map record and its exact player spawn
-  ---
-  duration_ms: 9.483093
-  type: 'test'
-  ...
-# Subtest: every E1M1 wall and non-sky flat resolves from original palette resources
-ok 42 - every E1M1 wall and non-sky flat resolves from original palette resources
-  ---
-  duration_ms: 25.285416
-  type: 'test'
-  ...
-# Subtest: original sprites and HUD retain picture offsets and transparent pixels
-ok 43 - original sprites and HUD retain picture offsets and transparent pixels
-  ---
-  duration_ms: 2.07579
-  type: 'test'
-  ...
-# Subtest: DMX sounds decode real sample rate and sample count without invented samples
-ok 44 - DMX sounds decode real sample rate and sample count without invented samples
-  ---
-  duration_ms: 1.350771
-  type: 'test'
-  ...
-# Subtest: synthetic posts preserve holes, row orientation, palette and signed offsets
-ok 45 - synthetic posts preserve holes, row orientation, palette and signed offsets
-  ---
-  duration_ms: 0.614694
-  type: 'test'
-  ...
-# Subtest: TEXTURE1 uses patch origins independently of sprite drawing offsets
-ok 46 - TEXTURE1 uses patch origins independently of sprite drawing offsets
-  ---
-  duration_ms: 0.481113
-  type: 'test'
-  ...
-# Subtest: duplicate lump lookup and typed array slices obey actual WAD bounds
-ok 47 - duplicate lump lookup and typed array slices obey actual WAD bounds
-  ---
-  duration_ms: 0.266992
-  type: 'test'
-  ...
-# Subtest: invalid headers, directories and lump ranges fail explicitly
-ok 48 - invalid headers, directories and lump ranges fail explicitly
-  ---
-  duration_ms: 0.954966
-  type: 'test'
-  ...
-# Subtest: malformed image posts and malformed texture references cannot read past a lump
-ok 49 - malformed image posts and malformed texture references cannot read past a lump
-  ---
-  duration_ms: 0.627623
-  type: 'test'
-  ...
-# Subtest: BSP axis-aligned and diagonal partitions use Doom right/left convention
-ok 50 - BSP axis-aligned and diagonal partitions use Doom right/left convention
-  ---
-  duration_ms: 0.297187
-  type: 'test'
-  ...
-# Subtest: damaged map vertex references and BSP cycles fail before game startup
-ok 51 - damaged map vertex references and BSP cycles fail before game startup
-  ---
-  duration_ms: 39.40506
-  type: 'test'
-  ...
-1..51
-# tests 51
+1..58
+# tests 58
 # suites 0
-# pass 51
+# pass 58
 # fail 0
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 534.436782
+# duration_ms 1049.507705

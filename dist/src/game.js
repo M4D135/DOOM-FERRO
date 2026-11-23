@@ -1,5 +1,5 @@
 /**
- * E1M1 gameplay on the original Doom map records, rendered separately by FERRO.
+ * E1M1 gameplay on generated sector geometry, rendered separately by FERRO.
  * Coordinates and heights remain Doom units. This is a new simulation rather
  * than the original Doom executable; sector specials follow id's published
  * p_spec.c / p_switch.c / p_doors.c data definitions.
@@ -149,7 +149,7 @@ export class DoomGame {
       const bearing = Math.atan2(this.player.y - entity.y, this.player.x - entity.x);
       const turn = ((bearing - entity.angle) % TAU + TAU + Math.PI / 8) % TAU;
       const rotation = Math.floor(turn / (Math.PI / 4)) + 1, frame = entity.sprite[4];
-      // Doom stores mirrored rotations together, e.g. POSSA2A8.
+      // Paired view identifiers share one generated pose, mirrored around its origin.
       const first = rotation > 5 ? 10 - rotation : rotation;
       entity.sprite = entity.base + frame + first + (first > 1 && first < 5 ? frame + (10 - first) : '');
       entity.flip = rotation > 5;
@@ -610,7 +610,7 @@ export class DoomGame {
     let collided = wall.line !== null;
     projectile.x += dx; projectile.y += dy; projectile.z += dz;
     const sector = this.map.sectorAt(projectile.x, projectile.y);
-    if (projectile.z < sector.floor || projectile.z + projectile.height > sector.ceiling) collided = true;
+    if (!sector || projectile.z < sector.floor || projectile.z + projectile.height > sector.ceiling) collided = true;
     if (!collided) {
       for (const target of [this.player, ...this.entities]) {
         if (target === projectile.owner || target === projectile || target.projectile || target.removed || !target.solid) continue;

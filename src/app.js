@@ -1,7 +1,7 @@
-import { Wad } from './wad.js';
+import { ProceduralResources } from './procedural-resources.js';
 import { FerroDoomRenderer } from './ferro-doom-renderer.js';
 import { DoomGame } from './game.js';
-import { DoomAudio } from './audio.js';
+import { ProceduralAudio } from './procedural-audio.js';
 import { GamepadControls } from './input.js';
 
 const $ = id => document.getElementById(id);
@@ -9,7 +9,7 @@ const world = $('world'), overlay = $('overlay'), hud = $('hud');
 const ctx = overlay.getContext('2d'), hctx = hud.getContext('2d');
 const keys = new Set(), images = new Map(), visited = new Set();
 const touch = { forward: 0, strafe: 0, fire: false, use: false, turn: 0, look: 0 };
-let wad, map, game, renderer, audio;
+let resources, map, game, renderer, audio;
 let mode = 'title', mapOpen = false, soundEnabled = true, fpsVisible = false;
 let previousTime = 0, previousHealth = 100, damage = 0, pickupFlash = 0;
 let mouseTurn = 0, mouseLook = 0, requestedWeapon = null, messageUntil = 0;
@@ -27,7 +27,7 @@ function controlMode(kind) {
 
 function image(name) {
   if (images.has(name)) return images.get(name);
-  const patch = wad.patch(name);
+  const patch = resources.patch(name);
   if (!patch) return null;
   const canvas = document.createElement('canvas');
   canvas.width = patch.width; canvas.height = patch.height;
@@ -264,6 +264,7 @@ function tick(timestamp) {
     const pad = gamepad(dt);
     let moving = false;
     if (game && mode === 'playing') {
+      audio?.setListener?.(game.player);
       const input = getInput(dt, pad); moving = Math.abs(input.forward) + Math.abs(input.strafe) > 0.05;
       game.update(dt, input);
       const p = game.player, sector = map.sectorAt(p.x, p.y);
@@ -282,9 +283,9 @@ function tick(timestamp) {
       if (pickupFlash > 0) { ctx.fillStyle = `rgba(220,179,40,${pickupFlash * 0.45})`; ctx.fillRect(0, 0, overlay.width, overlay.height); }
       if (++frames % 20 === 0) {
         const stats = renderer.stats, sector = map.sectorAt(p.x, p.y);
-        $('perf').textContent = `${Math.round(fps)} FPS · FERRO ${stats.ferroVersion}\n${stats.width || world.width} × ${stats.height || world.height} · ${stats.mapTriangles} triangles carte\n${stats.drawCalls || 0} appels · secteur ${sector?.id ?? '?'}`;
+        $('perf').textContent = `${Math.round(fps)} FPS · FERRO ${stats.ferroVersion}\n${stats.width || world.width} × ${stats.height || world.height} · ${stats.mapTriangles} triangles carte\n${stats.drawCalls || 0} appels · secteur ${sector?.id ?? '?'}\nPosition ${Math.round(p.x)}, ${Math.round(p.y)}, ${Math.round(p.z)} · angle ${Math.round(p.angle * 180 / Math.PI)}°\nGénération procédurale · ${resources.stats().generatedImages} surfaces`;
         $('accessibleStatus').textContent = `${mode}. Secteur ${sector?.id}, santé ${Math.round(p.health)}, munitions ${p.ammo}.`;
-        world.dataset.sector = String(sector?.id); world.dataset.triangles = String(stats.mapTriangles); world.dataset.engine = `FERRO ${stats.ferroVersion}`;
+        world.dataset.sector = String(sector?.id); world.dataset.triangles = String(stats.mapTriangles); world.dataset.engine = `FERRO ${stats.ferroVersion}`; world.dataset.generation = 'procedural';
       }
     }
     if (messageUntil && timestamp > messageUntil) { $('gameMessage').textContent = ''; messageUntil = 0; }
@@ -358,19 +359,11 @@ $('touchWeapon').addEventListener('pointerdown', e => { cycleWeapon(); e.prevent
 
 async function boot() {
   try {
-    const response = await fetch('assets/doom1.wad');
-    if (!response.ok) throw new Error(`WAD indisponible (${response.status}). Relance la construction avec python3 tools/build.py.`);
-    const buffer = await response.arrayBuffer();
-    if (buffer.byteLength !== 4196020) throw new Error('Le WAD shareware ne correspond pas à la version 1.9 attendue.');
-    // Build/CI always verify the full hash. Web Crypto is unavailable on plain
-    // HTTP LAN previews, so that optional browser check must not block mobile use.
-    if (globalThis.crypto?.subtle) {
-      const digest = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', buffer)), b => b.toString(16).padStart(2, '0')).join('');
-      if (digest !== '1d7d43be501e67d927e415e0b8f3e29c3bf33075e859721816f652a526cac771') throw new Error('Le WAD shareware ne correspond pas à la version 1.9 attendue.');
-    }
-    wad = new Wad(buffer); map = wad.map('E1M1'); audio = new DoomAudio(wad);
+    resources = new ProceduralResources();
+    map = resources.map('E1M1');
+    audio = new ProceduralAudio();
     game = new DoomGame(map, { skill: 2, onSound: playSound, onMessage: message, onComplete: complete });
-    renderer = new FerroDoomRenderer(world, wad, map, { maxPixels: 640 * 400, brightness: 1.2 });
+    renderer = new FerroDoomRenderer(world, resources, map, { maxPixels: 640 * 400, brightness: 1.2 });
     const logo = image('M_DOOM'); $('doomLogo').width = logo.width; $('doomLogo').height = logo.height; $('doomLogo').getContext('2d').drawImage(logo.canvas, 0, 0);
     resize(); screen('title'); $('loading').hidden = true; $('menuActions').hidden = false;
     requestAnimationFrame(tick);
