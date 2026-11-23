@@ -5,6 +5,8 @@ This is a native shader and geometry probe, not a browser gameplay capture or
 a hardware performance test. No browser is installed or driven by this tool.
 The JS extractor calls the production geometry/sprite builders and FERRO camera
 helpers. Shader strings are read unchanged from the production host adapter.
+The two sprite-anchor views are isolated regression fixtures: they place one
+original WAD sprite in E1M1, without simulating or claiming a played game.
 """
 import argparse
 import base64
@@ -40,6 +42,11 @@ const cases=[{name:'spawn-north',x:1056,y:-3616,z:41,angle:Math.PI/2},
   {name:'spawn-west',x:1056,y:-3616,z:41,angle:Math.PI},
   {name:'courtyard',x:2488,y:-3504,z:-15,angle:Math.PI},
   {name:'start-hall',x:1110.8979591836735,y:-2957.224489795918,z:41,angle:-Math.PI/2}];
+for(const flip of [false,true])cases.push({
+  name:flip?'sprite-anchor-mirrored':'sprite-anchor-normal',x:1056,y:-3616,z:41,angle:Math.PI/2,
+  fixture:{scope:'Isolated original-WAD sprite anchor regression; not a played game.',
+    entity:{sprite:'TROOH2H8',x:1056,y:-3520,z:0,flip,scale:1,fullbright:false}}
+});
 const width=640,height=400,views=[];
 for(const camera of cases){
 const position=[camera.x/32,camera.z/32,-camera.y/32],axes=FRender.shared.cameraAxes({yaw:Math.PI/2-camera.angle,pitch:0});
@@ -49,8 +56,16 @@ const view=new Float32Array([r[0],u[0],-f[0],0,r[1],u[1],-f[1],0,r[2],u[2],-f[2]
 const focal=1/Math.tan(70*Math.PI/360),near=.025,far=400,p=new Float32Array(16),vp=new Float32Array(16);
 p[0]=focal/(width/height);p[5]=focal;p[10]=(far+near)/(near-far);p[11]=-1;p[14]=2*far*near/(near-far);FRender.shared.multiply(p,view,vp);
 const v={oeil:position,droite:r,haut:u,avant:f,tangente:1/focal,largeur:width,hauteur:height,vp};
-const adapter=Object.create(FerroDoomRenderer.prototype);adapter.frame={entities:game.entities,time:0};adapter.map=map;adapter.spriteMeshes=new Map();adapter._texture=tex;
+const adapter=Object.create(FerroDoomRenderer.prototype);adapter.frame={entities:camera.fixture?[camera.fixture.entity]:game.entities,time:0};adapter.map=map;adapter.spriteMeshes=new Map();adapter._texture=tex;
 adapter._upload=(collection,key,vertices)=>{collection.set(key,{name:key,vertices});};adapter._sprites(v);
+if(camera.fixture){
+  const fixture=camera.fixture,e=fixture.entity,patch=wad.patch(e.sprite),vertices=adapter.spriteMeshes.get(e.sprite).vertices;
+  const offsets=[];for(let i=0;i<vertices.length;i+=7)offsets.push(((vertices[i]-e.x/32)*r[0]+(vertices[i+2]+e.y/32)*r[2])*32);
+  fixture.patch={width:patch.width,height:patch.height,leftOffset:patch.leftOffset,topOffset:patch.topOffset};
+  fixture.horizontalBoundsDoom=[Math.min(...offsets),Math.max(...offsets)];
+  const anchor=[e.x/32,e.z/32,-e.y/32,1],clip=Array.from({length:4},(_,row)=>anchor.reduce((sum,value,col)=>sum+value*vp[col*4+row],0));
+  fixture.anchorScreen={x:(clip[0]/clip[3]+1)*width/2,y:(1-clip[1]/clip[3])*height/2};
+}
 views.push({...camera,position,right:r,up:u,forward:f,tangent:1/focal,vp:Array.from(vp),sprites:[...adapter.spriteMeshes].map(([name,m])=>({key:'sprite:'+name,vertices:bytes(m.vertices),count:m.vertices.length/7}))});
 }
 console.log(JSON.stringify({width,height,shaders,groups:groups.map(g=>({key:g.key,vertices:bytes(g.vertices),count:g.vertices.length/7})),textures:[...textures.values()],views,
@@ -181,10 +196,13 @@ def main():
     for view in data['views']:
         pixels=context.render(world,sky,textures,meshes,view);path=args.output/(view['name']+'-egl.png');Image.fromarray(pixels).save(path)
         unique=np.unique(pixels.reshape(-1,3),axis=0).shape[0];assert unique>500,'Expected textured E1M1 geometry'
-        results.append({'name':view['name'],'image':path.name,'camera':{k:view[k] for k in ['x','y','z','angle']},'uniqueColors':unique,'meanRGB':pixels.mean(axis=(0,1)).tolist()})
+        result={'name':view['name'],'image':path.name,'camera':{k:view[k] for k in ['x','y','z','angle']},'uniqueColors':unique,'meanRGB':pixels.mean(axis=(0,1)).tolist()}
+        if 'fixture' in view:result['fixture']=view['fixture']
+        results.append(result)
     report={'passed':True,'scope':'Native llvmpipe EGL renders of production host shaders, real WAD geometry/textures/sprites and FERRO camera helpers. Not a browser gameplay capture, full FERRO frame execution, or hardware FPS measurement.',
         'environment':context.info,'size':[data['width'],data['height']],'ferroVersion':data['engineVersion'],'sectors':data['sectors'],'subsectors':data['subsectors'],
         'shaderCompilation':'4 unmodified GLSL ES 3.00 production shaders compiled; 2 programs linked','mapTriangles':sum(m['count']//3 for m in data['groups']),
+        'adapterSha256':hashlib.sha256((ROOT/'src/ferro-doom-renderer.js').read_bytes()).hexdigest(),
         'shaderSha256':{name:hashlib.sha256(code.encode()).hexdigest() for name,code in s.items()},'cases':results}
     (args.output/'egl-report.json').write_text(json.dumps(report,indent=2)+'\n');print(json.dumps(report,indent=2))
 

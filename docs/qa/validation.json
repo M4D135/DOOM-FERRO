@@ -1,15 +1,24 @@
 {
-  "version": "0.1.1",
-  "nodeTests": 47,
+  "version": "0.1.2",
+  "nodeTests": 51,
   "nodeTestsPassed": true,
   "reproducibleBuild": true,
-  "buildFiles": 15,
+  "buildFiles": 16,
   "browserWebGL2": "context unavailable in managed browser on 2026-11-23; interactive validation incomplete",
-  "nativeEGL": "passed; see egl-report.json",
+  "nativeEGL": "passed; 4 map views and 2 isolated sprite-anchor fixtures; see egl-report.json",
   "hardwareFPS": "not measured",
   "mainRoute": "original spawn to exit with real movement/use, enemies disabled only for traversal test",
-  "inputTests": 10,
-  "inputTestScope": "gamepad sampler and production DOM event handlers using simulated DOM; no physical device claim",
-  "githubActions": "job not started; GitHub reports account billing or spending-limit block",
-  "githubActionsUrl": "https://github.com/M4D135/DOOM-FERRO/actions/runs/45271910444"
+  "inputTestScope": "production DOM handlers with simulated DOM/audio/renderer, real WAD and game; gamepad sampler; no physical-device or audible-audio claim",
+  "githubActions": "previous 0.1.1 job did not start; reported account billing or spending-limit block; local qualification is independent",
+  "githubActionsUrl": "https://github.com/M4D135/DOOM-FERRO/actions/runs/45272736066",
+  "nodeSkipped": 0,
+  "testFiles": [
+    "tests/app-input.test.mjs",
+    "tests/audio.test.mjs",
+    "tests/game.test.mjs",
+    "tests/input.test.mjs",
+    "tests/renderer.test.mjs",
+    "tests/wad.test.mjs"
+  ],
+  "testLogSha256": "3fc6ddc8870fbeda33bf207aa8605a0f2af67927c719dacea6b232b1455ca7e5"
 }

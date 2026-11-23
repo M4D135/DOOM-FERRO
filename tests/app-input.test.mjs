@@ -1,130 +1,223 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
-import { GamepadControls } from '../src/input.js';
+import {Wad} from '../src/wad.js';
+import {DoomGame} from '../src/game.js';
+import {GamepadControls} from '../src/input.js';
 
-const dt = 1 / 60;
-const controller = () => ({ index: 0, connected: true, axes: [0, 0, 0, 0], buttons: Array.from({ length: 17 }, () => ({ pressed: false })) });
+const appSource = readFileSync(new URL('../src/app.js', import.meta.url), 'utf8');
+const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
+const wadBytes = readFileSync(new URL('../assets/doom1.wad', import.meta.url));
+const flush = () => new Promise(resolve => setImmediate(resolve));
 
-// Exercise the actual DOM event handlers without starting WAD, audio or WebGL.
-// Imports are supplied as test doubles; only the final boot() call is omitted.
-const app = readFileSync(new URL('../src/app.js', import.meta.url), 'utf8')
-  .replace(/^import .*;\n/gm, '').replace(/\nboot\(\);\s*$/, '\n');
-
-function browser({ coarse = false, touchPoints = 5, unlock = async () => true } = {}) {
-  const elements = new Map(), docEvents = new Map(), winEvents = new Map();
-  let pointerRequests = 0, musicResumes = 0;
-  function element(id) {
-    if (elements.has(id)) return elements.get(id);
-    const listeners = new Map(), classes = new Set(), captures = new Set();
-    const node = {
-      id, style: {}, firstElementChild: { style: {} }, hidden: false,
-      classList: { toggle(name, enabled) { if (enabled) classes.add(name); else classes.delete(name); }, remove(name) { classes.delete(name); }, contains: name => classes.has(name) },
-      getContext: () => ({}), setAttribute() {}, focus() {},
-      addEventListener(type, callback) { listeners.set(type, callback); },
-      dispatch(type, values = {}) { listeners.get(type)?.({ currentTarget: node, preventDefault() {}, ...values }); },
-      requestPointerLock() { pointerRequests++; return Promise.resolve(); },
-      setPointerCapture: id => captures.add(id), hasPointerCapture: id => captures.has(id), releasePointerCapture: id => captures.delete(id),
-      options: [{ value: '1' }, { value: '2' }, { value: '3' }], selectedIndex: 1
+class Element {
+  constructor() {
+    this.listeners = new Map(); this.captures = new Set(); this.style = {}; this.dataset = {};
+    this.attributes = {}; this.hidden = false; this.firstElementChild = {style: {}};
+    const classes = new Set();
+    this.classList = {
+      contains: name => classes.has(name), remove: name => classes.delete(name),
+      toggle(name, enabled = !classes.has(name)) { if (enabled) classes.add(name); else classes.delete(name); }
     };
-    elements.set(id, node); return node;
+    this.context = new Proxy({}, {get: (target, key) => target[key] ?? (() => {})});
   }
-  const pad = controller();
-  const document = { body: element('body'), getElementById: element, pointerLockElement: null,
-    exitPointerLock() { document.pointerLockElement = null; },
-    addEventListener(type, callback) { docEvents.set(type, callback); } };
-  const audio = { unlock, setEnabled() {}, resumeMusic() { musicResumes++; }, pauseMusic() {}, stopMusic() {}, startMusic() {} };
-  const navigator = { maxTouchPoints: touchPoints, getGamepads: () => [pad] };
-  const context = vm.createContext({ document, navigator, GamepadControls,
-    matchMedia: () => ({ matches: coarse }), window: { addEventListener(type, callback) { winEvents.set(type, callback); } },
-    performance: { now: () => 0 }, console, requestAnimationFrame() {}, testAudio: audio });
-  vm.runInContext(app + `
-    game = { player: { weapon: 'pistol', weapons: new Set(['fist', 'pistol']) } };
-    audio = testAudio;
-    globalThis.api = { capturePointer, getInput, gamepad, screen, start, controlMode,
-      setMode: value => mode = value, mode: () => mode };
-  `, context);
-  return { api: context.api, element, pad, document, navigator,
-    event(type, values = {}) { docEvents.get(type)?.({ preventDefault() {}, ...values }); },
-    windowEvent(type) { winEvents.get(type)?.(); },
-    pointerRequests: () => pointerRequests, musicResumes: () => musicResumes };
+  addEventListener(type, handler) { if (!this.listeners.has(type)) this.listeners.set(type, []); this.listeners.get(type).push(handler); }
+  dispatch(type, properties = {}) {
+    const event = {target: this, currentTarget: this, repeat: false, button: 0, pointerId: 1, clientX: 0, clientY: 0, preventDefault() {}, ...properties};
+    for (const handler of this.listeners.get(type) || []) handler(event);
+  }
+  getContext() { return this.context; }
+  getBoundingClientRect() { return {width: 640, height: 400}; }
+  setAttribute(key, value) { this.attributes[key] = value; }
+  setPointerCapture(id) { this.captures.add(id); }
+  hasPointerCapture(id) { return this.captures.has(id); }
+  releasePointerCapture(id) { if (this.captures.delete(id)) this.dispatch('lostpointercapture', {pointerId: id}); }
+  focus() {} append() {} replaceChildren() {}
 }
 
-test('a touchscreen laptop can capture a mouse and walk; only the touch joystick auto-runs', async () => {
-  const b = browser(); b.api.setMode('playing');
-  await b.api.capturePointer();
-  assert.equal(b.pointerRequests(), 1);
-  b.event('keydown', { code: 'KeyW' });
-  assert.equal(b.api.getInput(dt, null).forward, 1);
-  assert.equal(b.api.getInput(dt, null).run, false);
-  b.event('keyup', { code: 'KeyW' });
-  b.element('movePad').dispatch('pointerdown', { pointerId: 1, clientX: 60, clientY: 60 });
-  b.element('movePad').dispatch('pointermove', { pointerId: 1, clientX: 60, clientY: 20 });
-  assert.equal(b.api.getInput(dt, null).run, true);
-  await b.api.capturePointer();
-  assert.equal(b.pointerRequests(), 1, 'touch input does not request mouse capture');
-  b.element('movePad').dispatch('pointerup', { pointerId: 1 });
-  assert.equal(b.api.getInput(dt, null).run, false);
-  b.document.pointerLockElement = b.element('world'); b.event('pointerlockchange');
-  b.document.pointerLockElement = null; b.event('pointerlockchange');
-  assert.equal(b.api.mode(), 'paused', 'losing capture also pauses on touch hardware');
+/** Run the production app and game with only DOM, renderer and audio boundaries mocked. */
+async function browser({coarse = false, touchPoints = 0} = {}) {
+  const h = {pads: [], now: 0, audio: null, game: null, frames: [], events: [], errors: []};
+  const elements = new Map([...html.matchAll(/<[a-z]+\b[^>]*\bid="([^"]+)"[^>]*>/gi)].map(match => {
+    const element = new Element(); element.hidden = /\bhidden\b/.test(match[0]); return [match[1], element];
+  }));
+  h.get = id => elements.get(id);
+  const document = h.document = new Element(), window = h.window = new Element();
+  document.body = new Element(); document.pointerLockElement = null;
+  document.getElementById = h.get; document.createElement = () => new Element();
+  h.lock = target => { document.pointerLockElement = target; document.dispatch('pointerlockchange'); };
+  document.exitPointerLock = () => { if (document.pointerLockElement) h.lock(null); };
+  h.get('world').requestPointerLock = () => { h.events.push('pointer-lock'); h.lock(h.get('world')); return Promise.resolve(); };
+  const skill = h.get('skill'); skill.options = [{value: '1'}, {value: '2'}, {value: '3'}]; skill.selectedIndex = 1;
+  Object.defineProperty(skill, 'value', {get: () => skill.options[skill.selectedIndex].value});
+  class ObservedGame extends DoomGame {
+    constructor(...args) { super(...args); this.inputs = []; h.game = this; }
+    update(dt, input) { this.inputs.push({...input}); super.update(dt, input); }
+  }
+  class Audio {
+    constructor() { h.audio = this; this.unlocked = false; this.context = {state: 'suspended'}; this.calls = 0; this.pending = []; this.musicPaused = true; }
+    unlock() {
+      this.calls++; h.events.push('audio-request');
+      return new Promise(resolve => this.pending.push(success => {
+        this.unlocked = success; this.context.state = success ? 'running' : 'suspended';
+        h.events.push('audio-settled'); resolve(success);
+      }));
+    }
+    settle(success = true) { for (const resolve of this.pending.splice(0)) resolve(success); }
+    play() {} setEnabled() {} stopMusic() { this.musicPaused = true; }
+    startMusic() { this.musicPaused = false; }
+    resumeMusic() { this.musicPaused = false; }
+    pauseMusic() { this.musicPaused = true; }
+  }
+  class Renderer { constructor() { this.stats = {}; } resize() {} draw() {} }
+  h.navigator = {maxTouchPoints: touchPoints, getGamepads: () => h.pads};
+  const context = vm.createContext({
+    document, window, Wad, DoomGame: ObservedGame, GamepadControls, DoomAudio: Audio, FerroDoomRenderer: Renderer,
+    navigator: h.navigator,
+    matchMedia: () => ({matches: coarse}), performance: {now: () => h.now},
+    ImageData: class {}, console: {error: error => h.errors.push(error)},
+    requestAnimationFrame: callback => h.frames.push(callback),
+    fetch: async () => ({ok: true, arrayBuffer: async () => wadBytes.buffer.slice(wadBytes.byteOffset, wadBytes.byteOffset + wadBytes.byteLength)})
+  });
+  // Keep every production handler intact; replace module wiring and await boot only.
+  vm.runInContext(appSource.replace(/^import[^\n]*\n/gm, '').replace(/boot\(\);\s*$/, 'globalThis.appReady = boot();'), context);
+  await context.appReady;
+  assert.deepEqual(h.errors, []);
+  h.frame = () => {
+    const frame = h.frames.shift(); assert.ok(frame, 'the application keeps scheduling frames');
+    frame(h.now += 1000 / 60); assert.deepEqual(h.errors, []);
+    return h.game.inputs.at(-1);
+  };
+  h.pointer = (id, type, properties = {}) => {
+    const element = h.get(id), event = {pointerType: 'touch', ...properties};
+    if (type === 'pointerdown' || type === 'pointerup') document.dispatch(type, {target: element, ...event});
+    element.dispatch(type, event);
+  };
+  h.click = (id, pointerType = 'mouse') => {
+    h.pointer(id, 'pointerdown', {pointerType}); h.pointer(id, 'pointerup', {pointerType}); h.get(id).dispatch('click');
+  };
+  h.key = (code, repeat = false) => document.dispatch('keydown', {code, repeat});
+  h.playing = () => document.body.classList.contains('playing');
+  return h;
+}
+
+function controller(pressed = []) {
+  return {connected: true, index: 0, axes: [0, 0, 0, 0], buttons: Array.from({length: 16}, (_, i) => ({pressed: pressed.includes(i)}))};
+}
+
+test('DOM mouse start on a touch-capable PC locks before audio settles and preserves walk/run', async () => {
+  const h = await browser({touchPoints: 10});
+  h.click('start');
+  assert.equal(h.playing(), true);
+  assert.equal(h.document.body.classList.contains('touch'), false);
+  assert.equal(h.document.pointerLockElement, h.get('world'));
+  assert.ok(h.events.includes('pointer-lock')); assert.equal(h.events.includes('audio-settled'), false);
+  h.frame(); h.key('KeyW');
+  assert.equal(h.frame().forward, 1); assert.equal(h.game.inputs.at(-1).run, false);
+  h.key('ShiftLeft'); assert.equal(h.frame().run, true);
+  h.document.dispatch('mousemove', {movementX: 10, movementY: 0});
+  assert.ok(h.frame().turn < 0);
+  h.lock(null); assert.equal(h.get('pause').hidden, false);
+  h.audio.settle(); await flush();
+  assert.equal(h.audio.musicPaused, true, 'late audio completion must preserve the pause');
 });
 
-test('Escape repeat stays paused and a pause releases touch ownership and pending commands', () => {
-  const b = browser({ coarse: true }); b.api.setMode('playing');
-  b.event('keydown', { code: 'Digit1' });
-  b.element('movePad').dispatch('pointerdown', { pointerId: 1, clientX: 60, clientY: 60 });
-  b.element('movePad').dispatch('pointermove', { pointerId: 1, clientX: 60, clientY: 20 });
-  b.element('touchFire').dispatch('pointerdown', { pointerId: 2 });
-  b.event('keydown', { code: 'Escape', repeat: false });
-  b.event('keydown', { code: 'Escape', repeat: true });
-  assert.equal(b.api.mode(), 'paused');
-  assert.equal(b.element('movePad').hasPointerCapture(1), false);
-  assert.equal(b.element('touchFire').hasPointerCapture(2), false);
-  b.api.screen('playing');
-  b.element('movePad').dispatch('pointermove', { pointerId: 1, clientX: 60, clientY: 0 });
-  b.api.getInput(dt, null);
-  const fresh = b.api.getInput(dt, null);
-  assert.equal(fresh.forward, 0); assert.equal(Boolean(fresh.fire), false); assert.equal(fresh.weapon, null);
+test('DOM Escape repeats, pointer loss and focus loss pause once and release captured inputs', async () => {
+  const h = await browser({coarse: true, touchPoints: 5});
+  h.click('start', 'touch'); h.frame();
+  h.pointer('movePad', 'pointerdown', {pointerId: 1});
+  h.pointer('movePad', 'pointermove', {pointerId: 1, clientY: -30});
+  h.pointer('touchFire', 'pointerdown', {pointerId: 2});
+  assert.equal(h.frame().fire, true);
+  h.key('Digit1'); // Pause before the next simulation frame consumes this request.
+  h.key('Escape'); h.key('Escape', true); h.key('Escape', true);
+  assert.equal(h.get('pause').hidden, false); assert.equal(h.playing(), false);
+  assert.equal(h.get('movePad').captures.size, 0); assert.equal(h.get('touchFire').captures.size, 0);
+  h.pointer('movePad', 'pointermove', {pointerId: 1, clientY: -40});
+  h.click('resume', 'touch'); h.frame();
+  assert.equal(h.frame().forward, 0); assert.equal(h.game.inputs.at(-1).fire, false);
+  assert.equal(h.game.inputs.at(-1).weapon, null);
+  assert.equal(h.game.player.weapon, 'pistol', 'a pending weapon change cannot cross pause/resume');
+  h.pointer('world', 'pointerdown', {pointerType: 'mouse'}); h.get('world').dispatch('mousedown');
+  assert.equal(h.document.pointerLockElement, h.get('world'));
+  h.lock(null); h.lock(null);
+  assert.equal(h.get('pause').hidden, false, 'duplicate unlocked events cannot resume the game');
+  h.click('resume'); h.frame(); h.key('KeyW'); h.get('world').dispatch('mousedown');
+  h.window.dispatch('blur'); assert.equal(h.playing(), false);
+  h.click('resume'); h.frame();
+  assert.equal(h.frame().forward, 0); assert.equal(h.game.inputs.at(-1).fire, false);
 });
 
-test('another finger cannot steal or cancel the active look and fire controls', () => {
-  const b = browser({ coarse: true }); b.api.setMode('playing');
-  b.element('lookPad').dispatch('pointerdown', { pointerId: 1, clientX: 50, clientY: 50 });
-  b.element('lookPad').dispatch('pointerdown', { pointerId: 2, clientX: 80, clientY: 50 });
-  b.element('lookPad').dispatch('pointerup', { pointerId: 2 });
-  b.element('lookPad').dispatch('pointermove', { pointerId: 1, clientX: 60, clientY: 50 });
-  assert.notEqual(b.api.getInput(dt, null).turn, 0);
-  b.element('touchFire').dispatch('pointerdown', { pointerId: 3 });
-  b.element('touchFire').dispatch('pointerup', { pointerId: 4 });
-  assert.equal(b.api.getInput(dt, null).fire, true);
-  b.element('touchFire').dispatch('pointerup', { pointerId: 3 });
-  assert.equal(Boolean(b.api.getInput(dt, null).fire), false);
+test('DOM touch move, look and fire track separate fingers and handle cancellation', async () => {
+  const h = await browser({coarse: true, touchPoints: 5});
+  h.click('start', 'touch'); h.frame();
+  h.pointer('movePad', 'pointerdown', {pointerId: 1});
+  h.pointer('movePad', 'pointermove', {pointerId: 1, clientY: -40});
+  h.pointer('lookPad', 'pointerdown', {pointerId: 2});
+  h.pointer('lookPad', 'pointerdown', {pointerId: 9});
+  h.pointer('lookPad', 'pointerup', {pointerId: 9});
+  h.pointer('touchFire', 'pointerdown', {pointerId: 3});
+  h.pointer('touchFire', 'pointerdown', {pointerId: 8});
+  h.pointer('touchFire', 'pointerup', {pointerId: 8});
+  h.pointer('lookPad', 'pointermove', {pointerId: 2, clientX: 20});
+  let input = h.frame();
+  assert.equal(input.forward, 1); assert.equal(input.run, true); assert.equal(input.fire, true); assert.ok(input.turn < 0);
+  h.pointer('touchFire', 'pointercancel', {pointerId: 3});
+  h.pointer('lookPad', 'pointercancel', {pointerId: 2});
+  h.pointer('lookPad', 'pointermove', {pointerId: 2, clientX: 40});
+  input = h.frame(); assert.equal(input.forward, 1); assert.equal(input.fire, false); assert.equal(input.turn, 0);
+  h.get('movePad').releasePointerCapture(1);
+  input = h.frame(); assert.equal(input.forward, 0); assert.equal(input.run, false);
+  assert.equal(h.get('movePad').firstElementChild.style.transform, '');
 });
 
-test('audio resume cannot delay mouse capture or undo a later pause', async () => {
-  let finishAudio;
-  const b = browser({ unlock: () => new Promise(resolve => { finishAudio = resolve; }) });
-  b.api.setMode('paused');
-  const started = b.api.start(false);
-  assert.equal(b.pointerRequests(), 1, 'capture requested in the initiating gesture');
-  b.api.screen('paused');
-  const count = b.musicResumes(); finishAudio(true); await started;
-  assert.equal(b.api.mode(), 'paused');
-  assert.equal(b.musicResumes(), count, 'late audio completion does not restart music');
+test('DOM difficulty stays within its options and denied gamepad access preserves keyboard play', async () => {
+  const h = await browser(), selector = h.get('skill');
+  const press = button => {
+    h.pads = [controller()]; h.frame();
+    h.pads = [controller([button])]; h.frame();
+  };
+  press(13); assert.equal(selector.selectedIndex, selector.options.length - 1);
+  press(13); assert.equal(selector.selectedIndex, selector.options.length - 1, 'a fresh down edge cannot exceed the maximum');
+  press(12); assert.equal(selector.selectedIndex, 1);
+  press(12); assert.equal(selector.selectedIndex, 0);
+  press(12); assert.equal(selector.selectedIndex, 0, 'a fresh up edge cannot pass the minimum');
+  h.navigator.getGamepads = () => { throw new Error('Gamepad API denied by browser policy'); };
+  h.frame(); h.click('start'); h.frame(); h.key('KeyW');
+  assert.equal(h.frame().forward, 1);
+  assert.equal(h.playing(), true);
+  assert.equal(h.get('error').hidden, true, 'gamepad denial must not show the fatal error screen');
 });
 
-test('denied Gamepad API leaves keyboard working and title difficulty stays bounded', () => {
-  const b = browser();
-  b.pad.buttons[13].pressed = true;
-  b.api.gamepad(dt); assert.equal(b.element('skill').selectedIndex, 2);
-  b.pad.buttons[13].pressed = false; b.api.gamepad(dt);
-  b.pad.buttons[13].pressed = true; b.api.gamepad(dt);
-  assert.equal(b.element('skill').selectedIndex, 2);
-  b.navigator.getGamepads = () => { throw new Error('Gamepad denied'); };
-  b.api.setMode('playing');
-  assert.doesNotThrow(() => b.api.gamepad(dt));
-  b.event('keydown', { code: 'KeyW' });
-  assert.equal(b.api.getInput(dt, null).forward, 1);
+test('DOM first keyboard or touch gesture enables audio after gamepad start without duplicate resumes', async () => {
+  for (const gesture of ['keyboard', 'touch']) {
+    const h = await browser({touchPoints: 5});
+    h.pads = [controller([0])]; h.frame();
+    assert.equal(h.playing(), true); assert.equal(h.audio.calls, 0, 'gamepad polling cannot unlock browser audio');
+    h.pads = [controller()]; h.frame();
+    h.key('Escape'); h.key('Escape', true); h.key('Escape'); h.frame();
+    assert.equal(h.audio.calls, 0, 'Escape resumes play without claiming browser activation');
+    const activate = () => {
+      if (gesture === 'keyboard') h.key('KeyW');
+      else {
+        const calls = h.audio.calls;
+        h.pointer('movePad', 'pointerdown', {pointerId: 1});
+        assert.equal(h.audio.calls, calls, 'touch activation waits for release');
+        h.pointer('movePad', 'pointerup', {pointerId: 1});
+      }
+    };
+    activate();
+    assert.equal(h.audio.calls, 1, `${gesture} requests audio synchronously`);
+    h.key('KeyW', true); h.key('KeyD');
+    h.pointer('touchUse', 'pointerdown', {pointerId: 2}); h.pointer('touchUse', 'pointerup', {pointerId: 2});
+    h.pointer('world', 'pointerdown', {pointerType: 'mouse'}); h.get('world').dispatch('mousedown');
+    assert.equal(h.audio.calls, 1, 'one pending audio request is shared by later gestures');
+    h.frame(); h.frame(); assert.equal(h.playing(), true, 'pending audio never blocks simulation');
+    h.audio.settle(false); await flush();
+    activate(); assert.equal(h.audio.calls, 2, 'a refused unlock can be retried by a fresh gesture');
+    h.audio.settle(); await flush();
+    h.key('KeyD'); h.pointer('touchUse', 'pointerdown', {pointerId: 3}); h.pointer('touchUse', 'pointerup', {pointerId: 3});
+    assert.equal(h.audio.calls, 2, 'running audio does not need another resume');
+  }
 });

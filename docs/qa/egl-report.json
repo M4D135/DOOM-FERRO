@@ -15,6 +15,7 @@
   "subsectors": 237,
   "shaderCompilation": "4 unmodified GLSL ES 3.00 production shaders compiled; 2 programs linked",
   "mapTriangles": 1844,
+  "adapterSha256": "f7ae073d8596b95ce63ea816845b795398cb9f3e21c6e8b6f466d5cc4feba15e",
   "shaderSha256": {
     "WORLD_VERTEX": "ccbad7fea38950df95408f4cb72052cf6009729480cd3c6b0b8af05e2488a92a",
     "WORLD_FRAGMENT": "1a23d865a45f27884ede18576fbdc7e3f39e2f6b0c4ab4949c4b78f30d85dd30",
@@ -85,6 +86,90 @@
         39.61840625,
         43.68049609375
       ]
+    },
+    {
+      "name": "sprite-anchor-normal",
+      "image": "sprite-anchor-normal-egl.png",
+      "camera": {
+        "x": 1056,
+        "y": -3616,
+        "z": 41,
+        "angle": 1.5707963267948966
+      },
+      "uniqueColors": 1419,
+      "meanRGB": [
+        40.357765625,
+        38.23595703125,
+        36.76928125
+      ],
+      "fixture": {
+        "scope": "Isolated original-WAD sprite anchor regression; not a played game.",
+        "entity": {
+          "sprite": "TROOH2H8",
+          "x": 1056,
+          "y": -3520,
+          "z": 0,
+          "flip": false,
+          "scale": 1,
+          "fullbright": false
+        },
+        "patch": {
+          "width": 31,
+          "height": 56,
+          "leftOffset": 6,
+          "topOffset": 51
+        },
+        "horizontalBoundsDoom": [
+          -6,
+          25
+        ],
+        "anchorScreen": {
+          "x": 319.99990463256836,
+          "y": 321.98764483133954
+        }
+      }
+    },
+    {
+      "name": "sprite-anchor-mirrored",
+      "image": "sprite-anchor-mirrored-egl.png",
+      "camera": {
+        "x": 1056,
+        "y": -3616,
+        "z": 41,
+        "angle": 1.5707963267948966
+      },
+      "uniqueColors": 1382,
+      "meanRGB": [
+        40.39755078125,
+        38.2936796875,
+        36.84514453125
+      ],
+      "fixture": {
+        "scope": "Isolated original-WAD sprite anchor regression; not a played game.",
+        "entity": {
+          "sprite": "TROOH2H8",
+          "x": 1056,
+          "y": -3520,
+          "z": 0,
+          "flip": true,
+          "scale": 1,
+          "fullbright": false
+        },
+        "patch": {
+          "width": 31,
+          "height": 56,
+          "leftOffset": 6,
+          "topOffset": 51
+        },
+        "horizontalBoundsDoom": [
+          -25,
+          6
+        ],
+        "anchorScreen": {
+          "x": 319.99990463256836,
+          "y": 321.98764483133954
+        }
+      }
     }
   ]
 }

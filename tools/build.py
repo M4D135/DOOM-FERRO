@@ -28,11 +28,19 @@ def main():
         expected = record.get('sha256')
         if expected and hashlib.sha256(path.read_bytes()).hexdigest() != expected:
             raise SystemExit(f'Canonical FERRO module changed: {filename}')
-    DEST.mkdir(exist_ok=True)
+    # dist is generated output. A fresh tree prevents removed sources from
+    # surviving in subsequent builds and makes reproducibility meaningful.
+    if DEST.exists():
+        shutil.rmtree(DEST)
+    DEST.mkdir()
     for name in ('index.html', 'style.css'):
         shutil.copy2(ROOT / name, DEST / name)
     for name in ('src', 'assets', 'vendor'):
         shutil.copytree(ROOT / name, DEST / name, dirs_exist_ok=True)
+    hosting = ROOT / '.openai' / 'hosting.json'
+    if hosting.is_file():
+        (DEST / '.openai').mkdir()
+        shutil.copy2(hosting, DEST / '.openai' / 'hosting.json')
     total = sum(p.stat().st_size for p in DEST.rglob('*') if p.is_file())
     version = json.loads((ROOT / 'package.json').read_text())['version']
     print(json.dumps({'build': 'dist/index.html', 'version': version, 'wad_sha256': WAD_SHA256, 'bytes': total, 'network_at_runtime': 'same-origin assets only'}))

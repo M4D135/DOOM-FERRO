@@ -613,11 +613,15 @@ export class DoomGame {
     if (projectile.z < sector.floor || projectile.z + projectile.height > sector.ceiling) collided = true;
     if (!collided) {
       for (const target of [this.player, ...this.entities]) {
-        if (target === projectile.owner || target === projectile || target.projectile || !target.alive || target.removed || !target.solid) continue;
+        if (target === projectile.owner || target === projectile || target.projectile || target.removed || !target.solid) continue;
         if (Math.hypot(target.x - projectile.x, target.y - projectile.y) < target.radius + 6
           && projectile.z + 12 >= target.z && projectile.z <= target.z + target.height) {
-          const damage = (1 + Math.floor(this.random() * 8)) * 3;
-          if (target === this.player) this.damagePlayer(damage, projectile.owner); else this.damageEntity(target, damage, projectile.owner);
+          // Doom's PIT_CheckThing stops missiles on solid decorations even
+          // when they are not shootable. Such impacts deal no damage.
+          if (target.alive && (target === this.player || target.enemy || target.barrel)) {
+            const damage = (1 + Math.floor(this.random() * 8)) * 3;
+            if (target === this.player) this.damagePlayer(damage, projectile.owner); else this.damageEntity(target, damage, projectile.owner);
+          }
           collided = true; break;
         }
       }

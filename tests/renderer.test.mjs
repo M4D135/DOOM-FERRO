@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {Wad} from '../src/wad.js';
-import {buildSubsectorPolygons,buildMapGeometry} from '../src/ferro-doom-renderer.js';
+import {FerroDoomRenderer,buildSubsectorPolygons,buildMapGeometry} from '../src/ferro-doom-renderer.js';
 
 const wad=new Wad(readFileSync(new URL('../assets/doom1.wad',import.meta.url)));
 
@@ -72,4 +72,44 @@ test('type48 computer walls encode GPU scrolling without changing WAD offsets',(
   }
   assert.ok(scrollVertices>0);
   assert.deepEqual(map.sides.map(s=>s.xOffset),originalOffsets);
+});
+
+test('mirrored directional sprites reflect around the original thing anchor',()=>{
+  const map=wad.map('E1M1');
+  const origin={x:1056,y:-3616,z:0};
+  // These original imp frames have deliberately asymmetric picture offsets.
+  // TROOH2H8, for example, is 31 pixels wide with its origin at pixel 6.
+  for(const name of ['TROOB2B8','TROOC2C8','TROOD2D8','TROOH2H8','TROOH4H6']){
+    const patch=wad.patch(name);
+    assert.notEqual(patch.width,2*patch.leftOffset,name+' must exercise an asymmetric anchor');
+    for(const scale of [1,0.5])for(const right of [[1,0,0],[Math.SQRT1_2,0,Math.SQRT1_2]]){
+      const adapter=Object.create(FerroDoomRenderer.prototype);
+      adapter.map=map;adapter.spriteMeshes=new Map();
+      adapter._texture=()=>patch;
+      adapter._upload=(collection,key,vertices)=>collection.set(key,{vertices});
+      const view={droite:right,oeil:[origin.x/32,41/32,-origin.y/32],avant:[0,0,-1]};
+      const bounds=[];
+      for(const flip of [false,true]){
+        adapter.frame={entities:[{...origin,sprite:name,flip,scale}]};
+        adapter._sprites(view);
+        const vertices=adapter.spriteMeshes.get(name).vertices;
+        assert.equal(vertices.length,42,'two triangles for one sprite');
+        const offsets=[];
+        for(let i=0;i<vertices.length;i+=7){
+          offsets.push((vertices[i]-origin.x/32)*right[0]+(vertices[i+2]+origin.y/32)*right[2]);
+          assert.ok(Number.isFinite(vertices[i])&&Number.isFinite(vertices[i+1])&&Number.isFinite(vertices[i+2]));
+        }
+        bounds.push({left:Math.min(...offsets),right:Math.max(...offsets),vertices});
+      }
+      const [normal,mirrored]=bounds;
+      assert.ok(Math.abs(normal.left+mirrored.right)<0.00001,name+' mirrored right edge preserves the origin');
+      assert.ok(Math.abs(normal.right+mirrored.left)<0.00001,name+' mirrored left edge preserves the origin');
+      assert.ok(Math.abs(normal.right-normal.left-patch.width*scale/32)<0.00001,name+' picture width is unchanged');
+      for(let i=0;i<normal.vertices.length;i+=7){
+        assert.equal(normal.vertices[i+1],mirrored.vertices[i+1],'vertical position is unchanged');
+        assert.equal(normal.vertices[i+3]+mirrored.vertices[i+3],1,'texture U is mirrored');
+        assert.equal(normal.vertices[i+4],mirrored.vertices[i+4],'texture V is unchanged');
+      }
+    }
+  }
 });

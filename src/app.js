@@ -16,6 +16,7 @@ let mouseTurn = 0, mouseLook = 0, requestedWeapon = null, messageUntil = 0;
 let fps = 60, frames = 0, lastHud = '';
 let inputKind = matchMedia('(pointer: coarse)').matches ? 'touch' : 'mouse';
 let screenRevision = 0, pointerWasLocked = false, neutralInput = false;
+let audioUnlockPending = null;
 const padControls = new GamepadControls();
 document.body.classList.toggle('touch', inputKind === 'touch');
 
@@ -46,6 +47,17 @@ function message(text) {
 
 function playSound(name, options) {
   audio?.play(name, options);
+}
+
+function unlockAudio() {
+  if (!audio || !soundEnabled) return Promise.resolve(false);
+  if (audio.unlocked && audio.context?.state === 'running') return Promise.resolve(true);
+  // Only direct keyboard/pointer/click handlers call this. A gamepad sample is
+  // not browser activation, and a rejected/pending resume must not stall play.
+  if (!audioUnlockPending) {
+    audioUnlockPending = audio.unlock().finally(() => { audioUnlockPending = null; });
+  }
+  return audioUnlockPending;
 }
 
 function clearInput() {
@@ -83,7 +95,7 @@ async function capturePointer() {
   } catch { if (mode === 'playing' && inputKind === 'mouse') message('Clique dans le jeu pour activer la souris.'); }
 }
 
-async function start(restart = false) {
+async function start(restart = false, activateAudio = true) {
   if (!game) return;
   if (restart || mode === 'title' || mode === 'dead' || mode === 'complete') {
     const skill = Number($('skill').value);
@@ -97,14 +109,14 @@ async function start(restart = false) {
   mapOpen = false; document.body.classList.remove('automap'); $('mapButton').setAttribute('aria-pressed', 'false');
   screen('playing'); const revision = screenRevision;
   audio.setEnabled(soundEnabled);
-  const unlocked = audio.unlock();
+  const unlocked = activateAudio ? unlockAudio() : Promise.resolve(false);
   // Request capture during the user gesture, before audio's asynchronous resume.
   capturePointer(); world.focus({ preventScroll: true });
   await unlocked;
   if (mode === 'playing' && revision === screenRevision) audio.resumeMusic();
 }
 
-function pause() { if (mode === 'playing') screen('paused'); else if (mode === 'paused') start(false); }
+function pause(activateAudio = true) { if (mode === 'playing') screen('paused'); else if (mode === 'paused') start(false, activateAudio); }
 
 function complete() {
   const stats = game.stats();
@@ -124,7 +136,7 @@ function showResults(stats, dead) {
 function toggleSound() {
   soundEnabled = !soundEnabled; audio?.setEnabled(soundEnabled);
   for (const id of ['audioButton', 'pauseSound']) { $(id).textContent = soundEnabled ? 'SON ACTIVÉ' : 'SON COUPÉ'; $(id).setAttribute('aria-pressed', String(soundEnabled)); }
-  if (soundEnabled) audio?.unlock();
+  if (soundEnabled) unlockAudio();
 }
 
 function toggleMap() {
@@ -148,9 +160,9 @@ function gamepad(dt) {
     const selector = $('skill');
     selector.selectedIndex = Math.max(0, Math.min(selector.options.length - 1, selector.selectedIndex + sample.difficulty));
   }
-  if (sample.action === 'start') start(true);
-  else if (sample.action === 'resume') start(false);
-  else if (sample.action === 'pause') pause();
+  if (sample.action === 'start') start(true, false);
+  else if (sample.action === 'resume') start(false, false);
+  else if (sample.action === 'pause') pause(false);
   if (sample.map) toggleMap();
   if (sample.cycleWeapon) cycleWeapon();
   return sample.input;
@@ -289,16 +301,17 @@ $('resume').addEventListener('click', () => start(false));
 $('restart').addEventListener('click', () => start(true));
 $('playAgain').addEventListener('click', () => start(true));
 $('backMenu').addEventListener('click', () => { game.restart(); screen('title'); });
-$('pauseButton').addEventListener('click', pause);
+$('pauseButton').addEventListener('click', () => pause());
 $('mapButton').addEventListener('click', toggleMap);
 $('audioButton').addEventListener('click', toggleSound); $('pauseSound').addEventListener('click', toggleSound);
 $('helpButton').addEventListener('click', () => { $('help').hidden = !$('help').hidden; });
 $('fullscreenButton').addEventListener('click', async () => { try { if (document.fullscreenElement) await document.exitFullscreen(); else await $('game').requestFullscreen(); } catch { message('Utilise le mode paysage pour agrandir le jeu.'); } });
 
 document.addEventListener('keydown', e => {
-  if (e.code === 'Escape') { e.preventDefault(); if (!e.repeat && !document.pointerLockElement) pause(); return; }
+  if (e.code === 'Escape') { e.preventDefault(); if (!e.repeat && !document.pointerLockElement) pause(false); return; }
   if (e.code === 'F3') { e.preventDefault(); if (!e.repeat) { fpsVisible = !fpsVisible; $('perf').hidden = !fpsVisible; } return; }
   if (mode !== 'playing') return;
+  if (!e.repeat) unlockAudio();
   controlMode('mouse');
   if (['Space', 'Tab', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ControlLeft', 'ControlRight'].includes(e.code)) e.preventDefault();
   if (!e.repeat && e.code === 'Tab') toggleMap();
@@ -306,8 +319,13 @@ document.addEventListener('keydown', e => {
   keys.add(e.code);
 });
 document.addEventListener('keyup', e => keys.delete(e.code));
-document.addEventListener('pointerdown', e => { if (e.pointerType) controlMode(e.pointerType === 'mouse' ? 'mouse' : 'touch'); }, true);
-world.addEventListener('mousedown', e => { if (mode === 'playing' && inputKind === 'mouse' && e.button === 0) { keys.add('Mouse0'); capturePointer(); audio.unlock(); } });
+document.addEventListener('pointerdown', e => {
+  if (e.pointerType) controlMode(e.pointerType === 'mouse' ? 'mouse' : 'touch');
+  if (mode === 'playing' && e.pointerType === 'mouse') unlockAudio();
+}, true);
+// Non-mouse pointers grant browser activation on release, not on pointerdown.
+document.addEventListener('pointerup', e => { if (mode === 'playing' && e.pointerType && e.pointerType !== 'mouse') unlockAudio(); }, true);
+world.addEventListener('mousedown', e => { if (mode === 'playing' && inputKind === 'mouse' && e.button === 0) { keys.add('Mouse0'); capturePointer(); unlockAudio(); } });
 document.addEventListener('mouseup', e => { if (e.button === 0) keys.delete('Mouse0'); });
 document.addEventListener('mousemove', e => { if (mode === 'playing' && document.pointerLockElement === world) { mouseTurn -= e.movementX * 0.0026; mouseLook -= e.movementY * 0.0021; } });
 world.addEventListener('contextmenu', e => e.preventDefault());

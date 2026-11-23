@@ -304,7 +304,9 @@ export class FerroDoomRenderer {
       const patch=this._texture('sprite',e.sprite),scale=e.scale||1;
       const sector=this.map.sectorAt(e.x,e.y),base=Number.isFinite(e.z)?e.z:sector?.floor||0;
       const top=(base+patch.topOffset*scale)*SCALE,bottom=top-patch.height*scale*SCALE;
-      const left=-patch.leftOffset*scale*SCALE,width=patch.width*scale*SCALE;
+      // Mirror around the thing's origin, including asymmetric WAD offsets.
+      // Reversing only U makes directional frames jump sideways as they turn.
+      const left=-(e.flip?patch.width-patch.leftOffset:patch.leftOffset)*scale*SCALE,width=patch.width*scale*SCALE;
       const x0=e.x*SCALE+right[0]*left,z0=-e.y*SCALE+right[2]*left;
       const x1=x0+right[0]*width,z1=z0+right[2]*width;
       const light=e.fullbright?2:(sector?.light??192)/255;

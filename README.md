@@ -2,7 +2,7 @@
 
 **E1M1 « Hangar » de Doom 1 shareware, jouable avec le moteur FERRO 0.3.33.**
 
-Version du jeu : **0.1.1**.
+Version du jeu : **0.1.2**.
 
 Le niveau est importé directement depuis le WAD shareware original 1.9. Ses coordonnées, secteurs, murs, hauteurs, textures, sprites et effets sonores proviennent des données originales. Le WAD complet est conservé sans modification.
 
@@ -38,6 +38,13 @@ Si le fichier shareware manque, `python3 tools/fetch-shareware.py` le récupère
 Le navigateur demande le verrouillage de la souris au démarrage. Échap libère la souris et met le jeu en pause. Sur mobile, le paysage donne la plus grande surface de jeu.
 
 Au menu, la croix directionnelle ou le stick gauche de la manette choisit la difficulté ; A ou Start démarre. La souris reste utilisable sur un PC à écran tactile. Après une pause, relâcher puis presser de nouveau une gâchette maintenue permet de reprendre le tir.
+
+### Correctifs 0.1.2
+
+- Les boules de feu s’arrêtent sur les lampes et colonnes solides : ces obstacles protègent maintenant le joueur. Les bougies et cadavres non solides restent traversables, et les ennemis et barils reçoivent toujours les dégâts.
+- Les sprites des monstres conservent leur origine quand ils sont retournés : leurs silhouettes ne sautent plus latéralement à cause des décalages des images originales.
+- Le premier geste clavier, souris ou tactile peut activer le son après un démarrage à la manette ; une seule demande de déverrouillage audio reste en cours.
+- Les gestionnaires de commandes de l’application sont contrôlés avec un DOM simulé ; le rapport de qualification calcule le nombre réel de tests exécutés et vérifie la reproductibilité du build.
 
 ### Correctifs 0.1.1
 
@@ -80,6 +87,7 @@ Le budget d’image est limité à **256 000 pixels** (640 × 400 de référence
 | `src/app.js` | Interface, commandes, HUD et boucle du jeu |
 | `src/input.js` | Lecture de la manette et neutralisation des boutons aux transitions |
 | `tools/build.py` | Vérification des sources et construction de `dist/` |
+| `tools/verify.py` | Tests réels, double construction et rapport de qualification mesuré |
 | `tests/` | Contrôles sur le vrai WAD, le moteur, la géométrie et le gameplay |
 
 ## Vérifier
@@ -91,15 +99,25 @@ node --test tests/*.test.mjs
 python3 tools/build.py
 ```
 
+Pour exécuter les tests, construire deux fois et enregistrer les preuves mesurées :
+
+```sh
+python3 tools/verify.py --write-report
+```
+
+Sans `--write-report`, le même contrôle s’exécute sans réécrire les rapports. Chaque construction repart d’un `dist/` vide. GitHub Actions utilise `--check-committed` pour vérifier également que tous les fichiers produits sont enregistrés dans Git, y compris les nouveaux fichiers.
+
 ### État des vérifications
 
-Les tests automatisés vérifient les données authentiques, les quatre modules FERRO, le BSP, les textures, les sons, le score musical, les collisions, les portes, les secrets, les armes et la sortie. Le rapport `docs/qa/egl-report.json` conserve également la compilation des quatre shaders de production et quatre rendus du vrai niveau via EGL/Mesa.
+Les tests automatisés vérifient les données authentiques, les quatre modules FERRO, le BSP, les textures, les sons, le score musical, les collisions, les portes, les secrets, les armes et la sortie. Les tests des commandes exécutent les gestionnaires de l’application avec un DOM et des périphériques simulés. Le rapport `docs/qa/egl-report.json` conserve la compilation des quatre shaders de production, quatre rendus du vrai niveau via EGL/Mesa et deux scènes isolées vérifiant l’ancrage d’un sprite normal ou retourné. L’empreinte de l’adaptateur utilisé est enregistrée dans ce rapport.
 
 ![Départ d’E1M1, rendu de contrôle EGL](docs/qa/spawn-north-egl.png)
 
 Ces images sont des **rendus OpenGL hors écran des shaders et données de production**, pas des captures de partie dans un navigateur. Le navigateur distant de cette session ne fournit pas de contexte WebGL 2 : la vérification interactive complète, le mixage audible, une manette physique et les performances sur téléphone/Xbox restent donc à confirmer sur ces appareils. Le moteur WebGL 2 et les commandes sont intégrés ; cette limite de vérification n’est pas présentée comme un test réussi.
 
-La qualification locale de la version **0.1.1** passe **47 tests**, dont la traversée complète du départ à la sortie, les commandes manette pendant les transitions, et les gestionnaires clavier, souris et tactiles dans un DOM simulé. La construction est reproductible. Le premier workflow GitHub Actions n’a pas démarré : GitHub a signalé un blocage lié à la facturation ou au plafond du compte. Les résultats locaux et EGL sont conservés dans `docs/qa/` ; le blocage distant ne correspond pas à un test du code exécuté en échec.
+La qualification locale de la version **0.1.2** passe **51 tests sur 51**, sans test ignoré. Elle inclut la traversée complète du départ à la sortie, les impacts des projectiles sur les décors, les ancrages des sprites retournés, les transitions de commandes et la reprise audio. La couverture précédente du clavier lorsque l’API manette est refusée et des limites du choix de difficulté est conservée. Deux constructions depuis un `dist/` vide produisent les mêmes 16 fichiers ; un contrôle vérifie aussi la suppression d’un ancien fichier de sortie.
+
+Les premiers workflows GitHub Actions n’ont pas exécuté les tests : un blocage lié à la facturation ou au plafond du compte a été rapporté lors de la publication 0.1.1. Les résultats locaux et EGL sont conservés dans `docs/qa/` ; ils sont distincts de la qualification distante. Le workflow reste disponible et vérifie également que le build fraîchement produit correspond aux fichiers enregistrés dans Git.
 
 ## Provenance Doom
 

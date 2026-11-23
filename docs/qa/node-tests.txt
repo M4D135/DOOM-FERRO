@@ -1,55 +1,316 @@
-✔ a touchscreen laptop can capture a mouse and walk; only the touch joystick auto-runs (3.743929ms)
-✔ Escape repeat stays paused and a pause releases touch ownership and pending commands (1.178943ms)
-✔ another finger cannot steal or cancel the active look and fire controls (0.985602ms)
-✔ audio resume cannot delay mouse capture or undo a later pause (2.431435ms)
-✔ denied Gamepad API leaves keyboard working and title difficulty stays bounded (1.245683ms)
-✔ original E1M1 MUS preserves the complete 96-second score (12.113621ms)
-✔ MUS velocity inheritance is per-channel and variable time uses 140 Hz (0.557788ms)
-✔ program, pitch, controls and system messages are retained (0.410377ms)
-✔ truncated, malformed and unbounded MUS event streams fail safely (1.023548ms)
-✔ audio waits for unlock, caps total voices, pauses and resumes at the saved time (13.646245ms)
-✔ original solo skill flags, entity sprites, player start and three secrets (28.776997ms)
-✔ swept player movement cannot tunnel through a wall or diagonal corner (50.431908ms)
-✔ all four original manual doors block, open, and allow the player through (30.06532ms)
-✔ closing door reopens when a player radius overlaps its boundary (4.511632ms)
-✔ closed doors block line of sight and hitscan, then open their portals (3.950279ms)
-✔ crossing original line308 lowers the tagged secret floor once (4.29067ms)
-✔ crossing original line195 cycles the tagged secret lift down, waits, returns (6.639903ms)
-✔ acid damages a grounded player; secrets count each original sector only once (3.526963ms)
-✔ pistol, fists and original shotgun pickup use the correct ammunition pools (7.058071ms)
-✔ real E1M1 enemy can be shot, dies once and drops ammunition (5.297725ms)
-✔ barrel explosion damages nearby actors and resolves to valid original sprites (3.225029ms)
-✔ only an aimed nearby exit switch completes E1M1 and restart restores everything (3.134472ms)
-✔ armor bonuses restore basic protection after blue armor is exhausted (2.265556ms)
-✔ same input sequence and random seed produce the same simulation (78.244652ms)
-✔ complete main route from authentic spawn with real movement and door use, no teleport (55.450093ms)
-✔ controller can select difficulty and start from the menu without firing (1.801869ms)
-✔ pause and resume require a new button press and cannot leak held triggers (0.41287ms)
-✔ axes implement deadzone, forward, right strafe and radian look deltas (0.384979ms)
-✔ use, map and weapon commands are edges while firing is held (0.217858ms)
-✔ disconnect resets motion and explicit clears require releasing pressed buttons (0.61201ms)
-✔ FERRO canonical sources retain upstream bytes and locked hashes (2.257033ms)
-✔ BSP triangulation covers every original E1M1 subsector and sector (11.091705ms)
-✔ E1M1 render mesh uses original WAD materials and finite geometry (26.201651ms)
-✔ opening closed sectors rebuilds door surfaces from mutable heights (24.813919ms)
-✔ type48 computer walls encode GPU scrolling without changing WAD offsets (5.50724ms)
-✔ bundled source is the complete authentic Doom v1.9 shareware IWAD (9.79151ms)
-✔ E1M1 retains every original map record and its exact player spawn (7.344772ms)
-✔ every E1M1 wall and non-sky flat resolves from original palette resources (12.906383ms)
-✔ original sprites and HUD retain picture offsets and transparent pixels (1.419194ms)
-✔ DMX sounds decode real sample rate and sample count without invented samples (0.786983ms)
-✔ synthetic posts preserve holes, row orientation, palette and signed offsets (0.488855ms)
-✔ TEXTURE1 uses patch origins independently of sprite drawing offsets (0.600352ms)
-✔ duplicate lump lookup and typed array slices obey actual WAD bounds (0.221273ms)
-✔ invalid headers, directories and lump ranges fail explicitly (0.694143ms)
-✔ malformed image posts and malformed texture references cannot read past a lump (0.616046ms)
-✔ BSP axis-aligned and diagonal partitions use Doom right/left convention (0.281923ms)
-✔ damaged map vertex references and BSP cycles fail before game startup (15.605386ms)
-ℹ tests 47
-ℹ suites 0
-ℹ pass 47
-ℹ fail 0
-ℹ cancelled 0
-ℹ skipped 0
-ℹ todo 0
-ℹ duration_ms 414.744701
+TAP version 13
+# Subtest: DOM mouse start on a touch-capable PC locks before audio settles and preserves walk/run
+ok 1 - DOM mouse start on a touch-capable PC locks before audio settles and preserves walk/run
+  ---
+  duration_ms: 60.349001
+  type: 'test'
+  ...
+# Subtest: DOM Escape repeats, pointer loss and focus loss pause once and release captured inputs
+ok 2 - DOM Escape repeats, pointer loss and focus loss pause once and release captured inputs
+  ---
+  duration_ms: 43.497381
+  type: 'test'
+  ...
+# Subtest: DOM touch move, look and fire track separate fingers and handle cancellation
+ok 3 - DOM touch move, look and fire track separate fingers and handle cancellation
+  ---
+  duration_ms: 31.514299
+  type: 'test'
+  ...
+# Subtest: DOM difficulty stays within its options and denied gamepad access preserves keyboard play
+ok 4 - DOM difficulty stays within its options and denied gamepad access preserves keyboard play
+  ---
+  duration_ms: 22.452278
+  type: 'test'
+  ...
+# Subtest: DOM first keyboard or touch gesture enables audio after gamepad start without duplicate resumes
+ok 5 - DOM first keyboard or touch gesture enables audio after gamepad start without duplicate resumes
+  ---
+  duration_ms: 25.466849
+  type: 'test'
+  ...
+# Subtest: original E1M1 MUS preserves the complete 96-second score
+ok 6 - original E1M1 MUS preserves the complete 96-second score
+  ---
+  duration_ms: 18.609903
+  type: 'test'
+  ...
+# Subtest: MUS velocity inheritance is per-channel and variable time uses 140 Hz
+ok 7 - MUS velocity inheritance is per-channel and variable time uses 140 Hz
+  ---
+  duration_ms: 0.791429
+  type: 'test'
+  ...
+# Subtest: program, pitch, controls and system messages are retained
+ok 8 - program, pitch, controls and system messages are retained
+  ---
+  duration_ms: 0.5254
+  type: 'test'
+  ...
+# Subtest: truncated, malformed and unbounded MUS event streams fail safely
+ok 9 - truncated, malformed and unbounded MUS event streams fail safely
+  ---
+  duration_ms: 1.201907
+  type: 'test'
+  ...
+# Subtest: audio waits for unlock, caps total voices, pauses and resumes at the saved time
+ok 10 - audio waits for unlock, caps total voices, pauses and resumes at the saved time
+  ---
+  duration_ms: 21.472475
+  type: 'test'
+  ...
+# Subtest: original solo skill flags, entity sprites, player start and three secrets
+ok 11 - original solo skill flags, entity sprites, player start and three secrets
+  ---
+  duration_ms: 52.572853
+  type: 'test'
+  ...
+# Subtest: swept player movement cannot tunnel through a wall or diagonal corner
+ok 12 - swept player movement cannot tunnel through a wall or diagonal corner
+  ---
+  duration_ms: 46.926235
+  type: 'test'
+  ...
+# Subtest: all four original manual doors block, open, and allow the player through
+ok 13 - all four original manual doors block, open, and allow the player through
+  ---
+  duration_ms: 64.35986
+  type: 'test'
+  ...
+# Subtest: closing door reopens when a player radius overlaps its boundary
+ok 14 - closing door reopens when a player radius overlaps its boundary
+  ---
+  duration_ms: 6.858229
+  type: 'test'
+  ...
+# Subtest: closed doors block line of sight and hitscan, then open their portals
+ok 15 - closed doors block line of sight and hitscan, then open their portals
+  ---
+  duration_ms: 5.671755
+  type: 'test'
+  ...
+# Subtest: crossing original line308 lowers the tagged secret floor once
+ok 16 - crossing original line308 lowers the tagged secret floor once
+  ---
+  duration_ms: 8.788149
+  type: 'test'
+  ...
+# Subtest: crossing original line195 cycles the tagged secret lift down, waits, returns
+ok 17 - crossing original line195 cycles the tagged secret lift down, waits, returns
+  ---
+  duration_ms: 10.716027
+  type: 'test'
+  ...
+# Subtest: acid damages a grounded player; secrets count each original sector only once
+ok 18 - acid damages a grounded player; secrets count each original sector only once
+  ---
+  duration_ms: 7.226542
+  type: 'test'
+  ...
+# Subtest: pistol, fists and original shotgun pickup use the correct ammunition pools
+ok 19 - pistol, fists and original shotgun pickup use the correct ammunition pools
+  ---
+  duration_ms: 9.282502
+  type: 'test'
+  ...
+# Subtest: real E1M1 enemy can be shot, dies once and drops ammunition
+ok 20 - real E1M1 enemy can be shot, dies once and drops ammunition
+  ---
+  duration_ms: 8.56171
+  type: 'test'
+  ...
+# Subtest: barrel explosion damages nearby actors and resolves to valid original sprites
+ok 21 - barrel explosion damages nearby actors and resolves to valid original sprites
+  ---
+  duration_ms: 3.721144
+  type: 'test'
+  ...
+# Subtest: original solid lamp blocks an imp fireball and protects the player behind it
+ok 22 - original solid lamp blocks an imp fireball and protects the player behind it
+  ---
+  duration_ms: 4.199772
+  type: 'test'
+  ...
+# Subtest: original nonsolid candle and corpse allow a fireball to reach the player
+ok 23 - original nonsolid candle and corpse allow a fireball to reach the player
+  ---
+  duration_ms: 8.168278
+  type: 'test'
+  ...
+# Subtest: fireballs still impact and damage living enemies and barrels
+ok 24 - fireballs still impact and damage living enemies and barrels
+  ---
+  duration_ms: 4.888738
+  type: 'test'
+  ...
+# Subtest: only an aimed nearby exit switch completes E1M1 and restart restores everything
+ok 25 - only an aimed nearby exit switch completes E1M1 and restart restores everything
+  ---
+  duration_ms: 2.642232
+  type: 'test'
+  ...
+# Subtest: armor bonuses restore basic protection after blue armor is exhausted
+ok 26 - armor bonuses restore basic protection after blue armor is exhausted
+  ---
+  duration_ms: 3.132228
+  type: 'test'
+  ...
+# Subtest: same input sequence and random seed produce the same simulation
+ok 27 - same input sequence and random seed produce the same simulation
+  ---
+  duration_ms: 68.2929
+  type: 'test'
+  ...
+# Subtest: complete main route from authentic spawn with real movement and door use, no teleport
+ok 28 - complete main route from authentic spawn with real movement and door use, no teleport
+  ---
+  duration_ms: 66.442119
+  type: 'test'
+  ...
+# Subtest: controller can select difficulty and start from the menu without firing
+ok 29 - controller can select difficulty and start from the menu without firing
+  ---
+  duration_ms: 1.747687
+  type: 'test'
+  ...
+# Subtest: pause and resume require a new button press and cannot leak held triggers
+ok 30 - pause and resume require a new button press and cannot leak held triggers
+  ---
+  duration_ms: 0.357948
+  type: 'test'
+  ...
+# Subtest: axes implement deadzone, forward, right strafe and radian look deltas
+ok 31 - axes implement deadzone, forward, right strafe and radian look deltas
+  ---
+  duration_ms: 0.33941
+  type: 'test'
+  ...
+# Subtest: use, map and weapon commands are edges while firing is held
+ok 32 - use, map and weapon commands are edges while firing is held
+  ---
+  duration_ms: 0.207252
+  type: 'test'
+  ...
+# Subtest: disconnect resets motion and explicit clears require releasing pressed buttons
+ok 33 - disconnect resets motion and explicit clears require releasing pressed buttons
+  ---
+  duration_ms: 0.304608
+  type: 'test'
+  ...
+# Subtest: FERRO canonical sources retain upstream bytes and locked hashes
+ok 34 - FERRO canonical sources retain upstream bytes and locked hashes
+  ---
+  duration_ms: 3.245889
+  type: 'test'
+  ...
+# Subtest: BSP triangulation covers every original E1M1 subsector and sector
+ok 35 - BSP triangulation covers every original E1M1 subsector and sector
+  ---
+  duration_ms: 28.563513
+  type: 'test'
+  ...
+# Subtest: E1M1 render mesh uses original WAD materials and finite geometry
+ok 36 - E1M1 render mesh uses original WAD materials and finite geometry
+  ---
+  duration_ms: 33.626759
+  type: 'test'
+  ...
+# Subtest: opening closed sectors rebuilds door surfaces from mutable heights
+ok 37 - opening closed sectors rebuilds door surfaces from mutable heights
+  ---
+  duration_ms: 15.747594
+  type: 'test'
+  ...
+# Subtest: type48 computer walls encode GPU scrolling without changing WAD offsets
+ok 38 - type48 computer walls encode GPU scrolling without changing WAD offsets
+  ---
+  duration_ms: 8.118904
+  type: 'test'
+  ...
+# Subtest: mirrored directional sprites reflect around the original thing anchor
+ok 39 - mirrored directional sprites reflect around the original thing anchor
+  ---
+  duration_ms: 1.411662
+  type: 'test'
+  ...
+# Subtest: bundled source is the complete authentic Doom v1.9 shareware IWAD
+ok 40 - bundled source is the complete authentic Doom v1.9 shareware IWAD
+  ---
+  duration_ms: 12.855093
+  type: 'test'
+  ...
+# Subtest: E1M1 retains every original map record and its exact player spawn
+ok 41 - E1M1 retains every original map record and its exact player spawn
+  ---
+  duration_ms: 9.483093
+  type: 'test'
+  ...
+# Subtest: every E1M1 wall and non-sky flat resolves from original palette resources
+ok 42 - every E1M1 wall and non-sky flat resolves from original palette resources
+  ---
+  duration_ms: 25.285416
+  type: 'test'
+  ...
+# Subtest: original sprites and HUD retain picture offsets and transparent pixels
+ok 43 - original sprites and HUD retain picture offsets and transparent pixels
+  ---
+  duration_ms: 2.07579
+  type: 'test'
+  ...
+# Subtest: DMX sounds decode real sample rate and sample count without invented samples
+ok 44 - DMX sounds decode real sample rate and sample count without invented samples
+  ---
+  duration_ms: 1.350771
+  type: 'test'
+  ...
+# Subtest: synthetic posts preserve holes, row orientation, palette and signed offsets
+ok 45 - synthetic posts preserve holes, row orientation, palette and signed offsets
+  ---
+  duration_ms: 0.614694
+  type: 'test'
+  ...
+# Subtest: TEXTURE1 uses patch origins independently of sprite drawing offsets
+ok 46 - TEXTURE1 uses patch origins independently of sprite drawing offsets
+  ---
+  duration_ms: 0.481113
+  type: 'test'
+  ...
+# Subtest: duplicate lump lookup and typed array slices obey actual WAD bounds
+ok 47 - duplicate lump lookup and typed array slices obey actual WAD bounds
+  ---
+  duration_ms: 0.266992
+  type: 'test'
+  ...
+# Subtest: invalid headers, directories and lump ranges fail explicitly
+ok 48 - invalid headers, directories and lump ranges fail explicitly
+  ---
+  duration_ms: 0.954966
+  type: 'test'
+  ...
+# Subtest: malformed image posts and malformed texture references cannot read past a lump
+ok 49 - malformed image posts and malformed texture references cannot read past a lump
+  ---
+  duration_ms: 0.627623
+  type: 'test'
+  ...
+# Subtest: BSP axis-aligned and diagonal partitions use Doom right/left convention
+ok 50 - BSP axis-aligned and diagonal partitions use Doom right/left convention
+  ---
+  duration_ms: 0.297187
+  type: 'test'
+  ...
+# Subtest: damaged map vertex references and BSP cycles fail before game startup
+ok 51 - damaged map vertex references and BSP cycles fail before game startup
+  ---
+  duration_ms: 39.40506
+  type: 'test'
+  ...
+1..51
+# tests 51
+# suites 0
+# pass 51
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 534.436782

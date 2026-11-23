@@ -17,6 +17,14 @@ function quiet(game) { game.entities.forEach(entity => { entity.removed = true; 
 function tick(game, seconds, input = {}) {
   for (let i = 0; i < Math.ceil(seconds * 70); i++) game.update(1 / 70, input);
 }
+function fireballFromLeft(game, target, height = 26) {
+  const projectile = {id: 'test-fireball', type: 'fireball', projectile: true, owner: null,
+    x: target.x - 40, y: target.y, z: target.z + height, vx: 350, vy: 0, vz: 0,
+    sprite: 'BAL1A0', radius: 6, height: 12, sector: target.sector, alive: true,
+    solid: false, fullbright: true, flip: false, scale: 1, removed: false, age: 0};
+  game.entities.push(projectile);
+  return projectile;
+}
 function pointInSector(game, id) {
   for (const sub of game.map.subsectors.filter(sub => sub.sector === id)) {
     const vertices = game.map.segs.slice(sub.first, sub.first + sub.count).map(seg => game.map.vertices[seg.v1]);
@@ -151,6 +159,56 @@ test('barrel explosion damages nearby actors and resolves to valid original spri
   assert.ok(game.player.health < 100); assert.ok(game.player.armor < 100);
   for (let i = 0; i < 5; i++) { tick(game, 0.1); assert.ok(wad.has(barrel.sprite), barrel.sprite); }
   tick(game, 0.1); assert.ok(barrel.removed);
+});
+
+test('original solid lamp blocks an imp fireball and protects the player behind it', () => {
+  const sounds = [];
+  const {game, wad} = setup(3, {onSound: name => sounds.push(name)});
+  const lamp = game.entities.find(e => e.id === 40);
+  assert.equal(lamp.type, 2028); assert.equal(lamp.solid, true); assert.equal(lamp.alive, false);
+  game.entities.forEach(e => { if (e !== lamp) e.removed = true; });
+  park(game, lamp.x + 48, lamp.y);
+  const projectile = fireballFromLeft(game, lamp);
+  tick(game, 0.2);
+  assert.equal(projectile.alive, false, 'a solid, nonliving decoration stops the fireball');
+  assert.ok(projectile.x < lamp.x, 'the collision occurs before crossing the lamp');
+  assert.equal(game.player.health, 100, 'the player behind the lamp receives no damage');
+  assert.equal(lamp.removed, false); assert.equal(lamp.solid, true);
+  assert.ok(sounds.includes('DSFIRXPL'), 'the fireball still plays its impact sound');
+  assert.ok(wad.has(projectile.sprite), 'the impact uses an original Doom sprite');
+});
+
+test('original nonsolid candle and corpse allow a fireball to reach the player', () => {
+  for (const id of [61, 124]) {
+    const {game} = setup(3);
+    const decoration = game.entities.find(e => e.id === id);
+    assert.equal(decoration.solid, false); assert.equal(decoration.alive, false);
+    game.entities.forEach(e => { if (e !== decoration) e.removed = true; });
+    park(game, decoration.x + 48, decoration.y);
+    // Low trajectory overlaps even the corpse's height, so this exercises
+    // nonsolidity rather than merely passing over a short decoration.
+    const projectile = fireballFromLeft(game, decoration, 4);
+    tick(game, 0.25);
+    assert.ok(projectile.x > decoration.x, `fireball passes decoration ${id}`);
+    assert.equal(projectile.alive, false, 'the fireball then impacts the player');
+    assert.ok(game.player.health < 100, `decoration ${id} does not shield the player`);
+    assert.equal(decoration.removed, false);
+  }
+});
+
+test('fireballs still impact and damage living enemies and barrels', () => {
+  for (const id of [11, 35]) {
+    const {game, wad} = setup(3);
+    const target = game.entities.find(e => e.id === id), hp = target.hp;
+    game.entities.forEach(e => { if (e !== target) e.removed = true; });
+    const projectile = fireballFromLeft(game, target);
+    // Isolate the projectile collision from enemy movement and attacks.
+    for (let i = 0; i < 20 && projectile.alive; i++) game._updateProjectile(projectile, 1 / 70);
+    assert.equal(projectile.alive, false, `fireball impacts target ${id}`);
+    assert.ok(target.hp < hp, `living target ${id} takes damage`);
+    game._updateProjectile(projectile, 1 / 70);
+    assert.ok(wad.has(projectile.sprite), 'the impact keeps a valid original animation');
+  }
 });
 
 test('only an aimed nearby exit switch completes E1M1 and restart restores everything', () => {
