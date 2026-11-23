@@ -1,0 +1,39 @@
+{
+  "engine": "FERRO",
+  "version": "0.3.33",
+  "repository": "https://github.com/M4D135/FERRO",
+  "sourceDirectory": "src/ferro",
+  "policy": "Canonical engine modules are byte-identical. Doom WAD behavior lives in src/ferro-doom-renderer.js and game adapters.",
+  "integration": "FRender.create, native FSurface pixel budget, pdr.programme, fx.foule.couleur inside FRender.draw; engine camera/projection/depth target/lifecycle/statistics.",
+  "modules": [
+    {
+      "file": "fmath.js",
+      "bytes": 19961,
+      "sha256": "bb001302bd2d57239c86183615c921563cf21f0490d67eef42586d1fc3457c9f",
+      "gitBlobSha": "a8020d15c3755e0bcdb475c624a76294a539f91f",
+      "loaded": true
+    },
+    {
+      "file": "surface.js",
+      "bytes": 3419,
+      "sha256": "46915edee28daa0408ea1c18abd664babef76e2e6bce52c2990a431f90cee77e",
+      "gitBlobSha": "017271a036bec6191a98ee92d8e5ed2004643490",
+      "loaded": true
+    },
+    {
+      "file": "renderer.js",
+      "bytes": 355730,
+      "sha256": "415eda20f5a3629348b3bfde3bd9e2a0a6a6c8badb671415f14d87d0b9c778a0",
+      "gitBlobSha": "2a7f9894ceaa1d903f22f851609f73e006142fc3",
+      "loaded": true
+    },
+    {
+      "file": "engine.js",
+      "bytes": 2025,
+      "sha256": "bf8cb3e1e1bade027bc10a843c1e61d1cb930350cbcab092990b546ba447f631",
+      "gitBlobSha": "9cfa70571cc8b3134a752b0ef84d6d52bc790403",
+      "loaded": true
+    }
+  ],
+  "sourceCommitSha": "a443359c4741a815f384278e6427a33758d79f2f"
+}

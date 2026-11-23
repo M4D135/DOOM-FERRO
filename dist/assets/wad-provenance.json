@@ -1,0 +1,68 @@
+{
+  "source": "https://ftp.fu-berlin.de/pc/games/idgames/idstuff/doom/win95/doom95.zip",
+  "wadFile": "/workspace/scratch/4b08ed8ed841/doom-research/doom1.wad",
+  "size": 4196020,
+  "md5": "f0cefca49926d00903cf57551d901abe",
+  "sha1": "5b2e249b9c5133ec987b3ea77596381dc0d6bc1d",
+  "sha256": "1d7d43be501e67d927e415e0b8f3e29c3bf33075e859721816f652a526cac771",
+  "magic": "IWAD",
+  "lumpCount": 1264,
+  "directoryOffset": 4175796,
+  "E1M1": [
+    {
+      "name": "E1M1",
+      "offset": 67500,
+      "size": 0
+    },
+    {
+      "name": "THINGS",
+      "offset": 67500,
+      "size": 1380
+    },
+    {
+      "name": "LINEDEFS",
+      "offset": 68880,
+      "size": 6650
+    },
+    {
+      "name": "SIDEDEFS",
+      "offset": 75532,
+      "size": 19440
+    },
+    {
+      "name": "VERTEXES",
+      "offset": 94972,
+      "size": 1868
+    },
+    {
+      "name": "SEGS",
+      "offset": 96840,
+      "size": 8784
+    },
+    {
+      "name": "SSECTORS",
+      "offset": 105624,
+      "size": 948
+    },
+    {
+      "name": "NODES",
+      "offset": 106572,
+      "size": 6608
+    },
+    {
+      "name": "SECTORS",
+      "offset": 113180,
+      "size": 2210
+    },
+    {
+      "name": "REJECT",
+      "offset": 115392,
+      "size": 904
+    },
+    {
+      "name": "BLOCKMAP",
+      "offset": 116296,
+      "size": 6922
+    }
+  ]
+}

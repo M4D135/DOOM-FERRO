@@ -1,0 +1,11 @@
+{
+  "version": "0.1.0",
+  "nodeTests": 37,
+  "nodeTestsPassed": true,
+  "reproducibleBuild": true,
+  "buildFiles": 14,
+  "browserWebGL2": "unavailable in managed browser; interactive validation incomplete",
+  "nativeEGL": "passed; see egl-report.json",
+  "hardwareFPS": "not measured",
+  "mainRoute": "original spawn to exit with real movement/use, enemies disabled only for traversal test"
+}

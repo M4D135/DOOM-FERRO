@@ -1,0 +1,90 @@
+{
+  "passed": true,
+  "scope": "Native llvmpipe EGL renders of production host shaders, real WAD geometry/textures/sprites and FERRO camera helpers. Not a browser gameplay capture, full FERRO frame execution, or hardware FPS measurement.",
+  "environment": {
+    "renderer": "llvmpipe (LLVM 19.1.7, 256 bits)",
+    "version": "4.5 (Core Profile) Mesa 25.0.7-2+deb13u1",
+    "egl": "1.5"
+  },
+  "size": [
+    640,
+    400
+  ],
+  "ferroVersion": "0.3.33",
+  "sectors": 85,
+  "subsectors": 237,
+  "shaderCompilation": "4 unmodified GLSL ES 3.00 production shaders compiled; 2 programs linked",
+  "mapTriangles": 1844,
+  "shaderSha256": {
+    "WORLD_VERTEX": "ccbad7fea38950df95408f4cb72052cf6009729480cd3c6b0b8af05e2488a92a",
+    "WORLD_FRAGMENT": "1a23d865a45f27884ede18576fbdc7e3f39e2f6b0c4ab4949c4b78f30d85dd30",
+    "SKY_VERTEX": "0619a596c2fddc0c3dc31b472ae2b4fd3cfa9bdca612db0c01d9f2a1d0cce430",
+    "SKY_FRAGMENT": "292aa699e862cff79910a33366da0c5080f1dedfc71be98780068a9a7bc1cfd1"
+  },
+  "cases": [
+    {
+      "name": "spawn-north",
+      "image": "spawn-north-egl.png",
+      "camera": {
+        "x": 1056,
+        "y": -3616,
+        "z": 41,
+        "angle": 1.5707963267948966
+      },
+      "uniqueColors": 1529,
+      "meanRGB": [
+        39.86851953125,
+        37.9795078125,
+        37.164859375
+      ]
+    },
+    {
+      "name": "spawn-west",
+      "image": "spawn-west-egl.png",
+      "camera": {
+        "x": 1056,
+        "y": -3616,
+        "z": 41,
+        "angle": 3.141592653589793
+      },
+      "uniqueColors": 772,
+      "meanRGB": [
+        48.6661640625,
+        43.99857421875,
+        39.2722109375
+      ]
+    },
+    {
+      "name": "courtyard",
+      "image": "courtyard-egl.png",
+      "camera": {
+        "x": 2488,
+        "y": -3504,
+        "z": -15,
+        "angle": 3.141592653589793
+      },
+      "uniqueColors": 1834,
+      "meanRGB": [
+        85.5730703125,
+        73.53638671875,
+        56.39059765625
+      ]
+    },
+    {
+      "name": "start-hall",
+      "image": "start-hall-egl.png",
+      "camera": {
+        "x": 1110.8979591836735,
+        "y": -2957.224489795918,
+        "z": 41,
+        "angle": -1.5707963267948966
+      },
+      "uniqueColors": 1674,
+      "meanRGB": [
+        42.974546875,
+        39.61840625,
+        43.68049609375
+      ]
+    }
+  ]
+}
