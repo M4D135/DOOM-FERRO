@@ -1,6 +1,6 @@
 {
   "version": "0.1.1",
-  "nodeTests": 42,
+  "nodeTests": 47,
   "nodeTestsPassed": true,
   "reproducibleBuild": true,
   "buildFiles": 15,
@@ -8,8 +8,8 @@
   "nativeEGL": "passed; see egl-report.json",
   "hardwareFPS": "not measured",
   "mainRoute": "original spawn to exit with real movement/use, enemies disabled only for traversal test",
-  "inputTests": 5,
-  "inputTestScope": "gamepad sampler transition tests; app handlers reviewed; no browser or physical-device claim",
+  "inputTests": 10,
+  "inputTestScope": "gamepad sampler and production DOM event handlers using simulated DOM; no physical device claim",
   "githubActions": "job not started; GitHub reports account billing or spending-limit block",
   "githubActionsUrl": "https://github.com/M4D135/DOOM-FERRO/actions/runs/45271910444"
 }
