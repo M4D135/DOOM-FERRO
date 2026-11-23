@@ -2,6 +2,7 @@ import { Wad } from './wad.js';
 import { FerroDoomRenderer } from './ferro-doom-renderer.js';
 import { DoomGame } from './game.js';
 import { DoomAudio } from './audio.js';
+import { GamepadControls } from './input.js';
 
 const $ = id => document.getElementById(id);
 const world = $('world'), overlay = $('overlay'), hud = $('hud');
@@ -12,9 +13,16 @@ let wad, map, game, renderer, audio;
 let mode = 'title', mapOpen = false, soundEnabled = true, fpsVisible = false;
 let previousTime = 0, previousHealth = 100, damage = 0, pickupFlash = 0;
 let mouseTurn = 0, mouseLook = 0, requestedWeapon = null, messageUntil = 0;
-let fps = 60, padPrevious = [], frames = 0, lastHud = '';
-const touchDevice = matchMedia('(pointer: coarse)').matches || navigator.maxTouchPoints > 0;
-document.body.classList.toggle('touch', touchDevice);
+let fps = 60, frames = 0, lastHud = '';
+let inputKind = matchMedia('(pointer: coarse)').matches ? 'touch' : 'mouse';
+let screenRevision = 0, pointerWasLocked = false, neutralInput = false;
+const padControls = new GamepadControls();
+document.body.classList.toggle('touch', inputKind === 'touch');
+
+function controlMode(kind) {
+  inputKind = kind;
+  document.body.classList.toggle('touch', kind === 'touch');
+}
 
 function image(name) {
   if (images.has(name)) return images.get(name);
@@ -44,11 +52,18 @@ function clearInput() {
   keys.clear(); mouseTurn = mouseLook = 0;
   touch.forward = touch.strafe = touch.turn = touch.look = 0;
   touch.fire = touch.use = false;
+  requestedWeapon = null; neutralInput = true; padControls.clear();
+  const captures = [['movePad', movePointer], ['lookPad', lookPointer], ['touchFire', firePointer]];
+  movePointer = lookPointer = firePointer = null; moveOrigin = lookLast = null;
+  for (const [id, pointer] of captures) {
+    const element = $(id);
+    try { if (pointer !== null && element.hasPointerCapture?.(pointer)) element.releasePointerCapture(pointer); } catch { /* Pointer already released. */ }
+  }
   $('movePad').firstElementChild.style.transform = '';
 }
 
 function screen(next) {
-  mode = next;
+  mode = next; screenRevision++;
   document.body.classList.toggle('playing', next === 'playing');
   $('menu').hidden = next !== 'title'; $('pause').hidden = next !== 'paused';
   $('ending').hidden = next !== 'dead' && next !== 'complete';
@@ -61,8 +76,11 @@ function screen(next) {
 }
 
 async function capturePointer() {
-  if (touchDevice || !world.requestPointerLock) return;
-  try { await world.requestPointerLock(); } catch { message('Clique dans le jeu pour activer la souris.'); }
+  if (mode !== 'playing' || inputKind !== 'mouse' || document.pointerLockElement === world || !world.requestPointerLock) return;
+  try {
+    await world.requestPointerLock();
+    if (mode !== 'playing' && document.pointerLockElement === world) document.exitPointerLock?.();
+  } catch { if (mode === 'playing' && inputKind === 'mouse') message('Clique dans le jeu pour activer la souris.'); }
 }
 
 async function start(restart = false) {
@@ -76,9 +94,14 @@ async function start(restart = false) {
     audio.stopMusic();
     audio.startMusic('D_E1M1');
   }
-  mapOpen = false; document.body.classList.remove('automap');
-  screen('playing'); await audio.unlock(); audio.setEnabled(soundEnabled); audio.resumeMusic();
+  mapOpen = false; document.body.classList.remove('automap'); $('mapButton').setAttribute('aria-pressed', 'false');
+  screen('playing'); const revision = screenRevision;
+  audio.setEnabled(soundEnabled);
+  const unlocked = audio.unlock();
+  // Request capture during the user gesture, before audio's asynchronous resume.
   capturePointer(); world.focus({ preventScroll: true });
+  await unlocked;
+  if (mode === 'playing' && revision === screenRevision) audio.resumeMusic();
 }
 
 function pause() { if (mode === 'playing') screen('paused'); else if (mode === 'paused') start(false); }
@@ -111,7 +134,7 @@ function toggleMap() {
 }
 
 function cycleWeapon() {
-  if (!game) return;
+  if (!game || mode !== 'playing') return;
   const weapons = ['fist', 'pistol', ...(game.player.weapons.has('shotgun') ? ['shotgun'] : [])];
   requestedWeapon = weapons[(weapons.indexOf(game.player.weapon) + 1) % weapons.length];
 }
@@ -119,17 +142,18 @@ function cycleWeapon() {
 function gamepad(dt) {
   let devices = [];
   try { devices = Array.from(navigator.getGamepads?.() || []); } catch { /* Sandboxed embeds may deny only the Gamepad API. */ }
-  const pad = devices.find(p => p && p.connected);
-  if (!pad) { padPrevious = []; return null; }
-  const down = i => !!pad.buttons[i]?.pressed;
-  const edge = i => down(i) && !padPrevious[i];
-  const axis = value => Math.abs(value || 0) < 0.18 ? 0 : Math.sign(value) * (Math.abs(value) - 0.18) / 0.82;
-  if (edge(9)) { if (mode === 'title' || mode === 'dead' || mode === 'complete') start(true); else pause(); }
-  if (edge(0) && mode !== 'playing') { if (mode === 'paused') start(false); else start(true); }
-  if (edge(8)) toggleMap();
-  if (edge(3) || edge(5)) cycleWeapon();
-  const input = { forward: -axis(pad.axes[1]), strafe: axis(pad.axes[0]), turn: -axis(pad.axes[2]) * dt * 2.7, look: -axis(pad.axes[3]) * dt * 1.7, fire: down(7), use: edge(0) || edge(2), run: down(10) || down(4) };
-  padPrevious = pad.buttons.map(b => b.pressed); return input;
+  const sample = padControls.sample(devices, dt, mode);
+  if (sample.active) controlMode('gamepad');
+  if (sample.difficulty) {
+    const selector = $('skill');
+    selector.selectedIndex = Math.max(0, Math.min(selector.options.length - 1, selector.selectedIndex + sample.difficulty));
+  }
+  if (sample.action === 'start') start(true);
+  else if (sample.action === 'resume') start(false);
+  else if (sample.action === 'pause') pause();
+  if (sample.map) toggleMap();
+  if (sample.cycleWeapon) cycleWeapon();
+  return sample.input;
 }
 
 function getInput(dt, pad) {
@@ -139,12 +163,16 @@ function getInput(dt, pad) {
     strafe: held('KeyD') - held('KeyA') + touch.strafe + (pad?.strafe || 0),
     turn: (held('ArrowLeft') - held('ArrowRight')) * 2.5 * dt + mouseTurn + touch.turn + (pad?.turn || 0),
     look: mouseLook + touch.look + (pad?.look || 0),
-    run: held('ShiftLeft', 'ShiftRight') || pad?.run || touchDevice,
+    run: Boolean(held('ShiftLeft', 'ShiftRight') || pad?.run || (movePointer !== null && (touch.forward || touch.strafe))),
     fire: held('ControlLeft', 'ControlRight', 'Mouse0') || touch.fire || pad?.fire,
     use: held('KeyE', 'Space') || touch.use || pad?.use,
     weapon: requestedWeapon
   };
   mouseTurn = mouseLook = touch.turn = touch.look = 0; touch.use = false; requestedWeapon = null;
+  if (neutralInput) {
+    neutralInput = false;
+    return { forward: 0, strafe: 0, turn: 0, look: 0, fire: false, use: false, run: false, weapon: null };
+  }
   return input;
 }
 
@@ -268,27 +296,33 @@ $('helpButton').addEventListener('click', () => { $('help').hidden = !$('help').
 $('fullscreenButton').addEventListener('click', async () => { try { if (document.fullscreenElement) await document.exitFullscreen(); else await $('game').requestFullscreen(); } catch { message('Utilise le mode paysage pour agrandir le jeu.'); } });
 
 document.addEventListener('keydown', e => {
-  if (e.code === 'Escape') { e.preventDefault(); if (!document.pointerLockElement) pause(); return; }
-  if (e.code === 'F3') { e.preventDefault(); fpsVisible = !fpsVisible; $('perf').hidden = !fpsVisible; return; }
+  if (e.code === 'Escape') { e.preventDefault(); if (!e.repeat && !document.pointerLockElement) pause(); return; }
+  if (e.code === 'F3') { e.preventDefault(); if (!e.repeat) { fpsVisible = !fpsVisible; $('perf').hidden = !fpsVisible; } return; }
   if (mode !== 'playing') return;
+  controlMode('mouse');
   if (['Space', 'Tab', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ControlLeft', 'ControlRight'].includes(e.code)) e.preventDefault();
   if (!e.repeat && e.code === 'Tab') toggleMap();
   if (/^Digit[123]$/.test(e.code)) requestedWeapon = Number(e.code.slice(-1));
   keys.add(e.code);
 });
 document.addEventListener('keyup', e => keys.delete(e.code));
-world.addEventListener('mousedown', e => { if (mode === 'playing' && e.button === 0) { keys.add('Mouse0'); capturePointer(); } });
+document.addEventListener('pointerdown', e => { if (e.pointerType) controlMode(e.pointerType === 'mouse' ? 'mouse' : 'touch'); }, true);
+world.addEventListener('mousedown', e => { if (mode === 'playing' && inputKind === 'mouse' && e.button === 0) { keys.add('Mouse0'); capturePointer(); audio.unlock(); } });
 document.addEventListener('mouseup', e => { if (e.button === 0) keys.delete('Mouse0'); });
 document.addEventListener('mousemove', e => { if (mode === 'playing' && document.pointerLockElement === world) { mouseTurn -= e.movementX * 0.0026; mouseLook -= e.movementY * 0.0021; } });
 world.addEventListener('contextmenu', e => e.preventDefault());
 world.addEventListener('wheel', e => { if (mode === 'playing') { e.preventDefault(); cycleWeapon(); } }, { passive: false });
-document.addEventListener('pointerlockchange', () => { if (!document.pointerLockElement && mode === 'playing' && !touchDevice) screen('paused'); });
+document.addEventListener('pointerlockchange', () => {
+  const locked = document.pointerLockElement === world, lost = pointerWasLocked && !locked;
+  pointerWasLocked = locked;
+  if (lost && mode === 'playing') screen('paused');
+});
 window.addEventListener('blur', () => { clearInput(); if (mode === 'playing') screen('paused'); });
 document.addEventListener('visibilitychange', () => { if (document.hidden && mode === 'playing') screen('paused'); });
 window.addEventListener('resize', resize);
 
-let movePointer = null, moveOrigin = null, lookPointer = null, lookLast = null;
-$('movePad').addEventListener('pointerdown', e => { movePointer = e.pointerId; moveOrigin = { x: e.clientX, y: e.clientY }; e.currentTarget.setPointerCapture(e.pointerId); e.preventDefault(); });
+let movePointer = null, moveOrigin = null, lookPointer = null, lookLast = null, firePointer = null;
+$('movePad').addEventListener('pointerdown', e => { if (mode !== 'playing' || movePointer !== null) return; controlMode('touch'); movePointer = e.pointerId; moveOrigin = { x: e.clientX, y: e.clientY }; e.currentTarget.setPointerCapture(e.pointerId); e.preventDefault(); });
 $('movePad').addEventListener('pointermove', e => {
   if (e.pointerId !== movePointer) return;
   let x = e.clientX - moveOrigin.x, y = e.clientY - moveOrigin.y;
@@ -296,12 +330,12 @@ $('movePad').addEventListener('pointermove', e => {
   touch.strafe = x / 40; touch.forward = -y / 40; $('movePad').firstElementChild.style.transform = `translate(${x}px,${y}px)`;
 });
 for (const type of ['pointerup', 'pointercancel', 'lostpointercapture']) $('movePad').addEventListener(type, e => { if (e.pointerId === movePointer) { movePointer = null; touch.forward = touch.strafe = 0; $('movePad').firstElementChild.style.transform = ''; } });
-$('lookPad').addEventListener('pointerdown', e => { lookPointer = e.pointerId; lookLast = { x: e.clientX, y: e.clientY }; e.currentTarget.setPointerCapture(e.pointerId); });
+$('lookPad').addEventListener('pointerdown', e => { if (mode !== 'playing' || lookPointer !== null) return; controlMode('touch'); lookPointer = e.pointerId; lookLast = { x: e.clientX, y: e.clientY }; e.currentTarget.setPointerCapture(e.pointerId); e.preventDefault(); });
 $('lookPad').addEventListener('pointermove', e => { if (e.pointerId !== lookPointer) return; touch.turn -= (e.clientX - lookLast.x) * 0.006; touch.look -= (e.clientY - lookLast.y) * 0.004; lookLast = { x: e.clientX, y: e.clientY }; });
-for (const type of ['pointerup', 'pointercancel', 'lostpointercapture']) $('lookPad').addEventListener(type, () => { lookPointer = null; });
-$('touchFire').addEventListener('pointerdown', e => { touch.fire = true; e.currentTarget.setPointerCapture(e.pointerId); e.preventDefault(); });
-for (const type of ['pointerup', 'pointercancel', 'lostpointercapture']) $('touchFire').addEventListener(type, () => { touch.fire = false; });
-$('touchUse').addEventListener('pointerdown', e => { touch.use = true; e.preventDefault(); });
+for (const type of ['pointerup', 'pointercancel', 'lostpointercapture']) $('lookPad').addEventListener(type, e => { if (e.pointerId === lookPointer) { lookPointer = null; lookLast = null; } });
+$('touchFire').addEventListener('pointerdown', e => { if (mode !== 'playing' || firePointer !== null) return; controlMode('touch'); firePointer = e.pointerId; touch.fire = true; e.currentTarget.setPointerCapture(e.pointerId); e.preventDefault(); });
+for (const type of ['pointerup', 'pointercancel', 'lostpointercapture']) $('touchFire').addEventListener(type, e => { if (e.pointerId === firePointer) { firePointer = null; touch.fire = false; } });
+$('touchUse').addEventListener('pointerdown', e => { if (mode === 'playing') touch.use = true; e.preventDefault(); });
 $('touchWeapon').addEventListener('pointerdown', e => { cycleWeapon(); e.preventDefault(); });
 
 async function boot() {

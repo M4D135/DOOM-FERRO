@@ -1,11 +1,15 @@
 {
-  "version": "0.1.0",
-  "nodeTests": 37,
+  "version": "0.1.1",
+  "nodeTests": 42,
   "nodeTestsPassed": true,
   "reproducibleBuild": true,
-  "buildFiles": 14,
-  "browserWebGL2": "unavailable in managed browser; interactive validation incomplete",
+  "buildFiles": 15,
+  "browserWebGL2": "context unavailable in managed browser on 2026-11-23; interactive validation incomplete",
   "nativeEGL": "passed; see egl-report.json",
   "hardwareFPS": "not measured",
-  "mainRoute": "original spawn to exit with real movement/use, enemies disabled only for traversal test"
+  "mainRoute": "original spawn to exit with real movement/use, enemies disabled only for traversal test",
+  "inputTests": 5,
+  "inputTestScope": "gamepad sampler transition tests; app handlers reviewed; no browser or physical-device claim",
+  "githubActions": "job not started; GitHub reports account billing or spending-limit block",
+  "githubActionsUrl": "https://github.com/M4D135/DOOM-FERRO/actions/runs/45271910444"
 }

@@ -2,6 +2,8 @@
 
 **E1M1 « Hangar » de Doom 1 shareware, jouable avec le moteur FERRO 0.3.33.**
 
+Version du jeu : **0.1.1**.
+
 Le niveau est importé directement depuis le WAD shareware original 1.9. Ses coordonnées, secteurs, murs, hauteurs, textures, sprites et effets sonores proviennent des données originales. Le WAD complet est conservé sans modification.
 
 ## Lancer
@@ -35,6 +37,15 @@ Si le fichier shareware manque, `python3 tools/fetch-shareware.py` le récupère
 
 Le navigateur demande le verrouillage de la souris au démarrage. Échap libère la souris et met le jeu en pause. Sur mobile, le paysage donne la plus grande surface de jeu.
 
+Au menu, la croix directionnelle ou le stick gauche de la manette choisit la difficulté ; A ou Start démarre. La souris reste utilisable sur un PC à écran tactile. Après une pause, relâcher puis presser de nouveau une gâchette maintenue permet de reprendre le tir.
+
+### Correctifs 0.1.1
+
+- Détection du périphérique réellement utilisé : la présence d’un écran tactile ne désactive plus la souris et ne force plus la course au clavier ou à la manette.
+- Choix de la difficulté à la manette ; les boutons de démarrage et de reprise ne déclenchent plus une action dans le niveau.
+- Pause stable avec Échap maintenu ; annulation des entrées et captures tactiles en attente à la perte de focus.
+- Contrôles tactiles séparés entre les doigts ; verrouillage souris demandé avant l’attente audio et musique gardée en pause si celle-ci survient pendant le démarrage.
+
 ## Contenu de cette version
 
 - La géométrie exacte d’E1M1 : 85 secteurs, 475 lignes, 648 côtés, 467 sommets, 237 sous-secteurs BSP.
@@ -67,6 +78,7 @@ Le budget d’image est limité à **256 000 pixels** (640 × 400 de référence
 | `src/game.js` | Simulation E1M1, collisions, armes, ennemis, objets et actions |
 | `src/audio.js` | Effets PCM originaux et séquenceur MUS |
 | `src/app.js` | Interface, commandes, HUD et boucle du jeu |
+| `src/input.js` | Lecture de la manette et neutralisation des boutons aux transitions |
 | `tools/build.py` | Vérification des sources et construction de `dist/` |
 | `tests/` | Contrôles sur le vrai WAD, le moteur, la géométrie et le gameplay |
 
@@ -86,6 +98,8 @@ Les tests automatisés vérifient les données authentiques, les quatre modules 
 ![Départ d’E1M1, rendu de contrôle EGL](docs/qa/spawn-north-egl.png)
 
 Ces images sont des **rendus OpenGL hors écran des shaders et données de production**, pas des captures de partie dans un navigateur. Le navigateur distant de cette session ne fournit pas de contexte WebGL 2 : la vérification interactive complète, le mixage audible, une manette physique et les performances sur téléphone/Xbox restent donc à confirmer sur ces appareils. Le moteur WebGL 2 et les commandes sont intégrés ; cette limite de vérification n’est pas présentée comme un test réussi.
+
+La qualification locale de la version **0.1.1** passe **42 tests**, dont la traversée complète du départ à la sortie et le traitement des commandes manette pendant les transitions de menu et de pause. La construction est reproductible. Le premier workflow GitHub Actions n’a pas démarré : GitHub a signalé un blocage lié à la facturation ou au plafond du compte. Les résultats locaux et EGL sont conservés dans `docs/qa/` ; le blocage distant ne correspond pas à un test du code exécuté en échec.
 
 ## Provenance Doom
 

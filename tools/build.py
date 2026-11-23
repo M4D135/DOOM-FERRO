@@ -34,7 +34,8 @@ def main():
     for name in ('src', 'assets', 'vendor'):
         shutil.copytree(ROOT / name, DEST / name, dirs_exist_ok=True)
     total = sum(p.stat().st_size for p in DEST.rglob('*') if p.is_file())
-    print(json.dumps({'build': 'dist/index.html', 'version': '0.1.0', 'wad_sha256': WAD_SHA256, 'bytes': total, 'network_at_runtime': 'same-origin assets only'}))
+    version = json.loads((ROOT / 'package.json').read_text())['version']
+    print(json.dumps({'build': 'dist/index.html', 'version': version, 'wad_sha256': WAD_SHA256, 'bytes': total, 'network_at_runtime': 'same-origin assets only'}))
 
 if __name__ == '__main__':
     main()
