@@ -99,7 +99,7 @@ Les tests automatisés vérifient les données authentiques, les quatre modules 
 
 Ces images sont des **rendus OpenGL hors écran des shaders et données de production**, pas des captures de partie dans un navigateur. Le navigateur distant de cette session ne fournit pas de contexte WebGL 2 : la vérification interactive complète, le mixage audible, une manette physique et les performances sur téléphone/Xbox restent donc à confirmer sur ces appareils. Le moteur WebGL 2 et les commandes sont intégrés ; cette limite de vérification n’est pas présentée comme un test réussi.
 
-La qualification locale de la version **0.1.1** passe **42 tests**, dont la traversée complète du départ à la sortie et le traitement des commandes manette pendant les transitions de menu et de pause. La construction est reproductible. Le premier workflow GitHub Actions n’a pas démarré : GitHub a signalé un blocage lié à la facturation ou au plafond du compte. Les résultats locaux et EGL sont conservés dans `docs/qa/` ; le blocage distant ne correspond pas à un test du code exécuté en échec.
+La qualification locale de la version **0.1.1** passe **47 tests**, dont la traversée complète du départ à la sortie, les commandes manette pendant les transitions, et les gestionnaires clavier, souris et tactiles dans un DOM simulé. La construction est reproductible. Le premier workflow GitHub Actions n’a pas démarré : GitHub a signalé un blocage lié à la facturation ou au plafond du compte. Les résultats locaux et EGL sont conservés dans `docs/qa/` ; le blocage distant ne correspond pas à un test du code exécuté en échec.
 
 ## Provenance Doom
 
