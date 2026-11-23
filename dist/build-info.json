@@ -1,10 +1,12 @@
 {
-  "version": "0.2.0",
-  "revision": "0.2.0-38b94775e87e",
+  "version": "0.3.0",
+  "revision": "0.3.0-663ad4ffe1db",
   "generation": "procedural",
   "level": "E1M1 geometric reference plan",
   "mapGenerator": "sector contour sweep",
   "importedMediaFiles": 0,
-  "runtimeModules": 15,
+  "worldBillboards": 0,
+  "worldRepresentation": "instanced procedural 3D triangle meshes",
+  "runtimeModules": 19,
   "ferroVersion": "0.3.33"
 }

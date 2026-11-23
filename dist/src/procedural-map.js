@@ -6,7 +6,7 @@
  * regions and holes. Neither pre-triangulated geometry nor a reference BSP is
  * used. Rendering and sector queries share the resulting cells exactly.
  */
-import {E1M1_PLAN} from './e1m1-plan.js?v=0.2.0-38b94775e87e';
+import {E1M1_PLAN} from './e1m1-plan.js?v=0.3.0-663ad4ffe1db';
 
 const EPSILON = 1e-7;
 const GRID_SIZE = 128;

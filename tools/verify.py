@@ -60,6 +60,8 @@ def main():
         'reproducibleBuild': True,
         'buildFiles': len(second),
         'generation': info['generation'],
+        'worldRepresentation': info['worldRepresentation'],
+        'worldBillboards': info['worldBillboards'],
         'buildRevision': info['revision'],
         'importedMediaFiles': info['importedMediaFiles'],
         'buildBytes': sum(path.stat().st_size for path in (ROOT / 'dist').rglob('*') if path.is_file()),

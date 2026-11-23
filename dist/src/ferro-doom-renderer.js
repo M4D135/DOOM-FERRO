@@ -1,3 +1,4 @@
+import { collectModelBatches, viewWeaponBatch } from './procedural-models.js?v=0.3.0-663ad4ffe1db';
 /**
  * DOOM host adapter for canonical FERRO 0.3.33.
  *
@@ -6,10 +7,10 @@
  * enter its documented host geometry hook (fx.foule.couleur); no engine source
  * is patched, no second renderer/context is hidden behind the FERRO name.
  */
-import '../vendor/ferro/fmath.js?v=0.2.0-38b94775e87e';
-import '../vendor/ferro/surface.js?v=0.2.0-38b94775e87e';
-import '../vendor/ferro/renderer.js?v=0.2.0-38b94775e87e';
-import '../vendor/ferro/engine.js?v=0.2.0-38b94775e87e';
+import '../vendor/ferro/fmath.js?v=0.3.0-663ad4ffe1db';
+import '../vendor/ferro/surface.js?v=0.3.0-663ad4ffe1db';
+import '../vendor/ferro/renderer.js?v=0.3.0-663ad4ffe1db';
+import '../vendor/ferro/engine.js?v=0.3.0-663ad4ffe1db';
 
 const SCALE = 1 / 32;
 const EPSILON = 0.00001;
@@ -206,6 +207,69 @@ void main(){vec3 d=normalize(uForward+uRight*vNDC.x*uFov.x+uUp*vNDC.y*uFov.y);
 float u=atan(d.z,d.x)*.6366197724;float v=clamp(.61-d.y/max(.01,length(d.xz))*.65,0.0,1.0);
 fragColor=vec4(texture(uTexture,vec2(u,v)).rgb,1.0);}`;
 
+const MODEL_VERTEX = `#version 300 es
+precision highp float;
+layout(location=0) in vec3 aPosition;
+layout(location=1) in vec3 aNormal;
+layout(location=2) in vec3 aColor;
+layout(location=3) in float aEmission;
+layout(location=4) in vec4 aOriginYaw;
+layout(location=5) in vec4 aScaleLight;
+uniform mat4 uVP;
+uniform vec3 uEye;
+uniform vec3 uRight;
+uniform vec3 uForward;
+uniform vec3 uUp;
+uniform bool uViewModel;
+out vec3 vPosition;
+out vec3 vNormal;
+out vec3 vColor;
+out float vEmission;
+out float vLight;
+flat out int vSpecial;
+void main(){
+ vec3 local=aPosition*aScaleLight.x;
+ if(uViewModel){
+  local+=aOriginYaw.xyz;
+  vPosition=uEye+(uRight*local.x+uForward*local.y+uUp*local.z)/32.0;
+  vNormal=uRight*aNormal.x+uForward*aNormal.y+uUp*aNormal.z;
+ }else{
+  float c=cos(aOriginYaw.w),s=sin(aOriginYaw.w);
+  vPosition=aOriginYaw.xyz+vec3(s*local.x+c*local.y,local.z,c*local.x-s*local.y)/32.0;
+  vNormal=vec3(s*aNormal.x+c*aNormal.y,aNormal.z,c*aNormal.x-s*aNormal.y);
+ }
+ vColor=aColor;vEmission=aEmission;vLight=aScaleLight.y;vSpecial=int(aScaleLight.z+.5);
+ gl_Position=uVP*vec4(vPosition,1.0);
+}`;
+const MODEL_FRAGMENT = `#version 300 es
+precision highp float;
+precision highp int;
+uniform vec3 uEye;
+uniform float uTime;
+uniform float uBrightness;
+uniform float uDamage;
+uniform float uFlash;
+in vec3 vPosition;
+in vec3 vNormal;
+in vec3 vColor;
+in float vEmission;
+in float vLight;
+flat in int vSpecial;
+out vec4 fragColor;
+void main(){
+ float light=vLight;
+ if(vSpecial==1){light*=fract(sin(floor(uTime*12.0)+float(vSpecial))*173.19)>.72?.4:1.0;}
+ if(vSpecial==2||vSpecial==4||vSpecial==12){light*=mod(uTime,1.0)<.17?1.0:.35;}
+ if(vSpecial==3||vSpecial==13){light*=mod(uTime,.5)<.17?1.0:.35;}
+ if(vSpecial==8){light*=.68+.32*sin(uTime*2.6);}
+ float distanceShade=vLight>1.1?1.0:max(.08,light-length(vPosition-uEye)*.005);
+ float relief=.58+.42*max(0.0,dot(normalize(vNormal),normalize(vec3(-.35,.8,.45))));
+ float intensity=mix(min(1.0,distanceShade+uFlash*.16)*relief,1.0,clamp(vEmission,0.0,1.0));
+ vec3 color=vColor*intensity*uBrightness;
+ color=mix(color,vec3(.65,.015,.005),clamp(uDamage,0.0,.55));
+ fragColor=vec4(color,1.0);
+}`;
+
 export class FerroDoomRenderer {
   constructor(canvas,resources,map,{maxPixels=640*400,brightness=1.25}={}) {
     this.canvas=canvas;this.resources=resources;this.map=map;this.brightness=brightness;
@@ -219,7 +283,7 @@ export class FerroDoomRenderer {
     this.engine.resize('low');
     this.engine.setWorld([],[],null);
     this.leaves=buildSubsectorPolygons(map);
-    this.textureCache=new Map();this.meshes=new Map();this.spriteMeshes=new Map();
+    this.textureCache=new Map();this.meshes=new Map();this.modelMeshes=new Map();
     this.generation=-1;this.sectorHeights='';this.frame={entities:[],time:0};
     this.camera={pos:[0,1.3,0],yaw:0,pitch:0,fov:70,near:.025,far:400};
     this.hook={couleur:(gl,view)=>this._renderPass(gl,view)};
@@ -231,11 +295,13 @@ export class FerroDoomRenderer {
     this.generation=this.engine.pdr.generation;
     this.worldProgram=this.engine.pdr.programme(WORLD_VERTEX,WORLD_FRAGMENT);
     this.skyProgram=this.engine.pdr.programme(SKY_VERTEX,SKY_FRAGMENT);
-    this.uniforms={};this.skyUniforms={};
+    this.modelProgram=this.engine.pdr.programme(MODEL_VERTEX,MODEL_FRAGMENT);
+    this.uniforms={};this.skyUniforms={};this.modelUniforms={};
     for(const n of ['uVP','uTexture','uEye','uTime','uBrightness','uDamage','uFlash']) this.uniforms[n]=gl.getUniformLocation(this.worldProgram,n);
     for(const n of ['uTexture','uForward','uRight','uUp','uFov']) this.skyUniforms[n]=gl.getUniformLocation(this.skyProgram,n);
+    for(const n of ['uVP','uEye','uRight','uForward','uUp','uViewModel','uTime','uBrightness','uDamage','uFlash'])this.modelUniforms[n]=gl.getUniformLocation(this.modelProgram,n);
     this.skyVao=gl.createVertexArray();
-    this.textureCache.clear();this.meshes.clear();this.spriteMeshes.clear();this.sectorHeights='';
+    this.textureCache.clear();this.meshes.clear();this.modelMeshes.clear();this.sectorHeights='';
     this._texture('wall','SKY1');
     for(const name of ['NUKAGE1','NUKAGE2','NUKAGE3'])this._texture('flat',name);
   }
@@ -244,7 +310,7 @@ export class FerroDoomRenderer {
     const key=kind+':'+name;
     if(this.textureCache.has(key))return this.textureCache.get(key);
     const gl=this.gl, texture=gl.createTexture();
-    let source=kind==='flat'?this.resources.flat(name):kind==='sprite'?this.resources.patch(name):this.resources.texture(name);
+    let source=kind==='flat'?this.resources.flat(name):this.resources.texture(name);
     if(!source){
       source={width:2,height:2,leftOffset:1,topOffset:2,pixels:new Uint8Array([120,100,90,255,80,65,55,255,80,65,55,255,120,100,90,255])};
     }
@@ -253,8 +319,8 @@ export class FerroDoomRenderer {
     gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,source.width,source.height,0,gl.RGBA,gl.UNSIGNED_BYTE,source.pixels);
     gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.NEAREST);
     gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,kind==='sprite'?gl.CLAMP_TO_EDGE:gl.REPEAT);
-    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,kind==='sprite'||name==='SKY1'?gl.CLAMP_TO_EDGE:gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,name==='SKY1'?gl.CLAMP_TO_EDGE:gl.REPEAT);
     const value={texture,...source};this.textureCache.set(key,value);return value;
   }
 
@@ -296,29 +362,52 @@ export class FerroDoomRenderer {
     return name;
   }
 
-  _sprites(view) {
-    const groups=new Map(),right=view.droite;
-    for(const e of this.frame.entities||[]){
-      if(e.removed||!e.sprite)continue;
-      const dx=e.x*SCALE-view.oeil[0],dz=-e.y*SCALE-view.oeil[2];
-      if(dx*view.avant[0]+dz*view.avant[2]<-4)continue;
-      const patch=this._texture('sprite',e.sprite),scale=e.scale||1;
-      const sector=this.map.sectorAt(e.x,e.y),base=Number.isFinite(e.z)?e.z:sector?.floor||0;
-      const top=(base+patch.topOffset*scale)*SCALE,bottom=top-patch.height*scale*SCALE;
-      // Mirror around the thing's origin, including asymmetric WAD offsets.
-      // Reversing only U makes directional frames jump sideways as they turn.
-      const left=-(e.flip?patch.width-patch.leftOffset:patch.leftOffset)*scale*SCALE,width=patch.width*scale*SCALE;
-      const x0=e.x*SCALE+right[0]*left,z0=-e.y*SCALE+right[2]*left;
-      const x1=x0+right[0]*width,z1=z0+right[2]*width;
-      const light=e.fullbright?2:(sector?.light??192)/255;
-      const u0=e.flip?1:0,u1=e.flip?0:1;
-      let out=groups.get(e.sprite);if(!out){out=[];groups.set(e.sprite,out);}
-      for(const p of [[x0,bottom,z0,u0,1],[x1,bottom,z1,u1,1],[x1,top,z1,u1,0],
-        [x0,bottom,z0,u0,1],[x1,top,z1,u1,0],[x0,top,z0,u0,0]])out.push(...p,light,0);
+  _uploadModel(batch) {
+    const gl=this.gl,source=batch.mesh;
+    let mesh=this.modelMeshes.get(source.key);
+    if(!mesh){
+      mesh={buffer:gl.createBuffer(),instancesBuffer:gl.createBuffer(),vao:gl.createVertexArray(),capacity:0,count:source.vertices.length/10};
+      gl.bindVertexArray(mesh.vao);gl.bindBuffer(gl.ARRAY_BUFFER,mesh.buffer);
+      gl.bufferData(gl.ARRAY_BUFFER,source.vertices,gl.STATIC_DRAW);
+      for(const [index,size,offset] of [[0,3,0],[1,3,12],[2,3,24],[3,1,36]]){
+        gl.enableVertexAttribArray(index);gl.vertexAttribPointer(index,size,gl.FLOAT,false,40,offset);
+      }
+      gl.bindBuffer(gl.ARRAY_BUFFER,mesh.instancesBuffer);
+      for(const [index,offset] of [[4,0],[5,16]]){
+        gl.enableVertexAttribArray(index);gl.vertexAttribPointer(index,4,gl.FLOAT,false,32,offset);gl.vertexAttribDivisor(index,1);
+      }
+      this.modelMeshes.set(source.key,mesh);
     }
-    for(const mesh of this.spriteMeshes.values())mesh.count=0;
-    for(const [name,values] of groups)this._upload(this.spriteMeshes,name,new Float32Array(values));
-    return groups.size;
+    gl.bindVertexArray(mesh.vao);gl.bindBuffer(gl.ARRAY_BUFFER,mesh.instancesBuffer);
+    if(batch.instances.byteLength>mesh.capacity){gl.bufferData(gl.ARRAY_BUFFER,batch.instances,gl.DYNAMIC_DRAW);mesh.capacity=batch.instances.byteLength;}
+    else gl.bufferSubData(gl.ARRAY_BUFFER,0,batch.instances);
+    mesh.instances=batch.count;return mesh;
+  }
+
+  _drawModels(gl,view) {
+    const u=this.modelUniforms,time=this.frame.time||0;
+    gl.useProgram(this.modelProgram);gl.enable(gl.CULL_FACE);gl.cullFace(gl.BACK);
+    gl.uniformMatrix4fv(u.uVP,false,view.vp);gl.uniform3fv(u.uEye,view.oeil);
+    gl.uniform3fv(u.uRight,view.droite);gl.uniform3fv(u.uForward,view.avant);gl.uniform3fv(u.uUp,view.haut);
+    gl.uniform1f(u.uTime,time);gl.uniform1f(u.uBrightness,this.brightness);
+    gl.uniform1f(u.uDamage,this.frame.damage||0);gl.uniform1f(u.uFlash,this.frame.flash||0);
+    gl.uniform1i(u.uViewModel,0);
+    let calls=0,triangles=0,instances=0;
+    for(const batch of collectModelBatches(this.map,this.frame.entities,time)){
+      const mesh=this._uploadModel(batch);
+      gl.drawArraysInstanced(gl.TRIANGLES,0,mesh.count,mesh.instances);
+      calls++;triangles+=mesh.count*mesh.instances/3;instances+=mesh.instances;
+    }
+    const weapon=viewWeaponBatch(this.frame.weapon,time);
+    if(weapon){
+      // Clear depth once for the close weapon; its parts still occlude each other in 3D.
+      gl.clear(gl.DEPTH_BUFFER_BIT);gl.uniform1i(u.uViewModel,1);
+      const mesh=this._uploadModel(weapon);gl.drawArraysInstanced(gl.TRIANGLES,0,mesh.count,1);
+      calls++;triangles+=mesh.count/3;
+    }
+    this.stats.modelTriangles=triangles;this.stats.modelInstances=instances;
+    this.stats.modelDrawCalls=calls;this.stats.generatedModels=this.modelMeshes.size;this.stats.worldBillboards=0;
+    return {calls,triangles,instances};
   }
 
   _renderPass(gl,view) {
@@ -342,15 +431,10 @@ export class FerroDoomRenderer {
       gl.bindTexture(gl.TEXTURE_2D,this._texture(mesh.kind,this._animated(mesh.name,time)).texture);
       gl.bindVertexArray(mesh.vao);gl.drawArrays(gl.TRIANGLES,0,mesh.count);calls++;triangles+=mesh.count/3;
     }
-    this._sprites(view);gl.disable(gl.CULL_FACE);
-    for(const [name,mesh] of this.spriteMeshes){
-      if(!mesh.count)continue;
-      gl.bindTexture(gl.TEXTURE_2D,this._texture('sprite',name).texture);
-      gl.bindVertexArray(mesh.vao);gl.drawArrays(gl.TRIANGLES,0,mesh.count);calls++;triangles+=mesh.count/3;
-    }
+    const models=this._drawModels(gl,view);calls+=models.calls;triangles+=models.triangles;
     gl.bindVertexArray(null);
     this.stats.generatedTextures=this.textureCache.size;
-    return {appels:calls,triangles,instances:this.frame.entities?.length||0};
+    return {appels:calls,triangles,instances:models.instances};
   }
 
   draw(camera,frame={}) {
@@ -367,9 +451,9 @@ export class FerroDoomRenderer {
 
   dispose(){
     const gl=this.gl;
-    for(const mesh of [...this.meshes.values(),...this.spriteMeshes.values()]){gl.deleteBuffer(mesh.buffer);gl.deleteVertexArray(mesh.vao);}
+    for(const mesh of [...this.meshes.values(),...this.modelMeshes.values()]){gl.deleteBuffer(mesh.buffer);if(mesh.instancesBuffer)gl.deleteBuffer(mesh.instancesBuffer);gl.deleteVertexArray(mesh.vao);}
     for(const texture of this.textureCache.values())gl.deleteTexture(texture.texture);
-    gl.deleteVertexArray(this.skyVao);gl.deleteProgram(this.worldProgram);gl.deleteProgram(this.skyProgram);
+    gl.deleteVertexArray(this.skyVao);gl.deleteProgram(this.worldProgram);gl.deleteProgram(this.skyProgram);gl.deleteProgram(this.modelProgram);
     this.engine.dispose();
   }
 }

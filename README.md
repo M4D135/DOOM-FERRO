@@ -1,10 +1,12 @@
-# DOOM · FERRO — Hangar procédural
+# DOOM · FERRO — Hangar procédural en 3D
 
-**E1M1 reconstruit par le code et rendu par le moteur FERRO 0.3.33.** Version du jeu : **0.2.0**.
+**E1M1 reconstruit par le code et rendu par le moteur FERRO 0.3.33.** Version du jeu : **0.3.0**.
 
 Le runtime ne charge aucun WAD, fichier image, modèle ou enregistrement sonore. Les générateurs construisent la géométrie, les matériaux, le ciel, les personnages, les objets, les armes, le HUD, les effets sonores et une musique originale. Ils utilisent des calculs, des primitives et des graines déterministes ; aucun média encodé ne remplace les anciens fichiers.
 
-Le **tracé d’E1M1 est un plan fixe de référence** : coordonnées des murs, hauteurs, connexions, mécanismes et placements constituent les paramètres de construction. Le niveau n’est donc pas aléatoire. Les surfaces et leur triangulation sont calculées au lancement depuis ces contours, sans reprendre le BSP ni les triangles originaux. Les graphismes et la musique sont de nouvelles interprétations procédurales et ne reproduisent pas les médias originaux à l’identique.
+Le **tracé d’E1M1 est un plan fixe de référence** : coordonnées des murs, hauteurs, connexions, mécanismes et placements constituent les paramètres de construction. Le niveau n’est donc pas aléatoire. Les surfaces et leur triangulation sont calculées au lancement depuis ces contours, sans reprendre le BSP ni les triangles originaux.
+
+Les visuels prennent maintenant les **assets de Doom PC de 1993 comme références directes** : dimensions des textures, motifs des panneaux, palettes, silhouettes, vêtements, objets et armes. Les ennemis, les objets, les cadavres, les projectiles et l’arme tenue sont des **maillages 3D générés**, avec leurs propres faces, normales et profondeur. Aucun de ces éléments n’est une image tournée vers la caméra. Les parties non visibles dans les dessins d’origine sont reconstruites en volume ; les recettes ne revendiquent pas une identité pixel par pixel. La musique reste une composition procédurale originale.
 
 ## Lancer
 
@@ -25,13 +27,15 @@ Ouvrir **http://localhost:8080**. Les modules JavaScript nécessitent un serveur
 |---|---|
 | Carte | Balayage des contours des 85 secteurs du plan, création de 295 cellules convexes ; triangulation et index spatial calculés |
 | Murs, sols et plafonds | Métal, rivets, panneaux, écrans, pierre, éclairages et fluides produits à partir de motifs et de bruits déterministes |
-| Ciel | Panorama de nuages, montagnes et installation construit mathématiquement |
-| Ennemis et objets | Primitives de volumes et de dessin raster, poses, orientations et animations générées |
-| Armes, HUD et logo | Dessin par le code, chiffres et lettres vectoriels, aucune police bitmap extraite |
+| Ciel | Nuages gris et crêtes rocheuses calculés d’après SKY1 |
+| Ennemis | Volumes triangulés des zombiemen, shotgun guys et imps ; marche, attaque, douleur et chute ; orientation propre à chaque acteur |
+| Objets et effets | Barils, lampes, colonnes, armures, bonus, caisses de soins, munitions, armes au sol, corps, boules de feu et explosions en 3D |
+| Armes en main | Pistolet, fusil à pompe et poing en 3D ; mains, recul, pompage et flashes en volume |
+| HUD et logo | Interface 2D calculée : barre grise, chiffres rouges, visage nu et logo bleu/or ; contours vectoriels sans police bitmap extraite |
 | Sons | Oscillateurs, bruit déterministe, filtres et enveloppes ; spatialisation selon la position du joueur |
 | Musique | Composition originale par règles : basse, batterie, drone et mélodie ; aucune partition extraite |
 
-Les ressources visuelles sont créées à la demande puis mises en cache. Les effets sonores sont calculés une fois et réutilisés. La musique conserve sa position lors des pauses. Le nombre de voix simultanées est plafonné à 24.
+Les ressources visuelles sont créées à la demande puis mises en cache. Les poses identiques partagent leur géométrie et sont rendues par instanciation. Changer l’angle de la caméra ne change ni le maillage ni l’orientation d’un acteur. Les effets sonores sont calculés une fois et réutilisés. La musique conserve sa position lors des pauses. Le nombre de voix simultanées est plafonné à 24.
 
 ## Commandes
 
@@ -67,11 +71,11 @@ Référence canonique : [M4D135/FERRO](https://github.com/M4D135/FERRO), version
 
 Les quatre modules utilisés sont conservés octet pour octet dans `vendor/ferro/` : `fmath.js`, `surface.js`, `renderer.js`, `engine.js`. Le manifeste associe chaque fichier à son SHA256 et à son objet Git amont. La construction et les tests vérifient ces empreintes.
 
-FERRO crée le contexte WebGL, contrôle la résolution, les matrices de caméra et de projection, les cibles de rendu, la profondeur, la compilation des shaders, le cycle d’image et les statistiques. L’adaptateur `src/ferro-doom-renderer.js` fournit les surfaces et sprites générés dans le point d’extension `fx.foule.couleur` de `FRender.draw`. Aucun autre moteur de rendu n’est inclus.
+FERRO crée le contexte WebGL, contrôle la résolution, les matrices de caméra et de projection, les cibles de rendu, la profondeur, la compilation des shaders, le cycle d’image et les statistiques. L’adaptateur `src/ferro-doom-renderer.js` fournit les surfaces et les modèles 3D générés dans le point d’extension `fx.foule.couleur` de `FRender.draw`. Aucun autre moteur de rendu n’est inclus.
 
 Les générateurs et les règles de Doom, dont les collisions par secteurs, appartiennent au jeu. Le noyau canonique de FERRO reste inchangé.
 
-Le budget d’image est limité à **256 000 pixels** (640 × 400 de référence, adapté au ratio de l’écran). La carte initiale comporte **2 025 triangles** ; les sprites ajoutent leur propre coût. Les buffers de carte sont réutilisés et ne sont reconstruits que lorsque la géométrie ou une texture de secteur change. Aucune mesure FPS sur Xbox ou téléphone physique n’est revendiquée.
+Le budget d’image est limité à **256 000 pixels** (640 × 400 de référence, adapté au ratio de l’écran). La carte initiale comporte **2 025 triangles**. Les personnages utilisent entre **1 572 et 1 952 triangles** selon le type et la pose ; les objets et armes ajoutent leur propre coût. Les buffers de carte sont réutilisés et ne sont reconstruits que lorsque la géométrie ou une texture de secteur change. F3 affiche les nombres de modèles et de triangles effectivement soumis. Aucune mesure FPS sur Xbox ou téléphone physique n’est revendiquée.
 
 ## Organisation
 
@@ -81,7 +85,11 @@ Le budget d’image est limité à **256 000 pixels** (640 × 400 de référence
 | `src/procedural-map.js` | Génération des cellules, géométrie et index spatial |
 | `src/procedural-materials.js` | Recettes de murs, sols, plafonds et ciel |
 | `src/procedural-raster.js` | Primitives de dessin des ressources |
-| `src/procedural-sprites.js` | Personnages, objets, armes et interface calculés |
+| `src/procedural-mesh.js` | Primitives de volumes, normales, couleurs et transformations |
+| `src/procedural-characters.js` | Maillages et poses des trois familles d’ennemis |
+| `src/procedural-objects.js` | Objets, corps, projectiles et armes 3D |
+| `src/procedural-models.js` | Sélection des recettes et groupes d’instances |
+| `src/procedural-interface.js` | HUD et logo calculés, sans images de personnages ni d’armes |
 | `src/procedural-resources.js` | Accès et comptage des ressources générées |
 | `src/procedural-audio.js` | Synthèse des sons, composition et lecture musicales |
 | `src/ferro-doom-renderer.js` | Adaptateur de rendu dans FERRO |
@@ -110,7 +118,9 @@ Le rapport `docs/qa/validation.json` conserve le nombre réel de tests, la révi
 
 Les tests de commandes exécutent les gestionnaires de l’application avec un DOM et des périphériques simulés, la vraie carte générée et la vraie simulation. Les contrôles de synthèse audio portent sur les signaux, la spatialisation et le cycle de vie avec un contexte audio simulé.
 
-Le script `python3 tests/render-egl.py` compile les shaders de production et produit des images de contrôle avec EGL/Mesa. Son rapport `docs/qa/egl-report.json` enregistre la géométrie, les vues et l’empreinte de l’adaptateur utilisé.
+Les tests de modèles vérifient les volumes, les normales, les poses, les limites de cache, les objets des trois difficultés et l’indépendance par rapport à la caméra. Les tests de l’interface empêchent le retour d’une image de personnage ou d’arme par l’API du HUD.
+
+Le script `python3 tests/render-egl.py` compile les six shaders de production et produit des images de contrôle avec EGL/Mesa : niveau, armes, personnages de face/profil/dos et porte ouverte. Son rapport `docs/qa/egl-report.json` enregistre la géométrie, les vues et les empreintes des modules utilisés. Les scènes de studio et de porte contenant un acteur sont des placements contrôlés pour la vérification visuelle.
 
 ![Départ d’E1M1, rendu procédural de contrôle EGL](docs/qa/spawn-north-egl.png)
 
@@ -121,6 +131,8 @@ GitHub Actions n’a pas pu démarrer lors de la qualification précédente, à 
 ## Référence et provenance
 
 `reference/doom1.wad` est conservé comme archive de recherche, avec sa provenance, les anciens lecteurs et leurs tests séparés. Il n’est ni nécessaire au build, ni copié dans `dist/`, ni chargé par le jeu. L’outil `tools/export-e1m1-plan.mjs` permet de refaire le relevé architectural lors du développement.
+
+La démarche de fidélité, les familles inspectées et les captures publiques de référence sont détaillées dans [les références visuelles](docs/visual-reference.md).
 
 Taille de l’archive : **4 196 020 octets**. SHA256 : `1d7d43be501e67d927e415e0b8f3e29c3bf33075e859721816f652a526cac771`.
 

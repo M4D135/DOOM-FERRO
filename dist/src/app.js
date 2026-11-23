@@ -1,8 +1,8 @@
-import { ProceduralResources } from './procedural-resources.js?v=0.2.0-38b94775e87e';
-import { FerroDoomRenderer } from './ferro-doom-renderer.js?v=0.2.0-38b94775e87e';
-import { DoomGame } from './game.js?v=0.2.0-38b94775e87e';
-import { ProceduralAudio } from './procedural-audio.js?v=0.2.0-38b94775e87e';
-import { GamepadControls } from './input.js?v=0.2.0-38b94775e87e';
+import { ProceduralResources } from './procedural-resources.js?v=0.3.0-663ad4ffe1db';
+import { FerroDoomRenderer } from './ferro-doom-renderer.js?v=0.3.0-663ad4ffe1db';
+import { DoomGame } from './game.js?v=0.3.0-663ad4ffe1db';
+import { ProceduralAudio } from './procedural-audio.js?v=0.3.0-663ad4ffe1db';
+import { GamepadControls } from './input.js?v=0.3.0-663ad4ffe1db';
 
 const $ = id => document.getElementById(id);
 const world = $('world'), overlay = $('overlay'), hud = $('hud');
@@ -221,22 +221,6 @@ function drawHud(time) {
   hud.setAttribute('aria-label', `Santé ${Math.round(p.health)} %, armure ${Math.round(p.armor)} %, ${p.ammo} balles, ${p.shells} cartouches.`);
 }
 
-function drawWeapon(time, moving) {
-  const p = game.player;
-  if (p.health <= 0) return;
-  const since = game.time - game.lastShot;
-  let name = p.weapon === 'shotgun' ? 'SHTGA0' : p.weapon === 'fist' ? 'PUNGA0' : 'PISGA0';
-  if (p.weapon === 'pistol' && since < 0.14) name = 'PISGB0';
-  if (p.weapon === 'shotgun' && since < 0.1) name = 'SHTGA0';
-  else if (p.weapon === 'shotgun' && since < 0.6) name = since < 0.27 ? 'SHTGB0' : since < 0.44 ? 'SHTGC0' : 'SHTGD0';
-  if (p.weapon === 'fist' && since < 0.24) name = 'PUNGB0';
-  if (!image(name)) name = p.weapon === 'shotgun' ? 'SHTGA0' : 'PISGA0';
-  const scale = overlay.height / 168;
-  const x = (overlay.width - 320 * scale) / 2 + (moving ? Math.sin(time * 9) * 2 * scale : 0);
-  const y = moving ? Math.abs(Math.cos(time * 9)) * 2 * scale : 0;
-  patch(ctx, name, x, y, scale, true);
-  if (since < 0.08 && p.weapon !== 'fist') patch(ctx, p.weapon === 'shotgun' ? 'SHTFA0' : 'PISFA0', x, y, scale, true);
-}
 
 function drawMap() {
   const width = overlay.width, height = overlay.height, p = game.player;
@@ -262,10 +246,9 @@ function tick(timestamp) {
   if (dt > 0) fps += (1 / dt - fps) * 0.04;
   try {
     const pad = gamepad(dt);
-    let moving = false;
     if (game && mode === 'playing') {
       audio?.setListener?.(game.player);
-      const input = getInput(dt, pad); moving = Math.abs(input.forward) + Math.abs(input.strafe) > 0.05;
+      const input = getInput(dt, pad);
       game.update(dt, input);
       const p = game.player, sector = map.sectorAt(p.x, p.y);
       if (sector) visited.add(sector.id);
@@ -276,14 +259,14 @@ function tick(timestamp) {
     }
     if (game && renderer) {
       const p = game.player;
-      renderer.draw({ x: p.x, y: p.y, z: p.z + (p.health <= 0 ? 12 : 41), angle: p.angle, pitch: p.pitch, fov: 70 }, { entities: game.entities, time: game.stats().time, flash: 0, damage: 0 });
+      renderer.draw({ x: p.x, y: p.y, z: p.z + (p.health <= 0 ? 12 : 41), angle: p.angle, pitch: p.pitch, fov: 70 }, { entities: game.entities, time: game.stats().time, flash: 0, damage: 0, weapon: mode === 'title' || mapOpen ? null : { kind: p.weapon, phase: game.time - game.lastShot, moving: p.moving, dead: p.health <= 0, light: (map.sectorAt(p.x, p.y)?.light ?? 192) / 255 } });
       ctx.clearRect(0, 0, overlay.width, overlay.height);
-      if (mode !== 'title') { if (mapOpen) drawMap(); else drawWeapon(time, moving); drawHud(time); }
+      if (mode !== 'title') { if (mapOpen) drawMap(); drawHud(time); }
       $('damage').style.opacity = String(damage * 0.7);
       if (pickupFlash > 0) { ctx.fillStyle = `rgba(220,179,40,${pickupFlash * 0.45})`; ctx.fillRect(0, 0, overlay.width, overlay.height); }
       if (++frames % 20 === 0) {
         const stats = renderer.stats, sector = map.sectorAt(p.x, p.y);
-        $('perf').textContent = `${Math.round(fps)} FPS · FERRO ${stats.ferroVersion}\n${stats.width || world.width} × ${stats.height || world.height} · ${stats.mapTriangles} triangles carte\n${stats.drawCalls || 0} appels · secteur ${sector?.id ?? '?'}\nPosition ${Math.round(p.x)}, ${Math.round(p.y)}, ${Math.round(p.z)} · angle ${Math.round(p.angle * 180 / Math.PI)}°\nGénération procédurale · ${resources.stats().generatedImages} surfaces`;
+        $('perf').textContent = `${Math.round(fps)} FPS · FERRO ${stats.ferroVersion}\n${stats.width || world.width} × ${stats.height || world.height} · ${stats.mapTriangles} triangles carte\n${stats.drawCalls || 0} appels · secteur ${sector?.id ?? '?'}\nPosition ${Math.round(p.x)}, ${Math.round(p.y)}, ${Math.round(p.z)} · angle ${Math.round(p.angle * 180 / Math.PI)}°\n3D procédurale · ${stats.modelInstances || 0} modèles · ${stats.modelTriangles || 0} triangles objets`;
         $('accessibleStatus').textContent = `${mode}. Secteur ${sector?.id}, santé ${Math.round(p.health)}, munitions ${p.ammo}.`;
         world.dataset.sector = String(sector?.id); world.dataset.triangles = String(stats.mapTriangles); world.dataset.engine = `FERRO ${stats.ferroVersion}`; world.dataset.generation = 'procedural';
       }

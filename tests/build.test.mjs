@@ -31,6 +31,7 @@ test('production builds from code alone and ships a complete versioned module gr
     assert.ok(built.every(path => /\.(?:js|html|css|json)$/.test(path)), built.join('\n'));
     assert.ok(!built.some(path => /(?:reference|assets|wad\.js|audio\.js$)/.test(path.replace('procedural-audio.js', 'synthesis.js'))));
     assert.equal(existsSync(join(temporary, 'reference')), false);
+    assert.ok(!built.some(path => path.endsWith('/procedural-sprites.js')), 'no world or weapon billboard generator ships');
     const info = JSON.parse(readFileSync(join(dist, 'build-info.json'), 'utf8'));
     assert.equal(info.generation, 'procedural');
     assert.equal(info.importedMediaFiles, 0);

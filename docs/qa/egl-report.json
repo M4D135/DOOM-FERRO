@@ -1,6 +1,6 @@
 {
   "passed": true,
-  "scope": "Native llvmpipe EGL renders of unchanged production host shaders, procedurally constructed map/materials/sprites and FERRO camera helpers. No WAD or reference asset is loaded. Not a browser gameplay capture, full FERRO frame execution, or hardware FPS measurement.",
+  "scope": "Native llvmpipe EGL renders of unchanged production host shaders, procedurally constructed map/materials and instanced 3D models and FERRO camera helpers. No WAD or reference asset is loaded. Not a browser gameplay capture, full FERRO frame execution, or hardware FPS measurement.",
   "environment": {
     "renderer": "llvmpipe (LLVM 19.1.7, 256 bits)",
     "version": "4.5 (Core Profile) Mesa 25.0.7-2+deb13u1",
@@ -16,32 +16,41 @@
   "mapGenerator": "sector-trapezoid-sweep-v1",
   "resources": {
     "mode": "procedural",
-    "generatedImages": 78,
-    "rgbaBytes": 2681224,
+    "generatedImages": 54,
+    "rgbaBytes": 1854464,
     "importedAssets": 0
   },
-  "shaderCompilation": "4 unmodified GLSL ES 3.00 production shaders compiled; 2 programs linked",
+  "modelMeshes": 26,
+  "worldBillboards": 0,
+  "shaderCompilation": "6 unmodified GLSL ES 3.00 production shaders compiled; 3 programs linked",
   "mapTriangles": 2025,
   "sceneTriangles": {
     "base": 2025,
     "door-open": 2029
   },
-  "adapterSha256": "0da3540b3d12d82fae2d108b516a95b97b442de2de465b257da68839c1e4ed84",
+  "adapterSha256": "adee38028044263df158e3d741b393cce92b84022d182c44f0276f1707e738d9",
   "sourceSha256": {
-    "src/procedural-resources.js": "48b8799f135411655c203fc532be43c77ea6c5078cf43f28c574ab05712ee4d7",
+    "src/procedural-resources.js": "ab7d2a61b083b024e7c288202d4d289a5edcbecc7e5ca009c6c35bfe8537d558",
     "src/procedural-map.js": "1437769cd25117db4c9e9a7b067c193381dc3d85147e661f72ba4fbf58c3a06b",
     "src/e1m1-plan.js": "41c8ed8ce81db64bb5117cb6011b6c693c3745d5708f46a05681900393cce521",
-    "src/procedural-materials.js": "abc7d3efbfb0a222d94eb477a50e0dc9eb50d27586fe1f9926c932f618a94df6",
-    "src/procedural-sprites.js": "bed9a296182162bf75a5274fc6d59cd3b5b241bdf7b8613c3af39cd824122b5a",
+    "src/procedural-materials.js": "64ed3877c4006d2e53652c9670831be6c3d208844ecdebf4374b26b94e458dee",
+    "src/procedural-interface.js": "af287b0e0573e6432d1d41a7a3076c6335a84b2d807ca710e4c72e0c1a19de8a",
     "src/procedural-raster.js": "3b372674f3004fbe0de245ae359f5895ce72a4bc48a515e4e3a55acbebe7bdb5",
+    "src/procedural-mesh.js": "ab1f81502e041347348b1b2528c1d3760a22b52e6a11bd1e11ab93a00d7077fe",
+    "src/procedural-models.js": "bf893d9f108ef57e6d9500cc1aa0e14bc99285ea1d7034fc5c1ef998a52a7ad3",
+    "src/procedural-characters.js": "c9cbf0a673338da51567e78e3e2653a5e50032ae3570c41b6f416cd5e44c6ac8",
+    "src/procedural-objects.js": "d670bff90f74650ce99face9df39e5bdf8b03a8dffa3e37269c85afab5b5342b",
     "src/game.js": "c7eab7a0c76b0dbd468209f76561b1cb17e250e88b0eb636a8c41838be4cd88f",
-    "src/ferro-doom-renderer.js": "0da3540b3d12d82fae2d108b516a95b97b442de2de465b257da68839c1e4ed84"
+    "src/ferro-doom-renderer.js": "adee38028044263df158e3d741b393cce92b84022d182c44f0276f1707e738d9",
+    "src/app.js": "444b2e05ac25f0805651f3be7936d30c7114978038a94ce6d49963866d224036"
   },
   "shaderSha256": {
     "WORLD_VERTEX": "ccbad7fea38950df95408f4cb72052cf6009729480cd3c6b0b8af05e2488a92a",
     "WORLD_FRAGMENT": "1a23d865a45f27884ede18576fbdc7e3f39e2f6b0c4ab4949c4b78f30d85dd30",
     "SKY_VERTEX": "0619a596c2fddc0c3dc31b472ae2b4fd3cfa9bdca612db0c01d9f2a1d0cce430",
-    "SKY_FRAGMENT": "292aa699e862cff79910a33366da0c5080f1dedfc71be98780068a9a7bc1cfd1"
+    "SKY_FRAGMENT": "292aa699e862cff79910a33366da0c5080f1dedfc71be98780068a9a7bc1cfd1",
+    "MODEL_VERTEX": "859a0a724e430944d9d107dcf90a0de720f33699ef64fa5004a614d45d5003d8",
+    "MODEL_FRAGMENT": "6756d111915962cf9387c1a2be968ea19e2e8eca5ae4a9db1be0a40f20646e2b"
   },
   "cases": [
     {
@@ -53,11 +62,11 @@
         "z": 41,
         "angle": 1.5707963267948966
       },
-      "uniqueColors": 6790,
+      "uniqueColors": 6429,
       "meanRGB": [
-        54.99769921875,
-        57.86629296875,
-        49.3466171875
+        44.86027734375,
+        42.39014453125,
+        38.55340625
       ]
     },
     {
@@ -69,11 +78,11 @@
         "z": 41,
         "angle": 3.141592653589793
       },
-      "uniqueColors": 3385,
+      "uniqueColors": 3761,
       "meanRGB": [
-        55.46956640625,
-        52.94563671875,
-        41.9873515625
+        52.097703125,
+        47.18551171875,
+        40.2795859375
       ]
     },
     {
@@ -85,11 +94,11 @@
         "z": -15,
         "angle": 3.141592653589793
       },
-      "uniqueColors": 9332,
+      "uniqueColors": 13879,
       "meanRGB": [
-        109.91330078125,
-        101.03042578125,
-        79.6648046875
+        92.2593046875,
+        79.40896875,
+        58.0087109375
       ]
     },
     {
@@ -101,95 +110,385 @@
         "z": 41,
         "angle": -1.5707963267948966
       },
-      "uniqueColors": 8140,
+      "uniqueColors": 7453,
       "meanRGB": [
-        57.842796875,
-        61.2877109375,
-        53.669203125
+        47.31199609375,
+        43.18099609375,
+        42.4413359375
       ]
     },
     {
-      "name": "sprite-anchor-normal",
-      "image": "sprite-anchor-normal-egl.png",
+      "name": "shotgun-reload",
+      "image": "shotgun-reload-egl.png",
       "camera": {
         "x": 1056,
         "y": -3616,
         "z": 41,
         "angle": 1.5707963267948966
       },
-      "uniqueColors": 6589,
+      "uniqueColors": 5902,
       "meanRGB": [
-        56.0489921875,
-        57.48064453125,
-        48.5278515625
+        51.9487578125,
+        45.5314140625,
+        38.912328125
+      ]
+    },
+    {
+      "name": "pistol-fire",
+      "image": "pistol-fire-egl.png",
+      "camera": {
+        "x": 1056,
+        "y": -3616,
+        "z": 41,
+        "angle": 1.5707963267948966
+      },
+      "uniqueColors": 6332,
+      "meanRGB": [
+        46.82416015625,
+        43.627671875,
+        38.97002734375
+      ]
+    },
+    {
+      "name": "poss-front",
+      "image": "poss-front-egl.png",
+      "camera": {
+        "x": 1056,
+        "y": -3528,
+        "z": 28,
+        "angle": -1.5707963267948966
+      },
+      "uniqueColors": 430,
+      "meanRGB": [
+        31.45367578125,
+        33.09393359375,
+        35.58924609375
       ],
       "fixture": {
-        "scope": "Isolated procedurally generated sprite anchor fixture; not a played game.",
+        "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
         "entity": {
-          "sprite": "TROOH2H8",
+          "id": "POSS",
+          "base": "POSS",
+          "enemy": true,
+          "sprite": "POSSA1",
+          "alive": true,
+          "state": "idle",
           "x": 1056,
-          "y": -3520,
+          "y": -3616,
           "z": 0,
-          "flip": false,
-          "scale": 1,
-          "fullbright": false
+          "angle": 1.5707963267948966
         },
-        "patch": {
-          "width": 80,
-          "height": 72,
-          "leftOffset": 40,
-          "topOffset": 70
-        },
-        "horizontalBoundsDoom": [
-          -40,
-          40
-        ],
         "anchorScreen": {
-          "x": 319.99990463256836,
-          "y": 321.98764483133954
-        }
+          "x": 320.00010403719943,
+          "y": 290.8821452747692
+        },
+        "meshKeys": [
+          "character:POSS:A:idle"
+        ]
       }
     },
     {
-      "name": "sprite-anchor-mirrored",
-      "image": "sprite-anchor-mirrored-egl.png",
+      "name": "poss-side",
+      "image": "poss-side-egl.png",
       "camera": {
-        "x": 1056,
+        "x": 1144,
         "y": -3616,
-        "z": 41,
-        "angle": 1.5707963267948966
+        "z": 28,
+        "angle": 3.141592653589793
       },
-      "uniqueColors": 6600,
+      "uniqueColors": 336,
       "meanRGB": [
-        56.0448046875,
-        57.47001171875,
-        48.53815625
+        31.32594140625,
+        33.1441171875,
+        35.8008671875
       ],
       "fixture": {
-        "scope": "Isolated procedurally generated sprite anchor fixture; not a played game.",
+        "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
         "entity": {
-          "sprite": "TROOH2H8",
+          "id": "POSS",
+          "base": "POSS",
+          "enemy": true,
+          "sprite": "POSSA1",
+          "alive": true,
+          "state": "idle",
           "x": 1056,
-          "y": -3520,
+          "y": -3616,
           "z": 0,
-          "flip": true,
-          "scale": 1,
-          "fullbright": false
+          "angle": 1.5707963267948966
         },
-        "patch": {
-          "width": 80,
-          "height": 72,
-          "leftOffset": 40,
-          "topOffset": 70
-        },
-        "horizontalBoundsDoom": [
-          -40,
-          40
-        ],
         "anchorScreen": {
-          "x": 319.99990463256836,
-          "y": 321.98764483133954
-        }
+          "x": 320.00021501020956,
+          "y": 290.8821452747694
+        },
+        "meshKeys": [
+          "character:POSS:A:idle"
+        ]
+      }
+    },
+    {
+      "name": "poss-back",
+      "image": "poss-back-egl.png",
+      "camera": {
+        "x": 1056,
+        "y": -3704,
+        "z": 28,
+        "angle": 1.5707963267948966
+      },
+      "uniqueColors": 484,
+      "meanRGB": [
+        31.83,
+        33.575765625,
+        35.9552109375
+      ],
+      "fixture": {
+        "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
+        "entity": {
+          "id": "POSS",
+          "base": "POSS",
+          "enemy": true,
+          "sprite": "POSSA1",
+          "alive": true,
+          "state": "idle",
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 319.9998959628018,
+          "y": 290.8821452747692
+        },
+        "meshKeys": [
+          "character:POSS:A:idle"
+        ]
+      }
+    },
+    {
+      "name": "spos-front",
+      "image": "spos-front-egl.png",
+      "camera": {
+        "x": 1056,
+        "y": -3528,
+        "z": 28,
+        "angle": -1.5707963267948966
+      },
+      "uniqueColors": 328,
+      "meanRGB": [
+        31.02700390625,
+        32.6190703125,
+        35.341390625
+      ],
+      "fixture": {
+        "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
+        "entity": {
+          "id": "SPOS",
+          "base": "SPOS",
+          "enemy": true,
+          "sprite": "SPOSA1",
+          "alive": true,
+          "state": "idle",
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 320.00010403719943,
+          "y": 290.8821452747692
+        },
+        "meshKeys": [
+          "character:SPOS:A:idle"
+        ]
+      }
+    },
+    {
+      "name": "spos-side",
+      "image": "spos-side-egl.png",
+      "camera": {
+        "x": 1144,
+        "y": -3616,
+        "z": 28,
+        "angle": 3.141592653589793
+      },
+      "uniqueColors": 245,
+      "meanRGB": [
+        31.0174140625,
+        32.8032578125,
+        35.624859375
+      ],
+      "fixture": {
+        "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
+        "entity": {
+          "id": "SPOS",
+          "base": "SPOS",
+          "enemy": true,
+          "sprite": "SPOSA1",
+          "alive": true,
+          "state": "idle",
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 320.00021501020956,
+          "y": 290.8821452747694
+        },
+        "meshKeys": [
+          "character:SPOS:A:idle"
+        ]
+      }
+    },
+    {
+      "name": "spos-back",
+      "image": "spos-back-egl.png",
+      "camera": {
+        "x": 1056,
+        "y": -3704,
+        "z": 28,
+        "angle": 1.5707963267948966
+      },
+      "uniqueColors": 303,
+      "meanRGB": [
+        30.9873125,
+        32.74569921875,
+        35.49734375
+      ],
+      "fixture": {
+        "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
+        "entity": {
+          "id": "SPOS",
+          "base": "SPOS",
+          "enemy": true,
+          "sprite": "SPOSA1",
+          "alive": true,
+          "state": "idle",
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 319.9998959628018,
+          "y": 290.8821452747692
+        },
+        "meshKeys": [
+          "character:SPOS:A:idle"
+        ]
+      }
+    },
+    {
+      "name": "troo-front",
+      "image": "troo-front-egl.png",
+      "camera": {
+        "x": 1056,
+        "y": -3528,
+        "z": 28,
+        "angle": -1.5707963267948966
+      },
+      "uniqueColors": 303,
+      "meanRGB": [
+        31.7185546875,
+        32.95158984375,
+        34.9851484375
+      ],
+      "fixture": {
+        "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
+        "entity": {
+          "id": "TROO",
+          "base": "TROO",
+          "enemy": true,
+          "sprite": "TROOA1",
+          "alive": true,
+          "state": "idle",
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 320.00010403719943,
+          "y": 290.8821452747692
+        },
+        "meshKeys": [
+          "character:TROO:A:idle"
+        ]
+      }
+    },
+    {
+      "name": "troo-side",
+      "image": "troo-side-egl.png",
+      "camera": {
+        "x": 1144,
+        "y": -3616,
+        "z": 28,
+        "angle": 3.141592653589793
+      },
+      "uniqueColors": 243,
+      "meanRGB": [
+        31.41544140625,
+        32.9635234375,
+        35.3770703125
+      ],
+      "fixture": {
+        "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
+        "entity": {
+          "id": "TROO",
+          "base": "TROO",
+          "enemy": true,
+          "sprite": "TROOA1",
+          "alive": true,
+          "state": "idle",
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 320.00021501020956,
+          "y": 290.8821452747694
+        },
+        "meshKeys": [
+          "character:TROO:A:idle"
+        ]
+      }
+    },
+    {
+      "name": "troo-back",
+      "image": "troo-back-egl.png",
+      "camera": {
+        "x": 1056,
+        "y": -3704,
+        "z": 28,
+        "angle": 1.5707963267948966
+      },
+      "uniqueColors": 339,
+      "meanRGB": [
+        31.89809375,
+        33.124328125,
+        35.10976171875
+      ],
+      "fixture": {
+        "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
+        "entity": {
+          "id": "TROO",
+          "base": "TROO",
+          "enemy": true,
+          "sprite": "TROOA1",
+          "alive": true,
+          "state": "idle",
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 319.9998959628018,
+          "y": 290.8821452747692
+        },
+        "meshKeys": [
+          "character:TROO:A:idle"
+        ]
       }
     },
     {
@@ -201,14 +500,14 @@
         "z": 41,
         "angle": 0
       },
-      "uniqueColors": 6737,
+      "uniqueColors": 4709,
       "meanRGB": [
-        89.41041796875,
-        84.4028984375,
-        64.3691484375
+        83.6511640625,
+        77.953609375,
+        67.507953125
       ],
       "fixture": {
-        "scope": "Door 151 opened with the production door action; actors omitted for a rendering baseline.",
+        "scope": "Door opened by production action, empty passage baseline.",
         "door": {
           "line": 151,
           "sector": 4,
@@ -228,8 +527,7 @@
             "x": 1544,
             "y": -2496
           },
-          "openingTicks": 68,
-          "stepSeconds": 0.014285714285714285
+          "ticks": 68
         },
         "portalScreen": [
           {
@@ -252,22 +550,22 @@
       }
     },
     {
-      "name": "door151-actor-normal",
-      "image": "door151-actor-normal-egl.png",
+      "name": "door151-model-front",
+      "image": "door151-model-front-egl.png",
       "camera": {
         "x": 1408,
         "y": -2496,
         "z": 41,
         "angle": 0
       },
-      "uniqueColors": 7354,
+      "uniqueColors": 5130,
       "meanRGB": [
-        90.62837890625,
-        84.610890625,
-        64.18134375
+        84.5960390625,
+        78.42673046875,
+        67.25469921875
       ],
       "fixture": {
-        "scope": "Generated actor placed at the centre of the open doorway for a controlled anchor check. Not a reproduced gameplay encounter.",
+        "scope": "3D imp deliberately centred in doorway for an occlusion/anchor check; not a reproduced player encounter.",
         "door": {
           "line": 151,
           "sector": 4,
@@ -287,32 +585,27 @@
             "x": 1544,
             "y": -2496
           },
-          "openingTicks": 68,
-          "stepSeconds": 0.014285714285714285
+          "ticks": 68
         },
         "entity": {
-          "sprite": "TROOH2H8",
+          "id": "door-model",
+          "base": "TROO",
+          "enemy": true,
+          "sprite": "TROOA1",
+          "alive": true,
+          "state": "idle",
           "x": 1544,
           "y": -2496,
           "z": 0,
-          "flip": false,
-          "scale": 1,
-          "fullbright": false
+          "angle": 3.141592653589793
         },
-        "patch": {
-          "width": 80,
-          "height": 72,
-          "leftOffset": 40,
-          "topOffset": 70
-        },
-        "horizontalBoundsDoom": [
-          -40,
-          40
-        ],
         "anchorScreen": {
           "x": 319.99991921817553,
           "y": 286.1089257632986
         },
+        "meshKeys": [
+          "character:TROO:A:idle"
+        ],
         "portalScreen": [
           {
             "x": 177.18511581420873,
@@ -332,38 +625,38 @@
           }
         ],
         "visibleActor": {
-          "pixels": 5008,
+          "pixels": 4660,
           "boundsXY": [
-            286,
-            156,
-            348,
-            285
+            284,
+            168,
+            354,
+            288
           ],
           "centroidXY": [
-            318.189696485623,
-            221.4442891373802
+            319.35257510729616,
+            223.5678111587983
           ],
           "check": "Visible pixels compared with the identical open-door view without actors; fixed placement, not a combat or AI test."
         }
       }
     },
     {
-      "name": "door151-actor-mirrored",
-      "image": "door151-actor-mirrored-egl.png",
+      "name": "door151-model-side",
+      "image": "door151-model-side-egl.png",
       "camera": {
         "x": 1408,
         "y": -2496,
         "z": 41,
         "angle": 0
       },
-      "uniqueColors": 7369,
+      "uniqueColors": 5087,
       "meanRGB": [
-        90.62221484375,
-        84.60388671875,
-        64.16221875
+        84.18753125,
+        78.22245703125,
+        67.32903125
       ],
       "fixture": {
-        "scope": "Generated actor placed at the centre of the open doorway for a controlled anchor check. Not a reproduced gameplay encounter.",
+        "scope": "3D imp deliberately centred in doorway for an occlusion/anchor check; not a reproduced player encounter.",
         "door": {
           "line": 151,
           "sector": 4,
@@ -383,32 +676,27 @@
             "x": 1544,
             "y": -2496
           },
-          "openingTicks": 68,
-          "stepSeconds": 0.014285714285714285
+          "ticks": 68
         },
         "entity": {
-          "sprite": "TROOH2H8",
+          "id": "door-model",
+          "base": "TROO",
+          "enemy": true,
+          "sprite": "TROOA1",
+          "alive": true,
+          "state": "idle",
           "x": 1544,
           "y": -2496,
           "z": 0,
-          "flip": true,
-          "scale": 1,
-          "fullbright": false
+          "angle": 1.5707963267948966
         },
-        "patch": {
-          "width": 80,
-          "height": 72,
-          "leftOffset": 40,
-          "topOffset": 70
-        },
-        "horizontalBoundsDoom": [
-          -40,
-          40
-        ],
         "anchorScreen": {
           "x": 319.99991921817553,
           "y": 286.1089257632986
         },
+        "meshKeys": [
+          "character:TROO:A:idle"
+        ],
         "portalScreen": [
           {
             "x": 177.18511581420873,
@@ -428,16 +716,16 @@
           }
         ],
         "visibleActor": {
-          "pixels": 5008,
+          "pixels": 2754,
           "boundsXY": [
-            291,
-            156,
-            353,
-            285
+            295,
+            169,
+            336,
+            289
           ],
           "centroidXY": [
-            320.810303514377,
-            221.4442891373802
+            316.37726942628905,
+            227.32861292665214
           ],
           "check": "Visible pixels compared with the identical open-door view without actors; fixed placement, not a combat or AI test."
         }

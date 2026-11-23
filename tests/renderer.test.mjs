@@ -4,7 +4,8 @@ import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {ProceduralResources} from '../src/procedural-resources.js';
 import {createE1M1Map} from '../src/procedural-map.js';
-import {Raster} from '../src/procedural-raster.js';
+import { collectModelBatches, viewWeaponBatch } from '../src/procedural-models.js';
+import { DoomGame } from '../src/game.js';
 import {FerroDoomRenderer,buildSubsectorPolygons,buildMapGeometry} from '../src/ferro-doom-renderer.js';
 
 const resources=new ProceduralResources();
@@ -77,44 +78,39 @@ test('type48 computer walls encode GPU scrolling without changing plan offsets',
   assert.deepEqual(map.sides.map(s=>s.xOffset),originalOffsets);
 });
 
-test('mirrored procedural sprites reflect around their thing anchor, including asymmetric crops',()=>{
-  const map=createE1M1Map();
-  const origin={x:1056,y:-3616,z:0};
-  // Build asymmetric procedural fixtures so this regression remains effective
-  // even when a character recipe currently emits a centered, symmetric crop.
-  const pictures=[new Raster(31,56,6,56).rect(2,3,27,50,[180,90,40]).result('offset-left'),
-    new Raster(47,60,31,60).ellipse(20,30,16,27,[90,150,70]).result('offset-right')];
-  for(const patch of pictures){
-    const name=patch.name;
-    assert.notEqual(patch.width,2*patch.leftOffset,name+' must exercise an asymmetric anchor');
-    for(const scale of [1,0.5])for(const right of [[1,0,0],[Math.SQRT1_2,0,Math.SQRT1_2]]){
-      const adapter=Object.create(FerroDoomRenderer.prototype);
-      adapter.map=map;adapter.spriteMeshes=new Map();
-      adapter._texture=()=>patch;
-      adapter._upload=(collection,key,vertices)=>collection.set(key,{vertices});
-      const view={droite:right,oeil:[origin.x/32,41/32,-origin.y/32],avant:[0,0,-1]};
-      const bounds=[];
-      for(const flip of [false,true]){
-        adapter.frame={entities:[{...origin,sprite:name,flip,scale}]};
-        adapter._sprites(view);
-        const vertices=adapter.spriteMeshes.get(name).vertices;
-        assert.equal(vertices.length,42,'two triangles for one sprite');
-        const offsets=[];
-        for(let i=0;i<vertices.length;i+=7){
-          offsets.push((vertices[i]-origin.x/32)*right[0]+(vertices[i+2]+origin.y/32)*right[2]);
-          assert.ok(Number.isFinite(vertices[i])&&Number.isFinite(vertices[i+1])&&Number.isFinite(vertices[i+2]));
-        }
-        bounds.push({left:Math.min(...offsets),right:Math.max(...offsets),vertices});
-      }
-      const [normal,mirrored]=bounds;
-      assert.ok(Math.abs(normal.left+mirrored.right)<0.00001,name+' mirrored right edge preserves the origin');
-      assert.ok(Math.abs(normal.right+mirrored.left)<0.00001,name+' mirrored left edge preserves the origin');
-      assert.ok(Math.abs(normal.right-normal.left-patch.width*scale/32)<0.00001,name+' picture width is unchanged');
-      for(let i=0;i<normal.vertices.length;i+=7){
-        assert.equal(normal.vertices[i+1],mirrored.vertices[i+1],'vertical position is unchanged');
-        assert.equal(normal.vertices[i+3]+mirrored.vertices[i+3],1,'texture U is mirrored');
-        assert.equal(normal.vertices[i+4],mirrored.vertices[i+4],'texture V is unchanged');
-      }
+test('world entities are instanced 3D volumes at the simulation origin and heading',()=>{
+  const map=createE1M1Map(),game=new DoomGame(map,{skill:3});
+  const batches=collectModelBatches(map,game.entities,0);
+  assert.equal(batches.reduce((n,b)=>n+b.count,0),game.entities.filter(e=>!e.removed).length);
+  for(const batch of batches){
+    const mesh=batch.mesh;
+    assert.equal(mesh.vertices.length%30,0,'complete position/normal/color/emission triangles');
+    assert.ok(mesh.triangles>12,'geometry cannot collapse to a billboard');
+    for(const axis of [0,1,2])assert.ok(mesh.bounds.max[axis]-mesh.bounds.min[axis]>.1,'volume along all three axes');
+    for(let i=0;i<batch.count;i++){
+      const actor=game.entities.find(e=>e.id===batch.entityIds[i]);
+      const record=batch.instances.subarray(i*8,i*8+8);
+      for(const [index,value] of [[0,actor.x/32],[1,actor.z/32],[2,-actor.y/32],[3,actor.angle||0]])
+        assert.ok(Math.abs(record[index]-value)<.0001,'uses actor state, never camera facing');
     }
+  }
+  const actor=game.entities.find(e=>e.enemy),fixed={...actor,angle:0};
+  const a=collectModelBatches(map,[fixed],0)[0];
+  const b=collectModelBatches(map,[{...fixed,angle:Math.PI/2}],0)[0];
+  assert.equal(a.mesh,b.mesh,'turning shares one genuine mesh');
+  assert.notEqual(a.instances[3],b.instances[3],'heading rotates that mesh in world space');
+  const removed=collectModelBatches(map,[{...fixed,removed:true}],0);
+  assert.equal(removed.length,0,'collected and removed objects leave the renderer');
+});
+
+test('first-person arms are depth-tested meshes and are omitted on title, map and death',()=>{
+  assert.equal(viewWeaponBatch(null),null);
+  assert.equal(viewWeaponBatch({kind:'pistol',dead:true}),null);
+  for(const kind of ['pistol','shotgun','fist']){
+    const idle=viewWeaponBatch({kind,phase:Infinity});
+    const shot=viewWeaponBatch({kind,phase:.03});
+    assert.ok(idle.mesh.triangles>12);assert.equal(idle.count,1);
+    assert.notEqual(idle.mesh.key,shot.mesh.key,'weapon has a generated shot/punch pose');
+    assert.ok(idle.mesh.bounds.max[1]>idle.mesh.bounds.min[1]+2,'weapon has depth');
   }
 });

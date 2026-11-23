@@ -1,9 +1,9 @@
 {
   "name": "doom-ferro",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
-  "description": "E1M1 reconstruit par des générateurs de géométrie, matériaux, personnages et audio, rendu par FERRO.",
+  "description": "E1M1 dans FERRO : matériaux référencés Doom et personnages, objets et armes en maillages 3D entièrement procéduraux.",
   "scripts": {
     "build": "python3 tools/build.py",
     "test": "node --test tests/*.test.mjs",

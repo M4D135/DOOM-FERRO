@@ -3,9 +3,9 @@
 
 This is a native shader and geometry probe, not a browser gameplay capture or
 a hardware performance test. No browser is installed or driven by this tool.
-The JS extractor calls the production geometry/sprite builders and FERRO camera
+The JS extractor calls the production geometry/model builders and FERRO camera
 helpers. Shader strings are read unchanged from the production host adapter.
-The sprite-anchor and doorway views are explicitly controlled fixtures. They
+The studio and doorway views are explicitly controlled fixtures. They
 place a generated actor in the constructed map without simulating a played game
 or purporting to reproduce a user-reported encounter.
 """
@@ -24,8 +24,9 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE_FILES = [
     'src/procedural-resources.js', 'src/procedural-map.js', 'src/e1m1-plan.js',
-    'src/procedural-materials.js', 'src/procedural-sprites.js', 'src/procedural-raster.js',
-    'src/game.js', 'src/ferro-doom-renderer.js'
+    'src/procedural-materials.js', 'src/procedural-interface.js', 'src/procedural-raster.js',
+    'src/procedural-mesh.js', 'src/procedural-models.js', 'src/procedural-characters.js',
+    'src/procedural-objects.js', 'src/game.js', 'src/ferro-doom-renderer.js', 'src/app.js'
 ]
 
 
@@ -36,80 +37,67 @@ EXTRACT = r"""
 import fs from 'node:fs';
 import {ProceduralResources} from './src/procedural-resources.js';
 import {DoomGame} from './src/game.js';
-import {FerroDoomRenderer,buildSubsectorPolygons,buildMapGeometry} from './src/ferro-doom-renderer.js';
-const source=fs.readFileSync('src/ferro-doom-renderer.js','utf8');
-const shaders={};for(const name of ['WORLD_VERTEX','WORLD_FRAGMENT','SKY_VERTEX','SKY_FRAGMENT']){
-  const match=source.match(new RegExp('const '+name+'\\s*=\\s*`([\\s\\S]*?)`;'));
-  if(!match)throw Error('Shader not found '+name);shaders[name]=match[1];
+import {collectModelBatches,viewWeaponBatch} from './src/procedural-models.js';
+import {buildMapGeometry} from './src/ferro-doom-renderer.js';
+const source=fs.readFileSync('src/ferro-doom-renderer.js','utf8'),shaders={};
+for(const name of ['WORLD_VERTEX','WORLD_FRAGMENT','SKY_VERTEX','SKY_FRAGMENT','MODEL_VERTEX','MODEL_FRAGMENT']){
+ const match=source.match(new RegExp('const '+name+'\\s*=\\s*`([\\s\\S]*?)`;'));
+ if(!match)throw Error('Shader not found '+name);shaders[name]=match[1];
 }
 const resources=new ProceduralResources(),map=resources.map(),game=new DoomGame(map,{skill:2});
-if(!map.procedural||map.nodes.length)throw Error('Expected a generated map, without imported BSP.');
-const groups=buildMapGeometry(resources,map),textures=new Map();
+const groups=buildMapGeometry(resources,map),textures=new Map(),catalog=new Map();
 const bytes=x=>Buffer.from(x.buffer,x.byteOffset,x.byteLength).toString('base64');
-function tex(kind,name){const key=kind+':'+name;let t=kind==='flat'?resources.flat(name):kind==='sprite'?resources.patch(name):resources.texture(name);
-if(!t)throw Error('Missing texture '+key);if(!textures.has(key))textures.set(key,{key,width:t.width,height:t.height,pixels:bytes(t.pixels)});return t;}
-for(const group of groups)tex(group.kind,group.name);tex('wall','SKY1');
+function tex(kind,name){const key=kind+':'+name,t=kind==='flat'?resources.flat(name):resources.texture(name);
+ if(!t)throw Error('Missing generated material '+key);if(!textures.has(key))textures.set(key,{key,width:t.width,height:t.height,pixels:bytes(t.pixels)});}
+function pack(batch){if(!batch)return null;const m=batch.mesh;
+ if(!catalog.has(m.key))catalog.set(m.key,{key:m.key,vertices:bytes(m.vertices),count:m.vertices.length/10,bounds:m.bounds});
+ return {key:m.key,instances:bytes(batch.instances),count:batch.count};}
+for(const g of groups)tex(g.kind,g.name);tex('wall','SKY1');
 const scenes=[{name:'base',groups}];
-const cases=[{name:'spawn-north',x:1056,y:-3616,z:41,angle:Math.PI/2},
-  {name:'spawn-west',x:1056,y:-3616,z:41,angle:Math.PI},
-  {name:'courtyard',x:2488,y:-3504,z:-15,angle:Math.PI},
-  {name:'start-hall',x:1110.8979591836735,y:-2957.224489795918,z:41,angle:-Math.PI/2}];
-for(const flip of [false,true])cases.push({
-  name:flip?'sprite-anchor-mirrored':'sprite-anchor-normal',x:1056,y:-3616,z:41,angle:Math.PI/2,
-  fixture:{scope:'Isolated procedurally generated sprite anchor fixture; not a played game.',
-    entity:{sprite:'TROOH2H8',x:1056,y:-3520,z:0,flip,scale:1,fullbright:false}}
-});
-
-// Exercise the real door action in an isolated fixture. No traversal or combat
-// is inferred from these still images, and the ordinary views keep the closed mesh.
-const door=game.lines[151],doorSector=map.sectors[door.back];
-const action=game._openDoor(door);let openingTicks=0;
-while(game.actions.get(door.back)?.phase==='up'&&openingTicks<140){game._updateActions(1/70);openingTicks++;}
-if(!action||game.actions.get(door.back)?.phase!=='wait'||doorSector.ceiling-doorSector.floor<56)throw Error('Door fixture did not open.');
-const openGroups=buildMapGeometry(resources,map);
-for(const group of openGroups)tex(group.kind,group.name);
+const cases=[{name:'spawn-north',x:1056,y:-3616,z:41,angle:Math.PI/2,weapon:'pistol'},
+ {name:'spawn-west',x:1056,y:-3616,z:41,angle:Math.PI,weapon:'shotgun'},
+ {name:'courtyard',x:2488,y:-3504,z:-15,angle:Math.PI,weapon:'pistol'},
+ {name:'start-hall',x:1110.8979591836735,y:-2957.224489795918,z:41,angle:-Math.PI/2,weapon:'fist'},
+ {name:'shotgun-reload',x:1056,y:-3616,z:41,angle:Math.PI/2,weapon:'shotgun',phase:.3},
+ {name:'pistol-fire',x:1056,y:-3616,z:41,angle:Math.PI/2,weapon:'pistol',phase:.03}];
+// Same generated mesh, fixed actor heading; the camera alone orbits it.
+for(const family of ['POSS','SPOS','TROO'])for(const [view,dx,dy,angle] of [
+ ['front',0,88,-Math.PI/2],['side',88,0,Math.PI],['back',0,-88,Math.PI/2]]){
+ cases.push({name:family.toLowerCase()+'-'+view,x:1056+dx,y:-3616+dy,z:28,angle,studio:true,
+  fixture:{scope:'One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.',
+   entity:{id:family,base:family,enemy:true,sprite:family+'A1',alive:true,state:'idle',x:1056,y:-3616,z:0,angle:Math.PI/2}}});
+}
+const door=game.lines[151],sector=map.sectors[door.back];game._openDoor(door);let ticks=0;
+while(game.actions.get(door.back)?.phase==='up'&&ticks<140){game._updateActions(1/70);ticks++;}
+if(sector.ceiling-sector.floor<56)throw Error('Door did not open');
+const openGroups=buildMapGeometry(resources,map);for(const g of openGroups)tex(g.kind,g.name);
 scenes.push({name:'door-open',groups:openGroups});
-const doorCells=map.floorPolygons.filter(cell=>cell.sector===door.back),points=doorCells.flatMap(cell=>cell.points);
-const center={x:(Math.min(...points.map(p=>p.x))+Math.max(...points.map(p=>p.x)))/2,
-  y:(Math.min(...points.map(p=>p.y))+Math.max(...points.map(p=>p.y)))/2};
-const doorway={line:door.id,sector:door.back,floor:doorSector.floor,ceiling:doorSector.ceiling,
-  endpoints:[{x:door.ax,y:door.ay},{x:door.bx,y:door.by}],center,openingTicks,stepSeconds:1/70};
-const doorCamera={scene:'door-open',x:door.ax-128,y:center.y,z:41,angle:0};
-cases.push({...doorCamera,name:'door151-open',fixture:{scope:'Door 151 opened with the production door action; actors omitted for a rendering baseline.',door:doorway}});
-for(const flip of [false,true])cases.push({...doorCamera,name:flip?'door151-actor-mirrored':'door151-actor-normal',
-  fixture:{scope:'Generated actor placed at the centre of the open doorway for a controlled anchor check. Not a reproduced gameplay encounter.',door:doorway,
-    entity:{sprite:'TROOH2H8',...center,z:doorSector.floor,flip,scale:1,fullbright:false}}});
-
+const points=map.floorPolygons.filter(p=>p.sector===door.back).flatMap(p=>p.points);
+const center={x:(Math.min(...points.map(p=>p.x))+Math.max(...points.map(p=>p.x)))/2,y:(Math.min(...points.map(p=>p.y))+Math.max(...points.map(p=>p.y)))/2};
+const doorway={line:door.id,sector:door.back,floor:sector.floor,ceiling:sector.ceiling,endpoints:[{x:door.ax,y:door.ay},{x:door.bx,y:door.by}],center,ticks};
+const camera={scene:'door-open',x:door.ax-128,y:center.y,z:41,angle:0};
+cases.push({...camera,name:'door151-open',fixture:{scope:'Door opened by production action, empty passage baseline.',door:doorway}});
+for(const [pose,angle] of [['front',Math.PI],['side',Math.PI/2]])cases.push({...camera,name:'door151-model-'+pose,
+ fixture:{scope:'3D imp deliberately centred in doorway for an occlusion/anchor check; not a reproduced player encounter.',door:doorway,
+ entity:{id:'door-model',base:'TROO',enemy:true,sprite:'TROOA1',alive:true,state:'idle',...center,z:sector.floor,angle}}});
 const width=640,height=400,views=[];
 for(const camera of cases){
-const position=[camera.x/32,camera.z/32,-camera.y/32],axes=FRender.shared.cameraAxes({yaw:Math.PI/2-camera.angle,pitch:0});
-const r=axes.right,u=axes.up,f=axes.forward;
-const view=new Float32Array([r[0],u[0],-f[0],0,r[1],u[1],-f[1],0,r[2],u[2],-f[2],0,
- -(r[0]*position[0]+r[1]*position[1]+r[2]*position[2]),-(u[0]*position[0]+u[1]*position[1]+u[2]*position[2]),f[0]*position[0]+f[1]*position[1]+f[2]*position[2],1]);
-const focal=1/Math.tan(70*Math.PI/360),near=.025,far=400,p=new Float32Array(16),vp=new Float32Array(16);
-p[0]=focal/(width/height);p[5]=focal;p[10]=(far+near)/(near-far);p[11]=-1;p[14]=2*far*near/(near-far);FRender.shared.multiply(p,view,vp);
-const v={oeil:position,droite:r,haut:u,avant:f,tangente:1/focal,largeur:width,hauteur:height,vp};
-const adapter=Object.create(FerroDoomRenderer.prototype);adapter.frame={entities:camera.fixture?(camera.fixture.entity?[camera.fixture.entity]:[]):game.entities,time:0};adapter.map=map;adapter.spriteMeshes=new Map();adapter._texture=tex;
-adapter._upload=(collection,key,vertices)=>{collection.set(key,{name:key,vertices});};adapter._sprites(v);
-const project=(x,y,z)=>{
-  const point=[x/32,z/32,-y/32,1],clip=Array.from({length:4},(_,row)=>point.reduce((sum,value,col)=>sum+value*vp[col*4+row],0));
-  return {x:(clip[0]/clip[3]+1)*width/2,y:(1-clip[1]/clip[3])*height/2};
-};
-if(camera.fixture?.entity){
-  const fixture=camera.fixture,e=fixture.entity,patch=resources.patch(e.sprite),vertices=adapter.spriteMeshes.get(e.sprite).vertices;
-  const offsets=[];for(let i=0;i<vertices.length;i+=7)offsets.push(((vertices[i]-e.x/32)*r[0]+(vertices[i+2]+e.y/32)*r[2])*32);
-  fixture.patch={width:patch.width,height:patch.height,leftOffset:patch.leftOffset,topOffset:patch.topOffset};
-  fixture.horizontalBoundsDoom=[Math.min(...offsets),Math.max(...offsets)];
-  fixture.anchorScreen=project(e.x,e.y,e.z);
+ const position=[camera.x/32,camera.z/32,-camera.y/32],axes=FRender.shared.cameraAxes({yaw:Math.PI/2-camera.angle,pitch:0});
+ const r=axes.right,u=axes.up,f=axes.forward;
+ const v=new Float32Array([r[0],u[0],-f[0],0,r[1],u[1],-f[1],0,r[2],u[2],-f[2],0,
+  -(r[0]*position[0]+r[1]*position[1]+r[2]*position[2]),-(u[0]*position[0]+u[1]*position[1]+u[2]*position[2]),f[0]*position[0]+f[1]*position[1]+f[2]*position[2],1]);
+ const focal=1/Math.tan(70*Math.PI/360),near=.025,far=400,p=new Float32Array(16),vp=new Float32Array(16);
+ p[0]=focal/(width/height);p[5]=focal;p[10]=(far+near)/(near-far);p[11]=-1;p[14]=2*far*near/(near-far);FRender.shared.multiply(p,v,vp);
+ const project=(x,y,z)=>{const point=[x/32,z/32,-y/32,1],c=Array.from({length:4},(_,row)=>point.reduce((sum,value,col)=>sum+value*vp[col*4+row],0));return{x:(c[0]/c[3]+1)*width/2,y:(1-c[1]/c[3])*height/2};};
+ const entities=camera.fixture?(camera.fixture.entity?[camera.fixture.entity]:[]):game.entities;
+ const models=collectModelBatches(map,entities,0).map(pack);
+ if(camera.fixture?.entity){const e=camera.fixture.entity;camera.fixture.anchorScreen=project(e.x,e.y,e.z);camera.fixture.meshKeys=models.map(m=>m.key);}
+ if(camera.fixture?.door){const d=camera.fixture.door;camera.fixture.portalScreen=d.endpoints.flatMap(p=>[project(p.x,p.y,d.floor),project(p.x,p.y,d.ceiling)]);}
+ views.push({scene:'base',...camera,position,right:r,up:u,forward:f,tangent:1/focal,vp:Array.from(vp),models,
+  weaponModel:pack(viewWeaponBatch(camera.weapon?{kind:camera.weapon,phase:camera.phase??Infinity}:null,0))});
 }
-if(camera.fixture?.door){
-  const d=camera.fixture.door;
-  camera.fixture.portalScreen=d.endpoints.flatMap(point=>[project(point.x,point.y,d.floor),project(point.x,point.y,d.ceiling)]);
-}
-views.push({scene:'base',...camera,position,right:r,up:u,forward:f,tangent:1/focal,vp:Array.from(vp),sprites:[...adapter.spriteMeshes].map(([name,m])=>({key:'sprite:'+name,vertices:bytes(m.vertices),count:m.vertices.length/7}))});
-}
-console.log(JSON.stringify({width,height,shaders,scenes:scenes.map(scene=>({name:scene.name,groups:scene.groups.map(g=>({key:g.key,vertices:bytes(g.vertices),count:g.vertices.length/7}))})),textures:[...textures.values()],views,
-engineVersion:FERRO.version,sectors:map.sectors.length,subsectors:map.subsectors.length,mapGenerator:map.generator,resources:resources.stats()}));
+console.log(JSON.stringify({width,height,shaders,models:[...catalog.values()],scenes:scenes.map(s=>({name:s.name,groups:s.groups.map(g=>({key:g.key,vertices:bytes(g.vertices),count:g.vertices.length/7}))})),textures:[...textures.values()],views,
+ engineVersion:FERRO.version,sectors:map.sectors.length,subsectors:map.subsectors.length,mapGenerator:map.generator,resources:resources.stats()}));
 """
 
 
@@ -160,6 +148,8 @@ class Context:
             ('glClear',None,[C.c_uint]),('glEnable',None,[C.c_uint]),('glDisable',None,[C.c_uint]),
             ('glDepthMask',None,[C.c_ubyte]),('glDepthFunc',None,[C.c_uint]),('glCullFace',None,[C.c_uint]),
             ('glDrawArrays',None,[C.c_uint,C.c_int,C.c_int]),
+            ('glDrawArraysInstanced',None,[C.c_uint,C.c_int,C.c_int,C.c_int]),
+            ('glVertexAttribDivisor',None,[C.c_uint,C.c_uint]),
             ('glReadPixels',None,[C.c_int,C.c_int,C.c_int,C.c_int,C.c_uint,C.c_uint,C.c_void_p]),
         ]:self.fn(name,result,*args)
         self.info={'renderer':self.gl.glGetString(0x1F01).decode(),'version':self.gl.glGetString(0x1F02).decode(),'egl':f'{major.value}.{minor.value}'}
@@ -189,9 +179,8 @@ class Context:
         pixels=base64.b64decode(texture['pixels']);data=C.create_string_buffer(pixels)
         g.glPixelStorei(0x0CF5,1);g.glTexImage2D(0x0DE1,0,0x1908,texture['width'],texture['height'],0,0x1908,0x1401,data)
         g.glTexParameteri(0x0DE1,0x2800,0x2600);g.glTexParameteri(0x0DE1,0x2801,0x2600)
-        sprite=texture['key'].startswith('sprite:')
-        g.glTexParameteri(0x0DE1,0x2802,0x812F if sprite else 0x2901)
-        g.glTexParameteri(0x0DE1,0x2803,0x812F if sprite or texture['key']=='wall:SKY1' else 0x2901)
+        g.glTexParameteri(0x0DE1,0x2802,0x2901)
+        g.glTexParameteri(0x0DE1,0x2803,0x812F if texture['key']=='wall:SKY1' else 0x2901)
         return handle.value
 
     def mesh(self,mesh):
@@ -202,24 +191,47 @@ class Context:
             g.glEnableVertexAttribArray(index);g.glVertexAttribPointer(index,size,0x1406,0,28,C.c_void_p(offset))
         return {**mesh,'vao':vao.value,'buffer':buffer.value}
 
-    def render(self,world,sky,textures,meshes,view):
-        g=self.gl;g.glViewport(0,0,self.width,self.height);g.glDepthMask(1);g.glClearColor(0,0,0,1);g.glClear(0x4000|0x0100)
+    def model(self,model):
+        g=self.gl;vao=C.c_uint();vertex=C.c_uint();instances=C.c_uint()
+        g.glGenVertexArrays(1,C.byref(vao));g.glBindVertexArray(vao)
+        g.glGenBuffers(1,C.byref(vertex));g.glBindBuffer(0x8892,vertex)
+        data=C.create_string_buffer(base64.b64decode(model['vertices']));g.glBufferData(0x8892,len(data)-1,data,0x88E4)
+        for index,size,offset in [(0,3,0),(1,3,12),(2,3,24),(3,1,36)]:
+            g.glEnableVertexAttribArray(index);g.glVertexAttribPointer(index,size,0x1406,0,40,C.c_void_p(offset))
+        g.glGenBuffers(1,C.byref(instances));g.glBindBuffer(0x8892,instances)
+        for index,offset in [(4,0),(5,16)]:
+            g.glEnableVertexAttribArray(index);g.glVertexAttribPointer(index,4,0x1406,0,32,C.c_void_p(offset));g.glVertexAttribDivisor(index,1)
+        return {**model,'vao':vao.value,'buffer':vertex.value,'instancesBuffer':instances.value}
+
+    def draw_model(self,model,batch):
+        g=self.gl;g.glBindVertexArray(model['vao']);g.glBindBuffer(0x8892,model['instancesBuffer'])
+        data=C.create_string_buffer(base64.b64decode(batch['instances']));g.glBufferData(0x8892,len(data)-1,data,0x88E8)
+        g.glDrawArraysInstanced(4,0,model['count'],batch['count'])
+
+    def render(self,world,sky,model_program,textures,meshes,models,view):
+        g=self.gl;g.glViewport(0,0,self.width,self.height);g.glDepthMask(1);g.glClearColor(.12,.13,.14,1);g.glClear(0x4000|0x0100)
         g.glDisable(0x0B71);g.glDisable(0x0B44);g.glDisable(0x0BE2);g.glDepthMask(0)
-        g.glUseProgram(sky);loc=lambda name:g.glGetUniformLocation(sky,name.encode())
-        g.glActiveTexture(0x84C0);g.glBindTexture(0x0DE1,textures['wall:SKY1']);g.glUniform1i(loc('uTexture'),0)
-        for name,key in [('uForward','forward'),('uRight','right'),('uUp','up')]:g.glUniform3f(loc(name),*view[key])
-        g.glUniform2f(loc('uFov'),view['tangent']*self.width/self.height,view['tangent'])
-        g.glDrawArrays(4,0,3)
+        if not view.get('studio'):
+            g.glUseProgram(sky);loc=lambda name:g.glGetUniformLocation(sky,name.encode())
+            g.glActiveTexture(0x84C0);g.glBindTexture(0x0DE1,textures['wall:SKY1']);g.glUniform1i(loc('uTexture'),0)
+            for name,key in [('uForward','forward'),('uRight','right'),('uUp','up')]:g.glUniform3f(loc(name),*view[key])
+            g.glUniform2f(loc('uFov'),view['tangent']*self.width/self.height,view['tangent']);g.glDrawArrays(4,0,3)
         g.glEnable(0x0B71);g.glDepthMask(1);g.glDepthFunc(0x0203);g.glEnable(0x0B44);g.glCullFace(0x0405)
-        g.glUseProgram(world);loc=lambda name:g.glGetUniformLocation(world,name.encode())
+        if not view.get('studio'):
+            g.glUseProgram(world);loc=lambda name:g.glGetUniformLocation(world,name.encode())
+            g.glUniformMatrix4fv(loc('uVP'),1,0,(C.c_float*16)(*view['vp']))
+            g.glUniform3f(loc('uEye'),*view['position']);g.glUniform1i(loc('uTexture'),0)
+            for name,value in [('uTime',0),('uBrightness',1.2),('uDamage',0),('uFlash',0)]:g.glUniform1f(loc(name),value)
+            for mesh in meshes:
+                g.glBindTexture(0x0DE1,textures[mesh['key']]);g.glBindVertexArray(mesh['vao']);g.glDrawArrays(4,0,mesh['count'])
+        g.glUseProgram(model_program);loc=lambda name:g.glGetUniformLocation(model_program,name.encode())
         g.glUniformMatrix4fv(loc('uVP'),1,0,(C.c_float*16)(*view['vp']))
-        g.glUniform3f(loc('uEye'),*view['position']);g.glUniform1i(loc('uTexture'),0)
+        for name,key in [('uEye','position'),('uRight','right'),('uForward','forward'),('uUp','up')]:g.glUniform3f(loc(name),*view[key])
         for name,value in [('uTime',0),('uBrightness',1.2),('uDamage',0),('uFlash',0)]:g.glUniform1f(loc(name),value)
-        for mesh in meshes:
-            g.glBindTexture(0x0DE1,textures[mesh['key']]);g.glBindVertexArray(mesh['vao']);g.glDrawArrays(4,0,mesh['count'])
-        g.glDisable(0x0B44)
-        for data in view['sprites']:
-            mesh=self.mesh(data);g.glBindTexture(0x0DE1,textures[mesh['key']]);g.glDrawArrays(4,0,mesh['count'])
+        g.glUniform1i(loc('uViewModel'),0)
+        for batch in view['models']:self.draw_model(models[batch['key']],batch)
+        if view.get('weaponModel'):
+            g.glClear(0x0100);g.glUniform1i(loc('uViewModel'),1);batch=view['weaponModel'];self.draw_model(models[batch['key']],batch)
         pixels=np.empty((self.height,self.width,4),dtype=np.uint8)
         g.glReadPixels(0,0,self.width,self.height,0x1908,0x1401,pixels.ctypes.data_as(C.c_void_p))
         error=g.glGetError();assert error==0,f'OpenGL error {error:#x}'
@@ -232,16 +244,17 @@ def main():
     data=json.loads(subprocess.check_output(['node','--input-type=module','-e',EXTRACT],cwd=ROOT,text=True))
     context=Context(data['width'],data['height']);s=data['shaders']
     world=context.program(s['WORLD_VERTEX'],s['WORLD_FRAGMENT']);sky=context.program(s['SKY_VERTEX'],s['SKY_FRAGMENT'])
+    model_program=context.program(s['MODEL_VERTEX'],s['MODEL_FRAGMENT']);models={m['key']:context.model(m) for m in data['models']}
     textures={t['key']:context.texture(t) for t in data['textures']}
     meshes={scene['name']:[context.mesh(m) for m in scene['groups']] for scene in data['scenes']}
     results=[];rendered={}
     for view in data['views']:
-        pixels=context.render(world,sky,textures,meshes[view['scene']],view);path=args.output/(view['name']+'-egl.png');Image.fromarray(pixels).save(path)
+        pixels=context.render(world,sky,model_program,textures,meshes[view['scene']],models,view);path=args.output/(view['name']+'-egl.png');Image.fromarray(pixels).save(path)
         rendered[view['name']]=pixels
-        unique=np.unique(pixels.reshape(-1,3),axis=0).shape[0];assert unique>500,'Expected textured E1M1 geometry'
+        unique=np.unique(pixels.reshape(-1,3),axis=0).shape[0];assert unique>(30 if view.get('studio') else 500),'Expected visible shaded geometry'
         result={'name':view['name'],'image':path.name,'camera':{k:view[k] for k in ['x','y','z','angle']},'uniqueColors':unique,'meanRGB':pixels.mean(axis=(0,1)).tolist()}
         if 'fixture' in view:result['fixture']=view['fixture']
-        if view['name'].startswith('door151-actor-'):
+        if view['name'].startswith('door151-model-'):
             # Difference against an identical camera/geometry baseline isolates
             # the visible actor, without relying on a colour or aesthetic threshold.
             mask=np.any(pixels!=rendered['door151-open'],axis=2)
@@ -254,10 +267,10 @@ def main():
                 'check':'Visible pixels compared with the identical open-door view without actors; fixed placement, not a combat or AI test.'}
         results.append(result)
     assert source_hashes()==initial_hashes,'Production sources changed while rendering; rerun before reporting a valid snapshot'
-    report={'passed':True,'scope':'Native llvmpipe EGL renders of unchanged production host shaders, procedurally constructed map/materials/sprites and FERRO camera helpers. No WAD or reference asset is loaded. Not a browser gameplay capture, full FERRO frame execution, or hardware FPS measurement.',
+    report={'passed':True,'scope':'Native llvmpipe EGL renders of unchanged production host shaders, procedurally constructed map/materials and instanced 3D models and FERRO camera helpers. No WAD or reference asset is loaded. Not a browser gameplay capture, full FERRO frame execution, or hardware FPS measurement.',
         'environment':context.info,'size':[data['width'],data['height']],'ferroVersion':data['engineVersion'],'sectors':data['sectors'],'subsectors':data['subsectors'],
-        'mapGenerator':data['mapGenerator'],'resources':data['resources'],
-        'shaderCompilation':'4 unmodified GLSL ES 3.00 production shaders compiled; 2 programs linked','mapTriangles':sum(m['count']//3 for m in data['scenes'][0]['groups']),
+        'mapGenerator':data['mapGenerator'],'resources':data['resources'],'modelMeshes':len(models),'worldBillboards':0,
+        'shaderCompilation':'6 unmodified GLSL ES 3.00 production shaders compiled; 3 programs linked','mapTriangles':sum(m['count']//3 for m in data['scenes'][0]['groups']),
         'sceneTriangles':{scene['name']:sum(m['count']//3 for m in scene['groups']) for scene in data['scenes']},
         'adapterSha256':initial_hashes['src/ferro-doom-renderer.js'],'sourceSha256':initial_hashes,
         'shaderSha256':{name:hashlib.sha256(code.encode()).hexdigest() for name,code in s.items()},'cases':results}

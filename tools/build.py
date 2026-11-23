@@ -67,7 +67,8 @@ def main():
     shutil.copy2(ROOT / 'vendor/ferro/manifest.json', DEST / 'vendor/ferro/manifest.json')
     metadata = {'version': version, 'revision': revision, 'generation': 'procedural',
                 'level': 'E1M1 geometric reference plan', 'mapGenerator': 'sector contour sweep',
-                'importedMediaFiles': 0, 'runtimeModules': len(graph),
+                'importedMediaFiles': 0, 'worldBillboards': 0,
+                'worldRepresentation': 'instanced procedural 3D triangle meshes', 'runtimeModules': len(graph),
                 'ferroVersion': manifest['version']}
     (DEST / 'build-info.json').write_text(json.dumps(metadata, ensure_ascii=False, indent=2) + '\n')
     total = sum(p.stat().st_size for p in DEST.rglob('*') if p.is_file())

@@ -1,7 +1,7 @@
 /** All shipped resources are generated from code; no binary asset is loaded. */
-import { createE1M1Map } from './procedural-map.js?v=0.2.0-38b94775e87e';
-import { proceduralTexture, proceduralFlat } from './procedural-materials.js?v=0.2.0-38b94775e87e';
-import { proceduralPatch } from './procedural-sprites.js?v=0.2.0-38b94775e87e';
+import { createE1M1Map } from './procedural-map.js?v=0.3.0-663ad4ffe1db';
+import { proceduralTexture, proceduralFlat } from './procedural-materials.js?v=0.3.0-663ad4ffe1db';
+import { proceduralPatch, hasProceduralPatch } from './procedural-interface.js?v=0.3.0-663ad4ffe1db';
 
 export class ProceduralResources {
   constructor() {
@@ -21,8 +21,8 @@ export class ProceduralResources {
 
   texture(name) { return this._remember('wall', name, proceduralTexture(name)); }
   flat(name) { return this._remember('flat', name, proceduralFlat(name)); }
-  patch(name) { return this._remember('sprite', name, proceduralPatch(name)); }
-  has(name) { return Boolean(this.patch(name)); }
+  patch(name) { return this._remember('interface', name, proceduralPatch(name)); }
+  has(name) { return hasProceduralPatch(name); }
 
   stats() {
     return { mode: this.kind, generatedImages: this.used.size,

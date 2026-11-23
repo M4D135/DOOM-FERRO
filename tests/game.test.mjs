@@ -1,3 +1,4 @@
+import { modelForEntity } from '../src/procedural-models.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {ProceduralResources} from '../src/procedural-resources.js';
@@ -34,13 +35,13 @@ function pointInSector(game, id) {
   throw new Error(`No interior sample for sector ${id}`);
 }
 
-test('E1M1 solo flags, procedural entity sprites, player start and three secrets', () => {
+test('E1M1 solo flags, procedural entity models, player start and three secrets', () => {
   for (const [skill, kills, items] of [[1, 4, 37], [2, 6, 37], [3, 29, 38]]) {
     const {game, resources} = setup(skill);
     assert.equal(game.totalKills, kills); assert.equal(game.totalItems, items); assert.equal(game.totalSecrets, 3);
     assert.deepEqual([game.player.x, game.player.y, game.player.z], [1056, -3616, 0]);
     assert.equal(game.player.angle, Math.PI / 2);
-    for (const entity of game.entities) assert.ok(resources.has(entity.sprite), entity.sprite);
+    for (const entity of game.entities) assert.ok(modelForEntity(entity, game.time), entity.sprite);
     assert.ok(!game.entities.some(e => e.type === 2002 || e.type === 2003), 'multiplayer-only weapons are absent');
   }
 });
@@ -149,14 +150,14 @@ test('real E1M1 enemy can be shot, dies once and drops ammunition', () => {
   game.damageEntity(enemy, 100); assert.equal(game.kills, 1);
 });
 
-test('barrel explosion damages nearby actors and resolves to valid procedural sprites', () => {
+test('barrel explosion damages nearby actors and resolves to valid procedural 3D effects', () => {
   const {game, resources} = setup();
   const barrel = game.entities.find(e => e.barrel);
   game.entities.forEach(e => { if (e !== barrel) e.removed = true; });
   park(game, barrel.x - 35, barrel.y); game.player.armor = 100; game.player.armorType = 1;
   game.damageEntity(barrel, 21); assert.equal(barrel.alive, false); assert.equal(barrel.solid, false);
   assert.ok(game.player.health < 100); assert.ok(game.player.armor < 100);
-  for (let i = 0; i < 5; i++) { tick(game, 0.1); assert.ok(resources.has(barrel.sprite), barrel.sprite); }
+  for (let i = 0; i < 5; i++) { tick(game, 0.1); assert.ok(modelForEntity({...barrel, removed: false}, game.time), barrel.sprite); }
   tick(game, 0.1); assert.ok(barrel.removed);
 });
 
@@ -174,7 +175,7 @@ test('original solid lamp blocks an imp fireball and protects the player behind 
   assert.equal(game.player.health, 100, 'the player behind the lamp receives no damage');
   assert.equal(lamp.removed, false); assert.equal(lamp.solid, true);
   assert.ok(sounds.includes('DSFIRXPL'), 'the fireball still plays its impact sound');
-  assert.ok(resources.has(projectile.sprite), 'the impact uses a generated sprite');
+  assert.ok(modelForEntity({...projectile, removed: false}, game.time), 'the impact uses a generated 3D effect');
 });
 
 test('original nonsolid candle and corpse allow a fireball to reach the player', () => {
@@ -206,7 +207,7 @@ test('fireballs still impact and damage living enemies and barrels', () => {
     assert.equal(projectile.alive, false, `fireball impacts target ${id}`);
     assert.ok(target.hp < hp, `living target ${id} takes damage`);
     game._updateProjectile(projectile, 1 / 70);
-    assert.ok(resources.has(projectile.sprite), 'the impact keeps a valid generated animation');
+    assert.ok(modelForEntity({...projectile, removed: false}, game.time), 'the impact keeps a valid generated animation');
   }
 });
 
