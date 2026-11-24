@@ -129,7 +129,7 @@ function tornRemains(b,q,family){
   [-1,-17,1.3,3.7,5.4,1.25],[1.5,-9.0,1.8,4.7,5.8,1.7],[-1.1,-1.7,1.6,5.9,5.2,1.5],
   [1.4,5.1,2.1,5.0,5.0,2.0],[-1.0,12.8,1.55,4.2,5.4,1.5],[2.0,18.0,1.0,2.4,3.7,.95]]:
   [[0,-13,1.0,3.4,5.8,.9],[-1,-5,1.4,4.5,5.5,1.25],[1,2.3,1.8,4.2,5.3,1.65],[-.5,9.4,1.25,3.6,5.2,1.1]];
- if(!q){for(const [x,y,z,rx,ry,rz]of forms)ball(b,[x,y,z],[rx,ry,rz],[113,14,9],0,{kind:'blood',roughness:.4});}
+ if(!q){for(const [x,y,z,rx,ry,rz]of forms)ball(b,[x,y,z],[rx,ry,rz],[113,14,9],0,{kind:'blood',roughness:.82});}
  else{
   const distance=(x,y,z)=>{
    let d=1e3;for(const p of forms)d=smoothUnion(d,ellipsoidDistance(x,y,z,p.slice(0,3),p.slice(3)),.95);
@@ -138,9 +138,19 @@ function tornRemains(b,q,family){
    const top=Math.max(0,Math.min(1,z*.4));
    return d+.15*top*Math.sin(x*2.2+Math.sin(y*.8))*Math.sin(y*1.7+z*1.1);
   };
-  b.add(implicitMesh('coalesced-'+family,{bounds:[[-9,-length-2,-.35],[9,length+2,5.2]],resolution:q===2?[40,62,18]:[18,28,8],distance,
+  const tissue=implicitMesh('coalesced-'+family,{bounds:[[-9,-length-2,-.35],[9,length+2,5.2]],resolution:q===2?[40,62,18]:[18,28,8],distance,
    color:(x,y,z)=>{const shade=.69+.08*Math.min(z,3)+.11*Math.sin(x*.65+y*.41)+.06*Math.cos(y*1.4-z);return[105*shade,13*shade,9*shade];},
-   material:{kind:'blood',roughness:.57}}));
+   material:{kind:'blood',roughness:.82}});
+  // Coagulated tissue is mostly dull. Only small folds retain moisture; a
+  // position-continuous field avoids white varnish across the whole mass and
+  // does not introduce independent stains on neighbouring triangles.
+  for(let i=0;i<tissue.vertices.length;i+=17){
+   const v=tissue.vertices,x=v[i],y=v[i+1],z=v[i+2],
+    dry=.5+.5*Math.sin(x*.73+y*.27)*Math.cos(y*.51-z*.8),
+    fold=Math.exp(-1*((x-1.8*Math.sin(y*.46))/.72)**2)*Math.exp(-1*((z-1.8)/1.1)**2);
+   v[i+10]=.79+.09*dry-.24*fold;
+  }
+  b.add(tissue);
  }
  if(gibbed){
   for(const [side,y,height]of[[-1,-10,8.7],[1,-6.5,10.1],[-1,13,7.3]]){

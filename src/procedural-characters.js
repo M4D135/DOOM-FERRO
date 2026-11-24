@@ -214,6 +214,10 @@ function jointedLimb(b,points,color,d,kind='arm',material='skin'){
     profile[5]=[13,2.55,2.72,2.90,0];profile[6]=[16.5,2.97,2.47,3.34,-.20];
     profile[7]=[20.5,2.12,1.90,2.12,0];profile[8]=[24,1.97,1.82,1.98,0];
   }
+  // The shirt owns the covered upper arm. Keeping a complete skin deltoid
+  // underneath its tapered root made skin teeth cut through the sleeve when
+  // viewed from the side or back. Start skin just inside the cuff instead.
+  if(kind==='arm')profile.splice(0,2);
   const key=partKey('continuous-limb',color,d,kind,material),length=isLeg?24:20;
   const mesh=remember(key,()=>anatomicalLoft(profile,{
     detail:d,color,material:material==='skin'?{kind:'skin',roughness:imp?.87:.80}:material,rows:[8,12,24][d],columns:[6,10,18][d],key,
@@ -396,14 +400,17 @@ function human(family,pose,d) {
   const gunRotation=pose.dead?[.2,0,1.35]:pose.attack?[0,0,.1]:[.38,0,1.2];
   const localWrists=[[2.55,-3.0,-2.35],[0,5.7,-3.15]],wrists=localWrists.map(p=>add(gunOrigin,rotateEuler(p,gunRotation)));
   for(let i=0;i<2;i++){
-    const side=i===0?1:-1,shoulder=[side*8.15,0,42.1],wrist=wrists[i];
-    const elbow=pose.dead?[side*11.9,1.8,31.0]:[side*10.95,3.7+(pose.attack?1.1:0),34.4],cuff=mix(shoulder,elbow,.50),sleeveRoot=[side*7.45,-.12,43.2];
+    const side=i===0?1:-1,shoulder=[side*7.45,-.12,43.2],wrist=wrists[i];
+    const elbow=pose.dead?[side*11.9,1.8,31.0]:[side*10.95,3.7+(pose.attack?1.1:0),34.4];
     jointedLimb(b,[shoulder,elbow,wrist],skin,d,'arm');
-    const sleeve=remember(partKey('tailored-sleeve',shirt,d),()=>anatomicalLoft([[0,.35,.35,.35,0],[.8,2.58,2.48,2.5,0],[2.0,3.12,3.06,3.08,0],[3.2,3.08,2.94,2.93,0],[4.8,2.83,2.77,2.76,0],[5.0,2.88,2.82,2.80,0]],{
+    const sleeve=remember(partKey('tailored-sleeve',shirt,d),()=>anatomicalLoft([[0,.35,.35,.35,0],[.8,2.58,2.48,2.5,0],[2.0,3.18,3.10,3.15,0],[3.2,3.14,3.02,3.07,0],[5.30,3.02,2.91,2.97,0],[5.55,3.07,2.96,3.02,0]],{
       detail:d,color:shirt,material:'cloth',rows:[4,6,12][d],columns:[6,10,20][d],
       deform:(p,a)=>{const r=.022*Math.sin(p[2]*3.2+a*1.8)*bell(p[2]-3.8,1.0)+.026*Math.cos(a*3+.5)*bell(p[2]-2.9,1.8);return[p[0]*(1+r),p[1]*(1+r),p[2]];},
-      colours:(p,a)=>tone(shirt,(p[2]>4.75?.80:1)-.08*bell(a-4.7,.6)*bell(p[2]-3.5,1.4)),key:'fitted-shirt-sleeve'}));
-    b.add(sleeve,{...along(sleeveRoot,cuff),scale:[1,1,Math.hypot(...sub(cuff,sleeveRoot))/5]});
+      colours:(p,a)=>tone(shirt,(p[2]>5.25?.80:1)-.08*bell(a-4.7,.6)*bell(p[2]-3.5,1.4)),key:'fitted-shirt-sleeve'}));
+    // Sleeve and exposed skin use the same articulated frame, including the
+    // shoulder-to-elbow bend in aiming and death poses. The cuff overlaps the
+    // skin by .55 rest units and remains slightly thicker than the bare arm.
+    b.add(sleeve,{bend:{points:[shoulder,elbow,wrist],length:20,joint:.52}});
   }
   const hands=remember(`part:hands:${guard}:${d}`,()=>{const part=new MeshBuilder();gripHands(part,d,skin,guard);return part.finish('hands-on-weapon');});
   b.add(firearm(guard,pose.frame==='F'&&!pose.dead,d),{translation:gunOrigin,rotation:gunRotation});

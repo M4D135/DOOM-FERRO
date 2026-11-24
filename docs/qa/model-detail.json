@@ -11,7 +11,7 @@
     "src/input.js": "64c99b9f6f35adab712553c6572890107d83dd7770464581f635b7c3a6a0c1b8",
     "src/procedural-anatomy.js": "c6795c121e15ee098a76e1529be8816772aa9e962e122658d9d28ea61c0188e9",
     "src/procedural-audio.js": "876369149bf422cf94cd00200fae4925f26bd2d88b311f7e819aa42546f70106",
-    "src/procedural-characters.js": "6d08d3dd9a6faaec5c126e78023e9d836b5396a90fc0c76d0e1c3b1bde5ed928",
+    "src/procedural-characters.js": "940e11698059608cf388497936a17ce0aebb379873c60476a2d552be2a57e181",
     "src/procedural-interface.js": "af287b0e0573e6432d1d41a7a3076c6335a84b2d807ca710e4c72e0c1a19de8a",
     "src/procedural-lighting.js": "386ec4afda6fd66def7ce7c110d58a62e1e6eac1b8b09f653b70ccf1c91b75e8",
     "src/procedural-map.js": "1437769cd25117db4c9e9a7b067c193381dc3d85147e661f72ba4fbf58c3a06b",
@@ -22,7 +22,7 @@
     "src/procedural-object-sculpt.js": "55aed8fd2343d630d7b21a0de54ed5212b4f9212a7e2cf855082186857a3a516",
     "src/procedural-objects.js": "49dc29051ffcb389d0dd4fc798b44ff5ccc9ec5155360fcfbbd0bfc9e131018d",
     "src/procedural-raster.js": "3b372674f3004fbe0de245ae359f5895ce72a4bc48a515e4e3a55acbebe7bdb5",
-    "src/procedural-remains.js": "12c4f518a7971cb509eb39b9998adaecd7088b936d77d5e67bc3e124996b7366",
+    "src/procedural-remains.js": "ccd3f16d09c29d1fba3d438360f78a959edb6b5b51deb692d54e602b12ba32b1",
     "src/procedural-resources.js": "ab7d2a61b083b024e7c288202d4d289a5edcbecc7e5ca009c6c35bfe8537d558",
     "src/procedural-shaders.js": "dd26cd0d26941ce333d48b7d4c4191e3d5058bf4c4fb2605b5c52ceaa05250f3",
     "src/procedural-surface-detail.js": "67c3253e6391090cead7c0dcc9ef605abfad6c484a1ef5f555e1df1c8be6d8bf",
@@ -49,7 +49,7 @@
             0
           ],
           "max": [
-            13.117822647094727,
+            13.07526969909668,
             16.046964645385742,
             55.73500061035156
           ]
@@ -75,7 +75,7 @@
             0
           ],
           "max": [
-            13.121377944946289,
+            13.07526969909668,
             16.05031394958496,
             55.73500061035156
           ]
@@ -101,7 +101,7 @@
             0
           ],
           "max": [
-            13.121377944946289,
+            13.07526969909668,
             16.05031394958496,
             55.74699783325195
           ]
@@ -129,7 +129,7 @@
             0
           ],
           "max": [
-            13.117822647094727,
+            13.07526969909668,
             15.458586692810059,
             55.70000076293945
           ]
@@ -155,7 +155,7 @@
             0
           ],
           "max": [
-            13.121377944946289,
+            13.07526969909668,
             15.462751388549805,
             55.70000076293945
           ]
@@ -181,7 +181,7 @@
             0
           ],
           "max": [
-            13.121377944946289,
+            13.07526969909668,
             15.462751388549805,
             55.70000076293945
           ]

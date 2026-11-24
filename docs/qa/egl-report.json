@@ -24,7 +24,7 @@
     "rgbaBytes": 1723392,
     "importedAssets": 0
   },
-  "modelMeshes": 55,
+  "modelMeshes": 57,
   "worldBillboards": 0,
   "modelVertexStride": 17,
   "materialCoordinates": "primitive-local surface coordinates preserved through pose transforms",
@@ -58,7 +58,7 @@
     "src/input.js": "64c99b9f6f35adab712553c6572890107d83dd7770464581f635b7c3a6a0c1b8",
     "src/procedural-anatomy.js": "c6795c121e15ee098a76e1529be8816772aa9e962e122658d9d28ea61c0188e9",
     "src/procedural-audio.js": "876369149bf422cf94cd00200fae4925f26bd2d88b311f7e819aa42546f70106",
-    "src/procedural-characters.js": "6d08d3dd9a6faaec5c126e78023e9d836b5396a90fc0c76d0e1c3b1bde5ed928",
+    "src/procedural-characters.js": "940e11698059608cf388497936a17ce0aebb379873c60476a2d552be2a57e181",
     "src/procedural-interface.js": "af287b0e0573e6432d1d41a7a3076c6335a84b2d807ca710e4c72e0c1a19de8a",
     "src/procedural-lighting.js": "386ec4afda6fd66def7ce7c110d58a62e1e6eac1b8b09f653b70ccf1c91b75e8",
     "src/procedural-map.js": "1437769cd25117db4c9e9a7b067c193381dc3d85147e661f72ba4fbf58c3a06b",
@@ -69,7 +69,7 @@
     "src/procedural-object-sculpt.js": "55aed8fd2343d630d7b21a0de54ed5212b4f9212a7e2cf855082186857a3a516",
     "src/procedural-objects.js": "49dc29051ffcb389d0dd4fc798b44ff5ccc9ec5155360fcfbbd0bfc9e131018d",
     "src/procedural-raster.js": "3b372674f3004fbe0de245ae359f5895ce72a4bc48a515e4e3a55acbebe7bdb5",
-    "src/procedural-remains.js": "12c4f518a7971cb509eb39b9998adaecd7088b936d77d5e67bc3e124996b7366",
+    "src/procedural-remains.js": "ccd3f16d09c29d1fba3d438360f78a959edb6b5b51deb692d54e602b12ba32b1",
     "src/procedural-resources.js": "ab7d2a61b083b024e7c288202d4d289a5edcbecc7e5ca009c6c35bfe8537d558",
     "src/procedural-shaders.js": "dd26cd0d26941ce333d48b7d4c4191e3d5058bf4c4fb2605b5c52ceaa05250f3",
     "src/procedural-surface-detail.js": "67c3253e6391090cead7c0dcc9ef605abfad6c484a1ef5f555e1df1c8be6d8bf",
@@ -98,11 +98,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 5213,
+      "uniqueColors": 5207,
       "meanRGB": [
-        18.4370537109375,
-        21.939583984375,
-        21.365634765625
+        18.436396484375,
+        21.938638671875,
+        21.364572265625
       ],
       "visibility": {
         "total": 91,
@@ -182,11 +182,11 @@
         "angle": -1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 6879,
+      "uniqueColors": 6865,
       "meanRGB": [
-        13.7076142578125,
-        16.0575517578125,
-        17.613927734375
+        13.706595703125,
+        16.056130859375,
+        17.6123193359375
       ],
       "visibility": {
         "total": 91,
@@ -210,11 +210,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 5984,
+      "uniqueColors": 5978,
       "meanRGB": [
-        17.189603515625,
-        20.6883203125,
-        20.3685185546875
+        17.1889462890625,
+        20.687375,
+        20.3674560546875
       ],
       "visibility": {
         "total": 91,
@@ -238,11 +238,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 19187,
+      "uniqueColors": 19183,
       "meanRGB": [
-        44.8377861328125,
-        39.956751953125,
-        27.876251953125
+        44.837552734375,
+        39.9564072265625,
+        27.8758759765625
       ],
       "visibility": {
         "total": 91,
@@ -266,11 +266,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 23182,
+      "uniqueColors": 23181,
       "meanRGB": [
-        45.7887802734375,
-        40.890400390625,
-        28.8941875
+        45.7881591796875,
+        40.88950390625,
+        28.89318359375
       ],
       "visibility": {
         "total": 91,
@@ -294,11 +294,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 5091,
+      "uniqueColors": 5090,
       "meanRGB": [
-        23.1550322265625,
-        24.9786962890625,
-        23.21255078125
+        23.154970703125,
+        24.97859375,
+        23.2124296875
       ],
       "visibility": {
         "total": 91,
@@ -322,11 +322,11 @@
         "angle": -1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 18803,
+      "uniqueColors": 18883,
       "meanRGB": [
-        21.0859716796875,
-        22.7773212890625,
-        24.9007392578125
+        21.0890546875,
+        22.7807587890625,
+        24.900591796875
       ],
       "visibility": {
         "total": 1,
@@ -373,11 +373,11 @@
         "angle": 3.141592653589793,
         "pitch": 0
       },
-      "uniqueColors": 10898,
+      "uniqueColors": 11005,
       "meanRGB": [
-        19.99956640625,
-        21.7765537109375,
-        24.2255302734375
+        19.9630732421875,
+        21.745328125,
+        24.192251953125
       ],
       "visibility": {
         "total": 1,
@@ -424,11 +424,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 12853,
+      "uniqueColors": 12730,
       "meanRGB": [
-        21.142408203125,
-        22.8750908203125,
-        24.8734892578125
+        21.114666015625,
+        22.8555185546875,
+        24.845484375
       ],
       "visibility": {
         "total": 1,
@@ -475,11 +475,11 @@
         "angle": -1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 14374,
+      "uniqueColors": 14315,
       "meanRGB": [
-        20.0393486328125,
-        21.5396064453125,
-        24.1448896484375
+        20.007716796875,
+        21.5179912109375,
+        24.12986328125
       ],
       "visibility": {
         "total": 1,
@@ -526,11 +526,11 @@
         "angle": 3.141592653589793,
         "pitch": 0
       },
-      "uniqueColors": 8154,
+      "uniqueColors": 8065,
       "meanRGB": [
-        19.4514921875,
-        21.0876796875,
-        23.8208154296875
+        19.32521875,
+        20.9969306640625,
+        23.756623046875
       ],
       "visibility": {
         "total": 1,
@@ -577,11 +577,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 8443,
+      "uniqueColors": 7796,
       "meanRGB": [
-        19.5847958984375,
-        21.225435546875,
-        23.8802529296875
+        19.4120205078125,
+        21.111416015625,
+        23.8030107421875
       ],
       "visibility": {
         "total": 1,
@@ -772,6 +772,210 @@
       }
     },
     {
+      "name": "poss-attack-side",
+      "image": "poss-attack-side-egl.png",
+      "camera": {
+        "x": 1144,
+        "y": -3616,
+        "z": 28,
+        "angle": 3.141592653589793,
+        "pitch": 0
+      },
+      "uniqueColors": 11574,
+      "meanRGB": [
+        20.118591796875,
+        21.8889912109375,
+        24.1791181640625
+      ],
+      "visibility": {
+        "total": 1,
+        "visible": 1,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          1
+        ]
+      },
+      "submittedModelTriangles": 33696,
+      "fixture": {
+        "scope": "Production attack pose viewed from the side and rear to inspect the moving upper-arm/sleeve junction.",
+        "entity": {
+          "id": "POSS-attack",
+          "base": "POSS",
+          "enemy": true,
+          "sprite": "POSSF1",
+          "alive": true,
+          "state": "attack",
+          "fullbright": true,
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 640.0004300204191,
+          "y": 581.7642905495388
+        },
+        "meshKeys": [
+          "character:POSS:F:pose:lod2"
+        ]
+      }
+    },
+    {
+      "name": "poss-attack-back",
+      "image": "poss-attack-back-egl.png",
+      "camera": {
+        "x": 1056,
+        "y": -3704,
+        "z": 28,
+        "angle": 1.5707963267948966,
+        "pitch": 0
+      },
+      "uniqueColors": 12833,
+      "meanRGB": [
+        21.139693359375,
+        22.8784951171875,
+        24.86763671875
+      ],
+      "visibility": {
+        "total": 1,
+        "visible": 1,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          1
+        ]
+      },
+      "submittedModelTriangles": 33696,
+      "fixture": {
+        "scope": "Production attack pose viewed from the side and rear to inspect the moving upper-arm/sleeve junction.",
+        "entity": {
+          "id": "POSS-attack",
+          "base": "POSS",
+          "enemy": true,
+          "sprite": "POSSF1",
+          "alive": true,
+          "state": "attack",
+          "fullbright": true,
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 639.9997919256036,
+          "y": 581.7642905495384
+        },
+        "meshKeys": [
+          "character:POSS:F:pose:lod2"
+        ]
+      }
+    },
+    {
+      "name": "spos-attack-side",
+      "image": "spos-attack-side-egl.png",
+      "camera": {
+        "x": 1144,
+        "y": -3616,
+        "z": 28,
+        "angle": 3.141592653589793,
+        "pitch": 0
+      },
+      "uniqueColors": 8688,
+      "meanRGB": [
+        19.4579248046875,
+        21.107408203125,
+        23.71648046875
+      ],
+      "visibility": {
+        "total": 1,
+        "visible": 1,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          1
+        ]
+      },
+      "submittedModelTriangles": 30340,
+      "fixture": {
+        "scope": "Production attack pose viewed from the side and rear to inspect the moving upper-arm/sleeve junction.",
+        "entity": {
+          "id": "SPOS-attack",
+          "base": "SPOS",
+          "enemy": true,
+          "sprite": "SPOSF1",
+          "alive": true,
+          "state": "attack",
+          "fullbright": true,
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 640.0004300204191,
+          "y": 581.7642905495388
+        },
+        "meshKeys": [
+          "character:SPOS:F:pose:lod2"
+        ]
+      }
+    },
+    {
+      "name": "spos-attack-back",
+      "image": "spos-attack-back-egl.png",
+      "camera": {
+        "x": 1056,
+        "y": -3704,
+        "z": 28,
+        "angle": 1.5707963267948966,
+        "pitch": 0
+      },
+      "uniqueColors": 8000,
+      "meanRGB": [
+        19.4397763671875,
+        21.1335537109375,
+        23.8225283203125
+      ],
+      "visibility": {
+        "total": 1,
+        "visible": 1,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          1
+        ]
+      },
+      "submittedModelTriangles": 30340,
+      "fixture": {
+        "scope": "Production attack pose viewed from the side and rear to inspect the moving upper-arm/sleeve junction.",
+        "entity": {
+          "id": "SPOS-attack",
+          "base": "SPOS",
+          "enemy": true,
+          "sprite": "SPOSF1",
+          "alive": true,
+          "state": "attack",
+          "fullbright": true,
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 639.9997919256036,
+          "y": 581.7642905495384
+        },
+        "meshKeys": [
+          "character:SPOS:F:pose:lod2"
+        ]
+      }
+    },
+    {
       "name": "poss-portrait",
       "image": "poss-portrait-egl.png",
       "camera": {
@@ -781,11 +985,11 @@
         "angle": -1.7894652726688387,
         "pitch": 0
       },
-      "uniqueColors": 33730,
+      "uniqueColors": 33990,
       "meanRGB": [
-        40.931193359375,
-        40.9847412109375,
-        39.2907607421875
+        40.9322421875,
+        41.01673828125,
+        39.3090068359375
       ],
       "visibility": {
         "total": 1,
@@ -832,11 +1036,11 @@
         "angle": -1.7894652726688387,
         "pitch": 0
       },
-      "uniqueColors": 29423,
+      "uniqueColors": 29296,
       "meanRGB": [
-        32.5087666015625,
-        32.3194306640625,
-        32.6888486328125
+        32.0665126953125,
+        32.03662890625,
+        32.5113095703125
       ],
       "visibility": {
         "total": 1,
@@ -1318,11 +1522,11 @@
         "angle": -2.214297435588181,
         "pitch": -0.3588334681147114
       },
-      "uniqueColors": 17630,
+      "uniqueColors": 15862,
       "meanRGB": [
-        21.5033349609375,
-        22.08253515625,
-        25.03606640625
+        21.327265625,
+        21.6173486328125,
+        24.55323828125
       ],
       "visibility": {
         "total": 1,
@@ -1414,11 +1618,11 @@
         "angle": -2.214297435588181,
         "pitch": -0.4180414626141114
       },
-      "uniqueColors": 10139,
+      "uniqueColors": 9926,
       "meanRGB": [
-        20.1904248046875,
-        21.42923828125,
-        24.47584765625
+        20.05537890625,
+        21.080228515625,
+        24.1141640625
       ],
       "visibility": {
         "total": 1,
@@ -2123,11 +2327,11 @@
         "angle": 3.141592653589793,
         "pitch": 0
       },
-      "uniqueColors": 6004,
+      "uniqueColors": 6005,
       "meanRGB": [
-        26.285955078125,
-        23.120185546875,
-        15.4024892578125
+        26.2858603515625,
+        23.1200498046875,
+        15.402337890625
       ],
       "visibility": {
         "total": 91,

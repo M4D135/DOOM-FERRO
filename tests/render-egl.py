@@ -67,6 +67,14 @@ for(const family of ['POSS','SPOS','TROO'])for(const [view,dx,dy,angle] of [
   fixture:{scope:'One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.',
    entity:{id:family,base:family,enemy:true,sprite:family+'A1',alive:true,state:'idle',fullbright:true,x:1056,y:-3616,z:0,angle:Math.PI/2}}});
 }
+// The upper-arm skin and sleeve must stay nested when the elbow moves forward
+// to aim. Side and rear views expose intersections hidden by the front view.
+for(const family of ['POSS','SPOS'])for(const [view,dx,dy,angle] of [
+ ['side',88,0,Math.PI],['back',0,-88,Math.PI/2]]){
+ cases.push({name:family.toLowerCase()+'-attack-'+view,x:1056+dx,y:-3616+dy,z:28,angle,studio:true,
+  fixture:{scope:'Production attack pose viewed from the side and rear to inspect the moving upper-arm/sleeve junction.',
+   entity:{id:family+'-attack',base:family,enemy:true,sprite:family+'F1',alive:true,state:'attack',fullbright:true,x:1056,y:-3616,z:0,angle:Math.PI/2}}});
+}
 for(const family of ['POSS','SPOS','TROO']){
  cases.push({name:family.toLowerCase()+'-portrait',x:1062,y:-3589,z:49,angle:Math.atan2(-27,-6),studio:true,
   fixture:{scope:'Close study of actual generated head geometry and procedural surface materials.',

@@ -56,7 +56,7 @@
     <div id="error" role="alert" hidden><h1>Le Hangar n’a pas pu démarrer.</h1><p id="errorText"></p><button onclick="location.reload()">RÉESSAYER</button></div>
     <p id="accessibleStatus" class="sr-only" aria-live="off"></p>
   </main>
-  <script id="build-info" type="application/json">{"version": "0.6.0", "revision": "0.6.0-6b09b429245a", "generation": "procedural", "distribution": "single self-contained HTML", "offline": true, "runtimeFiles": 1, "level": "E1M1 geometric reference plan", "mapGenerator": "sector contour sweep", "importedMediaFiles": 0, "worldBillboards": 0, "worldRepresentation": "instanced procedural 3D triangle meshes", "runtimeModules": 27, "worldDetailLevels": 3, "proceduralSurfaceMaterials": true, "modelGpuCacheMiB": 64, "physicallyBasedMaterials": true, "surfaceMapsPerMaterial": 3, "surfaceCpuCacheMiB": 48, "shadowMaps": 2, "shadowFilter": "hardware bilinear comparison, 3x3 PCF", "smoothNormalBuffer": true, "contactAO": "12 samples, indirect fraction", "ferroVersion": "0.3.33", "ferroModules": [{"file": "fmath.js", "bytes": 19961, "sha256": "bb001302bd2d57239c86183615c921563cf21f0490d67eef42586d1fc3457c9f", "gitBlobSha": "a8020d15c3755e0bcdb475c624a76294a539f91f", "loaded": true}, {"file": "surface.js", "bytes": 3419, "sha256": "46915edee28daa0408ea1c18abd664babef76e2e6bce52c2990a431f90cee77e", "gitBlobSha": "017271a036bec6191a98ee92d8e5ed2004643490", "loaded": true}, {"file": "renderer.js", "bytes": 355730, "sha256": "415eda20f5a3629348b3bfde3bd9e2a0a6a6c8badb671415f14d87d0b9c778a0", "gitBlobSha": "2a7f9894ceaa1d903f22f851609f73e006142fc3", "loaded": true}, {"file": "engine.js", "bytes": 2025, "sha256": "bf8cb3e1e1bade027bc10a843c1e61d1cb930350cbcab092990b546ba447f631", "gitBlobSha": "9cfa70571cc8b3134a752b0ef84d6d52bc790403", "loaded": true}]}</script>
+  <script id="build-info" type="application/json">{"version": "0.6.0", "revision": "0.6.0-77b0eb9c4db8", "generation": "procedural", "distribution": "single self-contained HTML", "offline": true, "runtimeFiles": 1, "level": "E1M1 geometric reference plan", "mapGenerator": "sector contour sweep", "importedMediaFiles": 0, "worldBillboards": 0, "worldRepresentation": "instanced procedural 3D triangle meshes", "runtimeModules": 27, "worldDetailLevels": 3, "proceduralSurfaceMaterials": true, "modelGpuCacheMiB": 64, "physicallyBasedMaterials": true, "surfaceMapsPerMaterial": 3, "surfaceCpuCacheMiB": 48, "shadowMaps": 2, "shadowFilter": "hardware bilinear comparison, 3x3 PCF", "smoothNormalBuffer": true, "contactAO": "12 samples, indirect fraction", "ferroVersion": "0.3.33", "ferroModules": [{"file": "fmath.js", "bytes": 19961, "sha256": "bb001302bd2d57239c86183615c921563cf21f0490d67eef42586d1fc3457c9f", "gitBlobSha": "a8020d15c3755e0bcdb475c624a76294a539f91f", "loaded": true}, {"file": "surface.js", "bytes": 3419, "sha256": "46915edee28daa0408ea1c18abd664babef76e2e6bce52c2990a431f90cee77e", "gitBlobSha": "017271a036bec6191a98ee92d8e5ed2004643490", "loaded": true}, {"file": "renderer.js", "bytes": 355730, "sha256": "415eda20f5a3629348b3bfde3bd9e2a0a6a6c8badb671415f14d87d0b9c778a0", "gitBlobSha": "2a7f9894ceaa1d903f22f851609f73e006142fc3", "loaded": true}, {"file": "engine.js", "bytes": 2025, "sha256": "bf8cb3e1e1bade027bc10a843c1e61d1cb930350cbcab092990b546ba447f631", "gitBlobSha": "9cfa70571cc8b3134a752b0ef84d6d52bc790403", "loaded": true}]}</script>
 <script data-ferro-module="fmath.js">/* FERRO — FMath: sin, cos, atan, atan2 and hypot identical on every platform.
  *
  * A plain-JavaScript port of fdlibm 5.3 as adapted by V8 (src/base/ieee754.cc):
@@ -10556,6 +10556,10 @@ function jointedLimb(b,points,color,d,kind='arm',material='skin'){
     profile[5]=[13,2.55,2.72,2.90,0];profile[6]=[16.5,2.97,2.47,3.34,-.20];
     profile[7]=[20.5,2.12,1.90,2.12,0];profile[8]=[24,1.97,1.82,1.98,0];
   }
+  // The shirt owns the covered upper arm. Keeping a complete skin deltoid
+  // underneath its tapered root made skin teeth cut through the sleeve when
+  // viewed from the side or back. Start skin just inside the cuff instead.
+  if(kind==='arm')profile.splice(0,2);
   const key=partKey('continuous-limb',color,d,kind,material),length=isLeg?24:20;
   const mesh=remember(key,()=>anatomicalLoft(profile,{
     detail:d,color,material:material==='skin'?{kind:'skin',roughness:imp?.87:.80}:material,rows:[8,12,24][d],columns:[6,10,18][d],key,
@@ -10738,14 +10742,17 @@ function human(family,pose,d) {
   const gunRotation=pose.dead?[.2,0,1.35]:pose.attack?[0,0,.1]:[.38,0,1.2];
   const localWrists=[[2.55,-3.0,-2.35],[0,5.7,-3.15]],wrists=localWrists.map(p=>add(gunOrigin,rotateEuler(p,gunRotation)));
   for(let i=0;i<2;i++){
-    const side=i===0?1:-1,shoulder=[side*8.15,0,42.1],wrist=wrists[i];
-    const elbow=pose.dead?[side*11.9,1.8,31.0]:[side*10.95,3.7+(pose.attack?1.1:0),34.4],cuff=mix(shoulder,elbow,.50),sleeveRoot=[side*7.45,-.12,43.2];
+    const side=i===0?1:-1,shoulder=[side*7.45,-.12,43.2],wrist=wrists[i];
+    const elbow=pose.dead?[side*11.9,1.8,31.0]:[side*10.95,3.7+(pose.attack?1.1:0),34.4];
     jointedLimb(b,[shoulder,elbow,wrist],skin,d,'arm');
-    const sleeve=remember(partKey('tailored-sleeve',shirt,d),()=>anatomicalLoft([[0,.35,.35,.35,0],[.8,2.58,2.48,2.5,0],[2.0,3.12,3.06,3.08,0],[3.2,3.08,2.94,2.93,0],[4.8,2.83,2.77,2.76,0],[5.0,2.88,2.82,2.80,0]],{
+    const sleeve=remember(partKey('tailored-sleeve',shirt,d),()=>anatomicalLoft([[0,.35,.35,.35,0],[.8,2.58,2.48,2.5,0],[2.0,3.18,3.10,3.15,0],[3.2,3.14,3.02,3.07,0],[5.30,3.02,2.91,2.97,0],[5.55,3.07,2.96,3.02,0]],{
       detail:d,color:shirt,material:'cloth',rows:[4,6,12][d],columns:[6,10,20][d],
       deform:(p,a)=>{const r=.022*Math.sin(p[2]*3.2+a*1.8)*bell(p[2]-3.8,1.0)+.026*Math.cos(a*3+.5)*bell(p[2]-2.9,1.8);return[p[0]*(1+r),p[1]*(1+r),p[2]];},
-      colours:(p,a)=>tone(shirt,(p[2]>4.75?.80:1)-.08*bell(a-4.7,.6)*bell(p[2]-3.5,1.4)),key:'fitted-shirt-sleeve'}));
-    b.add(sleeve,{...along(sleeveRoot,cuff),scale:[1,1,Math.hypot(...sub(cuff,sleeveRoot))/5]});
+      colours:(p,a)=>tone(shirt,(p[2]>5.25?.80:1)-.08*bell(a-4.7,.6)*bell(p[2]-3.5,1.4)),key:'fitted-shirt-sleeve'}));
+    // Sleeve and exposed skin use the same articulated frame, including the
+    // shoulder-to-elbow bend in aiming and death poses. The cuff overlaps the
+    // skin by .55 rest units and remains slightly thicker than the bare arm.
+    b.add(sleeve,{bend:{points:[shoulder,elbow,wrist],length:20,joint:.52}});
   }
   const hands=remember(`part:hands:${guard}:${d}`,()=>{const part=new MeshBuilder();gripHands(part,d,skin,guard);return part.finish('hands-on-weapon');});
   b.add(firearm(guard,pose.frame==='F'&&!pose.dead,d),{translation:gunOrigin,rotation:gunRotation});
@@ -11152,7 +11159,7 @@ function tornRemains(b,q,family){
   [-1,-17,1.3,3.7,5.4,1.25],[1.5,-9.0,1.8,4.7,5.8,1.7],[-1.1,-1.7,1.6,5.9,5.2,1.5],
   [1.4,5.1,2.1,5.0,5.0,2.0],[-1.0,12.8,1.55,4.2,5.4,1.5],[2.0,18.0,1.0,2.4,3.7,.95]]:
   [[0,-13,1.0,3.4,5.8,.9],[-1,-5,1.4,4.5,5.5,1.25],[1,2.3,1.8,4.2,5.3,1.65],[-.5,9.4,1.25,3.6,5.2,1.1]];
- if(!q){for(const [x,y,z,rx,ry,rz]of forms)ball(b,[x,y,z],[rx,ry,rz],[113,14,9],0,{kind:'blood',roughness:.4});}
+ if(!q){for(const [x,y,z,rx,ry,rz]of forms)ball(b,[x,y,z],[rx,ry,rz],[113,14,9],0,{kind:'blood',roughness:.82});}
  else{
   const distance=(x,y,z)=>{
    let d=1e3;for(const p of forms)d=smoothUnion(d,ellipsoidDistance(x,y,z,p.slice(0,3),p.slice(3)),.95);
@@ -11161,9 +11168,19 @@ function tornRemains(b,q,family){
    const top=Math.max(0,Math.min(1,z*.4));
    return d+.15*top*Math.sin(x*2.2+Math.sin(y*.8))*Math.sin(y*1.7+z*1.1);
   };
-  b.add(implicitMesh('coalesced-'+family,{bounds:[[-9,-length-2,-.35],[9,length+2,5.2]],resolution:q===2?[40,62,18]:[18,28,8],distance,
+  const tissue=implicitMesh('coalesced-'+family,{bounds:[[-9,-length-2,-.35],[9,length+2,5.2]],resolution:q===2?[40,62,18]:[18,28,8],distance,
    color:(x,y,z)=>{const shade=.69+.08*Math.min(z,3)+.11*Math.sin(x*.65+y*.41)+.06*Math.cos(y*1.4-z);return[105*shade,13*shade,9*shade];},
-   material:{kind:'blood',roughness:.57}}));
+   material:{kind:'blood',roughness:.82}});
+  // Coagulated tissue is mostly dull. Only small folds retain moisture; a
+  // position-continuous field avoids white varnish across the whole mass and
+  // does not introduce independent stains on neighbouring triangles.
+  for(let i=0;i<tissue.vertices.length;i+=17){
+   const v=tissue.vertices,x=v[i],y=v[i+1],z=v[i+2],
+    dry=.5+.5*Math.sin(x*.73+y*.27)*Math.cos(y*.51-z*.8),
+    fold=Math.exp(-1*((x-1.8*Math.sin(y*.46))/.72)**2)*Math.exp(-1*((z-1.8)/1.1)**2);
+   v[i+10]=.79+.09*dry-.24*fold;
+  }
+  b.add(tissue);
  }
  if(gibbed){
   for(const [side,y,height]of[[-1,-10,8.7],[1,-6.5,10.1],[-1,13,7.3]]){
