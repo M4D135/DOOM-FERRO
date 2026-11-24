@@ -1,7 +1,10 @@
 /** Deterministic lighting reconstructed from E1M1 sectors and visible fixtures.
  * Coordinates are FERRO metres (32 Doom units). Area/bounce illumination is
  * approximated by bounded local lights; this is not a global-illumination solve. */
-export const MAX_SCENE_LIGHTS = 6;
+export const MAX_SCENE_LIGHTS = 8;
+const ENTRY_RANGE = 1.25;
+const RETENTION_RANGE = 1.55;
+const FADE_SECONDS = 0.18;
 const dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
 const sub=(a,b)=>a.map((v,i)=>v-b[i]);
 const unit=a=>{const n=Math.hypot(...a)||1;return a.map(x=>x/n);};
@@ -34,8 +37,6 @@ export function shadowProjection(position,target,{fov=112,near=.06,far=45}={}){
 export function weaponShadowProjection(lightPosition,view,batch){
   const min=[Infinity,Infinity,Infinity],max=[-Infinity,-Infinity,-Infinity],s=batch.mesh.stride,vertices=batch.mesh.vertices;
   const instance=batch.instances,ty=view.tangente,tx=ty*view.largeur/view.hauteur;
-  // One vertex per triangle is sufficient for a padded fit; the actual shadow
-  // draw still uses every triangle. No new geometry or pose buffers are made.
   for(let i=0;i<vertices.length;i+=s*3){
     const x=vertices[i]*instance[4]+instance[0],y=vertices[i+1]*instance[4]+instance[1],z=vertices[i+2]*instance[4]+instance[2];
     if(y<.8||Math.abs(x)>y*tx*1.12+1||Math.abs(z)>y*ty*1.12+1)continue;
@@ -67,6 +68,12 @@ export function buildLightingRig(map){
     const record={x:cx/(3*area),y:cy/(3*area),area:Math.abs(area*.5)};
     if(!areas.has(cell.sector))areas.set(cell.sector,[]);areas.get(cell.sector).push(record);
   }
+  const sectorFill=new Map();
+  for(const [id,cells] of areas){
+    let x=0,y=0,total=0;
+    for(const cell of cells){x+=cell.x*cell.area;y+=cell.y*cell.area;total+=cell.area;}
+    if(total>0)sectorFill.set(id,{x:x/total,y:y/total});
+  }
   const lights=[];
   for(const sector of map.sectors){
     if(sector.ceiling-sector.floor<40)continue;
@@ -82,16 +89,11 @@ export function buildLightingRig(map){
         color:emitter?[.83,.91,.78]:outdoor?[.57,.71,.81]:[.60,.69,.71],
         source:emitter?'emissive-ceiling':outdoor?'open-sky':'sector-bounce'});
     }
-    // The original toxic floors provide a restrained green upward spill. These
-    // anchors follow the liquid's real sector; they do not add scenery/emitters.
     if(/^NUKAGE/.test(sector.floorTexture))for(const c of cells.filter(c=>c.area>512).slice(0,3)){
       lights.push({id:`liquid-${sector.id}-${lights.length}`,sector:sector.id,x:c.x,y:c.y,z:sector.floor+6,
         range:4.3,power:3.7,color:[.23,.66,.075],source:'toxic-floor'});
     }
   }
-  // Wall lamps and computer screens already exist in the fixed plan. Use their
-  // visible wall spans, instead of putting an unmotivated bright point beneath
-  // every plain ceiling. Offset each source into its own sector, never a wall.
   for(const line of map.lines)for(const left of [false,true]){
     const side=map.sides[left?line.left:line.right];if(!side)continue;
     const sector=map.sectors[side.sector],other=map.sides[left?line.right:line.left];
@@ -116,7 +118,7 @@ export function buildLightingRig(map){
   }
   const walls=map.lines.map(line=>({a:map.vertices[line.v1],b:map.vertices[line.v2],
     front:map.sides[line.right]?.sector,back:map.sides[line.left]?.sector}));
-  return {lights,walls,map};
+  return {lights,walls,map,sectorFill};
 }
 
 function lightHeight(rig,light,sector){
@@ -146,54 +148,170 @@ export function lightPathOpen(rig,from,to){
   return true;
 }
 
-function pack(lights,eye,target,ambient,outdoor,fogDensity=0){
+function pack(lights,eye,target,ambient,outdoor,fogDensity=0,key=lights[0],debug={}){
+  const keyLight=key?(lights.find(light=>light.id===key.id)||key):null;
+  const ordered=keyLight?[keyLight,...lights.filter(light=>light.id!==keyLight.id)]:lights.slice();
   const positions=new Float32Array(MAX_SCENE_LIGHTS*4),colors=new Float32Array(MAX_SCENE_LIGHTS*4);
-  lights.slice(0,MAX_SCENE_LIGHTS).forEach((light,i)=>{
-    positions.set([...light.position,light.range],i*4);colors.set([...light.color,light.power],i*4);
+  ordered.slice(0,MAX_SCENE_LIGHTS).forEach((light,i)=>{
+    positions.set([...light.position,light.range],i*4);
+    colors.set([...light.color,(light.power??0)*(light.weight??1)],i*4);
   });
-  const key=lights[0]||{position:eye.map((v,i)=>v+(i===1?3:0))};
-  const forward=unit(sub(target,key.position)),reference=Math.abs(forward[1])>.98?[0,0,1]:[0,1,0];
+  const shadowKey=ordered[0]||{id:'none',position:eye.map((v,i)=>v+(i===1?3:0)),range:14};
+  const forward=unit(sub(target,shadowKey.position)),reference=Math.abs(forward[1])>.98?[0,0,1]:[0,1,0];
   const right=unit(cross(forward,reference)),up=cross(right,forward);
-  return {positions,colors,count:Math.min(lights.length,MAX_SCENE_LIGHTS),
-    shadowVP:shadowProjection(key.position,target),ambient,outdoor,fogDensity,fogColor:[.027,.036,.037],
-    shadowView:{oeil:key.position,avant:forward,droite:right,haut:up,tangente:Math.tan(56*Math.PI/180),largeur:1,hauteur:1},
-    shadowRange:key.range||14,
-    sources:lights.slice(0,MAX_SCENE_LIGHTS).map(l=>({id:l.id,source:l.source,position:l.position}))};
+  return {positions,colors,count:Math.min(ordered.length,MAX_SCENE_LIGHTS),
+    shadowVP:shadowProjection(shadowKey.position,target),ambient,outdoor,fogDensity,fogColor:[.027,.036,.037],
+    shadowView:{oeil:shadowKey.position,avant:forward,droite:right,haut:up,tangente:Math.tan(56*Math.PI/180),largeur:1,hauteur:1},
+    shadowRange:shadowKey.range||14,
+    sources:ordered.slice(0,MAX_SCENE_LIGHTS).map(light=>({id:light.id,source:light.source,position:light.position,
+      range:light.range,power:light.power,weight:light.weight??1,score:light.score??0,distance:light.distance??0,
+      visible:light.visible!==false,shadow:light.id===shadowKey.id})),
+    debug:{...debug,shadowSource:shadowKey.id}};
 }
 
-export function sceneLighting(rig,view,entities=[],time=0,weapon=null){
-  const eye=view.oeil,origin={x:eye[0]*32,y:-eye[2]*32,z:eye[1]*32};
-  const sector=rig.map.sectorAt(origin.x,origin.y),candidates=[];
+function fixedCandidate(rig,origin,eye,light,time,previousEntry){
+  const sector=rig.map.sectors[light.sector];
+  if(!sector||sector.ceiling-sector.floor<40)return null;
+  const z=lightHeight(rig,light,sector),position=[light.x/32,z/32,-light.y/32];
+  const distance=Math.hypot(...sub(position,eye));
+  const limit=light.range*(previousEntry?RETENTION_RANGE:ENTRY_RANGE);
+  if(distance>limit)return null;
+  const visible=lightPathOpen(rig,origin,{x:light.x,y:light.y,z});
+  const basePower=light.power;
+  const power=basePower*sectorLightPulse(sector.special,time);
+  return {...light,z,position,distance,visible,basePower,power,score:power/(2+distance*distance),fixed:true};
+}
+
+function sectorFillLight(rig,origin,eye,sector){
+  if(!sector)return null;
+  const fill=rig.sectorFill?.get(sector.id);
+  if(!fill)return {id:'room-fill',source:'sector-bounce',sector:sector.id,x:origin.x,y:origin.y,z:origin.z,
+    position:[eye[0]-.8,Math.max((sector.ceiling??origin.z*32)/32-.2,eye[1]+.5),eye[2]-.3],range:9,
+    color:[.60,.69,.73],power:2.5,basePower:2.5,score:1,distance:0,visible:true,fixed:true};
+  const height=sector.floor+(sector.ceiling-sector.floor)*.62;
+  const position=[fill.x/32,height/32,-fill.y/32];
+  return {id:`room-fill-${sector.id}`,source:'sector-bounce',sector:sector.id,x:fill.x,y:fill.y,z:height,
+    position,range:9,color:[.60,.69,.73],power:2.5,basePower:2.5,score:1,
+    distance:Math.hypot(...sub(position,eye)),visible:true,fixed:true};
+}
+
+function chooseFixedLights(rig,origin,eye,time,previousState,max){
+  const previousLights=previousState?.lights||[];
+  const previousMap=new Map(previousLights.filter(l=>!l.transient).map(l=>[l.id,l]));
+  const previousOrder=new Map((previousState?.desiredFixed||previousLights.filter(l=>!l.transient).map(l=>l.id))
+    .map((id,index)=>[id,index]));
+  const candidates=[];
+  let rejectedByDistance=0,rejectedByVisibility=0;
   for(const light of rig.lights){
-    const s=rig.map.sectors[light.sector];if(s.ceiling-s.floor<40)continue;
-    const z=lightHeight(rig,light,s),position=[light.x/32,z/32,-light.y/32];
-    const distance=Math.hypot(...sub(position,eye));if(distance>light.range*1.4)continue;
-    // Choose the primary shadow light by its steady power; a flicker must not
-    // make the shadow camera jump between fixtures every game tick.
-    candidates.push({...light,z,position,power:light.power*sectorLightPulse(s.special,time),score:light.power/(2+distance*distance)});
+    const candidate=fixedCandidate(rig,origin,eye,light,time,previousMap.get(light.id));
+    if(!candidate){rejectedByDistance++;continue;}
+    if(!candidate.visible){rejectedByVisibility++;continue;}
+    candidates.push(candidate);
   }
-  const accepted=candidates.sort((a,b)=>b.score-a.score).slice(0,18).filter(l=>lightPathOpen(rig,origin,l)).slice(0,MAX_SCENE_LIGHTS);
-  for(const e of entities){
-    if(e.removed||!(e.type===2028||e.projectile||e.state==='exploding'))continue;
-    const position=[e.x/32,((e.z||0)+(e.type===2028?43:e.projectile?0:25))/32,-e.y/32],distance=Math.hypot(...sub(position,eye));
-    if(distance>7)continue;
-    const l={id:'object-'+e.id,source:e.type===2028?'lamp':'flame',position,range:5,power:e.type===2028?10:13,
-      color:e.type===2028?[1,.85,.45]:[1,.31,.065],score:8/(1+distance*distance)};
-    if(lightPathOpen(rig,origin,{x:e.x,y:e.y,z:position[1]*32}))accepted.push(l);
-  }
+  const best=candidates.reduce((score,candidate)=>Math.max(score,candidate.score),0);
+  const keep=candidates.filter(candidate=>previousOrder.has(candidate.id)&&
+    (!best||candidate.score>=best*.35))
+    .sort((a,b)=>(previousOrder.get(a.id)??99)-(previousOrder.get(b.id)??99)||b.score-a.score)
+    .slice(0,max);
+  const chosen=new Set(keep.map(candidate=>candidate.id));
+  const fill=candidates.filter(candidate=>!chosen.has(candidate.id)).sort((a,b)=>b.score-a.score)
+    .slice(0,Math.max(0,max-keep.length));
+  const accepted=[...keep,...fill];
   if(!accepted.length){
-    const height=(sector?.ceiling??origin.z+88)/32;
-    accepted.push({id:'room-fill',source:'sector-bounce',position:[eye[0]-.8,Math.max(height-.2,eye[1]+.5),eye[2]-.3],range:9,
-      color:[.60,.69,.73],power:2.5,score:1});
+    const sector=rig.map.sectorAt(origin.x,origin.y);
+    const fillLight=sectorFillLight(rig,origin,eye,sector);
+    if(fillLight)accepted.push(fillLight);
   }
-  accepted.sort((a,b)=>b.score-a.score);
-  if(weapon&&weapon.kind!=='fist'&&weapon.phase>=0&&weapon.phase<.08){
+  return {accepted,rejected:{distance:rejectedByDistance,visibility:rejectedByVisibility,budget:Math.max(0,candidates.length-max)}};
+}
+
+function transientCandidates(rig,origin,eye,view,entities,weapon){
+  const list=[];
+  for(const e of entities||[]){
+    if(e.removed||!(e.type===2028||e.projectile||e.state==='exploding'))continue;
+    const position=[e.x/32,((e.z||0)+(e.type===2028?43:e.projectile?0:25))/32,-e.y/32];
+    const distance=Math.hypot(...sub(position,eye));
+    if(distance>7)continue;
+    const power=e.type===2028?10:13;
+    const candidate={id:`object-${e.id}`,source:e.type===2028?'lamp':'flame',position,range:5,power,basePower:power,
+      color:e.type===2028?[1,.85,.45]:[1,.31,.065],score:8/(1+distance*distance),distance,visible:true,transient:true};
+    if(lightPathOpen(rig,origin,{x:e.x,y:e.y,z:position[1]*32}))list.push(candidate);
+  }
+  if(weapon&&weapon.kind!=='fist'&&weapon.kind!=='chainsaw'&&weapon.phase>=0&&weapon.phase<.08){
     const position=eye.map((v,i)=>v+view.avant[i]*.8-view.haut[i]*.15);
-    accepted.splice(1,0,{id:'muzzle',source:'muzzle',position,range:5,power:20*(1-weapon.phase/.1),color:[1,.6,.2],score:100});
+    const power=20*(1-weapon.phase/.1);
+    list.push({id:'muzzle',source:'muzzle',position,range:5,power,basePower:20,color:[1,.6,.2],
+      score:100,distance:0,visible:true,transient:true});
   }
-  const target=eye.map((v,i)=>v+view.avant[i]*3.5+(i===1?-.5:0));
+  return list.sort((a,b)=>b.score-a.score).slice(0,1);
+}
+
+function updateLightingState(previousState,desired,time){
+  const previousMap=new Map((previousState?.lights||[]).map(light=>[light.id,light]));
+  const desiredMap=new Map(desired.map(light=>[light.id,light]));
+  const rate=previousState?.time==null?1:clamp((time-previousState.time)/FADE_SECONDS,0,1);
+  const lights=[];
+  for(const id of new Set([...desiredMap.keys(),...previousMap.keys()])){
+    const wanted=desiredMap.get(id),previous=previousMap.get(id),base=wanted||previous;
+    if(!base)continue;
+    const weight=wanted?Math.min(1,(previous?.weight??0)+rate):Math.max(0,(previous?.weight??0)-rate);
+    if(weight>.02)lights.push({...base,weight,desired:!!wanted,transient:!!base.transient});
+  }
+  lights.sort((a,b)=>(b.desired-a.desired)||(b.score*b.weight-a.score*a.weight));
+  const final=lights.slice(0,MAX_SCENE_LIGHTS);
+  return {
+    time,
+    desiredFixed:desired.filter(light=>!light.transient).map(light=>light.id),
+    lights:final.map(light=>({id:light.id,source:light.source,sector:light.sector,position:light.position,z:light.z,
+      range:light.range,color:light.color,power:light.power,basePower:light.basePower??light.power,
+      score:light.score??0,weight:light.weight,transient:!!light.transient}))
+  };
+}
+
+function chooseShadowKey(state,previousState){
+  const candidates=state.lights.filter(light=>!light.transient&&light.weight>.15);
+  if(!candidates.length)return state.lights[0]?.id;
+  const best=candidates.reduce((a,b)=>(b.score||0)>(a.score||0)?b:a);
+  const previous=candidates.find(light=>light.id===previousState?.key);
+  if(previous&&(previous.score||0)>=((best.score||0)*.35))return previous.id;
+  return candidates.reduce((a,b)=>(b.basePower||0)>(a.basePower||0)?b:a).id;
+}
+
+function stableShadowTarget(rig,key,lights,eye,view){
+  if(key?.sector!=null&&rig.sectorFill?.has(key.sector)){
+    const center=rig.sectorFill.get(key.sector);
+    return [center.x/32,(key.z??(key.position?.[1]??0)*32)/32,-center.y/32];
+  }
+  const weighted=lights.filter(light=>!light.transient&&light.weight>.05);
+  const total=weighted.reduce((sum,light)=>sum+light.weight,0);
+  if(total>0)return weighted.reduce((sum,light)=>sum.map((value,i)=>value+light.position[i]*light.weight),[0,0,0])
+    .map(value=>value/total);
+  return eye.map((v,i)=>v+view.avant[i]*3.5+(i===1?-.5:0));
+}
+
+export function sceneLighting(rig,view,entities=[],time=0,weapon=null,previous=null,options={}){
+  const eye=view.oeil,origin={x:eye[0]*32,y:-eye[2]*32,z:eye[1]*32};
+  const sector=rig.map.sectorAt(origin.x,origin.y);
+  const previousState=previous?.state||null;
+  const transient=transientCandidates(rig,origin,eye,view,entities,weapon);
+  const fixedMax=Math.max(1,MAX_SCENE_LIGHTS-(transient.length?1:0));
+  const fixed=chooseFixedLights(rig,origin,eye,time,previousState,fixedMax);
+  const desired=[...fixed.accepted,...transient];
+  const state=updateLightingState(previousState,desired,time);
+  const keyId=chooseShadowKey(state,previousState);
+  const key=state.lights.find(light=>light.id===keyId)||state.lights[0];
+  const target=stableShadowTarget(rig,key,state.lights,eye,view);
   const outside=sector?.ceilingTexture==='F_SKY1';
-  return pack(accepted,eye,target,.64+Math.max(0,(sector?.light??160)/255)*.22,outside?1:0,outside?.009:.014);
+  const debug={
+    shadowSource:key?.id,
+    fixed:fixed.accepted.map(light=>({id:light.id,source:light.source,position:light.position,range:light.range,
+      power:light.power,score:light.score,distance:light.distance,visible:light.visible})),
+    transient:transient.map(light=>({id:light.id,source:light.source,position:light.position,range:light.range,
+      power:light.power,score:light.score,distance:light.distance,visible:light.visible})),
+    rejected:fixed.rejected,
+    budget:{max:MAX_SCENE_LIGHTS,fixedMax,accepted:state.lights.length}
+  };
+  return pack(state.lights,eye,target,.64+Math.max(0,(sector?.light??160)/255)*.22,outside?1:0,outside?.009:.014,key,{...debug,...(options.debug||{})});
 }
 
 /** Controlled portrait lighting used by the model inspection fixtures. */
@@ -201,8 +319,8 @@ export function studioLighting(view,target){
   const center=target||view.oeil.map((v,i)=>v+view.avant[i]*2);
   const at=(r,f,u)=>center.map((v,i)=>v+view.droite[i]*r+view.avant[i]*f+view.haut[i]*u);
   return pack([
-    {id:'studio-key',source:'studio',position:at(-2.7,-3.4,3.8),range:14,power:105,color:[1,.88,.75]},
-    {id:'studio-fill',source:'studio',position:at(3.4,-2,1.4),range:12,power:36,color:[.69,.81,1]},
-    {id:'studio-rim',source:'studio',position:at(.8,2.5,3),range:12,power:100,color:[.77,.86,1]}
-  ],view.oeil,center,.9,0);
+    {id:'studio-key',source:'studio',position:at(-2.7,-3.4,3.8),range:14,power:105,color:[1,.88,.75],weight:1},
+    {id:'studio-fill',source:'studio',position:at(3.4,-2,1.4),range:12,power:36,color:[.69,.81,1],weight:1},
+    {id:'studio-rim',source:'studio',position:at(.8,2.5,3),range:12,power:100,color:[.77,.86,1],weight:1}
+  ],view.oeil,center,.9,0,0,{id:'studio-key',position:at(-2.7,-3.4,3.8),range:14});
 }

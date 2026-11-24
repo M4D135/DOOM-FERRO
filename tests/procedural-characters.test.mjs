@@ -217,3 +217,17 @@ test('articulated walk poses preserve rest-surface coordinates and leave earlier
     assert.deepEqual(first.vertices,snapshot,'a cached pose shares no writable vertex buffer with another pose');
   }
 });
+
+test('every bestiary death frame produces finite grounded volumes at every LOD',()=>{
+  const deaths=[
+    {type:3002,base:'SARG',death:'HIJKL'},
+    {type:3003,base:'BOSS',death:'HIJKLM'},
+    {type:58,base:'BOSS',death:'HIJKLM'}
+  ];
+  for(let detail=0;detail<3;detail++)for(const spec of deaths)for(const frame of spec.death){
+    const mesh=characterMesh({type:spec.type,base:spec.base,alive:false,state:'dead',sprite:`${spec.base}${frame}0`,stateTime:2},2,detail);
+    assert.ok(mesh.vertices.every(Number.isFinite),`${spec.base}${frame} LOD${detail}: finite vertices`);
+    assert.ok(mesh.bounds.min.every(Number.isFinite)&&mesh.bounds.max.every(Number.isFinite),`${spec.base}${frame} LOD${detail}: finite bounds`);
+    assert.equal(mesh.bounds.min[2],0,`${spec.base}${frame} LOD${detail}: corpse touches the floor`);
+  }
+});

@@ -56,7 +56,7 @@
     <div id="error" role="alert" hidden><h1>Le Hangar n’a pas pu démarrer.</h1><p id="errorText"></p><button onclick="location.reload()">RÉESSAYER</button></div>
     <p id="accessibleStatus" class="sr-only" aria-live="off"></p>
   </main>
-  <script id="build-info" type="application/json">{"version": "0.6.0", "revision": "0.6.0-9e7af34b256f", "generation": "procedural", "distribution": "single self-contained HTML", "offline": true, "runtimeFiles": 1, "levels": ["E1M1", "E1M2", "E1M3", "E1M4", "E1M5", "E1M6", "E1M7", "E1M8", "E1M9"], "level": "E1M1 / E1M2 / E1M3 / E1M4 / E1M5 / E1M6 / E1M7 / E1M8 / E1M9", "mapGenerator": "sector contour sweep", "importedMediaFiles": 0, "worldBillboards": 0, "worldRepresentation": "instanced procedural 3D triangle meshes", "runtimeModules": 37, "worldDetailLevels": 3, "proceduralSurfaceMaterials": true, "modelGpuCacheMiB": 64, "physicallyBasedMaterials": true, "surfaceMapsPerMaterial": 3, "surfaceCpuCacheMiB": 48, "shadowMaps": 2, "shadowFilter": "hardware bilinear comparison, 3x3 PCF", "smoothNormalBuffer": true, "contactAO": "12 samples, indirect fraction", "ferroVersion": "0.3.33", "ferroModules": [{"file": "fmath.js", "bytes": 19961, "sha256": "bb001302bd2d57239c86183615c921563cf21f0490d67eef42586d1fc3457c9f", "gitBlobSha": "a8020d15c3755e0bcdb475c624a76294a539f91f", "loaded": true}, {"file": "surface.js", "bytes": 3419, "sha256": "46915edee28daa0408ea1c18abd664babef76e2e6bce52c2990a431f90cee77e", "gitBlobSha": "017271a036bec6191a98ee92d8e5ed2004643490", "loaded": true}, {"file": "renderer.js", "bytes": 355730, "sha256": "415eda20f5a3629348b3bfde3bd9e2a0a6a6c8badb671415f14d87d0b9c778a0", "gitBlobSha": "2a7f9894ceaa1d903f22f851609f73e006142fc3", "loaded": true}, {"file": "engine.js", "bytes": 2025, "sha256": "bf8cb3e1e1bade027bc10a843c1e61d1cb930350cbcab092990b546ba447f631", "gitBlobSha": "9cfa70571cc8b3134a752b0ef84d6d52bc790403", "loaded": true}]}</script>
+  <script id="build-info" type="application/json">{"version": "0.6.0", "revision": "0.6.0-5b35eaaebba3", "generation": "procedural", "distribution": "single self-contained HTML", "offline": true, "runtimeFiles": 1, "levels": ["E1M1", "E1M2", "E1M3", "E1M4", "E1M5", "E1M6", "E1M7", "E1M8", "E1M9"], "level": "E1M1 / E1M2 / E1M3 / E1M4 / E1M5 / E1M6 / E1M7 / E1M8 / E1M9", "mapGenerator": "sector contour sweep", "importedMediaFiles": 0, "worldBillboards": 0, "worldRepresentation": "instanced procedural 3D triangle meshes", "runtimeModules": 38, "worldDetailLevels": 3, "proceduralSurfaceMaterials": true, "modelGpuCacheMiB": 64, "physicallyBasedMaterials": true, "surfaceMapsPerMaterial": 3, "surfaceCpuCacheMiB": 48, "shadowMaps": 2, "shadowFilter": "hardware bilinear comparison, 3x3 PCF", "smoothNormalBuffer": true, "contactAO": "12 samples, indirect fraction", "ferroVersion": "0.3.33", "ferroModules": [{"file": "fmath.js", "bytes": 19961, "sha256": "bb001302bd2d57239c86183615c921563cf21f0490d67eef42586d1fc3457c9f", "gitBlobSha": "a8020d15c3755e0bcdb475c624a76294a539f91f", "loaded": true}, {"file": "surface.js", "bytes": 3419, "sha256": "46915edee28daa0408ea1c18abd664babef76e2e6bce52c2990a431f90cee77e", "gitBlobSha": "017271a036bec6191a98ee92d8e5ed2004643490", "loaded": true}, {"file": "renderer.js", "bytes": 355730, "sha256": "415eda20f5a3629348b3bfde3bd9e2a0a6a6c8badb671415f14d87d0b9c778a0", "gitBlobSha": "2a7f9894ceaa1d903f22f851609f73e006142fc3", "loaded": true}, {"file": "engine.js", "bytes": 2025, "sha256": "bf8cb3e1e1bade027bc10a843c1e61d1cb930350cbcab092990b546ba447f631", "gitBlobSha": "9cfa70571cc8b3134a752b0ef84d6d52bc790403", "loaded": true}]}</script>
 <script data-ferro-module="fmath.js">/* FERRO — FMath: sin, cos, atan, atan2 and hypot identical on every platform.
  *
  * A plain-JavaScript port of fdlibm 5.3 as adapted by V8 (src/base/ieee754.cc):
@@ -35826,7 +35826,10 @@ __modules["src/procedural-lighting.js"] = (() => {
 /** Deterministic lighting reconstructed from E1M1 sectors and visible fixtures.
  * Coordinates are FERRO metres (32 Doom units). Area/bounce illumination is
  * approximated by bounded local lights; this is not a global-illumination solve. */
-const MAX_SCENE_LIGHTS = 6;
+const MAX_SCENE_LIGHTS = 8;
+const ENTRY_RANGE = 1.25;
+const RETENTION_RANGE = 1.55;
+const FADE_SECONDS = 0.18;
 const dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
 const sub=(a,b)=>a.map((v,i)=>v-b[i]);
 const unit=a=>{const n=Math.hypot(...a)||1;return a.map(x=>x/n);};
@@ -35859,8 +35862,6 @@ function shadowProjection(position,target,{fov=112,near=.06,far=45}={}){
 function weaponShadowProjection(lightPosition,view,batch){
   const min=[Infinity,Infinity,Infinity],max=[-Infinity,-Infinity,-Infinity],s=batch.mesh.stride,vertices=batch.mesh.vertices;
   const instance=batch.instances,ty=view.tangente,tx=ty*view.largeur/view.hauteur;
-  // One vertex per triangle is sufficient for a padded fit; the actual shadow
-  // draw still uses every triangle. No new geometry or pose buffers are made.
   for(let i=0;i<vertices.length;i+=s*3){
     const x=vertices[i]*instance[4]+instance[0],y=vertices[i+1]*instance[4]+instance[1],z=vertices[i+2]*instance[4]+instance[2];
     if(y<.8||Math.abs(x)>y*tx*1.12+1||Math.abs(z)>y*ty*1.12+1)continue;
@@ -35892,6 +35893,12 @@ function buildLightingRig(map){
     const record={x:cx/(3*area),y:cy/(3*area),area:Math.abs(area*.5)};
     if(!areas.has(cell.sector))areas.set(cell.sector,[]);areas.get(cell.sector).push(record);
   }
+  const sectorFill=new Map();
+  for(const [id,cells] of areas){
+    let x=0,y=0,total=0;
+    for(const cell of cells){x+=cell.x*cell.area;y+=cell.y*cell.area;total+=cell.area;}
+    if(total>0)sectorFill.set(id,{x:x/total,y:y/total});
+  }
   const lights=[];
   for(const sector of map.sectors){
     if(sector.ceiling-sector.floor<40)continue;
@@ -35907,16 +35914,11 @@ function buildLightingRig(map){
         color:emitter?[.83,.91,.78]:outdoor?[.57,.71,.81]:[.60,.69,.71],
         source:emitter?'emissive-ceiling':outdoor?'open-sky':'sector-bounce'});
     }
-    // The original toxic floors provide a restrained green upward spill. These
-    // anchors follow the liquid's real sector; they do not add scenery/emitters.
     if(/^NUKAGE/.test(sector.floorTexture))for(const c of cells.filter(c=>c.area>512).slice(0,3)){
       lights.push({id:`liquid-${sector.id}-${lights.length}`,sector:sector.id,x:c.x,y:c.y,z:sector.floor+6,
         range:4.3,power:3.7,color:[.23,.66,.075],source:'toxic-floor'});
     }
   }
-  // Wall lamps and computer screens already exist in the fixed plan. Use their
-  // visible wall spans, instead of putting an unmotivated bright point beneath
-  // every plain ceiling. Offset each source into its own sector, never a wall.
   for(const line of map.lines)for(const left of [false,true]){
     const side=map.sides[left?line.left:line.right];if(!side)continue;
     const sector=map.sectors[side.sector],other=map.sides[left?line.right:line.left];
@@ -35941,7 +35943,7 @@ function buildLightingRig(map){
   }
   const walls=map.lines.map(line=>({a:map.vertices[line.v1],b:map.vertices[line.v2],
     front:map.sides[line.right]?.sector,back:map.sides[line.left]?.sector}));
-  return {lights,walls,map};
+  return {lights,walls,map,sectorFill};
 }
 
 function lightHeight(rig,light,sector){
@@ -35971,54 +35973,170 @@ function lightPathOpen(rig,from,to){
   return true;
 }
 
-function pack(lights,eye,target,ambient,outdoor,fogDensity=0){
+function pack(lights,eye,target,ambient,outdoor,fogDensity=0,key=lights[0],debug={}){
+  const keyLight=key?(lights.find(light=>light.id===key.id)||key):null;
+  const ordered=keyLight?[keyLight,...lights.filter(light=>light.id!==keyLight.id)]:lights.slice();
   const positions=new Float32Array(MAX_SCENE_LIGHTS*4),colors=new Float32Array(MAX_SCENE_LIGHTS*4);
-  lights.slice(0,MAX_SCENE_LIGHTS).forEach((light,i)=>{
-    positions.set([...light.position,light.range],i*4);colors.set([...light.color,light.power],i*4);
+  ordered.slice(0,MAX_SCENE_LIGHTS).forEach((light,i)=>{
+    positions.set([...light.position,light.range],i*4);
+    colors.set([...light.color,(light.power??0)*(light.weight??1)],i*4);
   });
-  const key=lights[0]||{position:eye.map((v,i)=>v+(i===1?3:0))};
-  const forward=unit(sub(target,key.position)),reference=Math.abs(forward[1])>.98?[0,0,1]:[0,1,0];
+  const shadowKey=ordered[0]||{id:'none',position:eye.map((v,i)=>v+(i===1?3:0)),range:14};
+  const forward=unit(sub(target,shadowKey.position)),reference=Math.abs(forward[1])>.98?[0,0,1]:[0,1,0];
   const right=unit(cross(forward,reference)),up=cross(right,forward);
-  return {positions,colors,count:Math.min(lights.length,MAX_SCENE_LIGHTS),
-    shadowVP:shadowProjection(key.position,target),ambient,outdoor,fogDensity,fogColor:[.027,.036,.037],
-    shadowView:{oeil:key.position,avant:forward,droite:right,haut:up,tangente:Math.tan(56*Math.PI/180),largeur:1,hauteur:1},
-    shadowRange:key.range||14,
-    sources:lights.slice(0,MAX_SCENE_LIGHTS).map(l=>({id:l.id,source:l.source,position:l.position}))};
+  return {positions,colors,count:Math.min(ordered.length,MAX_SCENE_LIGHTS),
+    shadowVP:shadowProjection(shadowKey.position,target),ambient,outdoor,fogDensity,fogColor:[.027,.036,.037],
+    shadowView:{oeil:shadowKey.position,avant:forward,droite:right,haut:up,tangente:Math.tan(56*Math.PI/180),largeur:1,hauteur:1},
+    shadowRange:shadowKey.range||14,
+    sources:ordered.slice(0,MAX_SCENE_LIGHTS).map(light=>({id:light.id,source:light.source,position:light.position,
+      range:light.range,power:light.power,weight:light.weight??1,score:light.score??0,distance:light.distance??0,
+      visible:light.visible!==false,shadow:light.id===shadowKey.id})),
+    debug:{...debug,shadowSource:shadowKey.id}};
 }
 
-function sceneLighting(rig,view,entities=[],time=0,weapon=null){
-  const eye=view.oeil,origin={x:eye[0]*32,y:-eye[2]*32,z:eye[1]*32};
-  const sector=rig.map.sectorAt(origin.x,origin.y),candidates=[];
+function fixedCandidate(rig,origin,eye,light,time,previousEntry){
+  const sector=rig.map.sectors[light.sector];
+  if(!sector||sector.ceiling-sector.floor<40)return null;
+  const z=lightHeight(rig,light,sector),position=[light.x/32,z/32,-light.y/32];
+  const distance=Math.hypot(...sub(position,eye));
+  const limit=light.range*(previousEntry?RETENTION_RANGE:ENTRY_RANGE);
+  if(distance>limit)return null;
+  const visible=lightPathOpen(rig,origin,{x:light.x,y:light.y,z});
+  const basePower=light.power;
+  const power=basePower*sectorLightPulse(sector.special,time);
+  return {...light,z,position,distance,visible,basePower,power,score:power/(2+distance*distance),fixed:true};
+}
+
+function sectorFillLight(rig,origin,eye,sector){
+  if(!sector)return null;
+  const fill=rig.sectorFill?.get(sector.id);
+  if(!fill)return {id:'room-fill',source:'sector-bounce',sector:sector.id,x:origin.x,y:origin.y,z:origin.z,
+    position:[eye[0]-.8,Math.max((sector.ceiling??origin.z*32)/32-.2,eye[1]+.5),eye[2]-.3],range:9,
+    color:[.60,.69,.73],power:2.5,basePower:2.5,score:1,distance:0,visible:true,fixed:true};
+  const height=sector.floor+(sector.ceiling-sector.floor)*.62;
+  const position=[fill.x/32,height/32,-fill.y/32];
+  return {id:`room-fill-${sector.id}`,source:'sector-bounce',sector:sector.id,x:fill.x,y:fill.y,z:height,
+    position,range:9,color:[.60,.69,.73],power:2.5,basePower:2.5,score:1,
+    distance:Math.hypot(...sub(position,eye)),visible:true,fixed:true};
+}
+
+function chooseFixedLights(rig,origin,eye,time,previousState,max){
+  const previousLights=previousState?.lights||[];
+  const previousMap=new Map(previousLights.filter(l=>!l.transient).map(l=>[l.id,l]));
+  const previousOrder=new Map((previousState?.desiredFixed||previousLights.filter(l=>!l.transient).map(l=>l.id))
+    .map((id,index)=>[id,index]));
+  const candidates=[];
+  let rejectedByDistance=0,rejectedByVisibility=0;
   for(const light of rig.lights){
-    const s=rig.map.sectors[light.sector];if(s.ceiling-s.floor<40)continue;
-    const z=lightHeight(rig,light,s),position=[light.x/32,z/32,-light.y/32];
-    const distance=Math.hypot(...sub(position,eye));if(distance>light.range*1.4)continue;
-    // Choose the primary shadow light by its steady power; a flicker must not
-    // make the shadow camera jump between fixtures every game tick.
-    candidates.push({...light,z,position,power:light.power*sectorLightPulse(s.special,time),score:light.power/(2+distance*distance)});
+    const candidate=fixedCandidate(rig,origin,eye,light,time,previousMap.get(light.id));
+    if(!candidate){rejectedByDistance++;continue;}
+    if(!candidate.visible){rejectedByVisibility++;continue;}
+    candidates.push(candidate);
   }
-  const accepted=candidates.sort((a,b)=>b.score-a.score).slice(0,18).filter(l=>lightPathOpen(rig,origin,l)).slice(0,MAX_SCENE_LIGHTS);
-  for(const e of entities){
-    if(e.removed||!(e.type===2028||e.projectile||e.state==='exploding'))continue;
-    const position=[e.x/32,((e.z||0)+(e.type===2028?43:e.projectile?0:25))/32,-e.y/32],distance=Math.hypot(...sub(position,eye));
-    if(distance>7)continue;
-    const l={id:'object-'+e.id,source:e.type===2028?'lamp':'flame',position,range:5,power:e.type===2028?10:13,
-      color:e.type===2028?[1,.85,.45]:[1,.31,.065],score:8/(1+distance*distance)};
-    if(lightPathOpen(rig,origin,{x:e.x,y:e.y,z:position[1]*32}))accepted.push(l);
-  }
+  const best=candidates.reduce((score,candidate)=>Math.max(score,candidate.score),0);
+  const keep=candidates.filter(candidate=>previousOrder.has(candidate.id)&&
+    (!best||candidate.score>=best*.35))
+    .sort((a,b)=>(previousOrder.get(a.id)??99)-(previousOrder.get(b.id)??99)||b.score-a.score)
+    .slice(0,max);
+  const chosen=new Set(keep.map(candidate=>candidate.id));
+  const fill=candidates.filter(candidate=>!chosen.has(candidate.id)).sort((a,b)=>b.score-a.score)
+    .slice(0,Math.max(0,max-keep.length));
+  const accepted=[...keep,...fill];
   if(!accepted.length){
-    const height=(sector?.ceiling??origin.z+88)/32;
-    accepted.push({id:'room-fill',source:'sector-bounce',position:[eye[0]-.8,Math.max(height-.2,eye[1]+.5),eye[2]-.3],range:9,
-      color:[.60,.69,.73],power:2.5,score:1});
+    const sector=rig.map.sectorAt(origin.x,origin.y);
+    const fillLight=sectorFillLight(rig,origin,eye,sector);
+    if(fillLight)accepted.push(fillLight);
   }
-  accepted.sort((a,b)=>b.score-a.score);
-  if(weapon&&weapon.kind!=='fist'&&weapon.phase>=0&&weapon.phase<.08){
+  return {accepted,rejected:{distance:rejectedByDistance,visibility:rejectedByVisibility,budget:Math.max(0,candidates.length-max)}};
+}
+
+function transientCandidates(rig,origin,eye,view,entities,weapon){
+  const list=[];
+  for(const e of entities||[]){
+    if(e.removed||!(e.type===2028||e.projectile||e.state==='exploding'))continue;
+    const position=[e.x/32,((e.z||0)+(e.type===2028?43:e.projectile?0:25))/32,-e.y/32];
+    const distance=Math.hypot(...sub(position,eye));
+    if(distance>7)continue;
+    const power=e.type===2028?10:13;
+    const candidate={id:`object-${e.id}`,source:e.type===2028?'lamp':'flame',position,range:5,power,basePower:power,
+      color:e.type===2028?[1,.85,.45]:[1,.31,.065],score:8/(1+distance*distance),distance,visible:true,transient:true};
+    if(lightPathOpen(rig,origin,{x:e.x,y:e.y,z:position[1]*32}))list.push(candidate);
+  }
+  if(weapon&&weapon.kind!=='fist'&&weapon.kind!=='chainsaw'&&weapon.phase>=0&&weapon.phase<.08){
     const position=eye.map((v,i)=>v+view.avant[i]*.8-view.haut[i]*.15);
-    accepted.splice(1,0,{id:'muzzle',source:'muzzle',position,range:5,power:20*(1-weapon.phase/.1),color:[1,.6,.2],score:100});
+    const power=20*(1-weapon.phase/.1);
+    list.push({id:'muzzle',source:'muzzle',position,range:5,power,basePower:20,color:[1,.6,.2],
+      score:100,distance:0,visible:true,transient:true});
   }
-  const target=eye.map((v,i)=>v+view.avant[i]*3.5+(i===1?-.5:0));
+  return list.sort((a,b)=>b.score-a.score).slice(0,1);
+}
+
+function updateLightingState(previousState,desired,time){
+  const previousMap=new Map((previousState?.lights||[]).map(light=>[light.id,light]));
+  const desiredMap=new Map(desired.map(light=>[light.id,light]));
+  const rate=previousState?.time==null?1:clamp((time-previousState.time)/FADE_SECONDS,0,1);
+  const lights=[];
+  for(const id of new Set([...desiredMap.keys(),...previousMap.keys()])){
+    const wanted=desiredMap.get(id),previous=previousMap.get(id),base=wanted||previous;
+    if(!base)continue;
+    const weight=wanted?Math.min(1,(previous?.weight??0)+rate):Math.max(0,(previous?.weight??0)-rate);
+    if(weight>.02)lights.push({...base,weight,desired:!!wanted,transient:!!base.transient});
+  }
+  lights.sort((a,b)=>(b.desired-a.desired)||(b.score*b.weight-a.score*a.weight));
+  const final=lights.slice(0,MAX_SCENE_LIGHTS);
+  return {
+    time,
+    desiredFixed:desired.filter(light=>!light.transient).map(light=>light.id),
+    lights:final.map(light=>({id:light.id,source:light.source,sector:light.sector,position:light.position,z:light.z,
+      range:light.range,color:light.color,power:light.power,basePower:light.basePower??light.power,
+      score:light.score??0,weight:light.weight,transient:!!light.transient}))
+  };
+}
+
+function chooseShadowKey(state,previousState){
+  const candidates=state.lights.filter(light=>!light.transient&&light.weight>.15);
+  if(!candidates.length)return state.lights[0]?.id;
+  const best=candidates.reduce((a,b)=>(b.score||0)>(a.score||0)?b:a);
+  const previous=candidates.find(light=>light.id===previousState?.key);
+  if(previous&&(previous.score||0)>=((best.score||0)*.35))return previous.id;
+  return candidates.reduce((a,b)=>(b.basePower||0)>(a.basePower||0)?b:a).id;
+}
+
+function stableShadowTarget(rig,key,lights,eye,view){
+  if(key?.sector!=null&&rig.sectorFill?.has(key.sector)){
+    const center=rig.sectorFill.get(key.sector);
+    return [center.x/32,(key.z??(key.position?.[1]??0)*32)/32,-center.y/32];
+  }
+  const weighted=lights.filter(light=>!light.transient&&light.weight>.05);
+  const total=weighted.reduce((sum,light)=>sum+light.weight,0);
+  if(total>0)return weighted.reduce((sum,light)=>sum.map((value,i)=>value+light.position[i]*light.weight),[0,0,0])
+    .map(value=>value/total);
+  return eye.map((v,i)=>v+view.avant[i]*3.5+(i===1?-.5:0));
+}
+
+function sceneLighting(rig,view,entities=[],time=0,weapon=null,previous=null,options={}){
+  const eye=view.oeil,origin={x:eye[0]*32,y:-eye[2]*32,z:eye[1]*32};
+  const sector=rig.map.sectorAt(origin.x,origin.y);
+  const previousState=previous?.state||null;
+  const transient=transientCandidates(rig,origin,eye,view,entities,weapon);
+  const fixedMax=Math.max(1,MAX_SCENE_LIGHTS-(transient.length?1:0));
+  const fixed=chooseFixedLights(rig,origin,eye,time,previousState,fixedMax);
+  const desired=[...fixed.accepted,...transient];
+  const state=updateLightingState(previousState,desired,time);
+  const keyId=chooseShadowKey(state,previousState);
+  const key=state.lights.find(light=>light.id===keyId)||state.lights[0];
+  const target=stableShadowTarget(rig,key,state.lights,eye,view);
   const outside=sector?.ceilingTexture==='F_SKY1';
-  return pack(accepted,eye,target,.64+Math.max(0,(sector?.light??160)/255)*.22,outside?1:0,outside?.009:.014);
+  const debug={
+    shadowSource:key?.id,
+    fixed:fixed.accepted.map(light=>({id:light.id,source:light.source,position:light.position,range:light.range,
+      power:light.power,score:light.score,distance:light.distance,visible:light.visible})),
+    transient:transient.map(light=>({id:light.id,source:light.source,position:light.position,range:light.range,
+      power:light.power,score:light.score,distance:light.distance,visible:light.visible})),
+    rejected:fixed.rejected,
+    budget:{max:MAX_SCENE_LIGHTS,fixedMax,accepted:state.lights.length}
+  };
+  return pack(state.lights,eye,target,.64+Math.max(0,(sector?.light??160)/255)*.22,outside?1:0,outside?.009:.014,key,{...debug,...(options.debug||{})});
 }
 
 /** Controlled portrait lighting used by the model inspection fixtures. */
@@ -36026,10 +36144,10 @@ function studioLighting(view,target){
   const center=target||view.oeil.map((v,i)=>v+view.avant[i]*2);
   const at=(r,f,u)=>center.map((v,i)=>v+view.droite[i]*r+view.avant[i]*f+view.haut[i]*u);
   return pack([
-    {id:'studio-key',source:'studio',position:at(-2.7,-3.4,3.8),range:14,power:105,color:[1,.88,.75]},
-    {id:'studio-fill',source:'studio',position:at(3.4,-2,1.4),range:12,power:36,color:[.69,.81,1]},
-    {id:'studio-rim',source:'studio',position:at(.8,2.5,3),range:12,power:100,color:[.77,.86,1]}
-  ],view.oeil,center,.9,0);
+    {id:'studio-key',source:'studio',position:at(-2.7,-3.4,3.8),range:14,power:105,color:[1,.88,.75],weight:1},
+    {id:'studio-fill',source:'studio',position:at(3.4,-2,1.4),range:12,power:36,color:[.69,.81,1],weight:1},
+    {id:'studio-rim',source:'studio',position:at(.8,2.5,3),range:12,power:100,color:[.77,.86,1],weight:1}
+  ],view.oeil,center,.9,0,0,{id:'studio-key',position:at(-2.7,-3.4,3.8),range:14});
 }
 
 return Object.freeze({"MAX_SCENE_LIGHTS": MAX_SCENE_LIGHTS, "sectorLightPulse": sectorLightPulse, "shadowProjection": shadowProjection, "weaponShadowProjection": weaponShadowProjection, "buildLightingRig": buildLightingRig, "lightPathOpen": lightPathOpen, "sceneLighting": sceneLighting, "studioLighting": studioLighting});
@@ -36044,7 +36162,7 @@ const LIGHTING = `
 uniform vec3 uEye,uFogColor;
 uniform float uFogDensity;
 uniform float uTime,uBrightness,uDamage,uFlash,uAmbient,uOutdoor;
-uniform vec4 uLights[6],uLightColors[6];
+uniform vec4 uLights[8],uLightColors[8];
 uniform int uLightCount;
 precision highp sampler2DShadow;
 uniform sampler2DShadow uShadow,uSelfShadow;
@@ -36099,7 +36217,7 @@ vec4 shadeSurface(vec3 srgb,vec3 p,vec3 normal,float rough,float metal,float ao,
  vec3 indirect=(base*(1.0-metal)*diffuseSky+(reflectedSky*F)*mix(.8,.22,rough))*ao;
  indirect*=uAmbient*(.23+sector*.77)*(1.0+uOutdoor*.4);
  vec3 direct=vec3(0);float shadow=shadowAt(p,n);
- for(int i=0;i<6;i++){
+ for(int i=0;i<8;i++){
   if(i>=uLightCount)break;
   vec3 delta=uLights[i].xyz-p;float d2=dot(delta,delta),distance=sqrt(d2),range=uLights[i].w;
   vec3 l=delta/max(distance,.001);float falloff=pow(sat(1.0-pow(distance/max(range,.1),4.0)),2.0)/(1.0+d2);
@@ -37566,7 +37684,8 @@ function baron(pose,d){
 function groundPose(source,key,pose,d) {
   let vertices=source.vertices;
   const min=[Infinity,Infinity,Infinity],max=[-Infinity,-Infinity,-Infinity];
-  const collapse=pose.dead?[.18,.38,.65,.88,1][Math.max(0,pose.deathIndex)]:0;
+  const collapseValues=[.18,.38,.65,.88,1];
+  const collapse=pose.dead?collapseValues[Math.min(collapseValues.length-1,Math.max(0,Number.isFinite(pose.deathIndex)?pose.deathIndex:collapseValues.length-1))]:0;
   if(pose.dead) {
     const cx=Math.cos(collapse*Math.PI/2),sx=Math.sin(collapse*Math.PI/2),cz=Math.cos(collapse*.12),sz=Math.sin(collapse*.12);
     for(let i=0;i<vertices.length;i+=MESH_VERTEX_STRIDE){
@@ -39072,7 +39191,7 @@ class FerroDoomRenderer {
     this.leaves=buildSubsectorPolygons(map);this.lightingRig=buildLightingRig(map);
     this.textureCache=new Map();this.meshes=new Map();this.modelMeshes=new Map();
     this.modelBytes=0;this.modelCacheLimit=64*1024*1024;this.lodState=new WeakMap();
-    this.generation=-1;this.sectorHeights='';this.frame={entities:[],time:0};
+    this.generation=-1;this.sectorHeights='';this.frame={entities:[],time:0};this.lastLighting=null;
     this.camera={pos:[0,1.3,0],yaw:0,pitch:0,fov:70,near:.025,far:400};
     this.hook={couleur:(gl,view)=>this._renderPass(gl,view)};
     this._initialize();this._updateMap();
@@ -39090,6 +39209,7 @@ class FerroDoomRenderer {
     this.map=map;
     this.leaves=buildSubsectorPolygons(map);
     this.lightingRig=buildLightingRig(map);
+    this.lastLighting=null;
     this.sectorHeights='';
     for (const mesh of this.meshes.values()) mesh.count=0;
     this.stats.host='procedural-'+String(map.name||'generated').toLowerCase();
@@ -39320,7 +39440,8 @@ class FerroDoomRenderer {
     if(this.generation!==this.engine.pdr.generation)this._initialize();
     this._updateMap();this._ensureTargets(view.largeur,view.hauteur);
     const time=this.frame.time||0,batches=collectModelBatches(this.map,this.frame.entities||[],time,view,this.lodState);
-    const weapon=viewWeaponBatch(this.frame.weapon,time),lighting=sceneLighting(this.lightingRig,view,this.frame.entities||[],time,this.frame.weapon);
+    const weapon=viewWeaponBatch(this.frame.weapon,time),lighting=sceneLighting(this.lightingRig,view,this.frame.entities||[],time,this.frame.weapon,this.lastLighting);
+    this.lastLighting=lighting;
     if(weapon)lighting.weaponShadowVP=weaponShadowProjection(lighting.positions.subarray(0,3),view,weapon);
     gl.disable(gl.SCISSOR_TEST);gl.disable(gl.BLEND);
     const casters=collectShadowBatches(this.map,this.frame.entities||[],time,lighting,batches);
@@ -39367,7 +39488,7 @@ class FerroDoomRenderer {
     Object.assign(this.stats,{modelTriangles,modelInstances:instances,modelDrawCalls:modelCalls,generatedModels:this.modelMeshes.size,worldBillboards:0,
       modelBytes:this.modelBytes,modelCacheLimit:this.modelCacheLimit,modelCulled:batches.summary.culled,modelLods:batches.summary.lods,
       generatedTextures:this.textureCache.size,surfaceTextureBytes:this.textureBytes,surfaceCPUBytes:surfaceDetailCacheStats().bytes,
-      localLights:lighting.count,shadowResolution:this.shadowSize,contactAO:!this.compact,physicallyBasedMaterials:true});
+      localLights:lighting.count,shadowResolution:this.shadowSize,shadowSource:lighting.debug?.shadowSource||lighting.sources?.[0]?.id||null,contactAO:!this.compact,physicallyBasedMaterials:true});
     return {appels:calls,triangles,instances};
   }
 
@@ -40763,6 +40884,46 @@ function episodeAvailable(planRegistry){
 return Object.freeze({"EPISODE_1": EPISODE_1, "episodeLevel": episodeLevel, "episodeNext": episodeNext, "episodeTitle": episodeTitle, "episodeAvailable": episodeAvailable});
 })();
 
+__modules["src/frame-timing.js"] = (() => {
+/** Separates the wall-clock delta used for measurement from the bounded delta
+ * handed to the simulation. The simulation cap remains, but it no longer hides
+ * stalls from the frame-rate readout. */
+function createFrameTimer({ maxSimulationDelta = 0.05, smoothing = 0.04 } = {}) {
+  let previous = null;
+  let fps = 60;
+  let lastRealDelta = 0;
+  let lastSimulationDelta = 0;
+  let lastTimestamp = 0;
+
+  return {
+    tick(timestamp) {
+      const raw = previous === null ? 0 : Math.max(0, (timestamp - previous) / 1000);
+      previous = timestamp;
+      lastTimestamp = timestamp;
+      lastRealDelta = raw;
+      lastSimulationDelta = Math.min(maxSimulationDelta, raw);
+      if (raw > 0) fps += (1 / raw - fps) * smoothing;
+      return { rawDelta: raw, simulationDelta: lastSimulationDelta, fps };
+    },
+    reset() {
+      previous = null;
+      fps = 60;
+      lastRealDelta = 0;
+      lastSimulationDelta = 0;
+      lastTimestamp = 0;
+    },
+    get fps() { return fps; },
+    get realDelta() { return lastRealDelta; },
+    get simulationDelta() { return lastSimulationDelta; },
+    get timestamp() { return lastTimestamp; },
+  };
+}
+
+
+
+return Object.freeze({"createFrameTimer": createFrameTimer, "default": createFrameTimer});
+})();
+
 __modules["src/app.js"] = (() => {
 const {ProceduralResources} = __modules["src/procedural-resources.js"];
 const {FerroDoomRenderer} = __modules["src/ferro-doom-renderer.js"];
@@ -40770,6 +40931,7 @@ const {DoomGame} = __modules["src/game.js"];
 const {ProceduralAudio} = __modules["src/procedural-audio.js"];
 const {GamepadControls} = __modules["src/input.js"];
 const {episodeNext, episodeTitle} = __modules["src/episode.js"];
+const {createFrameTimer} = __modules["src/frame-timing.js"];
 
 const $ = id => document.getElementById(id);
 const world = $('world'), overlay = $('overlay'), hud = $('hud');
@@ -40779,9 +40941,10 @@ const touch = { forward: 0, strafe: 0, fire: false, use: false, turn: 0, look: 0
 let resources, map, game, renderer, audio;
 let levelId = 'E1M1', pendingLevel = null;
 let mode = 'title', mapOpen = false, soundEnabled = true, fpsVisible = false;
-let previousTime = 0, previousHealth = 100, damage = 0, pickupFlash = 0;
+let previousHealth = 100, damage = 0, pickupFlash = 0;
 let mouseTurn = 0, mouseLook = 0, requestedWeapon = null, messageUntil = 0;
-let fps = 60, frames = 0, lastHud = '';
+const frameTimer = createFrameTimer();
+let frames = 0, lastHud = '';
 let inputKind = matchMedia('(pointer: coarse)').matches ? 'touch' : 'mouse';
 let screenRevision = 0, pointerWasLocked = false, neutralInput = false;
 let audioUnlockPending = null;
@@ -40852,7 +41015,7 @@ function screen(next) {
   if (next !== 'playing') {
     document.exitPointerLock?.(); audio?.pauseMusic();
   }
-  if (next === 'playing') audio?.resumeMusic();
+  if (next === 'playing') { frameTimer.reset(); audio?.resumeMusic(); }
 }
 
 async function capturePointer() {
@@ -41028,9 +41191,9 @@ function drawMap() {
 }
 
 function tick(timestamp) {
-  const dt = Math.min(0.05, Math.max(0, (timestamp - (previousTime || timestamp)) / 1000)); previousTime = timestamp;
+  const timing = frameTimer.tick(timestamp);
+  const dt = timing.simulationDelta;
   const time = timestamp / 1000;
-  if (dt > 0) fps += (1 / dt - fps) * 0.04;
   try {
     const pad = gamepad(dt);
     if (game && mode === 'playing') {
@@ -41053,7 +41216,7 @@ function tick(timestamp) {
       if (pickupFlash > 0) { ctx.fillStyle = `rgba(220,179,40,${pickupFlash * 0.45})`; ctx.fillRect(0, 0, overlay.width, overlay.height); }
       if (++frames % 20 === 0) {
         const stats = renderer.stats, sector = map.sectorAt(p.x, p.y);
-        $('perf').textContent = `${Math.round(fps)} FPS · FERRO ${stats.ferroVersion}\n${stats.width || world.width} × ${stats.height || world.height} · ${stats.mapTriangles} triangles carte\n${stats.drawCalls || 0} appels · secteur ${sector?.id ?? '?'}\nPosition ${Math.round(p.x)}, ${Math.round(p.y)}, ${Math.round(p.z)} · angle ${Math.round(p.angle * 180 / Math.PI)}°\n3D procédurale · ${stats.modelInstances || 0} modèles · ${stats.modelTriangles || 0} triangles objets\nDétails proche/moyen/loin ${(stats.modelLods || [0,0,0]).slice().reverse().join('/')} · ${stats.modelCulled || 0} hors champ · ${((stats.modelBytes || 0)/1048576).toFixed(1)} Mio modèles GPU\n${stats.localLights || 0} lumières · ombres ${stats.shadowResolution || 0} px · matières ${((stats.surfaceTextureBytes || 0)/1048576).toFixed(0)} Mio`;
+        $('perf').textContent = `${Math.round(frameTimer.fps)} FPS · ${Math.round(frameTimer.realDelta * 1000)} ms · FERRO ${stats.ferroVersion}\n${stats.width || world.width} × ${stats.height || world.height} · ${stats.mapTriangles} triangles carte\n${stats.drawCalls || 0} appels · secteur ${sector?.id ?? '?'}\nPosition ${Math.round(p.x)}, ${Math.round(p.y)}, ${Math.round(p.z)} · angle ${Math.round(p.angle * 180 / Math.PI)}°\n3D procédurale · ${stats.modelInstances || 0} modèles · ${stats.modelTriangles || 0} triangles objets\nDétails proche/moyen/loin ${(stats.modelLods || [0,0,0]).slice().reverse().join('/')} · ${stats.modelCulled || 0} hors champ · ${((stats.modelBytes || 0)/1048576).toFixed(1)} Mio modèles GPU\n${stats.localLights || 0} lumières · ombre ${stats.shadowSource || 'aucune'} ${stats.shadowResolution || 0} px · matières ${((stats.surfaceTextureBytes || 0)/1048576).toFixed(0)} Mio`;
         $('accessibleStatus').textContent = `${mode}. Secteur ${sector?.id}, santé ${Math.round(p.health)}, munitions ${p.ammo}.`;
         world.dataset.sector = String(sector?.id); world.dataset.triangles = String(stats.mapTriangles); world.dataset.engine = `FERRO ${stats.ferroVersion}`; world.dataset.generation = 'procedural';
       }

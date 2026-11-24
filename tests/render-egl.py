@@ -341,8 +341,9 @@ class Context:
             loc=lambda n:g.glGetUniformLocation(program,n.encode());axes(program)
             g.glUniformMatrix4fv(loc('uVP'),1,0,(C.c_float*16)(*view['vp']))
             g.glUniformMatrix4fv(loc('uShadowVP'),1,0,(C.c_float*16)(*lighting['shadowVP']))
-            g.glUniform4fv(loc('uLights[0]'),6,(C.c_float*24)(*lighting['positions']))
-            g.glUniform4fv(loc('uLightColors[0]'),6,(C.c_float*24)(*lighting['colors']))
+            lightCount=len(lighting['positions'])//4
+            g.glUniform4fv(loc('uLights[0]'),lightCount,(C.c_float*len(lighting['positions']))(*lighting['positions']))
+            g.glUniform4fv(loc('uLightColors[0]'),lightCount,(C.c_float*len(lighting['colors']))(*lighting['colors']))
             for name,value in [('uTime',0),('uBrightness',1.2),('uDamage',0),('uFlash',0),('uAmbient',lighting['ambient']),('uOutdoor',lighting['outdoor']),('uFogDensity',lighting['fogDensity'])]:g.glUniform1f(loc(name),value)
             g.glUniform3f(loc('uFogColor'),*lighting['fogColor'])
             for name,value in [('uShadow',3),('uShadowEnabled',0 if os.environ.get('DOOM_QA_NO_SHADOWS') else 1),('uAOOutput',int(ao)),('uLightCount',lighting['count'])]:g.glUniform1i(loc(name),value)

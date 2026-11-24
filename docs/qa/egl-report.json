@@ -59,9 +59,9 @@
     "e1m8-arrival": 1285,
     "e1m9-arrival": 2579
   },
-  "adapterSha256": "889c510bd8f87f717e7d1d59e041cf10c7f89ce591623361f2e98397ddf32571",
+  "adapterSha256": "0caa913a4ca08a590fa0116e9079adbd05fe66fc6fa11573e38ba93f54d4b8ec",
   "sourceSha256": {
-    "src/app.js": "623171f2b04b11e68147e066df0bae976521867c1a596d00a40512239100b179",
+    "src/app.js": "18f33ef11f8264da77b0d55ed31fe6e96b857f42d56ab419cb977c09dabc0dae",
     "src/e1m1-plan.js": "4f7295c014e4b1f7bf9c7a9b4b5644a824fab456723429f33f8e50d777fd8677",
     "src/e1m2-plan.js": "ef44faa1d36040beab33f98c8c3d7cb17e4d4c47a3fb0d479b529ba99cca4eeb",
     "src/e1m3-plan.js": "db7da2e49350d5733f157b3175e44402b45ea7c7f6b21c2e7142987b4776302b",
@@ -73,14 +73,15 @@
     "src/e1m9-plan.js": "90374968a16375d3ac3013818c1ac71a97abd6ee57561db6aaa318a49c7564dd",
     "src/episode-plans.js": "d525df3fb1e7a570a8123806cc9bac516c8770822444c20e90e7222fe9ca0d16",
     "src/episode.js": "4e58c77da49b2756a59dd7c7ae89ca0f414cf9c217debe7a4be70b13e398c086",
-    "src/ferro-doom-renderer.js": "889c510bd8f87f717e7d1d59e041cf10c7f89ce591623361f2e98397ddf32571",
+    "src/ferro-doom-renderer.js": "0caa913a4ca08a590fa0116e9079adbd05fe66fc6fa11573e38ba93f54d4b8ec",
+    "src/frame-timing.js": "7675adb43dc2690b992e84b5c73a97bbc914ccab5f7b133bf7efc88561704d9e",
     "src/game.js": "72c0451c0107786cb98a1d70ca0bc8a2e4763f7c3090d9fd9cec4aa4777ac0bf",
     "src/input.js": "64c99b9f6f35adab712553c6572890107d83dd7770464581f635b7c3a6a0c1b8",
     "src/procedural-anatomy.js": "c6795c121e15ee098a76e1529be8816772aa9e962e122658d9d28ea61c0188e9",
     "src/procedural-audio.js": "a54f8143f151e62bfcc64b65286af4fff2ac7ee7f9d79e516df85396af03e4e6",
-    "src/procedural-characters.js": "76b4df40a54012dacfd886825bcf087d573f7a4fc0904919e98b83c5c63fd6af",
+    "src/procedural-characters.js": "d2a7119223c15116b98d0bedc4e0ea4ec234f2730bd1c98a29f42289840a0e8c",
     "src/procedural-interface.js": "af287b0e0573e6432d1d41a7a3076c6335a84b2d807ca710e4c72e0c1a19de8a",
-    "src/procedural-lighting.js": "386ec4afda6fd66def7ce7c110d58a62e1e6eac1b8b09f653b70ccf1c91b75e8",
+    "src/procedural-lighting.js": "a70ce359acf29b23874cc6698fe8851fb7c8fc3700d1563c97f24b7cd5c75538",
     "src/procedural-map.js": "f44e2bbb75c2ab39db94081ec8d068575ca3404a6550b9ffb5e67978379a1dd9",
     "src/procedural-materials.js": "e607ba200d2354f72bb854924be947f3403392c6e81fb8e50df4bad5eb98c701",
     "src/procedural-mesh.js": "f7c1c90ff94caa95c15e03e29878e8777c0b3a1b2ce39f7a1215b1f5e79b5890",
@@ -91,15 +92,15 @@
     "src/procedural-raster.js": "3b372674f3004fbe0de245ae359f5895ce72a4bc48a515e4e3a55acbebe7bdb5",
     "src/procedural-remains.js": "ccd3f16d09c29d1fba3d438360f78a959edb6b5b51deb692d54e602b12ba32b1",
     "src/procedural-resources.js": "a12afda693840c0c63a82d6afbf49768372de146ead9beb75b9e154ef5830d1b",
-    "src/procedural-shaders.js": "dd26cd0d26941ce333d48b7d4c4191e3d5058bf4c4fb2605b5c52ceaa05250f3",
+    "src/procedural-shaders.js": "3f512a35f52ecf5e58d8ca5f11a4ff892fb2c59fb1d4ee1d1b61e8a8c0fa179f",
     "src/procedural-surface-detail.js": "67c3253e6391090cead7c0dcc9ef605abfad6c484a1ef5f555e1df1c8be6d8bf",
     "src/procedural-weapons.js": "b439504a1f6f619750f353faac4a2f9b7b98fc61bf0eb9aaff2bbd111d226d2d"
   },
   "shaderSha256": {
     "WORLD_VERTEX": "51cfbcbd50cdfac3e2d4bab23e70c61ab340bec8e6994a6750291d1ff3ed92d7",
-    "WORLD_FRAGMENT": "e1ca7bc4a405f86a79140939ddf28c48cfe3fc7494977f1b87173faecf277b6d",
+    "WORLD_FRAGMENT": "cd3c63821921388dd086b83a7e5e73431cc9be5cd05885b1d036c05e83e6f619",
     "MODEL_VERTEX": "5335e1649f25800e5c4f4e670dc5d45ed2720d4d4d344e0988650c5940fecee4",
-    "MODEL_FRAGMENT": "4ee862b6e9b3f5a7656268f6f0f929c3ced0b45fb798ff21d5c82caec2c9273d",
+    "MODEL_FRAGMENT": "3dfe43a0bff35bc08599ebf02091b788e6f9635036ecaf548f4c48ff78299bea",
     "SKY_VERTEX": "0619a596c2fddc0c3dc31b472ae2b4fd3cfa9bdca612db0c01d9f2a1d0cce430",
     "SKY_FRAGMENT": "a0a3c1f8154614e9ac3eb83e82fce6852752876780265924a47b6f620f1c9c7a",
     "SHADOW_VERTEX": "c66a7f0ef1c77eedd8efcbbabb62a5eb11c89d34279b509787c4b4559e84b782",
@@ -118,11 +119,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 5081,
+      "uniqueColors": 5078,
       "meanRGB": [
-        18.678599609375,
-        22.2463017578125,
-        21.70933984375
+        18.8034091796875,
+        22.3906328125,
+        21.8126513671875
       ],
       "visibility": {
         "total": 91,
@@ -146,11 +147,11 @@
         "angle": 3.141592653589793,
         "pitch": 0
       },
-      "uniqueColors": 11500,
+      "uniqueColors": 13131,
       "meanRGB": [
-        19.5772197265625,
-        21.472091796875,
-        18.8932294921875
+        23.9594921875,
+        26.184033203125,
+        22.27178125
       ],
       "visibility": {
         "total": 91,
@@ -174,11 +175,11 @@
         "angle": 3.141592653589793,
         "pitch": 0
       },
-      "uniqueColors": 13052,
+      "uniqueColors": 6510,
       "meanRGB": [
-        46.1455009765625,
-        49.245169921875,
-        46.6016142578125
+        44.5876904296875,
+        47.71327734375,
+        45.261435546875
       ],
       "visibility": {
         "total": 91,
@@ -202,11 +203,11 @@
         "angle": -1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 6386,
+      "uniqueColors": 5841,
       "meanRGB": [
-        13.39908984375,
-        15.699953125,
-        17.148591796875
+        13.1776455078125,
+        15.458677734375,
+        16.9141337890625
       ],
       "visibility": {
         "total": 91,
@@ -230,11 +231,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 5863,
+      "uniqueColors": 5861,
       "meanRGB": [
-        17.43544921875,
-        20.9982509765625,
-        20.71946875
+        17.5602587890625,
+        21.14258203125,
+        20.8227802734375
       ],
       "visibility": {
         "total": 91,
@@ -258,11 +259,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 18482,
+      "uniqueColors": 18520,
       "meanRGB": [
-        44.7189599609375,
-        39.9909375,
-        28.106802734375
+        44.8177578125,
+        40.1110673828125,
+        28.20266796875
       ],
       "visibility": {
         "total": 91,
@@ -286,11 +287,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 22450,
+      "uniqueColors": 22494,
       "meanRGB": [
-        45.6739619140625,
-        40.931603515625,
-        29.1289365234375
+        45.772759765625,
+        41.0517333984375,
+        29.2248017578125
       ],
       "visibility": {
         "total": 91,
@@ -314,11 +315,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 4993,
+      "uniqueColors": 4989,
       "meanRGB": [
-        23.389953125,
-        25.283802734375,
-        23.5528408203125
+        23.5147626953125,
+        25.4281337890625,
+        23.65615234375
       ],
       "visibility": {
         "total": 91,
@@ -342,11 +343,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 16923,
+      "uniqueColors": 16937,
       "meanRGB": [
-        50.58507421875,
-        55.127818359375,
-        47.5831259765625
+        50.6477734375,
+        55.2031767578125,
+        47.6421318359375
       ],
       "visibility": {
         "total": 91,
@@ -370,11 +371,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 28903,
+      "uniqueColors": 28934,
       "meanRGB": [
-        51.8017734375,
-        48.7415888671875,
-        37.45512890625
+        51.892255859375,
+        48.851568359375,
+        37.5431025390625
       ],
       "visibility": {
         "total": 91,
@@ -398,11 +399,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 16819,
+      "uniqueColors": 6550,
       "meanRGB": [
-        39.977259765625,
-        39.627841796875,
-        32.8470732421875
+        24.7111728515625,
+        29.5501337890625,
+        29.3257666015625
       ],
       "visibility": {
         "total": 91,
@@ -1040,7 +1041,7 @@
       },
       "uniqueColors": 17865,
       "meanRGB": [
-        22.837923828125,
+        22.8379248046875,
         24.40184765625,
         24.9354541015625
       ],
@@ -1550,7 +1551,7 @@
       },
       "uniqueColors": 28960,
       "meanRGB": [
-        32.0608984375,
+        32.0608974609375,
         32.0314677734375,
         32.50888671875
       ],
@@ -3000,11 +3001,11 @@
         "angle": 0,
         "pitch": 0
       },
-      "uniqueColors": 37733,
+      "uniqueColors": 37723,
       "meanRGB": [
-        90.70330859375,
-        91.9157119140625,
-        76.81709375
+        90.800046875,
+        92.015673828125,
+        76.9004423828125
       ],
       "visibility": {
         "total": 0,
@@ -3070,11 +3071,11 @@
         "angle": 0,
         "pitch": 0
       },
-      "uniqueColors": 43779,
+      "uniqueColors": 43578,
       "meanRGB": [
-        91.5540224609375,
-        92.23290234375,
-        76.6430087890625
+        91.821388671875,
+        92.50562890625,
+        76.86074609375
       ],
       "visibility": {
         "total": 1,
@@ -3148,18 +3149,18 @@
           }
         ],
         "visibleActor": {
-          "pixels": 24906,
+          "pixels": 20232,
           "boundsXY": [
-            541,
+            561,
             341,
-            738,
+            723,
             602
           ],
           "centroidXY": [
-            640.1775475788967,
-            479.6097325945555
+            640.3861704230922,
+            464.74777580071174
           ],
-          "pixelsInsideOpening": 24906,
+          "pixelsInsideOpening": 20232,
           "check": "Actor and shadow differences from the identical open-door baseline. Actor anchor and visible changes inside the opening checked; shadows can extend beyond jambs. Not a combat or AI test."
         }
       }
@@ -3174,11 +3175,11 @@
         "angle": 0,
         "pitch": 0
       },
-      "uniqueColors": 42171,
+      "uniqueColors": 42139,
       "meanRGB": [
-        90.990078125,
-        91.93613671875,
-        76.615115234375
+        91.2578642578125,
+        92.1810087890625,
+        76.7933056640625
       ],
       "visibility": {
         "total": 1,
@@ -3252,18 +3253,18 @@
           }
         ],
         "visibleActor": {
-          "pixels": 14273,
+          "pixels": 12073,
           "boundsXY": [
-            575,
+            580,
             342,
-            688,
+            672,
             605
           ],
           "centroidXY": [
-            633.7908638688433,
-            488.0194072724725
+            634.4164664954858,
+            478.7587178000497
           ],
-          "pixelsInsideOpening": 14273,
+          "pixelsInsideOpening": 12073,
           "check": "Actor and shadow differences from the identical open-door baseline. Actor anchor and visible changes inside the opening checked; shadows can extend beyond jambs. Not a combat or AI test."
         }
       }
@@ -3278,11 +3279,11 @@
         "angle": 3.141592653589793,
         "pitch": 0
       },
-      "uniqueColors": 1160,
+      "uniqueColors": 1157,
       "meanRGB": [
-        3.80046484375,
-        3.6162919921875,
-        2.1343369140625
+        3.8018154296875,
+        3.617439453125,
+        2.1352333984375
       ],
       "visibility": {
         "total": 91,
@@ -3661,11 +3662,11 @@
         "angle": 3.141592653589793,
         "pitch": 0
       },
-      "uniqueColors": 5821,
+      "uniqueColors": 6757,
       "meanRGB": [
-        26.3219287109375,
-        23.1896552734375,
-        15.5471796875
+        29.4850361328125,
+        26.0980849609375,
+        17.7505283203125
       ],
       "visibility": {
         "total": 91,
@@ -4053,11 +4054,11 @@
         "angle": 3.141592653589793,
         "pitch": 0
       },
-      "uniqueColors": 21130,
+      "uniqueColors": 21097,
       "meanRGB": [
-        34.1200400390625,
-        39.6360283203125,
-        31.8154423828125
+        34.1286376953125,
+        39.6455830078125,
+        31.8230712890625
       ],
       "visibility": {
         "total": 91,
@@ -4828,11 +4829,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 1167,
+      "uniqueColors": 1165,
       "meanRGB": [
-        6.490958984375,
-        8.5752626953125,
-        8.2348955078125
+        6.5048427734375,
+        8.5923935546875,
+        8.250662109375
       ],
       "visibility": {
         "total": 91,
@@ -5211,11 +5212,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 4619,
+      "uniqueColors": 4617,
       "meanRGB": [
-        18.6996220703125,
-        22.267326171875,
-        21.7520341796875
+        18.824431640625,
+        22.4116572265625,
+        21.855345703125
       ],
       "visibility": {
         "total": 0,
@@ -5244,9 +5245,9 @@
       },
       "uniqueColors": 2972,
       "meanRGB": [
-        13.7267607421875,
-        15.920517578125,
-        15.5160810546875
+        13.7420107421875,
+        15.93708203125,
+        15.5284169921875
       ],
       "visibility": {
         "total": 0,
@@ -5273,11 +5274,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 22599,
+      "uniqueColors": 22604,
       "meanRGB": [
-        44.4380595703125,
-        42.866001953125,
-        33.4359072265625
+        44.43884765625,
+        42.8667265625,
+        33.436478515625
       ],
       "visibility": {
         "total": 0,
@@ -5306,9 +5307,9 @@
       },
       "uniqueColors": 6227,
       "meanRGB": [
-        27.5397021484375,
-        24.76669140625,
-        16.7744384765625
+        27.539658203125,
+        24.7666650390625,
+        16.77442578125
       ],
       "visibility": {
         "total": 0,
@@ -5337,9 +5338,9 @@
       },
       "uniqueColors": 6342,
       "meanRGB": [
-        16.595337890625,
-        20.5178759765625,
-        16.2168212890625
+        16.5985009765625,
+        20.521087890625,
+        16.218625
       ],
       "visibility": {
         "total": 0,
@@ -5366,11 +5367,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 12138,
+      "uniqueColors": 12226,
       "meanRGB": [
-        22.965916015625,
-        23.369955078125,
-        19.5367470703125
+        23.0574814453125,
+        23.45145703125,
+        19.585294921875
       ],
       "visibility": {
         "total": 0,
@@ -5430,9 +5431,9 @@
       },
       "uniqueColors": 1077,
       "meanRGB": [
-        4.3899599609375,
-        4.9584619140625,
-        5.006232421875
+        4.38997265625,
+        4.958482421875,
+        5.0062587890625
       ],
       "visibility": {
         "total": 0,
@@ -5461,9 +5462,9 @@
       },
       "uniqueColors": 4625,
       "meanRGB": [
-        17.1999580078125,
-        18.6729482421875,
-        16.70590625
+        17.19997265625,
+        18.672966796875,
+        16.7059169921875
       ],
       "visibility": {
         "total": 0,

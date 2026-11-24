@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>DOOM FERRO — séquence de stabilité lumineuse</title>
+  <style>
+    body{margin:0;background:#050607;color:#f5f2e8;font:12px monospace}
+    #world{position:fixed;left:-10000px;top:0;width:1280px;height:800px}
+    #sheet{display:block;width:1280px;height:600px;background:#000}
+  </style>
+</head>
+<body>
+  <canvas id="world" width="1280" height="800"></canvas>
+  <canvas id="sheet" width="1280" height="600"></canvas>
+  <pre id="log" style="position:fixed;left:0;top:0;color:#0f0;font:10px monospace;background:#000;opacity:.7"></pre>
+  <script type="module">
+    const originalGetContext=HTMLCanvasElement.prototype.getContext;
+    HTMLCanvasElement.prototype.getContext=function(type,attrs){
+      if(type==='webgl2')attrs={...(attrs||{}),preserveDrawingBuffer:true};
+      return originalGetContext.call(this,type,attrs);
+    };
+    const {ProceduralResources}=await import('../src/procedural-resources.js');
+    const {DoomGame}=await import('../src/game.js');
+    const {FerroDoomRenderer}=await import('../src/ferro-doom-renderer.js');
+
+    const params=new URLSearchParams(location.search);
+    const world=document.querySelector('#world'), sheet=document.querySelector('#sheet');
+    const ctx=sheet.getContext('2d');
+    const log=document.querySelector('#log');
+    function note(message){log.textContent+=`${message}\n`;log.scrollTop=log.scrollHeight;}
+    function fail(error){
+      ctx.fillStyle='#000';ctx.fillRect(0,0,1280,800);ctx.fillStyle='#fff';ctx.font='16px monospace';
+      ctx.fillText(String(error?.stack||error),20,40);document.title='error';note(String(error?.stack||error));
+    }
+    window.onerror=(message,source,line,column,error)=>fail(error||message);
+    let resources,map,game,renderer;
+    try{
+      resources=new ProceduralResources();
+      map=resources.map('E1M1');
+      game=new DoomGame(map,{skill:2});
+      renderer=new FerroDoomRenderer(world,resources,map,{maxPixels:1280*800,brightness:1.2});
+    }catch(error){fail(error);throw error;}
+
+    try{
+      const weapon={kind:'pistol',phase:Infinity};
+      let frame=0;
+      const frameCanvas=document.createElement('canvas');
+      frameCanvas.width=1280;frameCanvas.height=800;
+      const frameCtx=frameCanvas.getContext('2d');
+      const pixels=new Uint8Array(1280*800*4),smallPixels=new Uint8ClampedArray(320*200*4);
+      async function draw(label,camera){
+        const col=frame%4,row=Math.floor(frame/4);
+        note(`draw ${frame+1} ${label}`);
+        try{
+          renderer.draw({x:camera.x,y:camera.y,z:camera.z,angle:camera.angle,pitch:0,fov:70},
+            {entities:game.entities,time:frame*0.016,weapon});
+          const gl=renderer.gl,target=renderer.sceneTarget||{framebuffer:null,width:1280,height:800};
+          gl.bindFramebuffer(gl.FRAMEBUFFER,target.framebuffer);
+          gl.readPixels(0,0,target.width,target.height,gl.RGBA,gl.UNSIGNED_BYTE,pixels);
+          gl.bindFramebuffer(gl.FRAMEBUFFER,null);
+          for(let y=0;y<200;y++)for(let x=0;x<320;x++){
+            const source=((target.height-1-y*4)*target.width+x*4)*4,dest=(y*320+x)*4;
+            for(let k=0;k<3;k++)smallPixels[dest+k]=pixels[source+k];
+            smallPixels[dest+3]=255;
+          }
+          const image=new ImageData(smallPixels,320,200);
+          frameCtx.putImageData(image,0,0);
+          ctx.drawImage(frameCanvas,0,0,320,200,col*320,row*200,320,200);
+          note(`ok ${frame+1} ${label}`);
+        }catch(error){
+          note(`err ${frame+1} ${label} ${String(error?.message||error)}`);
+          ctx.fillStyle='#f55';ctx.fillText('ERR '+String(error?.message||error),col*320+8,row*200+40);
+        }
+        ctx.fillStyle='rgba(0,0,0,.72)';ctx.fillRect(col*320,row*200,320,18);
+        ctx.fillStyle='#fff';ctx.fillText(`${frame+1} ${label}`,col*320+6,row*200+13);
+        ctx.fillStyle='#0f0';ctx.fillRect(0,592,frame*12,6);
+        frame++;
+      }
+
+      await draw('A avant',( {x:2499,y:-2285,z:73,angle:Math.PI/2}));
+      await draw('A +1',( {x:2500,y:-2285,z:73,angle:Math.PI/2}));
+      await draw('A -1',( {x:2499,y:-2285,z:73,angle:Math.PI/2}));
+      await draw('A rotation',( {x:2499,y:-2285,z:73,angle:0}));
+      await draw('B avant',( {x:1651,y:-2525,z:41,angle:Math.PI/2}));
+      await draw('B +1',( {x:1652,y:-2525,z:41,angle:Math.PI/2}));
+      await draw('C avant',( {x:739,y:-3405,z:41,angle:Math.PI/2}));
+      await draw('C +1',( {x:740,y:-3405,z:41,angle:Math.PI/2}));
+
+      const door=game.lines[151],doorSector=map.sectors[door.back];
+      const doorPoints=map.floorPolygons.filter(p=>p.sector===door.back).flatMap(p=>p.points);
+      const centerY=(Math.min(...doorPoints.map(p=>p.y))+Math.max(...doorPoints.map(p=>p.y)))/2;
+      const doorCamera={x:door.ax-128,y:centerY,z:41,angle:0};
+      await draw('porte fermée',doorCamera);
+      game._openDoor(door);
+      for(let tick=0;tick<140 && game.actions.get(door.back)?.phase==='up';tick++)game._updateActions(1/70);
+      await draw('porte ouverte',doorCamera);
+
+      ctx.fillStyle='#fff';ctx.fillText(`mode=${params.get('mode')||'current'} · ${renderer.stats.localLights||0} lumières · ombre ${renderer.stats.shadowSource||'?'}`,8,592);
+      document.title='ready';
+    }catch(error){fail(error);}
+  </script>
+</body>
+</html>

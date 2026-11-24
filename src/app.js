@@ -4,6 +4,7 @@ import { DoomGame } from './game.js';
 import { ProceduralAudio } from './procedural-audio.js';
 import { GamepadControls } from './input.js';
 import { episodeNext, episodeTitle } from './episode.js';
+import { createFrameTimer } from './frame-timing.js';
 
 const $ = id => document.getElementById(id);
 const world = $('world'), overlay = $('overlay'), hud = $('hud');
@@ -13,9 +14,10 @@ const touch = { forward: 0, strafe: 0, fire: false, use: false, turn: 0, look: 0
 let resources, map, game, renderer, audio;
 let levelId = 'E1M1', pendingLevel = null;
 let mode = 'title', mapOpen = false, soundEnabled = true, fpsVisible = false;
-let previousTime = 0, previousHealth = 100, damage = 0, pickupFlash = 0;
+let previousHealth = 100, damage = 0, pickupFlash = 0;
 let mouseTurn = 0, mouseLook = 0, requestedWeapon = null, messageUntil = 0;
-let fps = 60, frames = 0, lastHud = '';
+const frameTimer = createFrameTimer();
+let frames = 0, lastHud = '';
 let inputKind = matchMedia('(pointer: coarse)').matches ? 'touch' : 'mouse';
 let screenRevision = 0, pointerWasLocked = false, neutralInput = false;
 let audioUnlockPending = null;
@@ -86,7 +88,7 @@ function screen(next) {
   if (next !== 'playing') {
     document.exitPointerLock?.(); audio?.pauseMusic();
   }
-  if (next === 'playing') audio?.resumeMusic();
+  if (next === 'playing') { frameTimer.reset(); audio?.resumeMusic(); }
 }
 
 async function capturePointer() {
@@ -262,9 +264,9 @@ function drawMap() {
 }
 
 function tick(timestamp) {
-  const dt = Math.min(0.05, Math.max(0, (timestamp - (previousTime || timestamp)) / 1000)); previousTime = timestamp;
+  const timing = frameTimer.tick(timestamp);
+  const dt = timing.simulationDelta;
   const time = timestamp / 1000;
-  if (dt > 0) fps += (1 / dt - fps) * 0.04;
   try {
     const pad = gamepad(dt);
     if (game && mode === 'playing') {
@@ -287,7 +289,7 @@ function tick(timestamp) {
       if (pickupFlash > 0) { ctx.fillStyle = `rgba(220,179,40,${pickupFlash * 0.45})`; ctx.fillRect(0, 0, overlay.width, overlay.height); }
       if (++frames % 20 === 0) {
         const stats = renderer.stats, sector = map.sectorAt(p.x, p.y);
-        $('perf').textContent = `${Math.round(fps)} FPS · FERRO ${stats.ferroVersion}\n${stats.width || world.width} × ${stats.height || world.height} · ${stats.mapTriangles} triangles carte\n${stats.drawCalls || 0} appels · secteur ${sector?.id ?? '?'}\nPosition ${Math.round(p.x)}, ${Math.round(p.y)}, ${Math.round(p.z)} · angle ${Math.round(p.angle * 180 / Math.PI)}°\n3D procédurale · ${stats.modelInstances || 0} modèles · ${stats.modelTriangles || 0} triangles objets\nDétails proche/moyen/loin ${(stats.modelLods || [0,0,0]).slice().reverse().join('/')} · ${stats.modelCulled || 0} hors champ · ${((stats.modelBytes || 0)/1048576).toFixed(1)} Mio modèles GPU\n${stats.localLights || 0} lumières · ombres ${stats.shadowResolution || 0} px · matières ${((stats.surfaceTextureBytes || 0)/1048576).toFixed(0)} Mio`;
+        $('perf').textContent = `${Math.round(frameTimer.fps)} FPS · ${Math.round(frameTimer.realDelta * 1000)} ms · FERRO ${stats.ferroVersion}\n${stats.width || world.width} × ${stats.height || world.height} · ${stats.mapTriangles} triangles carte\n${stats.drawCalls || 0} appels · secteur ${sector?.id ?? '?'}\nPosition ${Math.round(p.x)}, ${Math.round(p.y)}, ${Math.round(p.z)} · angle ${Math.round(p.angle * 180 / Math.PI)}°\n3D procédurale · ${stats.modelInstances || 0} modèles · ${stats.modelTriangles || 0} triangles objets\nDétails proche/moyen/loin ${(stats.modelLods || [0,0,0]).slice().reverse().join('/')} · ${stats.modelCulled || 0} hors champ · ${((stats.modelBytes || 0)/1048576).toFixed(1)} Mio modèles GPU\n${stats.localLights || 0} lumières · ombre ${stats.shadowSource || 'aucune'} ${stats.shadowResolution || 0} px · matières ${((stats.surfaceTextureBytes || 0)/1048576).toFixed(0)} Mio`;
         $('accessibleStatus').textContent = `${mode}. Secteur ${sector?.id}, santé ${Math.round(p.health)}, munitions ${p.ammo}.`;
         world.dataset.sector = String(sector?.id); world.dataset.triangles = String(stats.mapTriangles); world.dataset.engine = `FERRO ${stats.ferroVersion}`; world.dataset.generation = 'procedural';
       }

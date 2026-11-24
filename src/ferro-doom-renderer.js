@@ -166,7 +166,7 @@ export class FerroDoomRenderer {
     this.leaves=buildSubsectorPolygons(map);this.lightingRig=buildLightingRig(map);
     this.textureCache=new Map();this.meshes=new Map();this.modelMeshes=new Map();
     this.modelBytes=0;this.modelCacheLimit=64*1024*1024;this.lodState=new WeakMap();
-    this.generation=-1;this.sectorHeights='';this.frame={entities:[],time:0};
+    this.generation=-1;this.sectorHeights='';this.frame={entities:[],time:0};this.lastLighting=null;
     this.camera={pos:[0,1.3,0],yaw:0,pitch:0,fov:70,near:.025,far:400};
     this.hook={couleur:(gl,view)=>this._renderPass(gl,view)};
     this._initialize();this._updateMap();
@@ -184,6 +184,7 @@ export class FerroDoomRenderer {
     this.map=map;
     this.leaves=buildSubsectorPolygons(map);
     this.lightingRig=buildLightingRig(map);
+    this.lastLighting=null;
     this.sectorHeights='';
     for (const mesh of this.meshes.values()) mesh.count=0;
     this.stats.host='procedural-'+String(map.name||'generated').toLowerCase();
@@ -414,7 +415,8 @@ export class FerroDoomRenderer {
     if(this.generation!==this.engine.pdr.generation)this._initialize();
     this._updateMap();this._ensureTargets(view.largeur,view.hauteur);
     const time=this.frame.time||0,batches=collectModelBatches(this.map,this.frame.entities||[],time,view,this.lodState);
-    const weapon=viewWeaponBatch(this.frame.weapon,time),lighting=sceneLighting(this.lightingRig,view,this.frame.entities||[],time,this.frame.weapon);
+    const weapon=viewWeaponBatch(this.frame.weapon,time),lighting=sceneLighting(this.lightingRig,view,this.frame.entities||[],time,this.frame.weapon,this.lastLighting);
+    this.lastLighting=lighting;
     if(weapon)lighting.weaponShadowVP=weaponShadowProjection(lighting.positions.subarray(0,3),view,weapon);
     gl.disable(gl.SCISSOR_TEST);gl.disable(gl.BLEND);
     const casters=collectShadowBatches(this.map,this.frame.entities||[],time,lighting,batches);
@@ -461,7 +463,7 @@ export class FerroDoomRenderer {
     Object.assign(this.stats,{modelTriangles,modelInstances:instances,modelDrawCalls:modelCalls,generatedModels:this.modelMeshes.size,worldBillboards:0,
       modelBytes:this.modelBytes,modelCacheLimit:this.modelCacheLimit,modelCulled:batches.summary.culled,modelLods:batches.summary.lods,
       generatedTextures:this.textureCache.size,surfaceTextureBytes:this.textureBytes,surfaceCPUBytes:surfaceDetailCacheStats().bytes,
-      localLights:lighting.count,shadowResolution:this.shadowSize,contactAO:!this.compact,physicallyBasedMaterials:true});
+      localLights:lighting.count,shadowResolution:this.shadowSize,shadowSource:lighting.debug?.shadowSource||lighting.sources?.[0]?.id||null,contactAO:!this.compact,physicallyBasedMaterials:true});
     return {appels:calls,triangles,instances};
   }
 

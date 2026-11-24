@@ -6,7 +6,7 @@ const LIGHTING = `
 uniform vec3 uEye,uFogColor;
 uniform float uFogDensity;
 uniform float uTime,uBrightness,uDamage,uFlash,uAmbient,uOutdoor;
-uniform vec4 uLights[6],uLightColors[6];
+uniform vec4 uLights[8],uLightColors[8];
 uniform int uLightCount;
 precision highp sampler2DShadow;
 uniform sampler2DShadow uShadow,uSelfShadow;
@@ -61,7 +61,7 @@ vec4 shadeSurface(vec3 srgb,vec3 p,vec3 normal,float rough,float metal,float ao,
  vec3 indirect=(base*(1.0-metal)*diffuseSky+(reflectedSky*F)*mix(.8,.22,rough))*ao;
  indirect*=uAmbient*(.23+sector*.77)*(1.0+uOutdoor*.4);
  vec3 direct=vec3(0);float shadow=shadowAt(p,n);
- for(int i=0;i<6;i++){
+ for(int i=0;i<8;i++){
   if(i>=uLightCount)break;
   vec3 delta=uLights[i].xyz-p;float d2=dot(delta,delta),distance=sqrt(d2),range=uLights[i].w;
   vec3 l=delta/max(distance,.001);float falloff=pow(sat(1.0-pow(distance/max(range,.1),4.0)),2.0)/(1.0+d2);

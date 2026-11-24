@@ -583,7 +583,8 @@ function baron(pose,d){
 function groundPose(source,key,pose,d) {
   let vertices=source.vertices;
   const min=[Infinity,Infinity,Infinity],max=[-Infinity,-Infinity,-Infinity];
-  const collapse=pose.dead?[.18,.38,.65,.88,1][Math.max(0,pose.deathIndex)]:0;
+  const collapseValues=[.18,.38,.65,.88,1];
+  const collapse=pose.dead?collapseValues[Math.min(collapseValues.length-1,Math.max(0,Number.isFinite(pose.deathIndex)?pose.deathIndex:collapseValues.length-1))]:0;
   if(pose.dead) {
     const cx=Math.cos(collapse*Math.PI/2),sx=Math.sin(collapse*Math.PI/2),cz=Math.cos(collapse*.12),sz=Math.sin(collapse*.12);
     for(let i=0;i<vertices.length;i+=MESH_VERTEX_STRIDE){
