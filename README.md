@@ -1,6 +1,6 @@
 # DOOM · FERRO — Hangar procédural en 3D
 
-**E1M1 reconstruit par le code et rendu par le moteur FERRO 0.3.33.** Version du jeu : **0.4.0**.
+**E1M1 reconstruit par le code et rendu par le moteur FERRO 0.3.33.** Version du jeu : **0.5.0**.
 
 Le runtime ne charge aucun WAD, fichier image, modèle ou enregistrement sonore. Les générateurs construisent la géométrie, les matériaux, le ciel, les personnages, les objets, les armes, le HUD, les effets sonores et une musique originale. Ils utilisent des calculs, des primitives et des graines déterministes ; aucun média encodé ne remplace les anciens fichiers.
 
@@ -37,29 +37,39 @@ Ouvrir **http://localhost:8080**. Les modules JavaScript nécessitent un serveur
 
 Les ressources visuelles sont créées à la demande puis mises en cache. Les poses identiques partagent leur géométrie et sont rendues par instanciation. Changer l’angle de la caméra ne change ni le maillage ni l’orientation d’un acteur. Les effets sonores sont calculés une fois et réutilisés. La musique conserve sa position lors des pauses. Le nombre de voix simultanées est plafonné à 24.
 
-## Détail des modèles en 0.4.0
+## Volumes, matières et lumière en 0.5.0
 
-Les personnages utilisent maintenant des profils anatomiques continus, des visages sculptés par fonctions, des yeux et paupières, une cavité buccale avec dents séparées, des mains articulées, des vêtements avec poches, coutures et plis, ainsi que des bottes avec semelles et lacets. L’imp possède des volumes de torse continus, des griffes et des pointes intégrées aux membres. Les mains des soldats suivent les prises de leur arme dans le même repère 3D.
+Cette refonte reprend ensemble les formes et leur éclairage. Les têtes, torses et membres utilisent des surfaces anatomiques continues. Les courbes tiennent compte de l’espacement réel des repères pour conserver des normales lisses. Les bras et jambes se déforment autour des articulations ; le transport de leurs repères et des normales évite les retournements aux coudes. Les yeux, paupières, oreilles, lèvres et dents sont des volumes distincts intégrés à la tête. Les cols et poches sont des panneaux courbes à épaisseur réelle.
 
-Les objets possèdent des rebords, collerettes, fixations, poignées, fermoirs, câbles et cartouches séparées suivant leur famille. Les armes en main ont des pièces de carcasse, des organes de visée, une détente et son pontet, des vis, une bouche de canon, une pompe et des mains détaillées. Les pièces fixes sont générées une fois puis transformées pour les poses de recul et de pompage.
+Les mains des armes utilisent des surfaces implicites fusionnées, avec paumes, pouces, doigts et poignets raccordés. Le pistolet et le fusil possèdent une carcasse profilée, des assemblages, une chambre, des organes de visée, un pontet réellement ouvert et une bouche de canon creuse. Le bois de la crosse et de la pompe suit une seule surface. Les barils, colonnes, armures, casques, flacons et trousses reçoivent des rebords, épaisseurs, joints, charnières, câbles et fixations adaptés à leur construction.
 
-Les chanfreins et les profils arrondis modifient réellement les silhouettes. Les matériaux distinguent peau, tissu, cuir, métal, peinture, os, verre, bois, sang et surfaces lumineuses. Grain, fibres, usure légère, rugosité et reflets sont calculés dans les shaders à partir de coordonnées locales conservées pendant les animations. Aucun fichier de texture ni de modèle supplémentaire n’est chargé.
+Le rendu des matières est repris avec **GGX, Smith corrélé et Schlick**, calculés en lumière linéaire, puis une courbe filmique et une conversion d’affichage. Les modèles distinguent peau, tissu, cuir, métal, peinture, os, verre, bois, sang et surfaces lumineuses. Pores, fibres et grain sont calculés dans leurs coordonnées locales, conservées pendant les mouvements. Les visages restent des reconstructions sculptées stylisées ; cette version ne revendique pas un photoréalisme acquis.
 
-Les recettes proposent trois niveaux géométriques suivant la distance, avec une marge de transition pour éviter des changements incessants à la limite. Le test de visibilité précède la génération du maillage. Les compteurs F3 indiquent les niveaux utilisés, les objets écartés et la mémoire des buffers de modèles.
+Les murs, portes, consoles, sols et plafonds disposent de **trois cartes calculées indépendamment** : couleur/couverture, normale/rugosité et métal/occlusion/émission/hauteur. Les grands motifs et dimensions de Doom sont conservés ; les détails sont évalués à la nouvelle résolution, jusqu’à 1024 pixels sur le grand côté. La parallaxe ajoute du relief apparent aux surfaces proches ; elle ne change ni les silhouettes architecturales ni les collisions. Les mipmaps, le filtrage linéaire et l’anisotropie disponible réduisent le scintillement à distance.
 
-L’inventaire de géométrie est mesuré directement depuis les buffers générés dans [model-detail.json](docs/qa/model-detail.json). Ces comptes correspondent à la pose au repos ou à la première image d’animation ; ils varient pendant certaines actions.
+Jusqu’à six sources locales proviennent des secteurs, luminaires, ouvertures extérieures et effets de tir. Les secteurs qui clignotent ou pulsent modulent aussi la lumière directe. Une carte de profondeur produit les ombres du monde ; une seconde, ajustée à la géométrie visible de l’arme, résout les petits contacts autour des mains. Les objets hors cadre peuvent encore projeter une ombre dans le champ. Les comparaisons de profondeur filtrées sont complétées par une occlusion de contact qui utilise les normales lisses, puis un léger filtrage des contours.
+
+L’éclairage indirect, la transmission de la peau et les réflexions d’environnement restent des approximations. Ce chemin n’est ni du ray tracing, ni un calcul complet d’illumination globale. Le fonctionnement exact, les sources des formules et les limites sont décrits dans [procedural-rendering.md](docs/procedural-rendering.md).
+
+### Géométrie et caches
+
+Les trois niveaux géométriques partagent leurs designs et leur rig. Une marge autour des distances de transition évite les changements incessants de détail. La visibilité est testée avant de générer une pose. Les pièces fixes sont construites une fois, puis les poses sont composées directement dans des tableaux Float32. Les ombres d’objets uniquement hors champ utilisent au plus le niveau intermédiaire.
+
+L’inventaire ci-dessous provient des buffers réels, au repos ou à la première image d’animation ; il ne mesure pas les FPS. Le fichier [model-detail.json](docs/qa/model-detail.json) contient les autres familles, les poses d’action, les dimensions, les matières et les empreintes des sources.
 
 | Modèle | Proche | Intermédiaire | Lointain |
 |---|---:|---:|---:|
-| Zombieman | 11 480 | 4 876 | 1 668 |
-| Shotgun guy | 11 248 | 4 840 | 1 664 |
-| Imp | 9 048 | 4 628 | 1 752 |
-| Baril | 3 344 | 1 296 | 308 |
-| Colonne technique | 4 752 | 1 368 | 232 |
-| Armure | 2 784 | 1 128 | 264 |
-| Fusil au sol | 3 560 | 1 808 | 222 |
+| Zombieman | 34332 | 7216 | 1708 |
+| Shotgun guy | 30400 | 6952 | 1656 |
+| Imp | 25408 | 6096 | 1848 |
+| Baril | 4488 | 1496 | 350 |
+| Colonne technique | 11840 | 1932 | 288 |
+| Armure | 8400 | 2192 | 368 |
+| Fusil au sol | 9124 | 2380 | 344 |
 
-Les armes en main restent détaillées : **4 536 triangles pour le pistolet**, **9 120 pour le fusil**, **2 364 pour le poing**. Un flash de tir ajoute 206 triangles. Les pièces communes des trois familles de personnages et les premières poses d’armes sont préparées pendant le chargement, en laissant le navigateur afficher entre les recettes. Les autres poses sont construites à la demande ; aucune cadence d’image sur appareil physique n’est déduite de ces comptes.
+Les armes tenues au repos comptent **12 460 triangles pour le pistolet**, **23 532 pour le fusil** et **8 404 pour le poing**. Le flash volumique ajoute 206 triangles aux armes à feu. Les pièces communes, premières poses et cartes de matière sont préparées pendant un chargement avec progression affichée, en laissant le navigateur afficher entre les recettes.
+
+Les buffers CPU conservés sont bornés : 32 Mio de pièces de personnages et 32 Mio de poses, 12 Mio d’objets, 20 Mio d’armes et 48 Mio de cartes de surfaces incluant leur tampon de hauteur temporaire. Ces valeurs ne représentent pas la mémoire totale du navigateur. Les modèles GPU restent plafonnés à 64 Mio. L’ensemble possible des 56 matières d’E1M1 utilise environ 178,2 Mio de textures GPU avec mipmaps sur ordinateur, ou 42,1 Mio avec la limite mobile de 256 pixels ; les cibles couleur, normales, profondeur et ombres s’ajoutent à ce compte.
 
 ## Commandes
 
@@ -99,7 +109,7 @@ FERRO crée le contexte WebGL, contrôle la résolution, les matrices de caméra
 
 Les générateurs et les règles de Doom, dont les collisions par secteurs, appartiennent au jeu. Le noyau canonique de FERRO reste inchangé.
 
-Le budget d’image atteint **576 000 pixels** sur les périphériques à pointeur précis (960 × 600 de référence, adapté au ratio de l’écran) et reste à **256 000 pixels** sur les périphériques à pointeur grossier. La carte initiale comporte **2 025 triangles**. Les modèles proches reçoivent la géométrie détaillée ; leurs versions intermédiaires et lointaines réduisent le coût. Les buffers de modèles GPU sont limités à **64 Mio**, avec éviction des poses les moins récemment utilisées ; leurs caches CPU sont également bornés en octets. Les buffers de carte sont réutilisés et ne sont reconstruits que lorsque la géométrie ou une texture de secteur change. F3 affiche les nombres de modèles et de triangles effectivement soumis. Aucune mesure FPS sur Xbox ou téléphone physique n’est revendiquée.
+Le budget d’image atteint **1 024 000 pixels** sur les périphériques à pointeur précis (1280 × 800 de référence, adapté au ratio de l’écran) et reste à **256 000 pixels** sur les périphériques à pointeur grossier. La carte initiale comporte **2 025 triangles**. Les modèles proches reçoivent la géométrie détaillée ; leurs versions intermédiaires et lointaines réduisent le coût. Les buffers de modèles GPU sont limités à **64 Mio**, avec éviction des poses les moins récemment utilisées ; leurs caches CPU sont également bornés en octets. Les buffers de carte sont réutilisés et ne sont reconstruits que lorsque la géométrie ou une texture de secteur change. F3 affiche les nombres de modèles et de triangles effectivement soumis. Aucune mesure FPS sur Xbox ou téléphone physique n’est revendiquée.
 
 ## Organisation
 
@@ -107,12 +117,15 @@ Le budget d’image atteint **576 000 pixels** sur les périphériques à pointe
 |---|---|
 | `src/e1m1-plan.js` | Paramètres d’architecture et de placements du plan fixe |
 | `src/procedural-map.js` | Génération des cellules, géométrie et index spatial |
-| `src/procedural-materials.js` | Recettes de murs, sols, plafonds et ciel |
+| `src/procedural-materials.js` | Dimensions et recettes de référence des matériaux |
+| `src/procedural-surface-detail.js` | Cartes PBR continues, hauteurs et cache CPU des surfaces |
+| `src/procedural-shaders.js` | Programmes monde, modèles, ciel, ombres et post-traitement |
+| `src/procedural-lighting.js` | Sources locales, pulsations et projections des ombres |
 | `src/procedural-raster.js` | Primitives de dessin des ressources |
 | `src/procedural-mesh.js` | Primitives fermées, chanfreins, profils, normales, matériaux et transformations |
-| `src/procedural-characters.js` | Maillages et poses des trois familles d’ennemis |
+| `src/procedural-characters.js`, `src/procedural-anatomy.js` | Surfaces anatomiques et poses des trois familles d’ennemis |
 | `src/procedural-objects.js` | Objets, corps et projectiles 3D, trois niveaux géométriques |
-| `src/procedural-weapons.js` | Armes, mains et animation des pièces préconstruites |
+| `src/procedural-weapons.js`, `src/procedural-object-sculpt.js` | Armes, surfaces implicites des mains et animation des pièces |
 | `src/procedural-models.js` | Sélection des recettes, visibilité, niveaux de détail et groupes d’instances |
 | `src/procedural-interface.js` | HUD et logo calculés, sans images de personnages ni d’armes |
 | `src/procedural-resources.js` | Accès et comptage des ressources générées |
@@ -143,11 +156,13 @@ Pour refaire l’inventaire de modèles : `node tools/measure-models.mjs > docs/
 
 Le rapport `docs/qa/validation.json` conserve le nombre réel de tests, la révision du build, sa taille et sa reproductibilité. Le journal TAP complet est dans `docs/qa/node-tests.txt`. Le test de build utilise une copie temporaire contenant uniquement le code, le moteur et l’interface : aucune archive n’est disponible. Il vérifie les dépendances, leurs révisions, l’absence de média livré, la suppression des anciennes sorties et les empreintes de FERRO.
 
+Les tests de passes exécutent le véritable adaptateur avec un WebGL 2 simulé qui suit les ressources et les samplers : ils vérifient les cibles couleur/normales/profondeur, l’absence de lecture d’une texture attachée à la cible courante, le retour à la cible FERRO et la libération des buffers au redimensionnement et à la fermeture. Les tests d’éclairage vérifient notamment les portes, les pulsations des secteurs, les ombres hors champ et le cadrage de l’ombre des armes. La compilation et les pixels sont contrôlés séparément par EGL.
+
 Les tests de commandes exécutent les gestionnaires de l’application avec un DOM et des périphériques simulés, la vraie carte générée et la vraie simulation. Les contrôles de synthèse audio portent sur les signaux, la spatialisation et le cycle de vie avec un contexte audio simulé.
 
 Les tests de modèles vérifient les volumes, les normales, les poses, les limites de cache, les objets des trois difficultés et l’indépendance par rapport à la caméra. Ils contrôlent aussi la fermeture des nouvelles primitives, la conservation des coordonnées de matière lors des transformations, les limites du champ de vision, l’hystérésis des niveaux de détail et la libération effective des buffers GPU. Les tests de l’interface empêchent le retour d’une image de personnage ou d’arme par l’API du HUD.
 
-Le script `python3 tests/render-egl.py` compile les six shaders de production et produit 31 images de contrôle avec EGL/Mesa : niveau, armes au repos et en action, personnages de face/profil/dos, portraits, objets en gros plan et porte ouverte. Son rapport `docs/qa/egl-report.json` enregistre la géométrie, les niveaux de détail, les vues et les empreintes des modules utilisés. Les scènes de studio et de porte contenant un acteur sont des placements contrôlés pour la vérification visuelle.
+Le script `python3 tests/render-egl.py` compile les dix shaders de production, lie cinq programmes et produit 31 images de contrôle en 1280 × 800 avec EGL/Mesa : niveau, armes au repos et en action, personnages de face/profil/dos, portraits, objets en gros plan et porte ouverte. Son rapport `docs/qa/egl-report.json` enregistre la géométrie, les niveaux de détail, les vues et les empreintes des modules utilisés. Les scènes de studio et de porte contenant un acteur sont des placements contrôlés pour la vérification visuelle. Les captures activent les ombres, les trois cartes de matière, les cibles de normales lisses, l’occlusion de contact et la passe dédiée à l’arme.
 
 ![Départ d’E1M1, rendu procédural de contrôle EGL](docs/qa/spawn-north-egl.png)
 

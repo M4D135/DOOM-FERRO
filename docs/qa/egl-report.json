@@ -1,14 +1,18 @@
 {
   "passed": true,
   "scope": "Native llvmpipe EGL renders of unchanged production host shaders, procedurally constructed map/materials and instanced 3D models and FERRO camera helpers. No WAD or reference asset is loaded. Not a browser gameplay capture, full FERRO frame execution, or hardware FPS measurement.",
+  "diagnosticOverrides": {
+    "shadowsDisabled": false,
+    "contactAODisabled": false
+  },
   "environment": {
     "renderer": "llvmpipe (LLVM 19.1.7, 256 bits)",
     "version": "4.5 (Core Profile) Mesa 25.0.7-2+deb13u1",
     "egl": "1.5"
   },
   "size": [
-    960,
-    600
+    1280,
+    800
   ],
   "ferroVersion": "0.3.33",
   "sectors": 85,
@@ -16,44 +20,64 @@
   "mapGenerator": "sector-trapezoid-sweep-v1",
   "resources": {
     "mode": "procedural",
-    "generatedImages": 54,
-    "rgbaBytes": 1854464,
+    "generatedImages": 53,
+    "rgbaBytes": 1723392,
     "importedAssets": 0
   },
   "modelMeshes": 41,
   "worldBillboards": 0,
   "modelVertexStride": 17,
   "materialCoordinates": "primitive-local surface coordinates preserved through pose transforms",
-  "shaderCompilation": "6 unmodified GLSL ES 3.00 production shaders compiled; 3 programs linked",
+  "shaderCompilation": "10 unmodified GLSL ES 3.00 production shaders compiled; 5 programs linked",
+  "passes": [
+    "1024px primary-light depth shadow with 3x3 PCF",
+    "linear-light GGX/Smith/Schlick world and model materials",
+    "procedural HD albedo, tangent normal, roughness, metallic, AO, emission and height",
+    "scene color/smooth-normal/depth targets",
+    "12-sample screen contact AO and edge filtering",
+    "512px fitted view-weapon self-shadow combined with room shadow"
+  ],
+  "textureMipBytes": 176357376,
   "mapTriangles": 2025,
   "sceneTriangles": {
     "base": 2025,
     "door-open": 2029
   },
-  "adapterSha256": "870daf175b001865223a83bb342841f5ba547515c158512673a105a566a08f16",
+  "adapterSha256": "142bed1aa2dc3c479b4a6c49f2d13bd14b715c3cc1117fd4d7aa63eb36df9df4",
   "sourceSha256": {
-    "src/procedural-resources.js": "ab7d2a61b083b024e7c288202d4d289a5edcbecc7e5ca009c6c35bfe8537d558",
-    "src/procedural-map.js": "1437769cd25117db4c9e9a7b067c193381dc3d85147e661f72ba4fbf58c3a06b",
+    "src/app.js": "f1b75fcd6f33a34dc352bc687b2b8cae5c92e5d4624e1258fdb522134ff21651",
     "src/e1m1-plan.js": "41c8ed8ce81db64bb5117cb6011b6c693c3745d5708f46a05681900393cce521",
-    "src/procedural-materials.js": "64ed3877c4006d2e53652c9670831be6c3d208844ecdebf4374b26b94e458dee",
-    "src/procedural-interface.js": "af287b0e0573e6432d1d41a7a3076c6335a84b2d807ca710e4c72e0c1a19de8a",
-    "src/procedural-raster.js": "3b372674f3004fbe0de245ae359f5895ce72a4bc48a515e4e3a55acbebe7bdb5",
-    "src/procedural-mesh.js": "f7c1c90ff94caa95c15e03e29878e8777c0b3a1b2ce39f7a1215b1f5e79b5890",
-    "src/procedural-models.js": "2b1365b41bf29b45eca526d9c5efcc7d59318253a1198584425da5096309a15c",
-    "src/procedural-characters.js": "3c3434bb097a69814f0717b8a9b6a66bd07aa324a8e9597568c2d37b6ff97309",
-    "src/procedural-objects.js": "11489ac64e643bf0209caf3a91bd7e5f03376f905c503ffeb9e8dec800f994b1",
-    "src/procedural-weapons.js": "f42dbec5e4129dad26985c1b151362a3714abfaa0aa0b4477d165af5c9e861e4",
+    "src/ferro-doom-renderer.js": "142bed1aa2dc3c479b4a6c49f2d13bd14b715c3cc1117fd4d7aa63eb36df9df4",
     "src/game.js": "c7eab7a0c76b0dbd468209f76561b1cb17e250e88b0eb636a8c41838be4cd88f",
-    "src/ferro-doom-renderer.js": "870daf175b001865223a83bb342841f5ba547515c158512673a105a566a08f16",
-    "src/app.js": "acaa698faf2482b7428f711054161ec331b1d9de7c999bdf9bb783fdc2179ecd"
+    "src/input.js": "64c99b9f6f35adab712553c6572890107d83dd7770464581f635b7c3a6a0c1b8",
+    "src/procedural-anatomy.js": "d8a89395c7749361c5533192a6fe6a20712846f92183c6b9257e427df5c14226",
+    "src/procedural-audio.js": "876369149bf422cf94cd00200fae4925f26bd2d88b311f7e819aa42546f70106",
+    "src/procedural-characters.js": "dbf73828383c73bb6d16aa8f128250efacb4558847f37e06e426e208d64fed41",
+    "src/procedural-interface.js": "af287b0e0573e6432d1d41a7a3076c6335a84b2d807ca710e4c72e0c1a19de8a",
+    "src/procedural-lighting.js": "285bcee5b7220de5a776ffcd67007d01196b8130962223ac3790f86dd40693cb",
+    "src/procedural-map.js": "1437769cd25117db4c9e9a7b067c193381dc3d85147e661f72ba4fbf58c3a06b",
+    "src/procedural-materials.js": "64ed3877c4006d2e53652c9670831be6c3d208844ecdebf4374b26b94e458dee",
+    "src/procedural-mesh.js": "f7c1c90ff94caa95c15e03e29878e8777c0b3a1b2ce39f7a1215b1f5e79b5890",
+    "src/procedural-models.js": "1a7c06d40d4e4949f125f0ef54afb184c30c81eb29d23d1ea3d35af27b01f016",
+    "src/procedural-object-sculpt.js": "755387194c9049d1224be1fcee7923294c9b0d63d19e99ca1121b53398a2890c",
+    "src/procedural-objects.js": "bd88ff1fc6cf53d6e2920bc752ed66a35fd22215a3fceda57136e1a2be0f76ef",
+    "src/procedural-raster.js": "3b372674f3004fbe0de245ae359f5895ce72a4bc48a515e4e3a55acbebe7bdb5",
+    "src/procedural-resources.js": "ab7d2a61b083b024e7c288202d4d289a5edcbecc7e5ca009c6c35bfe8537d558",
+    "src/procedural-shaders.js": "08fc706899d3de2d4515382bc256d0122f963cbbde876e6dedc4b8f0e3f87dc5",
+    "src/procedural-surface-detail.js": "67c3253e6391090cead7c0dcc9ef605abfad6c484a1ef5f555e1df1c8be6d8bf",
+    "src/procedural-weapons.js": "4738c651cfdbb4c675f453c4f8c92637a263e6f0e87e5bd0417d65d7268e17de"
   },
   "shaderSha256": {
-    "WORLD_VERTEX": "ccbad7fea38950df95408f4cb72052cf6009729480cd3c6b0b8af05e2488a92a",
-    "WORLD_FRAGMENT": "1a23d865a45f27884ede18576fbdc7e3f39e2f6b0c4ab4949c4b78f30d85dd30",
+    "WORLD_VERTEX": "51cfbcbd50cdfac3e2d4bab23e70c61ab340bec8e6994a6750291d1ff3ed92d7",
+    "WORLD_FRAGMENT": "fccdca77f48a88bdac87b7baddd534e6251b070bd9d9f24800f1bb44dc6819d8",
+    "MODEL_VERTEX": "16e54084e9080ee4e60eb916008e7d78748c430403773b26a57bbcf1cd6172fd",
+    "MODEL_FRAGMENT": "02796e7494ae3d501991a335b5a7a8830faa66ae419e1bc2a34f213e52fc22f5",
     "SKY_VERTEX": "0619a596c2fddc0c3dc31b472ae2b4fd3cfa9bdca612db0c01d9f2a1d0cce430",
-    "SKY_FRAGMENT": "292aa699e862cff79910a33366da0c5080f1dedfc71be98780068a9a7bc1cfd1",
-    "MODEL_VERTEX": "2aeb4e7d483a326f971f8b8135c9d5429039458b61b9dd90505e55b62b973f59",
-    "MODEL_FRAGMENT": "6145eddaf8a6740e2f46dca78ba7bb29858c4d405290266967cc849d799ef3e6"
+    "SKY_FRAGMENT": "133eb30e4ea5734217455fbb64e56974ef2f57de3a26252fc7ca0cceb2462cd9",
+    "SHADOW_VERTEX": "c66a7f0ef1c77eedd8efcbbabb62a5eb11c89d34279b509787c4b4559e84b782",
+    "SHADOW_FRAGMENT": "11689ba39478c20d7bd15aa81c6c9adffc749a2662c67e2db4dbc13c9e63daa6",
+    "POST_VERTEX": "7189975e906800c91a459c1ba958a4356d550ac59788940db271c81b5b44eddb",
+    "POST_FRAGMENT": "f4ae159b0de1505f78296e12cf70b43343304b1e167098e5d69fc49dfc785269"
   },
   "cases": [
     {
@@ -66,11 +90,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 9421,
+      "uniqueColors": 14996,
       "meanRGB": [
-        44.08278472222222,
-        42.06415277777778,
-        38.46808333333333
+        32.9226845703125,
+        34.470955078125,
+        33.5570615234375
       ],
       "visibility": {
         "total": 91,
@@ -82,7 +106,7 @@
           0
         ]
       },
-      "submittedModelTriangles": 14144
+      "submittedModelTriangles": 16276
     },
     {
       "name": "spawn-west",
@@ -94,11 +118,11 @@
         "angle": 3.141592653589793,
         "pitch": 0
       },
-      "uniqueColors": 5390,
+      "uniqueColors": 12871,
       "meanRGB": [
-        51.263524305555556,
-        46.916836805555555,
-        40.34543402777778
+        26.422619140625,
+        26.3085966796875,
+        23.9798291015625
       ],
       "visibility": {
         "total": 91,
@@ -110,7 +134,7 @@
           0
         ]
       },
-      "submittedModelTriangles": 6142
+      "submittedModelTriangles": 7726
     },
     {
       "name": "courtyard",
@@ -122,11 +146,11 @@
         "angle": 3.141592653589793,
         "pitch": 0
       },
-      "uniqueColors": 17873,
+      "uniqueColors": 22890,
       "meanRGB": [
-        91.78192881944445,
-        79.12708333333333,
-        57.72613194444445
+        68.21301171875,
+        67.4687822265625,
+        63.40258203125
       ],
       "visibility": {
         "total": 91,
@@ -138,7 +162,7 @@
           0
         ]
       },
-      "submittedModelTriangles": 7226
+      "submittedModelTriangles": 8884
     },
     {
       "name": "start-hall",
@@ -150,11 +174,11 @@
         "angle": -1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 10048,
+      "uniqueColors": 16943,
       "meanRGB": [
-        46.033751736111114,
-        42.539368055555556,
-        42.18970486111111
+        19.349447265625,
+        20.325626953125,
+        22.4258037109375
       ],
       "visibility": {
         "total": 91,
@@ -166,7 +190,7 @@
           1
         ]
       },
-      "submittedModelTriangles": 9766
+      "submittedModelTriangles": 14182
     },
     {
       "name": "shotgun-reload",
@@ -178,11 +202,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 9846,
+      "uniqueColors": 15961,
       "meanRGB": [
-        43.77989236111111,
-        42.580152777777776,
-        39.09911631944444
+        30.902890625,
+        32.60084375,
+        31.967525390625
       ],
       "visibility": {
         "total": 91,
@@ -194,7 +218,7 @@
           0
         ]
       },
-      "submittedModelTriangles": 14144
+      "submittedModelTriangles": 16276
     },
     {
       "name": "pistol-fire",
@@ -206,11 +230,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 9443,
+      "uniqueColors": 40436,
       "meanRGB": [
-        44.982125,
-        42.641888888888886,
-        38.50141145833334
+        57.0314736328125,
+        51.0955478515625,
+        39.533935546875
       ],
       "visibility": {
         "total": 91,
@@ -222,7 +246,7 @@
           0
         ]
       },
-      "submittedModelTriangles": 14144
+      "submittedModelTriangles": 16276
     },
     {
       "name": "shotgun-fire",
@@ -234,11 +258,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 9844,
+      "uniqueColors": 43907,
       "meanRGB": [
-        44.852383680555555,
-        42.988425347222226,
-        39.08664409722222
+        58.204552734375,
+        52.2249638671875,
+        40.5927080078125
       ],
       "visibility": {
         "total": 91,
@@ -250,7 +274,7 @@
           0
         ]
       },
-      "submittedModelTriangles": 14144
+      "submittedModelTriangles": 16276
     },
     {
       "name": "fist-punch",
@@ -262,11 +286,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 8593,
+      "uniqueColors": 15609,
       "meanRGB": [
-        50.7655,
-        46.259741319444444,
-        40.739251736111115
+        36.8999501953125,
+        36.936935546875,
+        35.2313740234375
       ],
       "visibility": {
         "total": 91,
@@ -278,7 +302,7 @@
           0
         ]
       },
-      "submittedModelTriangles": 14144
+      "submittedModelTriangles": 16276
     },
     {
       "name": "poss-front",
@@ -290,11 +314,11 @@
         "angle": -1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 1758,
+      "uniqueColors": 18258,
       "meanRGB": [
-        32.75722048611111,
-        34.38645138888889,
-        36.57933333333333
+        21.3088017578125,
+        22.9652685546875,
+        25.133828125
       ],
       "visibility": {
         "total": 1,
@@ -306,7 +330,7 @@
           1
         ]
       },
-      "submittedModelTriangles": 11480,
+      "submittedModelTriangles": 34332,
       "fixture": {
         "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
         "entity": {
@@ -323,8 +347,8 @@
           "angle": 1.5707963267948966
         },
         "anchorScreen": {
-          "x": 480.0001560557991,
-          "y": 436.3232179121538
+          "x": 640.0002080743989,
+          "y": 581.7642905495384
         },
         "meshKeys": [
           "character:POSS:A:idle:lod2"
@@ -341,11 +365,11 @@
         "angle": 3.141592653589793,
         "pitch": 0
       },
-      "uniqueColors": 1207,
+      "uniqueColors": 10783,
       "meanRGB": [
-        32.05917013888889,
-        33.81641493055555,
-        36.33448611111111
+        20.1717353515625,
+        21.92222265625,
+        24.39585546875
       ],
       "visibility": {
         "total": 1,
@@ -357,7 +381,7 @@
           1
         ]
       },
-      "submittedModelTriangles": 11480,
+      "submittedModelTriangles": 34332,
       "fixture": {
         "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
         "entity": {
@@ -374,8 +398,8 @@
           "angle": 1.5707963267948966
         },
         "anchorScreen": {
-          "x": 480.0003225153143,
-          "y": 436.3232179121541
+          "x": 640.0004300204191,
+          "y": 581.7642905495388
         },
         "meshKeys": [
           "character:POSS:A:idle:lod2"
@@ -392,11 +416,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 1566,
+      "uniqueColors": 12341,
       "meanRGB": [
-        33.29623958333333,
-        34.99364930555556,
-        37.076237847222224
+        21.4309091796875,
+        23.1283662109375,
+        25.156
       ],
       "visibility": {
         "total": 1,
@@ -408,7 +432,7 @@
           1
         ]
       },
-      "submittedModelTriangles": 11480,
+      "submittedModelTriangles": 34332,
       "fixture": {
         "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
         "entity": {
@@ -425,8 +449,8 @@
           "angle": 1.5707963267948966
         },
         "anchorScreen": {
-          "x": 479.9998439442028,
-          "y": 436.3232179121538
+          "x": 639.9997919256036,
+          "y": 581.7642905495384
         },
         "meshKeys": [
           "character:POSS:A:idle:lod2"
@@ -443,11 +467,11 @@
         "angle": -1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 1548,
+      "uniqueColors": 14084,
       "meanRGB": [
-        31.921640625,
-        33.422526041666664,
-        35.96499826388889
+        20.1367392578125,
+        21.6274169921875,
+        24.279509765625
       ],
       "visibility": {
         "total": 1,
@@ -459,7 +483,7 @@
           1
         ]
       },
-      "submittedModelTriangles": 11248,
+      "submittedModelTriangles": 30400,
       "fixture": {
         "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
         "entity": {
@@ -476,8 +500,8 @@
           "angle": 1.5707963267948966
         },
         "anchorScreen": {
-          "x": 480.0001560557991,
-          "y": 436.3232179121538
+          "x": 640.0002080743989,
+          "y": 581.7642905495384
         },
         "meshKeys": [
           "character:SPOS:A:idle:lod2"
@@ -494,11 +518,11 @@
         "angle": 3.141592653589793,
         "pitch": 0
       },
-      "uniqueColors": 1021,
+      "uniqueColors": 8142,
       "meanRGB": [
-        31.540526041666666,
-        33.232899305555556,
-        35.962362847222224
+        19.53872265625,
+        21.1696806640625,
+        23.937333984375
       ],
       "visibility": {
         "total": 1,
@@ -510,7 +534,7 @@
           1
         ]
       },
-      "submittedModelTriangles": 11248,
+      "submittedModelTriangles": 30400,
       "fixture": {
         "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
         "entity": {
@@ -527,8 +551,8 @@
           "angle": 1.5707963267948966
         },
         "anchorScreen": {
-          "x": 480.0003225153143,
-          "y": 436.3232179121541
+          "x": 640.0004300204191,
+          "y": 581.7642905495388
         },
         "meshKeys": [
           "character:SPOS:A:idle:lod2"
@@ -545,11 +569,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 1109,
+      "uniqueColors": 8416,
       "meanRGB": [
-        31.697395833333335,
-        33.404673611111114,
-        36.04573784722222
+        19.6566025390625,
+        21.2940283203125,
+        23.987203125
       ],
       "visibility": {
         "total": 1,
@@ -561,7 +585,7 @@
           1
         ]
       },
-      "submittedModelTriangles": 11248,
+      "submittedModelTriangles": 30400,
       "fixture": {
         "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
         "entity": {
@@ -578,8 +602,8 @@
           "angle": 1.5707963267948966
         },
         "anchorScreen": {
-          "x": 479.9998439442028,
-          "y": 436.3232179121538
+          "x": 639.9997919256036,
+          "y": 581.7642905495384
         },
         "meshKeys": [
           "character:SPOS:A:idle:lod2"
@@ -596,11 +620,11 @@
         "angle": -1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 1181,
+      "uniqueColors": 14798,
       "meanRGB": [
-        33.25660763888889,
-        34.07478993055555,
-        35.64927604166667
+        22.8701591796875,
+        22.99952734375,
+        24.3449189453125
       ],
       "visibility": {
         "total": 1,
@@ -612,7 +636,7 @@
           1
         ]
       },
-      "submittedModelTriangles": 9048,
+      "submittedModelTriangles": 25408,
       "fixture": {
         "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
         "entity": {
@@ -629,8 +653,8 @@
           "angle": 1.5707963267948966
         },
         "anchorScreen": {
-          "x": 480.0001560557991,
-          "y": 436.3232179121538
+          "x": 640.0002080743989,
+          "y": 581.7642905495384
         },
         "meshKeys": [
           "character:TROO:A:idle:lod2"
@@ -647,11 +671,11 @@
         "angle": 3.141592653589793,
         "pitch": 0
       },
-      "uniqueColors": 965,
+      "uniqueColors": 11434,
       "meanRGB": [
-        32.29352430555556,
-        33.620616319444444,
-        35.804461805555555
+        20.7822353515625,
+        21.65869921875,
+        23.7066064453125
       ],
       "visibility": {
         "total": 1,
@@ -663,7 +687,7 @@
           1
         ]
       },
-      "submittedModelTriangles": 9048,
+      "submittedModelTriangles": 25408,
       "fixture": {
         "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
         "entity": {
@@ -680,8 +704,8 @@
           "angle": 1.5707963267948966
         },
         "anchorScreen": {
-          "x": 480.0003225153143,
-          "y": 436.3232179121541
+          "x": 640.0004300204191,
+          "y": 581.7642905495388
         },
         "meshKeys": [
           "character:TROO:A:idle:lod2"
@@ -698,11 +722,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 1480,
+      "uniqueColors": 12564,
       "meanRGB": [
-        33.580112847222225,
-        34.330446180555555,
-        35.83034895833333
+        22.086546875,
+        22.3491650390625,
+        23.8891923828125
       ],
       "visibility": {
         "total": 1,
@@ -714,7 +738,7 @@
           1
         ]
       },
-      "submittedModelTriangles": 9048,
+      "submittedModelTriangles": 25408,
       "fixture": {
         "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
         "entity": {
@@ -731,8 +755,8 @@
           "angle": 1.5707963267948966
         },
         "anchorScreen": {
-          "x": 479.9998439442028,
-          "y": 436.3232179121538
+          "x": 639.9997919256036,
+          "y": 581.7642905495384
         },
         "meshKeys": [
           "character:TROO:A:idle:lod2"
@@ -749,11 +773,11 @@
         "angle": -1.7894652726688387,
         "pitch": 0
       },
-      "uniqueColors": 2636,
+      "uniqueColors": 30776,
       "meanRGB": [
-        45.89367534722222,
-        45.50979513888889,
-        43.66913715277778
+        43.189267578125,
+        43.02948828125,
+        41.6982265625
       ],
       "visibility": {
         "total": 1,
@@ -765,7 +789,7 @@
           1
         ]
       },
-      "submittedModelTriangles": 11480,
+      "submittedModelTriangles": 34332,
       "fixture": {
         "scope": "Close study of actual generated head geometry and procedural surface materials.",
         "entity": {
@@ -782,8 +806,8 @@
           "angle": 1.5707963267948966
         },
         "anchorScreen": {
-          "x": 479.99848562541473,
-          "y": 1059.034415869225
+          "x": 639.9979808338863,
+          "y": 1412.0458878256334
         },
         "meshKeys": [
           "character:POSS:A:idle:lod2"
@@ -800,11 +824,11 @@
         "angle": -1.7894652726688387,
         "pitch": 0
       },
-      "uniqueColors": 2433,
+      "uniqueColors": 25915,
       "meanRGB": [
-        38.89779166666667,
-        38.37614930555556,
-        38.32800173611111
+        33.17684765625,
+        32.958041015625,
+        33.656095703125
       ],
       "visibility": {
         "total": 1,
@@ -816,7 +840,7 @@
           1
         ]
       },
-      "submittedModelTriangles": 11248,
+      "submittedModelTriangles": 30400,
       "fixture": {
         "scope": "Close study of actual generated head geometry and procedural surface materials.",
         "entity": {
@@ -833,8 +857,8 @@
           "angle": 1.5707963267948966
         },
         "anchorScreen": {
-          "x": 479.99848562541473,
-          "y": 1059.034415869225
+          "x": 639.9979808338863,
+          "y": 1412.0458878256334
         },
         "meshKeys": [
           "character:SPOS:A:idle:lod2"
@@ -851,11 +875,11 @@
         "angle": -1.7894652726688387,
         "pitch": 0
       },
-      "uniqueColors": 2195,
+      "uniqueColors": 29081,
       "meanRGB": [
-        43.67501736111111,
-        39.01275173611111,
-        34.10867708333333
+        43.8471728515625,
+        35.7472705078125,
+        29.9190849609375
       ],
       "visibility": {
         "total": 1,
@@ -867,7 +891,7 @@
           1
         ]
       },
-      "submittedModelTriangles": 9048,
+      "submittedModelTriangles": 25408,
       "fixture": {
         "scope": "Close study of actual generated head geometry and procedural surface materials.",
         "entity": {
@@ -884,8 +908,8 @@
           "angle": 1.5707963267948966
         },
         "anchorScreen": {
-          "x": 479.99848562541473,
-          "y": 1059.034415869225
+          "x": 639.9979808338863,
+          "y": 1412.0458878256334
         },
         "meshKeys": [
           "character:TROO:A:idle:lod2"
@@ -896,17 +920,17 @@
       "name": "bar1-detail",
       "image": "bar1-detail-egl.png",
       "camera": {
-        "x": 1076.1993723564149,
-        "y": -3589.0675035247805,
-        "z": 22.922008209228515,
+        "x": 1076.098199935913,
+        "y": -3589.2024000854494,
+        "z": 22.86,
         "angle": -2.214297435588181,
-        "pitch": -0.20511854745382826
+        "pitch": -0.20558016594179337
       },
-      "uniqueColors": 1650,
+      "uniqueColors": 25251,
       "meanRGB": [
-        39.95231770833333,
-        42.69606597222222,
-        39.45504513888889
+        33.5692265625,
+        38.154546875,
+        31.215357421875
       ],
       "visibility": {
         "total": 1,
@@ -918,7 +942,7 @@
           1
         ]
       },
-      "submittedModelTriangles": 3344,
+      "submittedModelTriangles": 4488,
       "fixture": {
         "scope": "Close three-quarter view of an actual generated prop; uniform studio sector light.",
         "entity": {
@@ -932,8 +956,8 @@
           "angle": 1.5707963267948966
         },
         "anchorScreen": {
-          "x": 479.99510954011737,
-          "y": 477.44577104476707
+          "x": 639.9934497399679,
+          "y": 637.0049923837441
         },
         "meshKeys": [
           "object:BAR1:0:d2"
@@ -950,11 +974,11 @@
         "angle": -2.214297435588181,
         "pitch": -0.21760455032061152
       },
-      "uniqueColors": 688,
+      "uniqueColors": 5607,
       "meanRGB": [
-        32.75079340277778,
-        34.815421875,
-        36.288605902777775
+        20.4980380859375,
+        22.5335263671875,
+        25.133705078125
       ],
       "visibility": {
         "total": 1,
@@ -966,7 +990,7 @@
           1
         ]
       },
-      "submittedModelTriangles": 2448,
+      "submittedModelTriangles": 3696,
       "fixture": {
         "scope": "Close three-quarter view of an actual generated prop; uniform studio sector light.",
         "entity": {
@@ -980,8 +1004,8 @@
           "angle": 1.5707963267948966
         },
         "anchorScreen": {
-          "x": 479.99659818396333,
-          "y": 485.60272067007315
+          "x": 639.9954642452844,
+          "y": 647.4702942267643
         },
         "meshKeys": [
           "object:COLU:0:d2"
@@ -998,11 +1022,11 @@
         "angle": -2.214297435588181,
         "pitch": -0.23922362462341276
       },
-      "uniqueColors": 953,
+      "uniqueColors": 12337,
       "meanRGB": [
-        31.506859375,
-        33.606546875,
-        36.119453125
+        20.077587890625,
+        22.275486328125,
+        25.058373046875
       ],
       "visibility": {
         "total": 1,
@@ -1014,7 +1038,7 @@
           1
         ]
       },
-      "submittedModelTriangles": 4752,
+      "submittedModelTriangles": 11840,
       "fixture": {
         "scope": "Close three-quarter view of an actual generated prop; uniform studio sector light.",
         "entity": {
@@ -1028,8 +1052,8 @@
           "angle": 1.5707963267948966
         },
         "anchorScreen": {
-          "x": 479.9986268021798,
-          "y": 498.78933639589087
+          "x": 639.9981690695731,
+          "y": 665.0524485278545
         },
         "meshKeys": [
           "object:ELEC:0:d2"
@@ -1042,15 +1066,15 @@
       "camera": {
         "x": 1075.4454005355835,
         "y": -3590.072799285889,
-        "z": 13.032000274658202,
+        "z": 13.075199890136718,
         "angle": -2.214297435588181,
-        "pitch": -0.1222543640048646
+        "pitch": -0.12265557768657426
       },
-      "uniqueColors": 1371,
+      "uniqueColors": 10037,
       "meanRGB": [
-        42.39284722222222,
-        43.86928993055555,
-        44.800807291666665
+        39.8332578125,
+        41.920884765625,
+        43.7654736328125
       ],
       "visibility": {
         "total": 1,
@@ -1062,7 +1086,7 @@
           1
         ]
       },
-      "submittedModelTriangles": 840,
+      "submittedModelTriangles": 2836,
       "fixture": {
         "scope": "Close three-quarter view of an actual generated prop; uniform studio sector light.",
         "entity": {
@@ -1076,8 +1100,8 @@
           "angle": 1.5707963267948966
         },
         "anchorScreen": {
-          "x": 479.99454855103505,
-          "y": 414.0076112635479
+          "x": 639.9927333044789,
+          "y": 552.4668098314143
         },
         "meshKeys": [
           "object:MEDI:0:d2"
@@ -1088,17 +1112,17 @@
       "name": "bon1-detail",
       "image": "bon1-detail-egl.png",
       "camera": {
-        "x": 1066.4772001876831,
-        "y": -3602.030399749756,
+        "x": 1066.468800195694,
+        "y": -3602.0415997390746,
         "z": 11.952000274658202,
         "angle": -2.214297435588181,
-        "pitch": -0.20616822998637338
+        "pitch": -0.20632900258513145
       },
-      "uniqueColors": 1496,
+      "uniqueColors": 14951,
       "meanRGB": [
-        28.513131944444446,
-        31.083081597222222,
-        44.441288194444446
+        17.904271484375,
+        20.1559140625,
+        39.412947265625
       ],
       "visibility": {
         "total": 1,
@@ -1110,7 +1134,7 @@
           1
         ]
       },
-      "submittedModelTriangles": 1080,
+      "submittedModelTriangles": 2672,
       "fixture": {
         "scope": "Close three-quarter view of an actual generated prop; uniform studio sector light.",
         "entity": {
@@ -1124,8 +1148,8 @@
           "angle": 1.5707963267948966
         },
         "anchorScreen": {
-          "x": 479.9905817883532,
-          "y": 478.14651293349476
+          "x": 639.987434397867,
+          "y": 637.6723374676873
         },
         "meshKeys": [
           "object:BON1:0:d2"
@@ -1136,17 +1160,17 @@
       "name": "bon2-detail",
       "image": "bon2-detail-egl.png",
       "camera": {
-        "x": 1066.319399866104,
-        "y": -3602.240800178528,
-        "z": 8.999296188354492,
+        "x": 1066.0237403697968,
+        "y": -3602.635012840271,
+        "z": 9.002607192993164,
         "angle": -2.214297435588181,
-        "pitch": -0.15853875774293885
+        "pitch": -0.1631925908121305
       },
-      "uniqueColors": 1387,
+      "uniqueColors": 16822,
       "meanRGB": [
-        38.720083333333335,
-        40.55751909722222,
-        41.27937673611111
+        31.6784501953125,
+        33.7736220703125,
+        34.462341796875
       ],
       "visibility": {
         "total": 1,
@@ -1158,7 +1182,7 @@
           1
         ]
       },
-      "submittedModelTriangles": 1024,
+      "submittedModelTriangles": 2344,
       "fixture": {
         "scope": "Close three-quarter view of an actual generated prop; uniform studio sector light.",
         "entity": {
@@ -1172,8 +1196,8 @@
           "angle": 1.5707963267948966
         },
         "anchorScreen": {
-          "x": 479.99000109751637,
-          "y": 443.66351423491136
+          "x": 639.9863284575324,
+          "y": 596.3537877208208
         },
         "meshKeys": [
           "object:BON2:0:d2"
@@ -1184,17 +1208,17 @@
       "name": "arm1-detail",
       "image": "arm1-detail-egl.png",
       "camera": {
-        "x": 1076.9223925323486,
-        "y": -3588.1034766235352,
-        "z": 12.732776641845703,
+        "x": 1076.3007354125978,
+        "y": -3588.932352783203,
+        "z": 12.200133361816405,
         "angle": -2.214297435588181,
-        "pitch": -0.11111195678250906
+        "pitch": -0.10973523422859065
       },
-      "uniqueColors": 1591,
+      "uniqueColors": 20720,
       "meanRGB": [
-        31.885270833333333,
-        40.655541666666664,
-        34.81304166666666
+        20.675986328125,
+        30.3036953125,
+        24.50622265625
       ],
       "visibility": {
         "total": 1,
@@ -1206,7 +1230,7 @@
           1
         ]
       },
-      "submittedModelTriangles": 2784,
+      "submittedModelTriangles": 8400,
       "fixture": {
         "scope": "Close three-quarter view of an actual generated prop; uniform studio sector light.",
         "entity": {
@@ -1220,8 +1244,8 @@
           "angle": 1.5707963267948966
         },
         "anchorScreen": {
-          "x": 479.9948978639406,
-          "y": 404.3886666105756
+          "x": 639.9929831103182,
+          "y": 537.5795597959931
         },
         "meshKeys": [
           "object:ARM1:0:d2"
@@ -1238,11 +1262,11 @@
         "angle": -2.214297435588181,
         "pitch": -0.08326483844233427
       },
-      "uniqueColors": 1047,
+      "uniqueColors": 8338,
       "meanRGB": [
-        35.825854166666666,
-        36.886234375,
-        38.17360763888889
+        27.2273408203125,
+        28.3617890625,
+        29.688658203125
       ],
       "visibility": {
         "total": 1,
@@ -1254,7 +1278,7 @@
           1
         ]
       },
-      "submittedModelTriangles": 1532,
+      "submittedModelTriangles": 1788,
       "fixture": {
         "scope": "Close three-quarter view of an actual generated prop; uniform studio sector light.",
         "entity": {
@@ -1268,8 +1292,8 @@
           "angle": 1.5707963267948966
         },
         "anchorScreen": {
-          "x": 479.9951777499945,
-          "y": 379.4547558690951
+          "x": 639.993570333326,
+          "y": 505.9396744921268
         },
         "meshKeys": [
           "object:SBOX:0:d2"
@@ -1286,11 +1310,11 @@
         "angle": 0,
         "pitch": 0
       },
-      "uniqueColors": 4922,
+      "uniqueColors": 60928,
       "meanRGB": [
-        83.45809201388889,
-        77.76059027777778,
-        67.32205034722222
+        141.8797451171875,
+        132.7045146484375,
+        111.0628818359375
       ],
       "visibility": {
         "total": 0,
@@ -1328,20 +1352,20 @@
         },
         "portalScreen": [
           {
-            "x": 265.7776737213131,
-            "y": 437.23610043525724
+            "x": 354.37023162841746,
+            "y": 582.9814672470096
           },
           {
-            "x": 265.7776737213131,
-            "y": 209.6250079572199
+            "x": 354.37023162841746,
+            "y": 279.50001060962654
           },
           {
-            "x": 694.2220687866215,
-            "y": 437.23610043525724
+            "x": 925.6294250488287,
+            "y": 582.9814672470096
           },
           {
-            "x": 694.2220687866215,
-            "y": 209.6250079572199
+            "x": 925.6294250488287,
+            "y": 279.50001060962654
           }
         ]
       }
@@ -1356,11 +1380,11 @@
         "angle": 0,
         "pitch": 0
       },
-      "uniqueColors": 5906,
+      "uniqueColors": 68719,
       "meanRGB": [
-        84.40263368055555,
-        78.25632986111111,
-        67.1605607638889
+        143.4226650390625,
+        133.458314453125,
+        110.970193359375
       ],
       "visibility": {
         "total": 1,
@@ -1372,7 +1396,7 @@
           1
         ]
       },
-      "submittedModelTriangles": 9048,
+      "submittedModelTriangles": 25408,
       "fixture": {
         "scope": "3D imp deliberately centred in doorway for an occlusion/anchor check; not a reproduced player encounter.",
         "door": {
@@ -1409,43 +1433,44 @@
           "angle": 3.141592653589793
         },
         "anchorScreen": {
-          "x": 479.9998788272633,
-          "y": 429.16338864494793
+          "x": 639.9998384363511,
+          "y": 572.2178515265972
         },
         "meshKeys": [
           "character:TROO:A:idle:lod2"
         ],
         "portalScreen": [
           {
-            "x": 265.7776737213131,
-            "y": 437.23610043525724
+            "x": 354.37023162841746,
+            "y": 582.9814672470096
           },
           {
-            "x": 265.7776737213131,
-            "y": 209.6250079572199
+            "x": 354.37023162841746,
+            "y": 279.50001060962654
           },
           {
-            "x": 694.2220687866215,
-            "y": 437.23610043525724
+            "x": 925.6294250488287,
+            "y": 582.9814672470096
           },
           {
-            "x": 694.2220687866215,
-            "y": 209.6250079572199
+            "x": 925.6294250488287,
+            "y": 279.50001060962654
           }
         ],
         "visibleActor": {
-          "pixels": 9825,
+          "pixels": 27037,
           "boundsXY": [
-            423,
-            255,
-            536,
-            433
+            526,
+            338,
+            753,
+            596
           ],
           "centroidXY": [
-            479.3686513994911,
-            337.0378625954198
+            640.0949439656766,
+            480.71764618855644
           ],
-          "check": "Visible pixels compared with the identical open-door view without actors; fixed placement, not a combat or AI test."
+          "pixelsInsideOpening": 27037,
+          "check": "Actor and shadow differences from the identical open-door baseline. Actor anchor and visible changes inside the opening checked; shadows can extend beyond jambs. Not a combat or AI test."
         }
       }
     },
@@ -1459,11 +1484,11 @@
         "angle": 0,
         "pitch": 0
       },
-      "uniqueColors": 5691,
+      "uniqueColors": 66733,
       "meanRGB": [
-        83.95282118055556,
-        78.01786458333333,
-        67.19689930555556
+        142.3810419921875,
+        132.8123916015625,
+        110.8060849609375
       ],
       "visibility": {
         "total": 1,
@@ -1475,7 +1500,7 @@
           1
         ]
       },
-      "submittedModelTriangles": 9048,
+      "submittedModelTriangles": 25408,
       "fixture": {
         "scope": "3D imp deliberately centred in doorway for an occlusion/anchor check; not a reproduced player encounter.",
         "door": {
@@ -1512,43 +1537,44 @@
           "angle": 1.5707963267948966
         },
         "anchorScreen": {
-          "x": 479.9998788272633,
-          "y": 429.16338864494793
+          "x": 639.9998384363511,
+          "y": 572.2178515265972
         },
         "meshKeys": [
           "character:TROO:A:idle:lod2"
         ],
         "portalScreen": [
           {
-            "x": 265.7776737213131,
-            "y": 437.23610043525724
+            "x": 354.37023162841746,
+            "y": 582.9814672470096
           },
           {
-            "x": 265.7776737213131,
-            "y": 209.6250079572199
+            "x": 354.37023162841746,
+            "y": 279.50001060962654
           },
           {
-            "x": 694.2220687866215,
-            "y": 437.23610043525724
+            "x": 925.6294250488287,
+            "y": 582.9814672470096
           },
           {
-            "x": 694.2220687866215,
-            "y": 209.6250079572199
+            "x": 925.6294250488287,
+            "y": 279.50001060962654
           }
         ],
         "visibleActor": {
-          "pixels": 5410,
+          "pixels": 14249,
           "boundsXY": [
-            442,
-            256,
-            505,
-            435
+            575,
+            340,
+            700,
+            597
           ],
           "centroidXY": [
-            475.7158964879852,
-            344.6123844731978
+            634.5562495613727,
+            482.45182118043374
           ],
-          "check": "Visible pixels compared with the identical open-door view without actors; fixed placement, not a combat or AI test."
+          "pixelsInsideOpening": 14249,
+          "check": "Actor and shadow differences from the identical open-door baseline. Actor anchor and visible changes inside the opening checked; shadows can extend beyond jambs. Not a combat or AI test."
         }
       }
     }

@@ -1,7 +1,7 @@
 /** All shipped resources are generated from code; no binary asset is loaded. */
-import { createE1M1Map } from './procedural-map.js?v=0.4.0-f3ce9999b077';
-import { proceduralTexture, proceduralFlat } from './procedural-materials.js?v=0.4.0-f3ce9999b077';
-import { proceduralPatch, hasProceduralPatch } from './procedural-interface.js?v=0.4.0-f3ce9999b077';
+import { createE1M1Map } from './procedural-map.js?v=0.5.0-c0b972f9f86b';
+import { proceduralTexture, proceduralFlat } from './procedural-materials.js?v=0.5.0-c0b972f9f86b';
+import { proceduralPatch, hasProceduralPatch } from './procedural-interface.js?v=0.5.0-c0b972f9f86b';
 
 export class ProceduralResources {
   constructor() {

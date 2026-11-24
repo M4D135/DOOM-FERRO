@@ -1,4 +1,7 @@
-import { collectModelBatches, viewWeaponBatch, MODEL_VERTEX_STRIDE } from './procedural-models.js?v=0.4.0-f3ce9999b077';
+import { surfaceDetail, surfaceDetailCacheStats } from './procedural-surface-detail.js?v=0.5.0-c0b972f9f86b';
+import { buildLightingRig, sceneLighting, weaponShadowProjection } from './procedural-lighting.js?v=0.5.0-c0b972f9f86b';
+import { WORLD_VERTEX, WORLD_FRAGMENT, MODEL_VERTEX, MODEL_FRAGMENT, SKY_VERTEX, SKY_FRAGMENT, SHADOW_VERTEX, SHADOW_FRAGMENT, POST_VERTEX, POST_FRAGMENT } from './procedural-shaders.js?v=0.5.0-c0b972f9f86b';
+import { collectModelBatches, collectShadowBatches, viewWeaponBatch, MODEL_VERTEX_STRIDE } from './procedural-models.js?v=0.5.0-c0b972f9f86b';
 /**
  * DOOM host adapter for canonical FERRO 0.3.33.
  *
@@ -7,10 +10,10 @@ import { collectModelBatches, viewWeaponBatch, MODEL_VERTEX_STRIDE } from './pro
  * enter its documented host geometry hook (fx.foule.couleur); no engine source
  * is patched, no second renderer/context is hidden behind the FERRO name.
  */
-import '../vendor/ferro/fmath.js?v=0.4.0-f3ce9999b077';
-import '../vendor/ferro/surface.js?v=0.4.0-f3ce9999b077';
-import '../vendor/ferro/renderer.js?v=0.4.0-f3ce9999b077';
-import '../vendor/ferro/engine.js?v=0.4.0-f3ce9999b077';
+import '../vendor/ferro/fmath.js?v=0.5.0-c0b972f9f86b';
+import '../vendor/ferro/surface.js?v=0.5.0-c0b972f9f86b';
+import '../vendor/ferro/renderer.js?v=0.5.0-c0b972f9f86b';
+import '../vendor/ferro/engine.js?v=0.5.0-c0b972f9f86b';
 
 const SCALE = 1 / 32;
 const EPSILON = 0.00001;
@@ -147,187 +150,11 @@ export function buildMapGeometry(resources, map, leaves = buildSubsectorPolygons
   return [...groups.values()].map(g=>({...g,vertices:new Float32Array(g.vertices)}));
 }
 
-const WORLD_VERTEX = `#version 300 es
-precision highp float;
-precision highp int;
-layout(location=0) in vec3 aPosition;
-layout(location=1) in vec2 aUV;
-layout(location=2) in float aLight;
-layout(location=3) in float aSpecial;
-uniform mat4 uVP;
-out vec2 vUV;
-out vec3 vPosition;
-out float vLight;
-flat out int vSpecial;
-void main(){vUV=aUV;vPosition=aPosition;vLight=aLight;vSpecial=int(aSpecial+.5);gl_Position=uVP*vec4(aPosition,1.0);}`;
-const WORLD_FRAGMENT = `#version 300 es
-precision highp float;
-precision highp int;
-uniform sampler2D uTexture;
-uniform vec3 uEye;
-uniform float uTime;
-uniform float uBrightness;
-uniform float uDamage;
-uniform float uFlash;
-in vec2 vUV;
-in vec3 vPosition;
-in float vLight;
-flat in int vSpecial;
-out vec4 fragColor;
-void main(){
- int special=vSpecial%1000;
- float scroll=vSpecial>=1000?uTime*35.0/float(vSpecial/1000):0.0;
- vec4 c=texture(uTexture,vec2(vUV.x+scroll,vUV.y));if(c.a<.5)discard;
- float light=vLight;
- if(special==1){light*=fract(sin(floor(uTime*12.0)+float(special))*173.19)>.72?.4:1.0;}
- if(special==2||special==4||special==12){light*=mod(uTime,1.0)<.17?1.0:.35;}
- if(special==3||special==13){light*=mod(uTime,.5)<.17?1.0:.35;}
- if(special==8){light*=.68+.32*sin(uTime*2.6);}
- float distanceShade=max(.08,light-length(vPosition-uEye)*.005);
- if(vLight>1.1)distanceShade=1.0;
- distanceShade=min(1.0,distanceShade+uFlash*.16);
- vec3 color=c.rgb*distanceShade*uBrightness;
- color=mix(color,vec3(.65,.015,.005),clamp(uDamage,0.0,.55));
- fragColor=vec4(color,1.0);
-}`;
-const SKY_VERTEX=`#version 300 es
-precision highp float;
-out vec2 vNDC;
-void main(){vec2 p=vec2(float((gl_VertexID<<1)&2),float(gl_VertexID&2));vNDC=p*2.0-1.0;gl_Position=vec4(vNDC,.99999,1.0);}`;
-const SKY_FRAGMENT=`#version 300 es
-precision highp float;
-uniform sampler2D uTexture;
-uniform vec3 uForward;
-uniform vec3 uRight;
-uniform vec3 uUp;
-uniform vec2 uFov;
-in vec2 vNDC;
-out vec4 fragColor;
-void main(){vec3 d=normalize(uForward+uRight*vNDC.x*uFov.x+uUp*vNDC.y*uFov.y);
-float u=atan(d.z,d.x)*.6366197724;float v=clamp(.61-d.y/max(.01,length(d.xz))*.65,0.0,1.0);
-fragColor=vec4(texture(uTexture,vec2(u,v)).rgb,1.0);}`;
-
-const MODEL_VERTEX = `#version 300 es
-precision highp float;
-layout(location=0) in vec3 aPosition;
-layout(location=1) in vec3 aNormal;
-layout(location=2) in vec3 aColor;
-layout(location=3) in float aEmission;
-layout(location=4) in vec4 aMaterial;
-layout(location=5) in vec3 aSurface;
-layout(location=6) in vec4 aOriginYaw;
-layout(location=7) in vec4 aScaleLight;
-uniform mat4 uVP;
-uniform vec3 uEye;
-uniform vec3 uRight;
-uniform vec3 uForward;
-uniform vec3 uUp;
-uniform bool uViewModel;
-out vec3 vPosition;
-out vec3 vNormal;
-out vec3 vColor;
-out float vEmission;
-out float vLight;
-out vec3 vSurface;
-flat out vec4 vMaterial;
-flat out int vSpecial;
-void main(){
- vec3 local=aPosition*aScaleLight.x;
- if(uViewModel){
-  local+=aOriginYaw.xyz;
-  vPosition=uEye+(uRight*local.x+uForward*local.y+uUp*local.z)/32.0;
-  vNormal=uRight*aNormal.x+uForward*aNormal.y+uUp*aNormal.z;
- }else{
-  float c=cos(aOriginYaw.w),s=sin(aOriginYaw.w);
-  vPosition=aOriginYaw.xyz+vec3(s*local.x+c*local.y,local.z,c*local.x-s*local.y)/32.0;
-  vNormal=vec3(s*aNormal.x+c*aNormal.y,aNormal.z,c*aNormal.x-s*aNormal.y);
- }
- vColor=aColor;vEmission=aEmission;vLight=aScaleLight.y;vSpecial=int(aScaleLight.z+.5);
- vSurface=aSurface;vMaterial=aMaterial;
- gl_Position=uVP*vec4(vPosition,1.0);
-}`;
-const MODEL_FRAGMENT = `#version 300 es
-precision highp float;
-precision highp int;
-uniform vec3 uEye;
-uniform float uTime;
-uniform float uBrightness;
-uniform float uDamage;
-uniform float uFlash;
-in vec3 vPosition;
-in vec3 vNormal;
-in vec3 vColor;
-in float vEmission;
-in float vLight;
-in vec3 vSurface;
-flat in vec4 vMaterial;
-flat in int vSpecial;
-out vec4 fragColor;
-float hash3(vec3 p){p=fract(p*.1031);p+=dot(p,p.yzx+33.33);return fract((p.x+p.y)*p.z);}
-float noise3(vec3 p){
- vec3 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);
- return mix(mix(mix(hash3(i),hash3(i+vec3(1,0,0)),f.x),mix(hash3(i+vec3(0,1,0)),hash3(i+vec3(1,1,0)),f.x),f.y),
- mix(mix(hash3(i+vec3(0,0,1)),hash3(i+vec3(1,0,1)),f.x),mix(hash3(i+vec3(0,1,1)),hash3(i+vec3(1,1,1)),f.x),f.y),f.z);
-}
-float filteredLine(float phase){float width=fwidth(phase);return sin(phase)*exp(-width*width*.18);}
-void main(){
- float light=vLight;
- if(vSpecial==1){light*=fract(sin(floor(uTime*12.0)+float(vSpecial))*173.19)>.72?.4:1.0;}
- if(vSpecial==2||vSpecial==4||vSpecial==12){light*=mod(uTime,1.0)<.17?1.0:.35;}
- if(vSpecial==3||vSpecial==13){light*=mod(uTime,.5)<.17?1.0:.35;}
- if(vSpecial==8){light*=.68+.32*sin(uTime*2.6);}
- float distanceShade=vLight>1.1?1.0:max(.08,light-length(vPosition-uEye)*.005);
- vec3 p=vSurface*max(.01,vMaterial.w),albedo=vColor;
- int kind=int(vMaterial.z+.5);
- float roughness=clamp(vMaterial.x,.08,1.0),metalness=clamp(vMaterial.y,0.0,1.0);
- float coarse=noise3(p*.48),grain=(noise3(p*7.0)-.5)*exp(-length(fwidth(p))*2.5);
- float height=0.0;
- if(kind==1){ // Skin: broad colour variation and fine pores, fixed to each volume.
-  albedo*=.93+coarse*.12+grain*.065;roughness=clamp(roughness+grain*.12,.24,.85);height=grain*.00065;
- }else if(kind==2){ // Cloth: woven fibres and soft irregular wear.
-  float weave=filteredLine(p.x*38.0)*filteredLine(p.z*42.0);
-  albedo*=.91+coarse*.13+weave*.045+grain*.045;roughness=max(.76,roughness);height=weave*.00035;
- }else if(kind==3){ // Leather: fine creases, mottling and restrained oily highlights.
-  float creases=pow(1.0-abs(noise3(p*1.8)*2.0-1.0),13.0);
-  albedo*=.90+coarse*.18-creases*.08+grain*.07;roughness=clamp(roughness+grain*.18,.25,.9);height=(grain-creases*.35)*.0007;
- }else if(kind==4){ // Machined metal: brushed grain, tiny pits and scratches.
-  float brushed=filteredLine(p.z*51.0+noise3(p*.7)*5.0);
-  albedo*=.95+grain*.09+brushed*.035;roughness=clamp(roughness+coarse*.12+brushed*.025,.12,.72);height=brushed*.00012;
- }else if(kind==5){ // Painted metal: fine, sparse wear without large camouflage-like stains.
-  float chip=smoothstep(.88,.97,noise3(p*4.7))*exp(-length(fwidth(p))*3.0);
-  albedo=mix(albedo*(.97+coarse*.055+grain*.025),vec3(.16,.165,.15),chip*.24);
-  roughness=clamp(roughness+grain*.10,.23,.84);height=grain*.0004;
- }else if(kind==6){
-  float fibre=filteredLine(p.z*16.0+noise3(p*.9)*4.0);
-  albedo*=.91+coarse*.12+fibre*.035;roughness=clamp(roughness,.25,.8);height=fibre*.0002;
- }else if(kind==7){roughness=min(roughness,.17);albedo*=.94+coarse*.08;
- }else if(kind==8){ // Wood grain follows the primitive, including the moving pump.
-  float rings=filteredLine(length(p.xy)*5.0+noise3(vec3(p.xy*.5,p.z*.07))*6.0);
-  albedo*=.85+coarse*.14+rings*.13+grain*.05;roughness=clamp(roughness,.3,.8);height=rings*.0003;
- }else if(kind==9){albedo*=.86+coarse*.18;roughness=min(roughness,.27);height=grain*.0003;
- }else if(kind==10){albedo*=.94+coarse*.09;}
- vec3 n=normalize(vNormal),dx=dFdx(vPosition),dy=dFdy(vPosition);
- vec3 tx=cross(dy,n),ty=cross(n,dx);float det=dot(dx,tx);
- vec3 bump=sign(det)*(dFdx(height)*tx+dFdy(height)*ty)/max(abs(det),.000001);
- n=normalize(n-clamp(bump,vec3(-.12),vec3(.12)));
- vec3 V=normalize(uEye-vPosition),L=normalize(vec3(-.38,.83,.44)),H=normalize(L+V);
- float ndl=max(0.0,dot(n,L)),ndv=max(0.0,dot(n,V));
- float relief=.43+.16*max(n.y,0.0)+.43*ndl+.14*ndv;
- float exponent=mix(7.0,115.0,pow(1.0-roughness,2.0));
- vec3 f0=mix(vec3(kind==7?.12:.035),albedo,metalness);
- vec3 fresnel=f0+(1.0-f0)*pow(1.0-ndv,5.0);
- float specular=pow(max(dot(n,H),0.0),exponent)*(1.0-roughness*.72)*(.3+.7*ndl);
- vec3 reflected=reflect(-V,n);
- vec3 environment=mix(vec3(.09,.065,.035),vec3(.49,.56,.62),clamp(reflected.y*.5+.5,0.0,1.0));
- vec3 lit=albedo*relief*(1.0-metalness*.17)+f0*specular*1.15+environment*fresnel*pow(1.0-roughness,2.0)*.33;
- vec3 color=mix(lit*min(1.0,distanceShade+uFlash*.16),albedo,clamp(vEmission,0.0,1.0))*uBrightness;
- color=mix(color,vec3(.65,.015,.005),clamp(uDamage,0.0,.55));
- fragColor=vec4(color,1.0);
-}`;
-
 export class FerroDoomRenderer {
-  constructor(canvas,resources,map,{maxPixels=960*600,brightness=1.25}={}) {
+  constructor(canvas,resources,map,{maxPixels=1280*800,brightness=1.2}={}) {
     this.canvas=canvas;this.resources=resources;this.map=map;this.brightness=brightness;
+    this.compact=maxPixels<=640*400;this.surfaceMaxSize=this.compact?256:1024;
+    this.shadowSize=this.compact?512:1024;
     this.engine=globalThis.FERRO.render.create(canvas,{
       resolution:'native',maxPixels,renderScale:1,reflections:false,msaa:0,
       vignette:1,composition:false,cullMargin:0
@@ -335,9 +162,8 @@ export class FerroDoomRenderer {
     if (!this.engine.gl) {this.engine.dispose();throw new Error('Cette version de Doom FERRO nécessite WebGL 2.');}
     this.gl=this.engine.gl;this.stats=this.engine.stats;
     this.stats.host='procedural-e1m1';this.stats.ferroVersion=globalThis.FERRO.version;
-    this.engine.resize('low');
-    this.engine.setWorld([],[],null);
-    this.leaves=buildSubsectorPolygons(map);
+    this.engine.resize('low');this.engine.setWorld([],[],null);
+    this.leaves=buildSubsectorPolygons(map);this.lightingRig=buildLightingRig(map);
     this.textureCache=new Map();this.meshes=new Map();this.modelMeshes=new Map();
     this.modelBytes=0;this.modelCacheLimit=64*1024*1024;this.lodState=new WeakMap();
     this.generation=-1;this.sectorHeights='';this.frame={entities:[],time:0};
@@ -346,38 +172,85 @@ export class FerroDoomRenderer {
     this._initialize();this._updateMap();
   }
 
+  _locations(program,names) {
+    return Object.fromEntries(names.map(n=>[n,this.gl.getUniformLocation(program,/^uLights$|^uLightColors$/.test(n)?n+'[0]':n)]));
+  }
+
   _initialize() {
     const gl=this.gl;
     this.generation=this.engine.pdr.generation;
     this.worldProgram=this.engine.pdr.programme(WORLD_VERTEX,WORLD_FRAGMENT);
     this.skyProgram=this.engine.pdr.programme(SKY_VERTEX,SKY_FRAGMENT);
     this.modelProgram=this.engine.pdr.programme(MODEL_VERTEX,MODEL_FRAGMENT);
-    this.uniforms={};this.skyUniforms={};this.modelUniforms={};
-    for(const n of ['uVP','uTexture','uEye','uTime','uBrightness','uDamage','uFlash']) this.uniforms[n]=gl.getUniformLocation(this.worldProgram,n);
-    for(const n of ['uTexture','uForward','uRight','uUp','uFov']) this.skyUniforms[n]=gl.getUniformLocation(this.skyProgram,n);
-    for(const n of ['uVP','uEye','uRight','uForward','uUp','uViewModel','uTime','uBrightness','uDamage','uFlash'])this.modelUniforms[n]=gl.getUniformLocation(this.modelProgram,n);
+    this.shadowProgram=this.engine.pdr.programme(SHADOW_VERTEX,SHADOW_FRAGMENT);
+    this.postProgram=this.engine.pdr.programme(POST_VERTEX,POST_FRAGMENT);
+    const common=['uVP','uEye','uTime','uBrightness','uDamage','uFlash','uAmbient','uOutdoor','uLights','uLightColors','uLightCount',
+      'uShadow','uShadowVP','uShadowTexel','uShadowEnabled','uSelfShadow','uSelfShadowVP','uSelfShadowTexel','uSelfShadowEnabled','uAOOutput'];
+    this.uniforms=this._locations(this.worldProgram,[...common,'uTexture','uNormalRoughness','uSurface','uHeightUV','uRelief']);
+    this.modelUniforms=this._locations(this.modelProgram,[...common,'uRight','uForward','uUp','uViewModel']);
+    this.skyUniforms=this._locations(this.skyProgram,['uForward','uRight','uUp','uFov','uTime']);
+    this.shadowUniforms=this._locations(this.shadowProgram,['uVP','uTexture','uModel','uViewModel','uEye','uRight','uForward','uUp','uTime','uAlphaTest']);
+    this.postUniforms=this._locations(this.postProgram,['uScene','uDepth','uNormal','uRight','uUp','uForward','uPixel','uFov','uNearFar','uContactAO']);
     this.skyVao=gl.createVertexArray();
-    this.textureCache.clear();this.meshes.clear();this.modelMeshes.clear();this.modelBytes=0;this.lodState=new WeakMap();this.sectorHeights='';
-    this._texture('wall','SKY1');
-    for(const name of ['NUKAGE1','NUKAGE2','NUKAGE3'])this._texture('flat',name);
+    this.anisotropy=gl.getExtension('EXT_texture_filter_anisotropic');
+    this.textureCache.clear();this.textureBytes=0;this.meshes.clear();this.modelMeshes.clear();this.modelBytes=0;
+    this.lodState=new WeakMap();this.sectorHeights='';this.sceneTarget=null;this.shadowTarget=null;this.weaponShadowTarget=null;
   }
 
   _texture(kind,name) {
     const key=kind+':'+name;
     if(this.textureCache.has(key))return this.textureCache.get(key);
-    const gl=this.gl, texture=gl.createTexture();
-    let source=kind==='flat'?this.resources.flat(name):this.resources.texture(name);
-    if(!source){
-      source={width:2,height:2,leftOffset:1,topOffset:2,pixels:new Uint8Array([120,100,90,255,80,65,55,255,80,65,55,255,120,100,90,255])};
+    const gl=this.gl;
+    let base=kind==='flat'?this.resources.flat(name):this.resources.texture(name);
+    if(!base)base={width:2,height:2,pixels:new Uint8Array([120,100,90,255,80,65,55,255,80,65,55,255,120,100,90,255])};
+    const source=surfaceDetail(kind,name,base,{maxSize:this.surfaceMaxSize});
+    const upload=pixels=>{
+      const texture=gl.createTexture();gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,texture);
+      gl.pixelStorei(gl.UNPACK_ALIGNMENT,1);
+      gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA8,source.width,source.height,0,gl.RGBA,gl.UNSIGNED_BYTE,pixels);
+      gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR_MIPMAP_LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.REPEAT);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.REPEAT);
+      gl.generateMipmap(gl.TEXTURE_2D);
+      if(this.anisotropy)gl.texParameterf(gl.TEXTURE_2D,this.anisotropy.TEXTURE_MAX_ANISOTROPY_EXT,Math.min(4,gl.getParameter(this.anisotropy.MAX_TEXTURE_MAX_ANISOTROPY_EXT)));
+      return texture;
+    };
+    // Keep GPU handles only: holding source arrays here would defeat the CPU LRU.
+    const value={texture:upload(source.pixels),normal:upload(source.normalRoughness),surface:upload(source.surface),
+      width:source.width,height:source.height,baseWidth:source.baseWidth,baseHeight:source.baseHeight,heightScale:source.heightScale};
+    this.textureBytes+=Math.ceil(source.width*source.height*12*4/3);
+    this.textureCache.set(key,value);return value;
+  }
+
+  _target(width,height,depthOnly=false) {
+    const gl=this.gl,framebuffer=gl.createFramebuffer();gl.bindFramebuffer(gl.FRAMEBUFFER,framebuffer);
+    const allocate=(depth,attachment=gl.COLOR_ATTACHMENT0)=>{
+      const t=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,t);
+      gl.texImage2D(gl.TEXTURE_2D,0,depth?gl.DEPTH_COMPONENT24:gl.RGBA8,width,height,0,depth?gl.DEPTH_COMPONENT:gl.RGBA,depth?gl.UNSIGNED_INT:gl.UNSIGNED_BYTE,null);
+      gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,depth?gl.NEAREST:gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,depth?gl.NEAREST:gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+      if(depthOnly){
+        gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_COMPARE_MODE,gl.COMPARE_REF_TO_TEXTURE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_COMPARE_FUNC,gl.LEQUAL);
+        gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+      }
+      gl.framebufferTexture2D(gl.FRAMEBUFFER,depth?gl.DEPTH_ATTACHMENT:attachment,gl.TEXTURE_2D,t,0);return t;
+    };
+    const depth=allocate(true),color=depthOnly?null:allocate(false),normal=depthOnly?null:allocate(false,gl.COLOR_ATTACHMENT1);
+    gl.drawBuffers(depthOnly?[gl.NONE]:[gl.COLOR_ATTACHMENT0,gl.COLOR_ATTACHMENT1]);gl.readBuffer(depthOnly?gl.NONE:gl.COLOR_ATTACHMENT0);
+    if(gl.checkFramebufferStatus(gl.FRAMEBUFFER)!==gl.FRAMEBUFFER_COMPLETE)throw Error('Cible de rendu FERRO incomplète.');
+    return {framebuffer,depth,color,normal,width,height};
+  }
+
+  _deleteTarget(target) {
+    if(!target)return;this.gl.deleteFramebuffer(target.framebuffer);this.gl.deleteTexture(target.depth);if(target.color)this.gl.deleteTexture(target.color);if(target.normal)this.gl.deleteTexture(target.normal);
+  }
+
+  _ensureTargets(width,height) {
+    if(!this.sceneTarget||this.sceneTarget.width!==width||this.sceneTarget.height!==height){
+      this._deleteTarget(this.sceneTarget);this.sceneTarget=this._target(width,height);
     }
-    gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,texture);
-    gl.pixelStorei(gl.UNPACK_ALIGNMENT,1);
-    gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,source.width,source.height,0,gl.RGBA,gl.UNSIGNED_BYTE,source.pixels);
-    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.REPEAT);
-    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,name==='SKY1'?gl.CLAMP_TO_EDGE:gl.REPEAT);
-    const value={texture,...source};this.textureCache.set(key,value);return value;
+    if(!this.shadowTarget)this.shadowTarget=this._target(this.shadowSize,this.shadowSize,true);
+    if(!this.weaponShadowTarget)this.weaponShadowTarget=this._target(512,512,true);
   }
 
   _upload(collection,key,vertices) {
@@ -397,26 +270,20 @@ export class FerroDoomRenderer {
     return mesh;
   }
 
+
   _updateMap() {
     const signature=(this.map.revision||0)+'|'+this.map.sectors.map(s=>s.floor+','+s.ceiling).join(';');
     if(signature===this.sectorHeights)return;
     this.sectorHeights=signature;
     for(const mesh of this.meshes.values())mesh.count=0;
-    const groups=buildMapGeometry(this.resources,this.map,this.leaves);
-    let triangles=0;
+    const groups=buildMapGeometry(this.resources,this.map,this.leaves);let triangles=0;
     for(const group of groups){
-      const mesh=this._upload(this.meshes,group.key,group.vertices);
-      mesh.kind=group.kind;mesh.name=group.name;
-      this._texture(group.kind,group.name);triangles+=mesh.count/3;
+      const mesh=this._upload(this.meshes,group.key,group.vertices);mesh.kind=group.kind;mesh.name=group.name;triangles+=mesh.count/3;
     }
-    this.stats.mapTriangles=triangles;this.stats.mapSubsectors=this.leaves.length;
-    this.stats.mapSectors=this.map.sectors.length;
+    this.stats.mapTriangles=triangles;this.stats.mapSubsectors=this.leaves.length;this.stats.mapSectors=this.map.sectors.length;
   }
 
-  _animated(name,time) {
-    if(/^NUKAGE[1-3]$/.test(name))return 'NUKAGE'+(Math.floor(time*8)%3+1);
-    return name;
-  }
+  _animated(name,time) {return /^NUKAGE[1-3]$/.test(name)?'NUKAGE'+(Math.floor(time*8)%3+1):name;}
 
   _uploadModel(batch) {
     const gl=this.gl,source=batch.mesh;
@@ -453,82 +320,136 @@ export class FerroDoomRenderer {
     }
   }
 
-  /** Build shared actor/weapon pieces and first flash during the loading screen.
-   * Yield between recipes so the browser can paint; later poses only transform
-   * the shared pieces. The normal byte limits also apply to these warm entries. */
-  async prepareModels() {
-    for(const kind of ['pistol','shotgun','fist'])for(const phase of [Infinity,0]){
-      await new Promise(resolve=>globalThis.requestAnimationFrame(resolve));
-      this._uploadModel(viewWeaponBatch({kind,phase}));
-    }
-    for(const family of ['POSS','SPOS','TROO']){
-      await new Promise(resolve=>globalThis.requestAnimationFrame(resolve));
+
+  /** Precompute high-resolution maps and reusable sculpted parts while showing
+   * real progress. Yield between recipes so the loading screen remains usable. */
+  async prepareModels(progress=()=>{}) {
+    const tasks=[...this.meshes.values()].map(m=>()=>this._texture(m.kind,m.name));
+    for(const name of ['NUKAGE1','NUKAGE2','NUKAGE3'])tasks.push(()=>this._texture('flat',name));
+    for(const kind of ['pistol','shotgun','fist'])for(const phase of [Infinity,0])tasks.push(()=>this._uploadModel(viewWeaponBatch({kind,phase})));
+    for(const family of ['POSS','SPOS','TROO'])tasks.push(()=>{
       const actor={id:family,base:family,sprite:family+'A1',enemy:true,alive:true,state:'idle',x:0,y:0,z:0};
       for(const batch of collectModelBatches(this.map,[actor],0))this._uploadModel(batch);
+    });
+    for(let i=0;i<tasks.length;i++){
+      progress(i,tasks.length);await new Promise(resolve=>globalThis.requestAnimationFrame(resolve));tasks[i]();
     }
+    progress(tasks.length,tasks.length);
   }
 
-  _drawModels(gl,view) {
-    const u=this.modelUniforms,time=this.frame.time||0;
-    gl.useProgram(this.modelProgram);gl.enable(gl.CULL_FACE);gl.cullFace(gl.BACK);
+  _bindSurface(material) {
+    const gl=this.gl;
+    [material.texture,material.normal,material.surface].forEach((t,i)=>{gl.activeTexture(gl.TEXTURE0+i);gl.bindTexture(gl.TEXTURE_2D,t);});
+  }
+
+  _lightingUniforms(u,view,lighting,aoOutput) {
+    const gl=this.gl;
     gl.uniformMatrix4fv(u.uVP,false,view.vp);gl.uniform3fv(u.uEye,view.oeil);
-    gl.uniform3fv(u.uRight,view.droite);gl.uniform3fv(u.uForward,view.avant);gl.uniform3fv(u.uUp,view.haut);
-    gl.uniform1f(u.uTime,time);gl.uniform1f(u.uBrightness,this.brightness);
+    gl.uniform1f(u.uTime,this.frame.time||0);gl.uniform1f(u.uBrightness,this.brightness);
     gl.uniform1f(u.uDamage,this.frame.damage||0);gl.uniform1f(u.uFlash,this.frame.flash||0);
-    gl.uniform1i(u.uViewModel,0);
-    let calls=0,triangles=0,instances=0;
-    const batches=collectModelBatches(this.map,this.frame.entities,time,view,this.lodState);
-    for(const batch of batches){
-      const mesh=this._uploadModel(batch);
-      gl.drawArraysInstanced(gl.TRIANGLES,0,mesh.count,mesh.instances);
-      calls++;triangles+=mesh.count*mesh.instances/3;instances+=mesh.instances;
+    gl.uniform1f(u.uAmbient,lighting.ambient);gl.uniform1f(u.uOutdoor,lighting.outdoor);
+    gl.uniform4fv(u.uLights,lighting.positions);gl.uniform4fv(u.uLightColors,lighting.colors);gl.uniform1i(u.uLightCount,lighting.count);
+    gl.uniformMatrix4fv(u.uShadowVP,false,lighting.shadowVP);gl.uniform2f(u.uShadowTexel,1/this.shadowSize,1/this.shadowSize);
+    gl.uniform1i(u.uShadowEnabled,1);gl.uniform1i(u.uAOOutput,aoOutput?1:0);gl.uniform1i(u.uShadow,3);
+    gl.activeTexture(gl.TEXTURE3);gl.bindTexture(gl.TEXTURE_2D,this.shadowTarget.depth);
+    gl.uniform1i(u.uSelfShadow,4);gl.uniform1i(u.uSelfShadowEnabled,!aoOutput&&lighting.weaponShadowVP?1:0);
+    gl.uniformMatrix4fv(u.uSelfShadowVP,false,lighting.weaponShadowVP||lighting.shadowVP);gl.uniform2f(u.uSelfShadowTexel,1/512,1/512);
+    gl.activeTexture(gl.TEXTURE4);gl.bindTexture(gl.TEXTURE_2D,this.weaponShadowTarget.depth);
+  }
+
+  _modelAxes(u,view) {
+    this.gl.uniform3fv(u.uEye,view.oeil);this.gl.uniform3fv(u.uRight,view.droite);
+    this.gl.uniform3fv(u.uForward,view.avant);this.gl.uniform3fv(u.uUp,view.haut);
+  }
+
+  _drawBatch(batch) {
+    const mesh=this._uploadModel(batch);this.gl.drawArraysInstanced(this.gl.TRIANGLES,0,mesh.count,mesh.instances);
+    return mesh.count*mesh.instances/3;
+  }
+
+  _shadowPass(view,lighting,batches,weaponOnly=null) {
+    const gl=this.gl,u=this.shadowUniforms,target=weaponOnly?this.weaponShadowTarget:this.shadowTarget;
+    // Unbind depth map before rendering into it; WebGL disallows feedback loops.
+    gl.activeTexture(gl.TEXTURE3);gl.bindTexture(gl.TEXTURE_2D,null);
+    gl.activeTexture(gl.TEXTURE4);gl.bindTexture(gl.TEXTURE_2D,null);
+    gl.bindFramebuffer(gl.FRAMEBUFFER,target.framebuffer);gl.viewport(0,0,target.width,target.height);
+    gl.enable(gl.DEPTH_TEST);gl.depthMask(true);gl.depthFunc(gl.LEQUAL);gl.disable(gl.CULL_FACE);gl.disable(gl.BLEND);
+    gl.clear(gl.DEPTH_BUFFER_BIT);
+    gl.useProgram(this.shadowProgram);gl.uniformMatrix4fv(u.uVP,false,weaponOnly?lighting.weaponShadowVP:lighting.shadowVP);
+    this._modelAxes(u,view);gl.uniform1f(u.uTime,this.frame.time||0);gl.uniform1i(u.uTexture,0);
+    let calls=0,triangles=0;
+    if(!weaponOnly){
+      gl.uniform1i(u.uModel,0);gl.uniform1i(u.uViewModel,0);gl.uniform1i(u.uAlphaTest,1);
+      for(const mesh of this.meshes.values())if(mesh.count){
+        gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,this._texture(mesh.kind,this._animated(mesh.name,this.frame.time||0)).texture);
+        gl.bindVertexArray(mesh.vao);gl.drawArrays(gl.TRIANGLES,0,mesh.count);calls++;triangles+=mesh.count/3;
+      }
     }
-    const weapon=viewWeaponBatch(this.frame.weapon,time);
-    if(weapon){
-      // Clear depth once for the close weapon; its parts still occlude each other in 3D.
-      gl.clear(gl.DEPTH_BUFFER_BIT);gl.uniform1i(u.uViewModel,1);
-      const mesh=this._uploadModel(weapon);gl.drawArraysInstanced(gl.TRIANGLES,0,mesh.count,1);
-      calls++;triangles+=mesh.count/3;
-    }
-    this.stats.modelTriangles=triangles;this.stats.modelInstances=instances;
-    this.stats.modelDrawCalls=calls;this.stats.generatedModels=this.modelMeshes.size;this.stats.worldBillboards=0;
-    this.stats.modelBytes=this.modelBytes;this.stats.modelCacheLimit=this.modelCacheLimit;
-    this.stats.modelCulled=batches.summary.culled;this.stats.modelLods=batches.summary.lods;
-    return {calls,triangles,instances};
+    gl.uniform1i(u.uModel,1);gl.uniform1i(u.uAlphaTest,0);gl.uniform1i(u.uViewModel,weaponOnly?1:0);
+    for(const batch of weaponOnly?[weaponOnly]:batches){triangles+=this._drawBatch(batch);calls++;}
+    return {calls,triangles};
   }
 
   _renderPass(gl,view) {
+    const parent=gl.getParameter(gl.FRAMEBUFFER_BINDING),viewport=gl.getParameter(gl.VIEWPORT);
     if(this.generation!==this.engine.pdr.generation)this._initialize();
-    this._updateMap();
-    const time=this.frame.time||0;
-    gl.disable(gl.BLEND);gl.disable(gl.SCISSOR_TEST);gl.disable(gl.CULL_FACE);
-    gl.disable(gl.DEPTH_TEST);gl.depthMask(false);gl.useProgram(this.skyProgram);gl.bindVertexArray(this.skyVao);
-    gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,this._texture('wall','SKY1').texture);
-    const sky=this.skyUniforms;
-    gl.uniform1i(sky.uTexture,0);gl.uniform3fv(sky.uForward,view.avant);gl.uniform3fv(sky.uRight,view.droite);gl.uniform3fv(sky.uUp,view.haut);
-    gl.uniform2f(sky.uFov,view.tangente*view.largeur/view.hauteur,view.tangente);gl.drawArrays(gl.TRIANGLES,0,3);
+    this._updateMap();this._ensureTargets(view.largeur,view.hauteur);
+    const time=this.frame.time||0,batches=collectModelBatches(this.map,this.frame.entities||[],time,view,this.lodState);
+    const weapon=viewWeaponBatch(this.frame.weapon,time),lighting=sceneLighting(this.lightingRig,view,this.frame.entities||[],time,this.frame.weapon);
+    if(weapon)lighting.weaponShadowVP=weaponShadowProjection(lighting.positions.subarray(0,3),view,weapon);
+    gl.disable(gl.SCISSOR_TEST);gl.disable(gl.BLEND);
+    const casters=collectShadowBatches(this.map,this.frame.entities||[],time,lighting,batches);
+    const shadow=this._shadowPass(view,lighting,casters);
+    gl.bindFramebuffer(gl.FRAMEBUFFER,this.sceneTarget.framebuffer);gl.viewport(0,0,view.largeur,view.hauteur);
+    gl.depthMask(true);gl.clearColor(.07,.08,.09,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+    gl.disable(gl.CULL_FACE);gl.disable(gl.DEPTH_TEST);gl.depthMask(false);
+    gl.useProgram(this.skyProgram);gl.bindVertexArray(this.skyVao);const sky=this.skyUniforms;
+    gl.uniform3fv(sky.uForward,view.avant);gl.uniform3fv(sky.uRight,view.droite);gl.uniform3fv(sky.uUp,view.haut);
+    gl.uniform2f(sky.uFov,view.tangente*view.largeur/view.hauteur,view.tangente);gl.uniform1f(sky.uTime,time);gl.drawArrays(gl.TRIANGLES,0,3);
     gl.enable(gl.DEPTH_TEST);gl.depthMask(true);gl.depthFunc(gl.LEQUAL);gl.enable(gl.CULL_FACE);gl.cullFace(gl.BACK);
-    gl.useProgram(this.worldProgram);const u=this.uniforms;
-    gl.uniformMatrix4fv(u.uVP,false,view.vp);gl.uniform3fv(u.uEye,view.oeil);gl.uniform1i(u.uTexture,0);
-    gl.uniform1f(u.uTime,time);gl.uniform1f(u.uBrightness,this.brightness);
-    gl.uniform1f(u.uDamage,this.frame.damage||0);gl.uniform1f(u.uFlash,this.frame.flash||0);
-    let calls=1,triangles=1;
-    for(const mesh of this.meshes.values()){
-      if(!mesh.count)continue;
-      gl.bindTexture(gl.TEXTURE_2D,this._texture(mesh.kind,this._animated(mesh.name,time)).texture);
+    gl.useProgram(this.worldProgram);const u=this.uniforms;this._lightingUniforms(u,view,lighting,true);
+    gl.uniform1i(u.uTexture,0);gl.uniform1i(u.uNormalRoughness,1);gl.uniform1i(u.uSurface,2);gl.uniform1i(u.uRelief,this.compact?0:1);
+    let calls=1+shadow.calls,triangles=1+shadow.triangles,modelTriangles=0,modelCalls=0,instances=0;
+    for(const mesh of this.meshes.values())if(mesh.count){
+      const material=this._texture(mesh.kind,this._animated(mesh.name,time));this._bindSurface(material);
+      gl.uniform2f(u.uHeightUV,material.heightScale/material.baseWidth,material.heightScale/material.baseHeight);
       gl.bindVertexArray(mesh.vao);gl.drawArrays(gl.TRIANGLES,0,mesh.count);calls++;triangles+=mesh.count/3;
     }
-    const models=this._drawModels(gl,view);calls+=models.calls;triangles+=models.triangles;
-    gl.bindVertexArray(null);
-    this.stats.generatedTextures=this.textureCache.size;
-    return {appels:calls,triangles,instances:models.instances};
+    gl.useProgram(this.modelProgram);this._lightingUniforms(this.modelUniforms,view,lighting,true);this._modelAxes(this.modelUniforms,view);
+    gl.uniform1i(this.modelUniforms.uViewModel,0);
+    for(const batch of batches){modelTriangles+=this._drawBatch(batch);modelCalls++;instances+=batch.count;}
+    // Contact AO affects the indirect-light fraction saved in alpha; direct
+    // highlights and luminous panels keep their intensity. Present into FERRO's target.
+    gl.bindFramebuffer(gl.FRAMEBUFFER,parent);gl.viewport(...viewport);
+    gl.disable(gl.DEPTH_TEST);gl.depthMask(false);gl.disable(gl.CULL_FACE);gl.useProgram(this.postProgram);gl.bindVertexArray(this.skyVao);
+    const post=this.postUniforms;
+    gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,this.sceneTarget.color);gl.uniform1i(post.uScene,0);
+    gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,this.sceneTarget.depth);gl.uniform1i(post.uDepth,1);
+    gl.activeTexture(gl.TEXTURE2);gl.bindTexture(gl.TEXTURE_2D,this.sceneTarget.normal);gl.uniform1i(post.uNormal,2);
+    gl.uniform3fv(post.uRight,view.droite);gl.uniform3fv(post.uUp,view.haut);gl.uniform3fv(post.uForward,view.avant);
+    gl.uniform2f(post.uPixel,1/view.largeur,1/view.hauteur);gl.uniform2f(post.uFov,view.tangente*view.largeur/view.hauteur,view.tangente);
+    gl.uniform2f(post.uNearFar,this.camera.near,this.camera.far);gl.uniform1i(post.uContactAO,this.compact?0:1);gl.drawArrays(gl.TRIANGLES,0,3);calls++;triangles++;
+    if(weapon){
+      // Fit the hand/weapon shadow separately so tiny contacts retain detail.
+      // It also receives the room shadow, without casting giant world shadows.
+      const w=this._shadowPass(view,lighting,[],weapon);calls+=w.calls;triangles+=w.triangles;
+      gl.bindFramebuffer(gl.FRAMEBUFFER,parent);gl.viewport(...viewport);gl.enable(gl.DEPTH_TEST);gl.depthMask(true);gl.clear(gl.DEPTH_BUFFER_BIT);
+      gl.enable(gl.CULL_FACE);gl.cullFace(gl.BACK);gl.useProgram(this.modelProgram);
+      this._lightingUniforms(this.modelUniforms,view,lighting,false);this._modelAxes(this.modelUniforms,view);gl.uniform1i(this.modelUniforms.uViewModel,1);
+      modelTriangles+=this._drawBatch(weapon);modelCalls++;
+    }
+    calls+=modelCalls;triangles+=modelTriangles;gl.bindVertexArray(null);gl.activeTexture(gl.TEXTURE0);
+    Object.assign(this.stats,{modelTriangles,modelInstances:instances,modelDrawCalls:modelCalls,generatedModels:this.modelMeshes.size,worldBillboards:0,
+      modelBytes:this.modelBytes,modelCacheLimit:this.modelCacheLimit,modelCulled:batches.summary.culled,modelLods:batches.summary.lods,
+      generatedTextures:this.textureCache.size,surfaceTextureBytes:this.textureBytes,surfaceCPUBytes:surfaceDetailCacheStats().bytes,
+      localLights:lighting.count,shadowResolution:this.shadowSize,contactAO:!this.compact,physicallyBasedMaterials:true});
+    return {appels:calls,triangles,instances};
   }
 
   draw(camera,frame={}) {
     this.frame=frame;
     this.camera.pos[0]=camera.x*SCALE;this.camera.pos[1]=(camera.z??41)*SCALE;this.camera.pos[2]=-camera.y*SCALE;
-    this.camera.yaw=Math.PI/2-(camera.angle||0);this.camera.pitch=camera.pitch||0;
-    this.camera.fov=camera.fov||70;
+    this.camera.yaw=Math.PI/2-(camera.angle||0);this.camera.pitch=camera.pitch||0;this.camera.fov=camera.fov||70;
     this.engine.draw(this.camera,[],{time:frame.time||0,bloom:false,shadows:false,reflections:false,
       msaa:false,adaptive:false,groundCover:false,vignette:false,foule:this.hook});
     return this.stats;
@@ -539,8 +460,9 @@ export class FerroDoomRenderer {
   dispose(){
     const gl=this.gl;
     for(const mesh of [...this.meshes.values(),...this.modelMeshes.values()]){gl.deleteBuffer(mesh.buffer);if(mesh.instancesBuffer)gl.deleteBuffer(mesh.instancesBuffer);gl.deleteVertexArray(mesh.vao);}
-    for(const texture of this.textureCache.values())gl.deleteTexture(texture.texture);
-    gl.deleteVertexArray(this.skyVao);gl.deleteProgram(this.worldProgram);gl.deleteProgram(this.skyProgram);gl.deleteProgram(this.modelProgram);
+    for(const texture of this.textureCache.values())for(const t of [texture.texture,texture.normal,texture.surface])gl.deleteTexture(t);
+    this._deleteTarget(this.sceneTarget);this._deleteTarget(this.shadowTarget);this._deleteTarget(this.weaponShadowTarget);gl.deleteVertexArray(this.skyVao);
+    for(const p of [this.worldProgram,this.skyProgram,this.modelProgram,this.shadowProgram,this.postProgram])gl.deleteProgram(p);
     this.engine.dispose();
   }
 }

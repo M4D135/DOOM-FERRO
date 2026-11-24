@@ -7,7 +7,7 @@ import {createE1M1Map} from '../src/procedural-map.js';
 import {DoomGame} from '../src/game.js';
 
 const TYPES=[2035,2028,48,35,10,12,15,24,2011,2012,2014,2015,2018,2019,2007,2048,2008,2049,2001];
-const BUDGET=[550,1850,5000];
+const BUDGET=[550,2500,12000];
 const digest=mesh=>createHash('sha256').update(new Uint8Array(mesh.vertices.buffer)).digest('hex');
 const someVertex=(mesh,predicate)=>{for(let i=0;i<mesh.vertices.length;i+=STRIDE)if(predicate(mesh.vertices,i))return true;return false;};
 const hasMaterial=(mesh,name)=>someVertex(mesh,(v,i)=>v[i+12]===MATERIALS[name].kind);
@@ -117,7 +117,7 @@ test('projectiles and explosion stages have genuine emissive volumes at every de
 test('first-person weapons have solid mechanics, anatomical hands, volumetric flashes and recoverable poses',()=>{
   for(const kind of ['pistol','shotgun','fist']) {
     const idle=weaponMesh(kind,Infinity);
-    validate(idle,10000,false);
+    validate(idle,26000,false);
     assert(idle.bounds.max[1]>20,'weapon points along local +Y');
     let left=Infinity,right=-Infinity;
     for(let i=0;i<idle.vertices.length;i+=STRIDE)if(idle.vertices[i+1]>20){left=Math.min(left,idle.vertices[i]/idle.vertices[i+1]);right=Math.max(right,idle.vertices[i]/idle.vertices[i+1]);}
@@ -125,7 +125,7 @@ test('first-person weapons have solid mechanics, anatomical hands, volumetric fl
     assert(hasMaterial(idle,'skin'),'the arm is a physical skin surface');
     if(kind!=='fist')assert(hasMaterial(idle,'metal')&&hasMaterial(idle,'leather'));
     assert.equal(weaponMesh(kind,10),idle);assert.equal(weaponMesh(kind,-1),idle);assert.equal(weaponMesh(kind,NaN),idle);
-    const moving=weaponMesh(kind,kind==='fist'?.15:.03);validate(moving,10000,false);
+    const moving=weaponMesh(kind,kind==='fist'?.15:.03);validate(moving,26000,false);
     assert.notEqual(digest(moving),digest(idle));
     assert.equal(weaponMesh(kind,.121),weaponMesh(kind,.122),'30 Hz pose quantisation reuses geometry');
     if(kind!=='fist') {
@@ -170,4 +170,76 @@ test('shared parts stay resident while object and animated pose caches remain un
   }
   assert.equal(stats.weapons.staticParts,staticParts,'new recoil/pump phases do not rebuild permanent geometry');
   assert(stats.weapons.staticParts<20,'the shared part set is finite');
+});
+
+// The new close-up surfaces must survive depth testing as solids. These checks
+// exercise geometry/topology, not a requested triangle count or a beauty claim.
+test('analytic hand sculpting produces one closed joined surface with shared smooth normals',async()=>{
+  const {implicitMesh,smoothUnion,ellipsoidDistance,capsuleDistance}=await import('../src/procedural-object-sculpt.js');
+  const mesh=implicitMesh('joined-hand-test',{
+    bounds:[[-3,-3,-3],[3,3,3]],resolution:[22,24,22],color:[180,125,85],material:'skin',
+    distance:(x,y,z)=>smoothUnion(ellipsoidDistance(x,y,z,[0,-.4,0],[1.3,1.5,.85]),
+      capsuleDistance(x,y,z,[.55,.1,.1],[1.1,1.65,.2],.55,.38),.30)
+  });
+  validate(mesh,10000,false);
+  const v=mesh.vertices,vertices=new Map(),edges=new Map(),neighbors=new Map();
+  const id=(offset)=>{
+    const key=[v[offset],v[offset+1],v[offset+2]].map(x=>x.toFixed(6)).join(',');
+    if(!vertices.has(key))vertices.set(key,vertices.size);
+    return vertices.get(key);
+  };
+  for(let i=0;i<v.length;i+=STRIDE*3){
+    const ids=[id(i),id(i+STRIDE),id(i+STRIDE*2)];
+    for(let k=0;k<3;k++){
+      const a=ids[k],b=ids[(k+1)%3],key=a<b?a+':'+b:b+':'+a;
+      edges.set(key,(edges.get(key)||0)+1);
+      if(!neighbors.has(a))neighbors.set(a,new Set());neighbors.get(a).add(b);
+      if(!neighbors.has(b))neighbors.set(b,new Set());neighbors.get(b).add(a);
+    }
+  }
+  for(const count of edges.values())assert.equal(count,2,'every sculpted edge belongs to two faces');
+  const seen=new Set(),queue=[0];while(queue.length){const a=queue.pop();if(seen.has(a))continue;seen.add(a);for(const b of neighbors.get(a))if(!seen.has(b))queue.push(b);}
+  assert.equal(seen.size,vertices.size,'palm and finger are joined, with no disconnected beads');
+});
+
+test('muzzles have annular metal rims and visible bore depth rather than flat black disks',()=>{
+  const forwardSurface=(mesh,x,z)=>{
+    let hit=-Infinity;const a=mesh.vertices;
+    for(let i=0;i<a.length;i+=3*STRIDE){
+      const j=i+STRIDE,k=i+2*STRIDE,den=(a[j+2]-a[k+2])*(a[i]-a[k])+(a[k]-a[j])*(a[i+2]-a[k+2]);
+      if(Math.abs(den)<1e-9)continue;
+      const u=((a[j+2]-a[k+2])*(x-a[k])+(a[k]-a[j])*(z-a[k+2]))/den;
+      const w=((a[k+2]-a[i+2])*(x-a[k])+(a[i]-a[k])*(z-a[k+2]))/den,t=1-u-w;
+      if(u>=0&&w>=0&&t>=0)hit=Math.max(hit,u*a[i+1]+w*a[j+1]+t*a[k+1]);
+    }return hit;
+  };
+  for(const[kind,z,edge]of[['pistol',-6.91,1.02],['shotgun',-8.6+1.15*.73,.73]]){
+    const mesh=weaponMesh(kind),bore=forwardSurface(mesh,0,z),rim=forwardSurface(mesh,edge,z);
+    assert(Number.isFinite(bore)&&Number.isFinite(rim));
+    assert(rim-bore>1.0,`${kind} bore is recessed by more than one game unit`);
+  }
+});
+
+test('SHELLS reads left to right from the shell box printed face, with E and L stems on the viewer left',()=>{
+  // The printed face points along local +Y; its viewer-right direction is -X.
+  // Probe the actual front-facing ink triangles, not vertex insertion order.
+  const inkAt=(mesh,screenX,z)=>{
+    const v=mesh.vertices;
+    for(let i=0;i<v.length;i+=3*STRIDE){
+      if(v[i+4]<.9||Math.abs(v[i+6]-47/255)>1e-6||Math.abs(v[i+7]-51/255)>1e-6||Math.abs(v[i+8]-43/255)>1e-6)continue;
+      const j=i+STRIDE,k=i+2*STRIDE,ax=-v[i],bx=-v[j],cx=-v[k],az=v[i+2],bz=v[j+2],cz=v[k+2];
+      const den=(bz-cz)*(ax-cx)+(cx-bx)*(az-cz);if(Math.abs(den)<1e-9)continue;
+      const a=((bz-cz)*(screenX-cx)+(cx-bx)*(z-cz))/den,b=((cz-az)*(screenX-cx)+(ax-cx)*(z-cz))/den;
+      if(a>=0&&b>=0&&a+b<=1)return true;
+    }return false;
+  };
+  const scale=.97,left=5.6-8.5*scale,z=2.4+3*scale;
+  for(const detail of[1,2]){
+    const mesh=objectMesh({type:2049},0,detail);
+    for(const column of[2,3,4]){
+      const x=left+column*3*scale;
+      assert(inkAt(mesh,x,z),'E/L has its vertical stem on the left as viewed from +Y');
+      assert(!inkAt(mesh,x+2*scale,z),'E/L is open at the upper right, not horizontally mirrored');
+    }
+  }
 });

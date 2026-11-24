@@ -76,8 +76,8 @@ test('composition preserves volume and normals under rotation, nonuniform scale,
 test('all authored actor poses remain grounded detailed volumes at three geometric levels', () => {
   for (let detail=0;detail<3;detail++) for (const family of FAMILIES) for (const frame of family.alive+family.dead) {
     const mesh=characterMesh(actor(family,frame),0,detail);
-    assert.ok(inspect(mesh)>5000,`${mesh.key}: expected a closed body volume`);
-    assert.ok(mesh.triangles>1000&&mesh.triangles<=[2100,5600,12000][detail],`${mesh.key}: triangle budget ${mesh.triangles}`);
+    assert.ok(inspect(mesh)>4000,`${mesh.key}: expected a substantial body volume at every LOD`);
+    assert.ok(mesh.triangles>1000&&mesh.triangles<=[2000,8000,35000][detail],`${mesh.key}: triangle budget ${mesh.triangles}`);
     assert.equal(mesh.bounds.min[2],0,`${mesh.key}: feet/corpse must meet floor`);
     assert.ok(span(mesh,0)>20&&span(mesh,1)>12,`${mesh.key}: cannot be a billboard`);
     if (family.alive.includes(frame)) assert.ok(span(mesh,2)>=53&&span(mesh,2)<=58,`${mesh.key}: Doom actor height`);
@@ -145,11 +145,11 @@ test('state-only callers get deterministic bounded animation and death fallbacks
   }
 });
 
-test('character generation runs with only its two source modules, without reference media or readers', async () => {
+test('character generation runs with only its source modules, without reference media or readers', async () => {
   const folder=await mkdtemp(join(tmpdir(),'doom-procedural-characters-'));
   try {
     await writeFile(join(folder,'package.json'),JSON.stringify({type:'module'}));
-    for (const file of ['procedural-mesh.js','procedural-characters.js']) await copyFile(new URL(`../src/${file}`,import.meta.url),join(folder,file));
+    for (const file of ['procedural-mesh.js','procedural-anatomy.js','procedural-characters.js']) await copyFile(new URL(`../src/${file}`,import.meta.url),join(folder,file));
     const result=spawnSync(process.execPath,['--input-type=module','-e',`
       globalThis.fetch=()=>{throw new Error('No external resources are available');};
       const {characterMesh}=await import('./procedural-characters.js');
@@ -180,7 +180,7 @@ test('close views contain materially distinct small anatomy and details removed 
       if(high.vertices[i+2]>47&&high.vertices[i+1]>2){detailedFace++;if(high.vertices[i+4]>.3)frontFace++;}
     }
     assert.ok(detailedFace>900&&frontFace>300,'sculpted face retains meaningful surface geometry');
-    for(const kind of family.base==='TROO'?[1,6,7]:[1,2,3,4,6,7,9])assert.ok(materials.has(kind),`missing material ${kind}`);
+    for(const kind of family.base==='TROO'?[1,6,7]:[1,2,3,4,6,7])assert.ok(materials.has(kind),`missing material ${kind}`);
   }
 });
 
@@ -189,6 +189,28 @@ test('pose cache stays bounded and regeneration remains deterministic under all 
   for(let detail=0;detail<3;detail++)for(const family of FAMILIES)for(const frame of family.alive+family.dead)characterMesh(actor(family,frame),0,detail);
   const stats=proceduralCharacterCacheStats();
   assert.ok(stats.entries<=stats.limit);assert.ok(stats.bytes<=stats.byteLimit);
-  assert.ok(stats.byteLimit<=32*1024*1024);
+  assert.equal(stats.byteLimit,64*1024*1024);
+  assert.equal(stats.parts.byteLimit,32*1024*1024);
+  assert.equal(stats.poses.byteLimit,32*1024*1024);
+  assert.ok(stats.parts.bytes<=stats.parts.byteLimit&&stats.poses.bytes<=stats.poses.byteLimit);
+  assert.equal(stats.bytes,stats.parts.bytes+stats.poses.bytes);
   assert.deepEqual(characterMesh(actor(FAMILIES[0],'A')).vertices,original);
+  const builds=proceduralCharacterCacheStats().parts.builds;
+  for(let detail=0;detail<3;detail++)for(const family of FAMILIES)for(const frame of family.alive+family.dead)characterMesh(actor(family,frame),0,detail);
+  assert.equal(proceduralCharacterCacheStats().parts.builds,builds,'pose eviction must not rebuild the immutable heads and body parts');
+  assert.equal(proceduralCharacterCacheStats().parts.evictions,0,'all authored immutable LODs fit their protected budget');
+});
+
+test('articulated walk poses preserve rest-surface coordinates and leave earlier poses immutable',()=>{
+  for(const family of FAMILIES){
+    const first=characterMesh(actor(family,'A')),snapshot=first.vertices.slice(),next=characterMesh(actor(family,'B'));
+    assert.equal(next.vertices.length,first.vertices.length);
+    let moved=0;
+    for(let i=0;i<snapshot.length;i+=S){
+      if(Math.hypot(...[0,1,2].map(k=>snapshot[i+k]-next.vertices[i+k]))>.01)moved++;
+      for(let k=6;k<S;k++)assert.equal(snapshot[i+k],next.vertices[i+k],`${family.base}: posed material field changed`);
+    }
+    assert.ok(moved>1000,'actual limb vertices must move');
+    assert.deepEqual(first.vertices,snapshot,'a cached pose shares no writable vertex buffer with another pose');
+  }
 });

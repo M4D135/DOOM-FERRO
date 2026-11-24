@@ -1,6 +1,6 @@
-import { characterMesh } from './procedural-characters.js?v=0.4.0-f3ce9999b077';
-import { objectMesh, weaponMesh } from './procedural-objects.js?v=0.4.0-f3ce9999b077';
-import { MESH_VERTEX_STRIDE } from './procedural-mesh.js?v=0.4.0-f3ce9999b077';
+import { characterMesh } from './procedural-characters.js?v=0.5.0-c0b972f9f86b';
+import { objectMesh, weaponMesh } from './procedural-objects.js?v=0.5.0-c0b972f9f86b';
+import { MESH_VERTEX_STRIDE } from './procedural-mesh.js?v=0.5.0-c0b972f9f86b';
 
 export const MODEL_VERTEX_STRIDE = MESH_VERTEX_STRIDE;
 export const MODEL_INSTANCE_STRIDE = 8;
@@ -39,13 +39,14 @@ export function modelVisibility(entity, view, previousDetail) {
 
 /** Instance coordinates are FERRO world units. Local models use Doom units,
  * X right / Y forward / Z up. The GPU rotates around the actor's own heading. */
-export function collectModelBatches(map, entities, time = 0, view = null, lodState = null) {
+export function collectModelBatches(map, entities, time = 0, view = null, lodState = null, maxDetail = 2) {
   const batches = new Map(), summary = {total:0,visible:0,culled:0,lods:[0,0,0]};
   for (const entity of entities || []) {
     if (entity.removed) continue;
     summary.total++;
     const visibility = modelVisibility(entity,view,lodState?.get(entity));
     if (!visibility.visible) {summary.culled++;continue;}
+    visibility.detail=Math.min(visibility.detail,maxDetail);
     lodState?.set(entity,visibility.detail);
     const mesh = modelForEntity(entity, time, visibility.detail);
     if (!mesh) continue;
@@ -64,6 +65,17 @@ export function collectModelBatches(map, entities, time = 0, view = null, lodSta
     entityIds: batch.entityIds}));
   Object.defineProperty(result,'summary',{value:summary});
   return result;
+}
+
+/** A nearby object can cast a visible shadow while outside the camera. Reuse
+ * the visible pose buffers exactly; extra casters use at most the middle LOD
+ * and are bounded by the primary light's range and projection cone. */
+export function collectShadowBatches(map,entities,time,lighting,visibleBatches) {
+  const visibleIds=new Set(visibleBatches.flatMap(batch=>batch.entityIds));
+  const origin=lighting.shadowView.oeil,range=lighting.shadowRange+2.5;
+  const extra=(entities||[]).filter(e=>!e.removed&&!visibleIds.has(e.id)&&
+    Math.hypot(e.x/32-origin[0],((e.z||0)+32)/32-origin[1],-e.y/32-origin[2])<range);
+  return [...visibleBatches,...collectModelBatches(map,extra,time,lighting.shadowView,null,1)];
 }
 
 /** Weapon geometry lives in the camera's 3D basis, with depth between its parts. */

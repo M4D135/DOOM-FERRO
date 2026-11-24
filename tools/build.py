@@ -70,6 +70,9 @@ def main():
                 'importedMediaFiles': 0, 'worldBillboards': 0,
                 'worldRepresentation': 'instanced procedural 3D triangle meshes', 'runtimeModules': len(graph),
                 'worldDetailLevels': 3, 'proceduralSurfaceMaterials': True, 'modelGpuCacheMiB': 64,
+                'physicallyBasedMaterials': True, 'surfaceMapsPerMaterial': 3, 'surfaceCpuCacheMiB': 48,
+                'shadowMaps': 2, 'shadowFilter': 'hardware bilinear comparison, 3x3 PCF',
+                'smoothNormalBuffer': True, 'contactAO': '12 samples, indirect fraction',
                 'ferroVersion': manifest['version']}
     (DEST / 'build-info.json').write_text(json.dumps(metadata, ensure_ascii=False, indent=2) + '\n')
     total = sum(p.stat().st_size for p in DEST.rglob('*') if p.is_file())

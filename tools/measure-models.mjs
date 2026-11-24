@@ -1,12 +1,11 @@
 /** Reproducible geometry inventory. This does not measure frame rate. */
-import {readFileSync} from 'node:fs';
+import {readFileSync,readdirSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {characterMesh,proceduralCharacterCacheStats} from '../src/procedural-characters.js';
 import {objectMesh,weaponMesh,proceduralObjectCacheStats} from '../src/procedural-objects.js';
 import {MATERIALS,MESH_VERTEX_STRIDE} from '../src/procedural-mesh.js';
 
-const sources=['src/procedural-mesh.js','src/procedural-characters.js','src/procedural-objects.js',
-  'src/procedural-weapons.js','src/procedural-models.js','src/ferro-doom-renderer.js'];
+const sources=readdirSync(new URL('../src/',import.meta.url)).filter(n=>n.endsWith('.js')).sort().map(n=>'src/'+n);
 const hashes=()=>Object.fromEntries(sources.map(path=>[path,
   createHash('sha256').update(readFileSync(new URL('../'+path,import.meta.url))).digest('hex')]));
 const before=hashes();
@@ -40,6 +39,6 @@ const actors=proceduralCharacterCacheStats(),props=proceduralObjectCacheStats();
 console.log(JSON.stringify({version:JSON.parse(readFileSync(new URL('../package.json',import.meta.url))).version,
   scope:'Actual generated vertex buffers. Character counts use the idle A pose; props use the first frame. Animation counts vary. No FPS or hardware performance claim.',
   vertexStride:MESH_VERTEX_STRIDE,detailOrder:'0 distant, 1 intermediate, 2 close',sourceSha256:before,
-  limits:{characterBytes:actors.byteLimit,objectBytes:props.objects.byteLimit,
+  limits:{characterBytes:actors.byteLimit,characterPartBytes:actors.parts.byteLimit,characterPoseBytes:actors.poses.byteLimit,objectBytes:props.objects.byteLimit,
     weaponBytes:props.weapons.byteLimit,modelGpuBytes:64*1024*1024},
   characters,objects,weapons},null,2));

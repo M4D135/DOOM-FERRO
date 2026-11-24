@@ -1,4 +1,4 @@
-# Références visuelles des versions 0.3.0 et 0.4.0
+# Références visuelles et reconstructions procédurales
 
 La demande est de conserver les designs reconnaissables du premier Doom et de les construire par le code, avec des objets et personnages réellement en 3D. Les recettes s’appuient sur les assets PC de l’archive de recherche et sur des captures publiques du jeu. Aucun pixel extrait, modèle externe, atlas encodé ou lecteur WAD n’entre dans le graphe runtime.
 
@@ -46,3 +46,12 @@ L’examen porte maintenant sur les portraits, les vues de profil et de dos, les
 L’éclairage tient compte des normales, de la rugosité et du caractère métallique des surfaces. Les petits motifs de matière sont calculés dans le repère local de chaque primitive ; ils suivent donc les pièces animées. L’usure reste légère pour préserver la lecture des designs originaux. Les images de contrôle sont calculées en 960 × 600 pour examiner ces détails ; le jeu garde un budget inférieur sur les appareils à pointeur grossier.
 
 Les trois niveaux de géométrie reprennent les mêmes proportions, la même pose et la même orientation. Les contrôles automatisés complètent l’examen des images en vérifiant les normales, les volumes, les matériaux, le maintien des ancrages et les limites de mémoire. L’ajout de triangles ne constitue pas à lui seul un critère de fidélité ; la comparaison des silhouettes et des détails distinctifs reste nécessaire.
+
+
+## Reprise des surfaces et du modelé en 0.5.0
+
+Les mêmes assets hors runtime servent de référence aux proportions, palettes et motifs. Les volumes entre les vues sont reconstruits : surfaces anatomiques continues, mains fusionnées, parois internes d’objets et assemblages d’armes. Les cartes PBR sont évaluées à partir de fonctions continues ; elles ne sont pas un agrandissement de pixels extraits. Les petits profils de tôle, joints et chanfreins STAR ont été réduits après examen des vues natives pour éviter un aspect de grille plastique.
+
+Le contrôle final comporte 31 vues EGL à 1280 × 800, dont trois portraits, neuf angles de personnages et huit gros plans d’objets. Les ombres ont été examinées activées et désactivées pendant le développement pour distinguer les défauts géométriques des défauts de filtrage. Les captures livrées activent le chemin complet. Leur rapport et les empreintes de toutes les sources sont dans `docs/qa/egl-report.json`.
+
+Les personnages demeurent des reconstructions stylisées ; ni les comptes de triangles, ni les modèles physiques des matériaux ne constituent une preuve de photoréalisme. Les limites du rendu sont décrites dans [procedural-rendering.md](procedural-rendering.md).

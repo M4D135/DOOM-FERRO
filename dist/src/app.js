@@ -1,8 +1,8 @@
-import { ProceduralResources } from './procedural-resources.js?v=0.4.0-f3ce9999b077';
-import { FerroDoomRenderer } from './ferro-doom-renderer.js?v=0.4.0-f3ce9999b077';
-import { DoomGame } from './game.js?v=0.4.0-f3ce9999b077';
-import { ProceduralAudio } from './procedural-audio.js?v=0.4.0-f3ce9999b077';
-import { GamepadControls } from './input.js?v=0.4.0-f3ce9999b077';
+import { ProceduralResources } from './procedural-resources.js?v=0.5.0-c0b972f9f86b';
+import { FerroDoomRenderer } from './ferro-doom-renderer.js?v=0.5.0-c0b972f9f86b';
+import { DoomGame } from './game.js?v=0.5.0-c0b972f9f86b';
+import { ProceduralAudio } from './procedural-audio.js?v=0.5.0-c0b972f9f86b';
+import { GamepadControls } from './input.js?v=0.5.0-c0b972f9f86b';
 
 const $ = id => document.getElementById(id);
 const world = $('world'), overlay = $('overlay'), hud = $('hud');
@@ -266,7 +266,7 @@ function tick(timestamp) {
       if (pickupFlash > 0) { ctx.fillStyle = `rgba(220,179,40,${pickupFlash * 0.45})`; ctx.fillRect(0, 0, overlay.width, overlay.height); }
       if (++frames % 20 === 0) {
         const stats = renderer.stats, sector = map.sectorAt(p.x, p.y);
-        $('perf').textContent = `${Math.round(fps)} FPS · FERRO ${stats.ferroVersion}\n${stats.width || world.width} × ${stats.height || world.height} · ${stats.mapTriangles} triangles carte\n${stats.drawCalls || 0} appels · secteur ${sector?.id ?? '?'}\nPosition ${Math.round(p.x)}, ${Math.round(p.y)}, ${Math.round(p.z)} · angle ${Math.round(p.angle * 180 / Math.PI)}°\n3D procédurale · ${stats.modelInstances || 0} modèles · ${stats.modelTriangles || 0} triangles objets\nDétails proche/moyen/loin ${(stats.modelLods || [0,0,0]).slice().reverse().join('/')} · ${stats.modelCulled || 0} hors champ · ${((stats.modelBytes || 0)/1048576).toFixed(1)} Mio GPU`;
+        $('perf').textContent = `${Math.round(fps)} FPS · FERRO ${stats.ferroVersion}\n${stats.width || world.width} × ${stats.height || world.height} · ${stats.mapTriangles} triangles carte\n${stats.drawCalls || 0} appels · secteur ${sector?.id ?? '?'}\nPosition ${Math.round(p.x)}, ${Math.round(p.y)}, ${Math.round(p.z)} · angle ${Math.round(p.angle * 180 / Math.PI)}°\n3D procédurale · ${stats.modelInstances || 0} modèles · ${stats.modelTriangles || 0} triangles objets\nDétails proche/moyen/loin ${(stats.modelLods || [0,0,0]).slice().reverse().join('/')} · ${stats.modelCulled || 0} hors champ · ${((stats.modelBytes || 0)/1048576).toFixed(1)} Mio modèles GPU\n${stats.localLights || 0} lumières · ombres ${stats.shadowResolution || 0} px · matières ${((stats.surfaceTextureBytes || 0)/1048576).toFixed(0)} Mio`;
         $('accessibleStatus').textContent = `${mode}. Secteur ${sector?.id}, santé ${Math.round(p.health)}, munitions ${p.ammo}.`;
         world.dataset.sector = String(sector?.id); world.dataset.triangles = String(stats.mapTriangles); world.dataset.engine = `FERRO ${stats.ferroVersion}`; world.dataset.generation = 'procedural';
       }
@@ -346,8 +346,8 @@ async function boot() {
     map = resources.map('E1M1');
     audio = new ProceduralAudio();
     game = new DoomGame(map, { skill: 2, onSound: playSound, onMessage: message, onComplete: complete });
-    renderer = new FerroDoomRenderer(world, resources, map, { maxPixels: matchMedia('(pointer: coarse)').matches ? 640 * 400 : 960 * 600, brightness: 1.2 });
-    await renderer.prepareModels?.();
+    renderer = new FerroDoomRenderer(world, resources, map, { maxPixels: matchMedia('(pointer: coarse)').matches ? 640 * 400 : 1280 * 800, brightness: 1.2 });
+    await renderer.prepareModels?.((done,total)=>{ $('loading').textContent = `Création du Hangar… ${Math.round(done/total*100)} %`; });
     const logo = image('M_DOOM'); $('doomLogo').width = logo.width; $('doomLogo').height = logo.height; $('doomLogo').getContext('2d').drawImage(logo.canvas, 0, 0);
     resize(); screen('title'); $('loading').hidden = true; $('menuActions').hidden = false;
     requestAnimationFrame(tick);
