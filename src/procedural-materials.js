@@ -26,11 +26,13 @@ export const TEXTURE_DIMENSIONS = Object.freeze({
   BRNSMALC:[64,64], BRNSMALR:[32,64], BRNSMALL:[32,64], BRNPOIS2:[64,128], STONPOIS:[64,128],
   SW1DIRT:[64,128], SW1STONE:[64,128], SW1BRCOM:[128,128], GRAY5:[64,128], LITEBLU4:[16,128], COMP2:[256,128],
   SLADRIP3:[64,128], LITE2:[64,128], NUKEDGE1:[128,128], BIGDOOR1:[128,96], BRNPOIS:[64,128],
-  SW2BROWN:[128,128], SW1METAL:[64,128], REDWALL1:[128,128]
+  SW2BROWN:[128,128], SW1METAL:[64,128], REDWALL1:[128,128],
+  SW1BRN1:[64,128], SW1BRN2:[64,128], LITEBLU1:[8,128], BROWNPIP:[128,128], BRNSMAL1:[64,64], BRNSMAL2:[64,64],
+  LITEBLU2:[16,72], TEKWALL3:[128,112], SW1COMM:[64,72], SW1STON2:[64,128], SHAWN2:[64,128]
 });
 export const FLAT_NAMES = Object.freeze(['CEIL3_5','CEIL3_1','CEIL3_2','CEIL4_3','CEIL5_1','CEIL5_2','CONS1_1','CONS1_5','CONS1_7','FLAT2','FLAT5','FLAT10','FLAT14','FLAT18','FLAT20','FLAT22','FLAT23','FLAT5_4','FLAT5_5','MFLR8_1',
-  'CEIL4_2','FLOOR0_1','FLOOR0_3','FLOOR1_1','FLOOR1_7','FLOOR3_3','FLOOR4_1','FLOOR4_5','FLOOR4_6','FLOOR4_8','FLOOR5_1','FLOOR5_2','FLOOR5_3','FLOOR5_4',
-  'FLOOR6_1','FLOOR6_2','FLOOR7_1','FLOOR7_2',
+  'CEIL4_2','FLOOR0_1','FLOOR0_3','FLOOR0_6','FLOOR1_1','FLOOR1_7','FLOOR3_3','FLOOR4_1','FLOOR4_5','FLOOR4_6','FLOOR4_8','FLOOR5_1','FLOOR5_2','FLOOR5_3','FLOOR5_4',
+  'FLOOR6_1','FLOOR6_2','FLOOR7_1','FLOOR7_2','DEM1_1','DEM1_2','DEM1_3','DEM1_4',
   'NUKAGE1','NUKAGE2','NUKAGE3','STEP1','STEP2','TLITE6_1','TLITE6_4','TLITE6_5','TLITE6_6','F_SKY1']);
 const walls=new Map(),flats=new Map(),TAU=Math.PI*2;
 const mod=(x,m)=>(x%m+m)%m;
@@ -453,11 +455,11 @@ function consoleStation(image,variant,seed) {
     consoleDashes(image,110,40,2,3,seed+21);
   }
 }
-function pipeRack(image,seed) {
-  const tan=[92,72,44];
-  image.rect(0,0,256,128,(x,y)=>grain(tan,x,y,seed,1.2));
-  for(let i=0;i<26;i++){
-    const x=mod(i*37+5,254),w=i%5===0?3:i%3===0?2:1;
+function pipeRack(image,seed,width=256) {
+  const tan=[92,72,44],half=Math.floor(width/2);
+  image.rect(0,0,width,128,(x,y)=>grain(tan,x,y,seed,1.2));
+  for(let i=0;i<Math.round(width/10);i++){
+    const x=mod(i*37+5,width-2),w=i%5===0?3:i%3===0?2:1;
     const base=i%7===0?[126,92,48]:i%7===3?[86,96,56]:i%7===5?[64,54,36]:[110,88,54];
     image.rect(x,0,w,128,(px,yy)=>shade(base,.55+smoothNoise(px/2,yy/15,seed+i)*.5,rough(px,yy,seed)*.7));
     image.rect(x,0,1,128,shade(base,1.35));
@@ -472,22 +474,22 @@ function pipeRack(image,seed) {
       image.rect(x-2,y,w+4,1,shade(base,1.45));image.rect(x-2,y+3,w+4,1,shade(base,.35));}
   };
   column(3,10,[64,52,36],false);
-  column(22,12,[140,94,46],true);
-  column(58,7,[84,102,54],true);
-  column(134,8,[88,106,58],true);
-  column(190,5,[60,50,34],false);
+  column(Math.round(width*.086),12,[140,94,46],true);
+  column(Math.round(width*.227),7,[84,102,54],true);
+  column(Math.round(width*.523),8,[88,106,58],true);
+  column(Math.round(width*.742),5,[60,50,34],false);
   for(let row=0;row<4;row++){
     const y=10+row*30;
-    image.rect(128,y,128,3,(x,yy)=>grain(shade(tan,1.18),x,yy,seed+11));
-    image.rect(128,y,128,1,shade(tan,1.45));image.rect(128,y+2,128,1,shade(tan,.45));
-    for(let x=mod(row*29+140,150);x<256;x+=29)image.rect(x,y-2,4,7,shade(tan,.62));
+    image.rect(half,y,half,3,(x,yy)=>grain(shade(tan,1.18),x,yy,seed+11));
+    image.rect(half,y,half,1,shade(tan,1.45));image.rect(half,y+2,half,1,shade(tan,.45));
+    for(let x=mod(row*29+half+12,width-half-6)+half;x<width;x+=29)image.rect(x,y-2,4,7,shade(tan,.62));
   }
   for(let row=0;row<3;row++){
     const y=18+row*36;
-    image.bevel(152,y,30,20,[84,66,40],true);
-    for(let yy=y+3;yy<y+17;yy+=4)image.rect(155,yy,24,2,shade(tan,1.22));
+    image.bevel(half+24,y,30,20,[84,66,40],true);
+    for(let yy=y+3;yy<y+17;yy+=4)image.rect(half+27,yy,24,2,shade(tan,1.22));
   }
-  for(let x=132;x<256;x+=22)image.rect(x,0,1,128,shade(tan,.72));
+  for(let x=half+4;x<width;x+=22)image.rect(x,0,1,128,shade(tan,.72));
 }
 function slimeStreaks(image,width,height,seed,y0=0,rows=4,amount=1) {
   const cw=Math.floor(width/rows);
@@ -517,8 +519,8 @@ function poisonEmblem(image,cx,cy,seed) {
   image.rect(cx-2,cy+6,4,1,[226,220,192]);
   image.rect(cx-2,cy+3,1,1,[16,14,4]);image.rect(cx+1,cy+3,1,1,[16,14,4]);
 }
-function bronzeField(image,width,height,seed,slats=0) {
-  const bronze=[96,74,34];
+function bronzeField(image,width,height,seed,slats=0,tint=[96,74,34]) {
+  const bronze=tint;
   image.rect(0,0,width,height,(x,y)=>grain(bronze,x,y,seed,1.2));
   for(let x=0;x<width;x+=5)if(noise(x,0,seed+2)>.4)image.rect(x,0,1,height,shade(bronze,.72));
   for(let x=2;x<width;x+=9)image.rect(x,0,2,height,shade(bronze,1.16));
@@ -834,6 +836,44 @@ export function proceduralTexture(value) {
       image.rect(104,cy-2,18,1,[255,220,214]);
       image.rect(0,top,128,1,[92,6,6]);image.rect(0,top+63,128,1,[70,4,4]);
     }
+  }else if(name==='SW1BRN1'||name==='SW1BRN2'){
+    const plank=[126,104,66];
+    image.rect(0,0,64,128,(x,y)=>grain(plank,x,y,seed,1.15));
+    for(let x=0;x<64;x+=6)image.rect(x,0,1,128,shade(plank,.78));
+    for(let x=3;x<64;x+=12)image.rect(x,0,2,128,shade(plank,1.14));
+    const cw=Math.floor((64-8)/4);
+    for(let i=0;i<4;i++){image.bevel(4+i*cw,4,cw-6,20,[140,116,72],true);
+      for(let y=7;y<22;y+=3)image.rect(6+i*cw,y,cw-10,1,shade([140,116,72],1.25));}
+    image.rect(0,26,64,1,[74,58,30]);
+    if(name==='SW1BRN1'){
+      image.bevel(14,72,36,30,[150,150,144]);
+      image.bevel(17,75,30,24,[104,104,98],true);
+      image.rect(22,84,4,10,[62,62,56]);image.rect(38,84,4,10,[62,62,56]);
+      image.rect(20,82,8,3,[70,70,64]);image.rect(36,82,8,3,[70,70,64]);
+      image.rect(26,92,12,3,[78,78,72]);
+    }else{
+      image.bevel(20,72,24,28,[150,150,144]);
+      image.bevel(23,75,18,22,[104,104,98],true);
+      image.bevel(26,80,12,12,[36,120,36]);
+      image.rect(28,82,8,3,shade([36,120,36],1.5));
+    }
+  }else if(name==='LITEBLU1'){
+    image.rect(0,0,8,128,(x,y)=>brushed([150,150,148],x,y,seed));
+    image.rect(0,0,1,128,[92,92,88]);image.rect(7,0,1,128,[92,92,88]);
+    for(const [y0,h] of [[6,48],[74,48]]){
+      image.rect(2,y0,4,h,[8,12,74]);
+      for(let y=y0;y<y0+h;y++)for(let x=2;x<6;x++){
+        const n=smoothNoise(x/2,y/9,seed+7);
+        image.pixel(x,y,shade([16,38,186],.5+n*.8,rough(x,y,seed)*.4));}
+      image.rect(2,y0,4,1,[70,110,236]);}
+  }else if(name==='BROWNPIP'){
+    pipeRack(image,seed,128);
+  }else if(name==='BRNSMAL1'||name==='BRNSMAL2'){
+    bronzeField(image,64,64,seed,0,[72,58,28]);
+    image.rect(0,0,64,1,[104,86,44]);image.rect(0,62,64,2,[40,30,12]);
+    const slot=(pts)=>image.polygon(pts,[8,8,8]);
+    if(name==='BRNSMAL1'){slot([[6,8],[20,8],[34,54],[20,54]]);slot([[30,8],[44,8],[58,54],[44,54]]);}
+    else{slot([[20,8],[34,8],[20,54],[6,54]]);slot([[44,8],[58,8],[44,54],[30,54]]);}
   }else if(/^BROWN|^SLAD/.test(name))brownWall(image,name);
   else if(/^BRNBIG/.test(name))brownGrille(image,name);
   else if(/DOOR/.test(name))doors(image,name);
@@ -905,6 +945,52 @@ export function proceduralTexture(value) {
     }
   }else if(name==='PIPE2'){
     pipeRack(image,seed);
+  }else if(name==='LITEBLU2'){
+    image.rect(0,0,16,72,(x,y)=>brushed([150,150,148],x,y,seed));
+    image.rect(0,0,2,72,[92,92,88]);image.rect(14,0,2,72,[92,92,88]);
+    for(const [y0,h] of [[6,26],[40,26]]){
+      image.rect(5,y0,6,h,[8,12,74]);
+      for(let y=y0;y<y0+h;y++)for(let x=5;x<11;x++){
+        const n=smoothNoise(x/2,y/9,seed+7);
+        image.pixel(x,y,shade([16,38,186],.5+n*.8,rough(x,y,seed)*.4));}
+      image.rect(5,y0,6,1,[70,110,236]);}
+  }else if(name==='TEKWALL3'){
+    denseTechwall(image,seed);
+    for(let y=6;y<104;y+=6)for(let x=4;x<56;x+=6)
+      if(noise(x,y,seed+3)>.45)image.rect(x,y,4,4,noise(x,y,seed+4)>.5?[214,214,206]:[26,120,30]);
+    image.rect(20,26,14,44,[10,26,10]);
+    consoleNoise(image,21,27,12,42,seed+9,CONSOLE_GREEN,.5);
+    image.bevel(70,8,44,26,[96,88,58],true);
+    for(const [cx,cy] of [[82,20],[104,20]]){
+      image.ellipse(cx,cy,8,8,[26,26,22],true);
+      image.line(cx,cy,cx+5,cy-4,1,[196,180,120]);}
+    image.ellipse(92,66,14,14,[70,62,38]);
+    for(let i=0;i<8;i++){const a=i*TAU/8;
+      image.line(92+Math.cos(a)*6,66+Math.sin(a)*6,92+Math.cos(a)*13,66+Math.sin(a)*13,2,[128,116,74]);}
+    image.ellipse(92,66,4,4,[150,138,92]);
+    for(let y=86;y<104;y+=4)image.rect(66,y,52,2,[120,110,72]);
+  }else if(name==='SW1COMM'){
+    image.rect(0,0,64,72,(x,y)=>brushed([126,126,122],x,y,seed));
+    for(let x=0;x<64;x+=4)if(noise(x,0,seed+2)>.5)image.rect(x,0,1,72,shade([126,126,122],.84));
+    image.rect(0,0,64,1,[162,162,158]);image.rect(0,71,64,1,[62,62,58]);
+    image.bevel(20,14,26,44,[150,150,144]);
+    image.bevel(23,17,20,38,[104,104,98],true);
+    image.bevel(26,21,10,10,[200,0,0]);image.rect(28,23,6,2,shade([200,0,0],1.5));
+    image.bevel(26,40,10,10,[26,110,26]);image.rect(28,42,6,2,shade([26,110,26],1.5));
+    image.rect(38,22,2,26,[62,62,56]);image.rect(39,24,1,22,[96,96,90]);
+    image.bevel(37,32,4,3,[137,132,105]);
+  }else if(name==='SW1STON2'){
+    image.rect(0,0,64,128,(x,y)=>grain([96,96,94],x,y,seed,1.35));
+    for(let row=0;row<8;row++){const y=row*16;
+      image.rect(0,y,64,1,[38,38,36]);
+      for(let x=mod(row*23,32);x<64;x+=32)image.rect(x,y,1,16,[44,44,42]);}
+    for(let x=0;x<64;x+=9)if(noise(x,0,seed+4)>.5)image.rect(x,0,2,128,shade([96,96,94],.8));
+    image.bevel(24,74,16,26,[120,120,114]);
+    image.bevel(26,76,12,22,[58,58,52],true);
+    image.bevel(28,80,8,12,[188,10,8]);
+  }else if(name==='SHAWN2'){
+    image.rect(0,0,64,128,(x,y)=>brushed([176,176,174],x,y,seed));
+    for(let x=0;x<64;x+=3)if(noise(x,0,seed+2)>.5)image.rect(x,0,1,128,shade([176,176,174],.9));
   }else if(/^TEK/.test(name))technicalWall(image,name);
   else if(name==='EXITSIGN'){
     image.rect(0,0,64,16,[43,43,40]);image.bevel(0,1,32,14,[47,47,42],true);image.rect(2,3,28,10,[29,0,0]);
@@ -1091,6 +1177,27 @@ export function proceduralFlat(value) {
       image.rect(x,y,16,16,(px,yy)=>shade([112,96,60],
         .8+smoothNoise(vert?px/2:yy/2,vert?yy/6:px/6,seed+row+col)*.34));
       image.rect(x,y,16,1,[74,62,36]);image.rect(x,y,1,16,[74,62,36]);}
+  }else if(/^DEM1_/.test(name)){
+    const v=Number(name.at(-1));
+    image.rect(0,0,64,64,(x,y)=>shade([126,132,104],.6+smoothNoise(x/3,y/3,seed)*.5,rough(x,y,seed)*1.2));
+    for(let i=0;i<16;i++){
+      const x0=noise(i,v,seed)*64,y0=noise(i,v+1,seed)*64,a=noise(i,v+2,seed)*TAU,len=8+noise(i,v+3,seed)*22;
+      for(let t=0;t<len;t++){
+        const x=Math.round(x0+Math.cos(a)*t+smoothNoise(t/3,i,seed)*3);
+        const y=Math.round(y0+Math.sin(a)*t+smoothNoise(i,t/3,seed)*3);
+        image.rect(x,y,1,1,shade([36,44,26],.5+noise(x,y,seed)*.6));}}
+    const cx=v===1||v===3?18:46,cy=v===1||v===2?34:20,r=26,t0=v*TAU/5;
+    for(let a=0;a<72;a++){const t=a*TAU/72;
+      image.rect(Math.round(cx+Math.cos(t)*r),Math.round(cy+Math.sin(t)*r),2,2,shade([150,20,18],.6+noise(a,v,seed)*.5));}
+    const star=[0,2,4,1,3].map(i=>[cx+Math.cos(t0+i*TAU/5)*r,cy+Math.sin(t0+i*TAU/5)*r]);
+    for(let i=0;i<5;i++){const a=star[i],b=star[(i+1)%5];
+      image.line(a[0],a[1],b[0],b[1],1,shade([150,20,18],.7+noise(i,v,seed)*.4));}
+  }else if(name==='FLOOR0_6'){
+    image.rect(0,0,64,64,(x,y)=>grain([140,140,138],x,y,seed,1.1));
+    image.rect(31,0,2,64,[86,86,84]);image.rect(0,31,64,2,[86,86,84]);
+    for(const [qx,qy] of [[0,0],[33,0],[0,33],[33,33]]){
+      for(let i=0;i<6;i++)image.rect(qx+3+i*4,qy+3+i*2,3,1,shade([140,140,138],.82));
+      for(const [sx,sy] of [[3,3],[28,3],[3,28],[28,28]])screw(image,qx+sx,qy+sy,[104,104,100]);}
   }else if(name==='FLAT2'){
     image.rect(0,0,64,64,(x,y)=>{const n=noise(x*3,y*3,seed);
       return shade([148,148,146],.62+smoothNoise(x/4,y/4,seed)*.4+(n>.86?.22:0),rough(x,y,seed)*1.4);});

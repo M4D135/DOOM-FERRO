@@ -20,8 +20,8 @@
   "mapGenerator": "sector-trapezoid-sweep-v1",
   "resources": {
     "mode": "procedural",
-    "generatedImages": 130,
-    "rgbaBytes": 4267008,
+    "generatedImages": 146,
+    "rgbaBytes": 4662784,
     "importedAssets": 0
   },
   "modelMeshes": 78,
@@ -29,104 +29,7 @@
   "modelVertexStride": 17,
   "materialCoordinates": "primitive-local surface coordinates preserved through pose transforms",
   "shaderCompilation": "10 unmodified GLSL ES 3.00 production shaders compiled; 5 programs linked",
-  "missingMaterials": [
-    {
-      "name": "flat:FLOOR0_6",
-      "maps": [
-        "E1M6"
-      ]
-    },
-    {
-      "name": "wall:SW1BRN2",
-      "maps": [
-        "E1M6"
-      ]
-    },
-    {
-      "name": "wall:LITEBLU1",
-      "maps": [
-        "E1M6"
-      ]
-    },
-    {
-      "name": "wall:BROWNPIP",
-      "maps": [
-        "E1M6"
-      ]
-    },
-    {
-      "name": "wall:SW1BRN1",
-      "maps": [
-        "E1M6"
-      ]
-    },
-    {
-      "name": "wall:BRNSMAL1",
-      "maps": [
-        "E1M6"
-      ]
-    },
-    {
-      "name": "wall:BRNSMAL2",
-      "maps": [
-        "E1M6"
-      ]
-    },
-    {
-      "name": "wall:LITEBLU2",
-      "maps": [
-        "E1M7"
-      ]
-    },
-    {
-      "name": "wall:TEKWALL3",
-      "maps": [
-        "E1M7"
-      ]
-    },
-    {
-      "name": "wall:SW1COMM",
-      "maps": [
-        "E1M7"
-      ]
-    },
-    {
-      "name": "flat:DEM1_3",
-      "maps": [
-        "E1M8"
-      ]
-    },
-    {
-      "name": "flat:DEM1_4",
-      "maps": [
-        "E1M8"
-      ]
-    },
-    {
-      "name": "flat:DEM1_1",
-      "maps": [
-        "E1M8"
-      ]
-    },
-    {
-      "name": "flat:DEM1_2",
-      "maps": [
-        "E1M8"
-      ]
-    },
-    {
-      "name": "wall:SW1STON2",
-      "maps": [
-        "E1M8"
-      ]
-    },
-    {
-      "name": "wall:SHAWN2",
-      "maps": [
-        "E1M8"
-      ]
-    }
-  ],
+  "missingMaterials": [],
   "passes": [
     "1024px primary-light depth shadow with 3x3 PCF",
     "linear-light GGX/Smith/Schlick world and model materials",
@@ -136,7 +39,7 @@
     "512px fitted view-weapon self-shadow combined with room shadow",
     "analytic distance haze; disabled in model studios"
   ],
-  "textureMipBytes": 414678016,
+  "textureMipBytes": 455704576,
   "mapTriangles": 2025,
   "sceneTriangles": {
     "base": 2025,
@@ -179,7 +82,7 @@
     "src/procedural-interface.js": "af287b0e0573e6432d1d41a7a3076c6335a84b2d807ca710e4c72e0c1a19de8a",
     "src/procedural-lighting.js": "386ec4afda6fd66def7ce7c110d58a62e1e6eac1b8b09f653b70ccf1c91b75e8",
     "src/procedural-map.js": "f44e2bbb75c2ab39db94081ec8d068575ca3404a6550b9ffb5e67978379a1dd9",
-    "src/procedural-materials.js": "36d7097357d8cb60ddf22d7b8b36bb02f42bea50e18082359342a987e1c64c88",
+    "src/procedural-materials.js": "e607ba200d2354f72bb854924be947f3403392c6e81fb8e50df4bad5eb98c701",
     "src/procedural-mesh.js": "f7c1c90ff94caa95c15e03e29878e8777c0b3a1b2ce39f7a1215b1f5e79b5890",
     "src/procedural-models.js": "cf5dc5ad1249a6e674b15825f285dd058302cb63483435f557e810486c278532",
     "src/procedural-object-finish.js": "dc19036074d2da300a011697b042399fea8e0e7340218af021aad9f58d647c72",
@@ -5463,11 +5366,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 12141,
+      "uniqueColors": 12138,
       "meanRGB": [
-        23.4697138671875,
-        23.783232421875,
-        19.98528515625
+        22.965916015625,
+        23.369955078125,
+        19.5367470703125
       ],
       "visibility": {
         "total": 0,
@@ -5525,11 +5428,11 @@
         "angle": 0,
         "pitch": 0
       },
-      "uniqueColors": 986,
+      "uniqueColors": 1077,
       "meanRGB": [
-        4.7714697265625,
-        4.810787109375,
-        4.533443359375
+        4.3899599609375,
+        4.9584619140625,
+        5.006232421875
       ],
       "visibility": {
         "total": 0,

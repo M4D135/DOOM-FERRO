@@ -53,14 +53,13 @@ let blobSeq=0;
 const bytes=x=>{const raw=Buffer.from(x.buffer,x.byteOffset,x.byteLength);
  if(!BLOB_DIR)return raw.toString('base64');
  const ref='b'+(blobSeq++)+'.b64';fs.writeFileSync(BLOB_DIR+'/'+ref,raw.toString('base64'));return ref;};
-// E1M1 is qualified: a missing material there is a regression. The eight other
-// surveyed levels still use names the material library has not been written
-// for; they render with the same 2x2 placeholder the production renderer uses
-// and are reported as a measured gap instead of being silently hidden.
+// Every surveyed level now has a recipe for every surface it references, so a
+// missing material is a regression on any map. The 2x2 placeholder is kept only
+// to make the failure visible before the throw.
 const PLACEHOLDER={width:2,height:2,pixels:new Uint8Array([120,100,90,255,80,65,55,255,80,65,55,255,120,100,90,255])};
 const missingMaterials=new Map();
 function tex(kind,name,mapId){if(!needsWorld)return;const key=kind+':'+name;let t=kind==='flat'?resources.flat(name):resources.texture(name);
- if(!t){if(!mapId||mapId==='E1M1')throw Error('Missing generated material '+key);
+ if(!t){if(!mapId)throw Error('Missing generated material '+key);
   if(!missingMaterials.has(key))missingMaterials.set(key,[]);if(!missingMaterials.get(key).includes(mapId))missingMaterials.get(key).push(mapId);t=PLACEHOLDER;}
  if(!textures.has(key)){const d=surfaceDetail(kind,name,t);textures.set(key,{key,width:d.width,height:d.height,baseWidth:d.baseWidth,baseHeight:d.baseHeight,heightScale:d.heightScale,pixels:bytes(d.pixels),normalRoughness:bytes(d.normalRoughness),surface:bytes(d.surface)});}}
 function pack(batch){if(!batch)return null;const m=batch.mesh;
