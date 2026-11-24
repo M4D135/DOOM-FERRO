@@ -7,13 +7,14 @@
 import {MeshBuilder, rotateEuler, MESH_VERTEX_STRIDE} from './procedural-mesh.js';
 import {sculptedHead, anatomicalLoft, anatomicalFront, anatomicalSweep, tailoredPanel, dermalColour} from './procedural-anatomy.js';
 
-const FAMILY = {3004:'POSS',9:'SPOS',3001:'TROO',3002:'POSS',3003:'SARG',58:'SARG'};
+const FAMILY = {3004:'POSS',9:'SPOS',3001:'TROO',3002:'SARG',3003:'BOSS',58:'BOSS'};
 /** Doom keeps one frame alphabet per species. */
 const FRAMES = {
   POSS:{death:'HIJKL',pain:'G',attack:'EF'},
   SPOS:{death:'HIJKL',pain:'G',attack:'EF'},
   TROO:{death:'IJKLM',pain:'H',attack:'EFG'},
-  SARG:{death:'HIJKLM',pain:'G',attack:'EF'}
+  SARG:{death:'HIJKL',pain:'G',attack:'EF'},
+  BOSS:{death:'HIJKLM',pain:'G',attack:'EF'}
 };
 const LIMIT_BYTES = 64 * 1024 * 1024, PART_BYTES = 32 * 1024 * 1024, LIMIT_ENTRIES = 768;
 const cache = new Map(),parts = new Map(); let cacheBytes = 0,partBytes = 0,poseBuilds=0,partBuilds=0,partEvictions=0;
@@ -282,9 +283,29 @@ function humanHead(guard,d,dead) {
   return remember(`part:human-head:${guard}:${d}:${dead}`,()=>sculptedHead(guard,d,dead));
 }
 
-function firearm(guard,firing,d) {
-  return remember(`part:firearm:${guard}:${firing}:${d}`,()=>{
-    const b=new MeshBuilder(),wood=guard?[87,52,27]:[53,61,43];
+function firearm(kind,firing,d) {
+  return remember(`part:firearm:${kind}:${firing}:${d}`,()=>{
+    const b=new MeshBuilder();
+    if(kind==='chaingun'){
+      // Belt-fed weapon: receiver, drum, three visible barrels and brass links.
+      rounded(b,[0,-5.4,-.3],[3.3,5.6,3.4],.4,DARK_METAL,d,'paint');
+      rounded(b,[0,-8.6,-.6],[2.6,3.4,2.9],.35,METAL,d,'metal');
+      rounded(b,[-2.4,-1.2,.2],[2.2,3.6,3.2],.3,METAL,d,'metal');
+      cylinder(b,[-2.4,-1.2,3.4],[-2.4,-1.2,4.3],1.5,DARK_METAL,d,'metal');
+      for(let i=0;i<3;i++){const a=i*TAU/3+.5;
+        cylinder(b,[Math.cos(a)*1.25,4.2,.5+Math.sin(a)*1.25],[Math.cos(a)*1.25,19.4,.5+Math.sin(a)*1.25],.78,METAL,d,'metal');}
+      cylinder(b,[0,4.2,.5],[0,5.5,.5],2.3,DARK_METAL,d,'metal');
+      cylinder(b,[0,19.4,.5],[0,20.6,.5],2.3,DARK_METAL,d,'metal');
+      rounded(b,[0,20.9,.5],[2.1,.5,2.1],.1,EDGE,d,'metal');
+      rounded(b,[0,1.2,-3.0],[1.9,2.6,3.6],.18,DARK_METAL,d,'metal',{rotation:[-.14,0,0]});
+      if(d)for(let i=0;i<6;i++)rounded(b,[-2.4,-1.2,1.2+i*.55],[2.5,.35,.3],.05,[176,146,62],1,'metal');
+      if(firing){
+        b.cone([0,21.1,.5],[0,27.2,.5],2.65,[255,144,22],{segments:[5,7,10][d],emissive:1,material:'glow'});
+        ell(b,[0,23.1,.5],[1.15,2.45,1.15],[255,234,132],Math.max(0,d-1),'glow',{emissive:1});
+      }
+      return b.finish('detailed-chaingun');
+    }
+    const guard=kind==='shotgun',wood=guard?[87,52,27]:[53,61,43];
     rounded(b,[0,-6.6,-.45],[3.5,6.5,3.8],.45,wood,d,guard?'wood':'paint',{rotation:[.1,0,0]});
     rounded(b,[0,-9.8,-.4],[3.7,.62,3.9],.18,DARK_METAL,d,'leather');
     rounded(b,[0,0,0],[3.15,7.5,3.1],.27,METAL,d,'metal');
@@ -367,8 +388,10 @@ function boots(b,ankle,lift,d){
 }
 
 function human(family,pose,d) {
-  const b=new PoseAssembler(),guard=family==='SPOS',shirt=guard?[44,49,46]:[133,124,98],shirtLight=tone(shirt,1.07);
-  const pants=guard?[35,39,35]:[91,102,67],skin=guard?[170,129,102]:[163,146,121];
+  const b=new PoseAssembler(),guard=family==='SPOS',sarge=family==='SARG';
+  const shirt=sarge?[58,78,44]:guard?[44,49,46]:[133,124,98],shirtLight=tone(shirt,1.07);
+  const pants=sarge?[40,52,34]:guard?[35,39,35]:[91,102,67],skin=sarge?[168,132,104]:guard?[170,129,102]:[163,146,121];
+  const weapon=sarge?'chaingun':guard?'shotgun':'pistol';
   for(const side of[-1,1]){
     const stride=pose.step*side,lift=Math.max(0,pose.lift*side),hip=[side*4.15,-.45,27.0],knee=[side*4.8,stride*.45+1.0,15.4+lift*.25],ankle=[side*5.2,stride,4.8+lift];
     jointedLimb(b,[hip,knee,ankle],pants,d,'leg','cloth');
@@ -419,8 +442,9 @@ function human(family,pose,d) {
     // skin by .55 rest units and remains slightly thicker than the bare arm.
     b.add(sleeve,{bend:{points:[shoulder,elbow,wrist],length:20,joint:.52}});
   }
-  const hands=remember(`part:hands:${guard}:${d}`,()=>{const part=new MeshBuilder();gripHands(part,d,skin,guard);return part.finish('hands-on-weapon');});
-  b.add(firearm(guard,pose.frame==='F'&&!pose.dead,d),{translation:gunOrigin,rotation:gunRotation});
+  const twoHands=guard||sarge;
+  const hands=remember(`part:hands:${twoHands}:${d}`,()=>{const part=new MeshBuilder();gripHands(part,d,skin,twoHands);return part.finish('hands-on-weapon');});
+  b.add(firearm(weapon,pose.frame==='F'&&!pose.dead,d),{translation:gunOrigin,rotation:gunRotation});
   b.add(hands,{translation:gunOrigin,rotation:gunRotation});
   b.add(humanHead(guard,d,pose.dead),{translation:[0,pose.pain?-1:0,45.8],rotation:[pose.pain?.24:0,0,pose.pain?.1:0]});
   if(pose.dead)wound(b,[0,4.6,35.0],4.2,4.2,d,7,.17);
@@ -588,9 +612,9 @@ function groundPose(source,key,pose,d) {
 export function characterMesh(entity,time=0,detail=2) {
   if(!entity||entity.removed)return null;
   const family=FAMILY[entity.type]||entity.base||String(entity.sprite||'').slice(0,4);
-  if(!['POSS','SPOS','TROO','SARG'].includes(family))return null;
+  if(!['POSS','SPOS','TROO','SARG','BOSS'].includes(family))return null;
   const d=level(detail),pose=frameFor(entity,time,family),key=`character:${family}:${pose.frame}:${pose.idle?'idle':'pose'}:lod${d}`;
-  return remember(key,()=>groundPose(family==='TROO'?imp(pose,d):family==='SARG'?baron(pose,d):human(family,pose,d),key,pose,d));
+  return remember(key,()=>groundPose(family==='TROO'?imp(pose,d):family==='BOSS'?baron(pose,d):human(family,pose,d),key,pose,d));
 }
 export function proceduralCharacterCacheStats(){return {entries:cache.size+parts.size,limit:LIMIT_ENTRIES,bytes:cacheBytes+partBytes,byteLimit:LIMIT_BYTES,parts:{entries:parts.size,bytes:partBytes,byteLimit:PART_BYTES,builds:partBuilds,evictions:partEvictions},poses:{entries:cache.size,bytes:cacheBytes,byteLimit:PART_BYTES,builds:poseBuilds}};}
 export default characterMesh;

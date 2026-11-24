@@ -9,7 +9,7 @@ export const MODEL_INSTANCE_STRIDE = 8;
  * They never select an image or an orientation relative to the camera. */
 export function modelForEntity(entity, time = 0, detail = 2) {
   if (!entity || entity.removed) return null;
-  return entity.enemy || /^(POSS|SPOS|TROO|SARG)/.test(entity.sprite || '')
+  return entity.enemy || /^(POSS|SPOS|TROO|SARG|BOSS)/.test(entity.sprite || '')
     ? characterMesh(entity, time, detail) : objectMesh(entity, time, detail);
 }
 

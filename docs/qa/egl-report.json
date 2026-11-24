@@ -6,8 +6,8 @@
     "contactAODisabled": false
   },
   "environment": {
-    "renderer": "llvmpipe (LLVM 19.1.7, 256 bits)",
-    "version": "4.5 (Core Profile) Mesa 25.0.7-2+deb13u1",
+    "renderer": "NVIDIA GB10/PCIe",
+    "version": "3.3.0 NVIDIA 580.178.04",
     "egl": "1.5"
   },
   "size": [
@@ -24,7 +24,7 @@
     "rgbaBytes": 1723392,
     "importedAssets": 0
   },
-  "modelMeshes": 57,
+  "modelMeshes": 30,
   "worldBillboards": 0,
   "modelVertexStride": 17,
   "materialCoordinates": "primitive-local surface coordinates preserved through pose transforms",
@@ -43,37 +43,47 @@
   "sceneTriangles": {
     "base": 2025,
     "door-open": 2029,
-    "secret68-closed": 2025,
-    "secret68-open": 2029,
-    "secret69-open": 2025,
-    "secret70-low": 2025,
-    "secret70-high": 2025
+    "secret68-closed": 2029,
+    "secret68-open": 2033,
+    "secret69-open": 2029,
+    "secret70-low": 2029,
+    "secret70-high": 2029
   },
-  "adapterSha256": "8b0bcc1fb87c8276b79fd3a16acdf91aa1961b6fc445ab2878e8120008dbc081",
+  "adapterSha256": "889c510bd8f87f717e7d1d59e041cf10c7f89ce591623361f2e98397ddf32571",
   "sourceSha256": {
-    "src/app.js": "f1b75fcd6f33a34dc352bc687b2b8cae5c92e5d4624e1258fdb522134ff21651",
-    "src/e1m1-plan.js": "41c8ed8ce81db64bb5117cb6011b6c693c3745d5708f46a05681900393cce521",
-    "src/ferro-doom-renderer.js": "8b0bcc1fb87c8276b79fd3a16acdf91aa1961b6fc445ab2878e8120008dbc081",
-    "src/game.js": "aaa3b48f14ad672f07d7fde76f8c002467d602e33bcd4a24ec14c93ecc9bfcfb",
+    "src/app.js": "623171f2b04b11e68147e066df0bae976521867c1a596d00a40512239100b179",
+    "src/e1m1-plan.js": "4f7295c014e4b1f7bf9c7a9b4b5644a824fab456723429f33f8e50d777fd8677",
+    "src/e1m2-plan.js": "ef44faa1d36040beab33f98c8c3d7cb17e4d4c47a3fb0d479b529ba99cca4eeb",
+    "src/e1m3-plan.js": "db7da2e49350d5733f157b3175e44402b45ea7c7f6b21c2e7142987b4776302b",
+    "src/e1m4-plan.js": "4e302c7cdff66e74a82ad51dd89fe28126bd98ec629fc7516aed7867d3f265bc",
+    "src/e1m5-plan.js": "f69e46a69eec9ebc2a5381cda119ecd6b5a2f9fab7540ae6a7baedcc636df322",
+    "src/e1m6-plan.js": "b936568b87bca4e6f4d8592293b543d8c48a003392b103b98fff71805935b35d",
+    "src/e1m7-plan.js": "b9aa80ab574270276b32f8f14ae2604c246571c87543574c16e34f39eb030677",
+    "src/e1m8-plan.js": "206e7ad2beebec4048d7013dd1cc3bb66f13ecfca463c1d18ba9ca137c61ace2",
+    "src/e1m9-plan.js": "90374968a16375d3ac3013818c1ac71a97abd6ee57561db6aaa318a49c7564dd",
+    "src/episode-plans.js": "d525df3fb1e7a570a8123806cc9bac516c8770822444c20e90e7222fe9ca0d16",
+    "src/episode.js": "4e58c77da49b2756a59dd7c7ae89ca0f414cf9c217debe7a4be70b13e398c086",
+    "src/ferro-doom-renderer.js": "889c510bd8f87f717e7d1d59e041cf10c7f89ce591623361f2e98397ddf32571",
+    "src/game.js": "72c0451c0107786cb98a1d70ca0bc8a2e4763f7c3090d9fd9cec4aa4777ac0bf",
     "src/input.js": "64c99b9f6f35adab712553c6572890107d83dd7770464581f635b7c3a6a0c1b8",
     "src/procedural-anatomy.js": "c6795c121e15ee098a76e1529be8816772aa9e962e122658d9d28ea61c0188e9",
-    "src/procedural-audio.js": "876369149bf422cf94cd00200fae4925f26bd2d88b311f7e819aa42546f70106",
-    "src/procedural-characters.js": "940e11698059608cf388497936a17ce0aebb379873c60476a2d552be2a57e181",
+    "src/procedural-audio.js": "a54f8143f151e62bfcc64b65286af4fff2ac7ee7f9d79e516df85396af03e4e6",
+    "src/procedural-characters.js": "76b4df40a54012dacfd886825bcf087d573f7a4fc0904919e98b83c5c63fd6af",
     "src/procedural-interface.js": "af287b0e0573e6432d1d41a7a3076c6335a84b2d807ca710e4c72e0c1a19de8a",
     "src/procedural-lighting.js": "386ec4afda6fd66def7ce7c110d58a62e1e6eac1b8b09f653b70ccf1c91b75e8",
-    "src/procedural-map.js": "1437769cd25117db4c9e9a7b067c193381dc3d85147e661f72ba4fbf58c3a06b",
+    "src/procedural-map.js": "f44e2bbb75c2ab39db94081ec8d068575ca3404a6550b9ffb5e67978379a1dd9",
     "src/procedural-materials.js": "64ed3877c4006d2e53652c9670831be6c3d208844ecdebf4374b26b94e458dee",
     "src/procedural-mesh.js": "f7c1c90ff94caa95c15e03e29878e8777c0b3a1b2ce39f7a1215b1f5e79b5890",
-    "src/procedural-models.js": "1a7c06d40d4e4949f125f0ef54afb184c30c81eb29d23d1ea3d35af27b01f016",
+    "src/procedural-models.js": "cf5dc5ad1249a6e674b15825f285dd058302cb63483435f557e810486c278532",
     "src/procedural-object-finish.js": "dc19036074d2da300a011697b042399fea8e0e7340218af021aad9f58d647c72",
     "src/procedural-object-sculpt.js": "55aed8fd2343d630d7b21a0de54ed5212b4f9212a7e2cf855082186857a3a516",
-    "src/procedural-objects.js": "49dc29051ffcb389d0dd4fc798b44ff5ccc9ec5155360fcfbbd0bfc9e131018d",
+    "src/procedural-objects.js": "cd79282844f63e0a1fb313b34fc57ad39090b354931e241b62bb37d283aeb08d",
     "src/procedural-raster.js": "3b372674f3004fbe0de245ae359f5895ce72a4bc48a515e4e3a55acbebe7bdb5",
     "src/procedural-remains.js": "ccd3f16d09c29d1fba3d438360f78a959edb6b5b51deb692d54e602b12ba32b1",
-    "src/procedural-resources.js": "ab7d2a61b083b024e7c288202d4d289a5edcbecc7e5ca009c6c35bfe8537d558",
+    "src/procedural-resources.js": "a12afda693840c0c63a82d6afbf49768372de146ead9beb75b9e154ef5830d1b",
     "src/procedural-shaders.js": "dd26cd0d26941ce333d48b7d4c4191e3d5058bf4c4fb2605b5c52ceaa05250f3",
     "src/procedural-surface-detail.js": "67c3253e6391090cead7c0dcc9ef605abfad6c484a1ef5f555e1df1c8be6d8bf",
-    "src/procedural-weapons.js": "a7c83e9550687cb47eaa606358e445da22e7f1db66cd4c60969a6df23bb9fd7b"
+    "src/procedural-weapons.js": "b439504a1f6f619750f353faac4a2f9b7b98fc61bf0eb9aaff2bbd111d226d2d"
   },
   "shaderSha256": {
     "WORLD_VERTEX": "51cfbcbd50cdfac3e2d4bab23e70c61ab340bec8e6994a6750291d1ff3ed92d7",
@@ -89,8 +99,8 @@
   },
   "cases": [
     {
-      "name": "spawn-north",
-      "image": "spawn-north-egl.png",
+      "name": "chaingun-fire",
+      "image": "chaingun-fire-egl.png",
       "camera": {
         "x": 1056,
         "y": -3616,
@@ -98,11 +108,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 5207,
+      "uniqueColors": 16923,
       "meanRGB": [
-        18.436396484375,
-        21.938638671875,
-        21.364572265625
+        50.58507421875,
+        55.127818359375,
+        47.5831259765625
       ],
       "visibility": {
         "total": 91,
@@ -117,92 +127,8 @@
       "submittedModelTriangles": 18190
     },
     {
-      "name": "spawn-west",
-      "image": "spawn-west-egl.png",
-      "camera": {
-        "x": 1056,
-        "y": -3616,
-        "z": 41,
-        "angle": 3.141592653589793,
-        "pitch": 0
-      },
-      "uniqueColors": 11946,
-      "meanRGB": [
-        19.410421875,
-        21.260435546875,
-        18.65527734375
-      ],
-      "visibility": {
-        "total": 91,
-        "visible": 16,
-        "culled": 75,
-        "lods": [
-          11,
-          5,
-          0
-        ]
-      },
-      "submittedModelTriangles": 7872
-    },
-    {
-      "name": "courtyard",
-      "image": "courtyard-egl.png",
-      "camera": {
-        "x": 2488,
-        "y": -3504,
-        "z": -15,
-        "angle": 3.141592653589793,
-        "pitch": 0
-      },
-      "uniqueColors": 13319,
-      "meanRGB": [
-        46.0826640625,
-        49.018212890625,
-        46.1342529296875
-      ],
-      "visibility": {
-        "total": 91,
-        "visible": 26,
-        "culled": 65,
-        "lods": [
-          25,
-          1,
-          0
-        ]
-      },
-      "submittedModelTriangles": 8626
-    },
-    {
-      "name": "start-hall",
-      "image": "start-hall-egl.png",
-      "camera": {
-        "x": 1110.8979591836735,
-        "y": -2957.224489795918,
-        "z": 41,
-        "angle": -1.5707963267948966,
-        "pitch": 0
-      },
-      "uniqueColors": 6865,
-      "meanRGB": [
-        13.706595703125,
-        16.056130859375,
-        17.6123193359375
-      ],
-      "visibility": {
-        "total": 91,
-        "visible": 17,
-        "culled": 74,
-        "lods": [
-          11,
-          5,
-          1
-        ]
-      },
-      "submittedModelTriangles": 19356
-    },
-    {
-      "name": "shotgun-reload",
-      "image": "shotgun-reload-egl.png",
+      "name": "launcher-fire",
+      "image": "launcher-fire-egl.png",
       "camera": {
         "x": 1056,
         "y": -3616,
@@ -210,11 +136,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 5978,
+      "uniqueColors": 28903,
       "meanRGB": [
-        17.1889462890625,
-        20.687375,
-        20.3674560546875
+        51.8017734375,
+        48.7415888671875,
+        37.45512890625
       ],
       "visibility": {
         "total": 91,
@@ -229,8 +155,8 @@
       "submittedModelTriangles": 18190
     },
     {
-      "name": "pistol-fire",
-      "image": "pistol-fire-egl.png",
+      "name": "chainsaw-swing",
+      "image": "chainsaw-swing-egl.png",
       "camera": {
         "x": 1056,
         "y": -3616,
@@ -238,11 +164,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 19183,
+      "uniqueColors": 16819,
       "meanRGB": [
-        44.837552734375,
-        39.9564072265625,
-        27.8758759765625
+        39.977259765625,
+        39.627841796875,
+        32.8470732421875
       ],
       "visibility": {
         "total": 91,
@@ -257,64 +183,8 @@
       "submittedModelTriangles": 18190
     },
     {
-      "name": "shotgun-fire",
-      "image": "shotgun-fire-egl.png",
-      "camera": {
-        "x": 1056,
-        "y": -3616,
-        "z": 41,
-        "angle": 1.5707963267948966,
-        "pitch": 0
-      },
-      "uniqueColors": 23181,
-      "meanRGB": [
-        45.7881591796875,
-        40.88950390625,
-        28.89318359375
-      ],
-      "visibility": {
-        "total": 91,
-        "visible": 22,
-        "culled": 69,
-        "lods": [
-          14,
-          8,
-          0
-        ]
-      },
-      "submittedModelTriangles": 18190
-    },
-    {
-      "name": "fist-punch",
-      "image": "fist-punch-egl.png",
-      "camera": {
-        "x": 1056,
-        "y": -3616,
-        "z": 41,
-        "angle": 1.5707963267948966,
-        "pitch": 0
-      },
-      "uniqueColors": 5090,
-      "meanRGB": [
-        23.154970703125,
-        24.97859375,
-        23.2124296875
-      ],
-      "visibility": {
-        "total": 91,
-        "visible": 22,
-        "culled": 69,
-        "lods": [
-          14,
-          8,
-          0
-        ]
-      },
-      "submittedModelTriangles": 18190
-    },
-    {
-      "name": "poss-front",
-      "image": "poss-front-egl.png",
+      "name": "sarg-front",
+      "image": "sarg-front-egl.png",
       "camera": {
         "x": 1056,
         "y": -3528,
@@ -322,11 +192,11 @@
         "angle": -1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 18883,
+      "uniqueColors": 17042,
       "meanRGB": [
-        21.0890546875,
-        22.7807587890625,
-        24.900591796875
+        20.019578125,
+        21.8014794921875,
+        24.1118056640625
       ],
       "visibility": {
         "total": 1,
@@ -338,14 +208,14 @@
           1
         ]
       },
-      "submittedModelTriangles": 33596,
+      "submittedModelTriangles": 33324,
       "fixture": {
         "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
         "entity": {
-          "id": "POSS",
-          "base": "POSS",
+          "id": "SARG",
+          "base": "SARG",
           "enemy": true,
-          "sprite": "POSSA1",
+          "sprite": "SARGA1",
           "alive": true,
           "state": "idle",
           "fullbright": true,
@@ -359,13 +229,13 @@
           "y": 581.7642905495384
         },
         "meshKeys": [
-          "character:POSS:A:idle:lod2"
+          "character:SARG:A:idle:lod2"
         ]
       }
     },
     {
-      "name": "poss-side",
-      "image": "poss-side-egl.png",
+      "name": "sarg-side",
+      "image": "sarg-side-egl.png",
       "camera": {
         "x": 1144,
         "y": -3616,
@@ -373,11 +243,11 @@
         "angle": 3.141592653589793,
         "pitch": 0
       },
-      "uniqueColors": 11005,
+      "uniqueColors": 10388,
       "meanRGB": [
-        19.9630732421875,
-        21.745328125,
-        24.192251953125
+        19.27984765625,
+        21.125103515625,
+        23.7048896484375
       ],
       "visibility": {
         "total": 1,
@@ -389,14 +259,14 @@
           1
         ]
       },
-      "submittedModelTriangles": 33596,
+      "submittedModelTriangles": 33324,
       "fixture": {
         "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
         "entity": {
-          "id": "POSS",
-          "base": "POSS",
+          "id": "SARG",
+          "base": "SARG",
           "enemy": true,
-          "sprite": "POSSA1",
+          "sprite": "SARGA1",
           "alive": true,
           "state": "idle",
           "fullbright": true,
@@ -410,13 +280,13 @@
           "y": 581.7642905495388
         },
         "meshKeys": [
-          "character:POSS:A:idle:lod2"
+          "character:SARG:A:idle:lod2"
         ]
       }
     },
     {
-      "name": "poss-back",
-      "image": "poss-back-egl.png",
+      "name": "sarg-back",
+      "image": "sarg-back-egl.png",
       "camera": {
         "x": 1056,
         "y": -3704,
@@ -424,11 +294,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 12730,
+      "uniqueColors": 11127,
       "meanRGB": [
-        21.114666015625,
-        22.8555185546875,
-        24.845484375
+        19.506859375,
+        21.5638203125,
+        23.755673828125
       ],
       "visibility": {
         "total": 1,
@@ -440,14 +310,14 @@
           1
         ]
       },
-      "submittedModelTriangles": 33596,
+      "submittedModelTriangles": 33324,
       "fixture": {
         "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
         "entity": {
-          "id": "POSS",
-          "base": "POSS",
+          "id": "SARG",
+          "base": "SARG",
           "enemy": true,
-          "sprite": "POSSA1",
+          "sprite": "SARGA1",
           "alive": true,
           "state": "idle",
           "fullbright": true,
@@ -461,13 +331,13 @@
           "y": 581.7642905495384
         },
         "meshKeys": [
-          "character:POSS:A:idle:lod2"
+          "character:SARG:A:idle:lod2"
         ]
       }
     },
     {
-      "name": "spos-front",
-      "image": "spos-front-egl.png",
+      "name": "boss-front",
+      "image": "boss-front-egl.png",
       "camera": {
         "x": 1056,
         "y": -3528,
@@ -475,11 +345,11 @@
         "angle": -1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 14315,
+      "uniqueColors": 17865,
       "meanRGB": [
-        20.007716796875,
-        21.5179912109375,
-        24.12986328125
+        22.837923828125,
+        24.40184765625,
+        24.9354541015625
       ],
       "visibility": {
         "total": 1,
@@ -491,14 +361,14 @@
           1
         ]
       },
-      "submittedModelTriangles": 30240,
+      "submittedModelTriangles": 15476,
       "fixture": {
         "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
         "entity": {
-          "id": "SPOS",
-          "base": "SPOS",
+          "id": "BOSS",
+          "base": "BOSS",
           "enemy": true,
-          "sprite": "SPOSA1",
+          "sprite": "BOSSA1",
           "alive": true,
           "state": "idle",
           "fullbright": true,
@@ -512,13 +382,13 @@
           "y": 581.7642905495384
         },
         "meshKeys": [
-          "character:SPOS:A:idle:lod2"
+          "character:BOSS:A:idle:lod2"
         ]
       }
     },
     {
-      "name": "spos-side",
-      "image": "spos-side-egl.png",
+      "name": "boss-side",
+      "image": "boss-side-egl.png",
       "camera": {
         "x": 1144,
         "y": -3616,
@@ -526,11 +396,11 @@
         "angle": 3.141592653589793,
         "pitch": 0
       },
-      "uniqueColors": 8065,
+      "uniqueColors": 13755,
       "meanRGB": [
-        19.32521875,
-        20.9969306640625,
-        23.756623046875
+        20.9205517578125,
+        22.5997314453125,
+        24.118748046875
       ],
       "visibility": {
         "total": 1,
@@ -542,14 +412,14 @@
           1
         ]
       },
-      "submittedModelTriangles": 30240,
+      "submittedModelTriangles": 15476,
       "fixture": {
         "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
         "entity": {
-          "id": "SPOS",
-          "base": "SPOS",
+          "id": "BOSS",
+          "base": "BOSS",
           "enemy": true,
-          "sprite": "SPOSA1",
+          "sprite": "BOSSA1",
           "alive": true,
           "state": "idle",
           "fullbright": true,
@@ -563,13 +433,13 @@
           "y": 581.7642905495388
         },
         "meshKeys": [
-          "character:SPOS:A:idle:lod2"
+          "character:BOSS:A:idle:lod2"
         ]
       }
     },
     {
-      "name": "spos-back",
-      "image": "spos-back-egl.png",
+      "name": "boss-back",
+      "image": "boss-back-egl.png",
       "camera": {
         "x": 1056,
         "y": -3704,
@@ -577,11 +447,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 7796,
+      "uniqueColors": 16273,
       "meanRGB": [
-        19.4120205078125,
-        21.111416015625,
-        23.8030107421875
+        21.9309150390625,
+        23.506099609375,
+        24.4914775390625
       ],
       "visibility": {
         "total": 1,
@@ -593,14 +463,14 @@
           1
         ]
       },
-      "submittedModelTriangles": 30240,
+      "submittedModelTriangles": 15476,
       "fixture": {
         "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
         "entity": {
-          "id": "SPOS",
-          "base": "SPOS",
+          "id": "BOSS",
+          "base": "BOSS",
           "enemy": true,
-          "sprite": "SPOSA1",
+          "sprite": "BOSSA1",
           "alive": true,
           "state": "idle",
           "fullbright": true,
@@ -614,64 +484,13 @@
           "y": 581.7642905495384
         },
         "meshKeys": [
-          "character:SPOS:A:idle:lod2"
+          "character:BOSS:A:idle:lod2"
         ]
       }
     },
     {
-      "name": "troo-front",
-      "image": "troo-front-egl.png",
-      "camera": {
-        "x": 1056,
-        "y": -3528,
-        "z": 28,
-        "angle": -1.5707963267948966,
-        "pitch": 0
-      },
-      "uniqueColors": 12838,
-      "meanRGB": [
-        21.8923671875,
-        22.43025,
-        24.0674169921875
-      ],
-      "visibility": {
-        "total": 1,
-        "visible": 1,
-        "culled": 0,
-        "lods": [
-          0,
-          0,
-          1
-        ]
-      },
-      "submittedModelTriangles": 25288,
-      "fixture": {
-        "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
-        "entity": {
-          "id": "TROO",
-          "base": "TROO",
-          "enemy": true,
-          "sprite": "TROOA1",
-          "alive": true,
-          "state": "idle",
-          "fullbright": true,
-          "x": 1056,
-          "y": -3616,
-          "z": 0,
-          "angle": 1.5707963267948966
-        },
-        "anchorScreen": {
-          "x": 640.0002080743989,
-          "y": 581.7642905495384
-        },
-        "meshKeys": [
-          "character:TROO:A:idle:lod2"
-        ]
-      }
-    },
-    {
-      "name": "troo-side",
-      "image": "troo-side-egl.png",
+      "name": "sarg-attack-side",
+      "image": "sarg-attack-side-egl.png",
       "camera": {
         "x": 1144,
         "y": -3616,
@@ -679,11 +498,11 @@
         "angle": 3.141592653589793,
         "pitch": 0
       },
-      "uniqueColors": 9820,
+      "uniqueColors": 10835,
       "meanRGB": [
-        20.297458984375,
-        21.410939453125,
-        23.600123046875
+        19.3932236328125,
+        21.24148828125,
+        23.6936904296875
       ],
       "visibility": {
         "total": 1,
@@ -695,116 +514,14 @@
           1
         ]
       },
-      "submittedModelTriangles": 25288,
-      "fixture": {
-        "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
-        "entity": {
-          "id": "TROO",
-          "base": "TROO",
-          "enemy": true,
-          "sprite": "TROOA1",
-          "alive": true,
-          "state": "idle",
-          "fullbright": true,
-          "x": 1056,
-          "y": -3616,
-          "z": 0,
-          "angle": 1.5707963267948966
-        },
-        "anchorScreen": {
-          "x": 640.0004300204191,
-          "y": 581.7642905495388
-        },
-        "meshKeys": [
-          "character:TROO:A:idle:lod2"
-        ]
-      }
-    },
-    {
-      "name": "troo-back",
-      "image": "troo-back-egl.png",
-      "camera": {
-        "x": 1056,
-        "y": -3704,
-        "z": 28,
-        "angle": 1.5707963267948966,
-        "pitch": 0
-      },
-      "uniqueColors": 10944,
-      "meanRGB": [
-        21.222091796875,
-        21.9012080078125,
-        23.700658203125
-      ],
-      "visibility": {
-        "total": 1,
-        "visible": 1,
-        "culled": 0,
-        "lods": [
-          0,
-          0,
-          1
-        ]
-      },
-      "submittedModelTriangles": 25288,
-      "fixture": {
-        "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
-        "entity": {
-          "id": "TROO",
-          "base": "TROO",
-          "enemy": true,
-          "sprite": "TROOA1",
-          "alive": true,
-          "state": "idle",
-          "fullbright": true,
-          "x": 1056,
-          "y": -3616,
-          "z": 0,
-          "angle": 1.5707963267948966
-        },
-        "anchorScreen": {
-          "x": 639.9997919256036,
-          "y": 581.7642905495384
-        },
-        "meshKeys": [
-          "character:TROO:A:idle:lod2"
-        ]
-      }
-    },
-    {
-      "name": "poss-attack-side",
-      "image": "poss-attack-side-egl.png",
-      "camera": {
-        "x": 1144,
-        "y": -3616,
-        "z": 28,
-        "angle": 3.141592653589793,
-        "pitch": 0
-      },
-      "uniqueColors": 11574,
-      "meanRGB": [
-        20.118591796875,
-        21.8889912109375,
-        24.1791181640625
-      ],
-      "visibility": {
-        "total": 1,
-        "visible": 1,
-        "culled": 0,
-        "lods": [
-          0,
-          0,
-          1
-        ]
-      },
-      "submittedModelTriangles": 33696,
+      "submittedModelTriangles": 33424,
       "fixture": {
         "scope": "Production attack pose viewed from the side and rear to inspect the moving upper-arm/sleeve junction.",
         "entity": {
-          "id": "POSS-attack",
-          "base": "POSS",
+          "id": "SARG-attack",
+          "base": "SARG",
           "enemy": true,
-          "sprite": "POSSF1",
+          "sprite": "SARGF1",
           "alive": true,
           "state": "attack",
           "fullbright": true,
@@ -818,13 +535,13 @@
           "y": 581.7642905495388
         },
         "meshKeys": [
-          "character:POSS:F:pose:lod2"
+          "character:SARG:F:pose:lod2"
         ]
       }
     },
     {
-      "name": "poss-attack-back",
-      "image": "poss-attack-back-egl.png",
+      "name": "sarg-attack-back",
+      "image": "sarg-attack-back-egl.png",
       "camera": {
         "x": 1056,
         "y": -3704,
@@ -832,11 +549,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 12833,
+      "uniqueColors": 11201,
       "meanRGB": [
-        21.139693359375,
-        22.8784951171875,
-        24.86763671875
+        19.5309345703125,
+        21.5825947265625,
+        23.7740888671875
       ],
       "visibility": {
         "total": 1,
@@ -848,14 +565,14 @@
           1
         ]
       },
-      "submittedModelTriangles": 33696,
+      "submittedModelTriangles": 33424,
       "fixture": {
         "scope": "Production attack pose viewed from the side and rear to inspect the moving upper-arm/sleeve junction.",
         "entity": {
-          "id": "POSS-attack",
-          "base": "POSS",
+          "id": "SARG-attack",
+          "base": "SARG",
           "enemy": true,
-          "sprite": "POSSF1",
+          "sprite": "SARGF1",
           "alive": true,
           "state": "attack",
           "fullbright": true,
@@ -869,115 +586,13 @@
           "y": 581.7642905495384
         },
         "meshKeys": [
-          "character:POSS:F:pose:lod2"
+          "character:SARG:F:pose:lod2"
         ]
       }
     },
     {
-      "name": "spos-attack-side",
-      "image": "spos-attack-side-egl.png",
-      "camera": {
-        "x": 1144,
-        "y": -3616,
-        "z": 28,
-        "angle": 3.141592653589793,
-        "pitch": 0
-      },
-      "uniqueColors": 8688,
-      "meanRGB": [
-        19.4579248046875,
-        21.107408203125,
-        23.71648046875
-      ],
-      "visibility": {
-        "total": 1,
-        "visible": 1,
-        "culled": 0,
-        "lods": [
-          0,
-          0,
-          1
-        ]
-      },
-      "submittedModelTriangles": 30340,
-      "fixture": {
-        "scope": "Production attack pose viewed from the side and rear to inspect the moving upper-arm/sleeve junction.",
-        "entity": {
-          "id": "SPOS-attack",
-          "base": "SPOS",
-          "enemy": true,
-          "sprite": "SPOSF1",
-          "alive": true,
-          "state": "attack",
-          "fullbright": true,
-          "x": 1056,
-          "y": -3616,
-          "z": 0,
-          "angle": 1.5707963267948966
-        },
-        "anchorScreen": {
-          "x": 640.0004300204191,
-          "y": 581.7642905495388
-        },
-        "meshKeys": [
-          "character:SPOS:F:pose:lod2"
-        ]
-      }
-    },
-    {
-      "name": "spos-attack-back",
-      "image": "spos-attack-back-egl.png",
-      "camera": {
-        "x": 1056,
-        "y": -3704,
-        "z": 28,
-        "angle": 1.5707963267948966,
-        "pitch": 0
-      },
-      "uniqueColors": 8000,
-      "meanRGB": [
-        19.4397763671875,
-        21.1335537109375,
-        23.8225283203125
-      ],
-      "visibility": {
-        "total": 1,
-        "visible": 1,
-        "culled": 0,
-        "lods": [
-          0,
-          0,
-          1
-        ]
-      },
-      "submittedModelTriangles": 30340,
-      "fixture": {
-        "scope": "Production attack pose viewed from the side and rear to inspect the moving upper-arm/sleeve junction.",
-        "entity": {
-          "id": "SPOS-attack",
-          "base": "SPOS",
-          "enemy": true,
-          "sprite": "SPOSF1",
-          "alive": true,
-          "state": "attack",
-          "fullbright": true,
-          "x": 1056,
-          "y": -3616,
-          "z": 0,
-          "angle": 1.5707963267948966
-        },
-        "anchorScreen": {
-          "x": 639.9997919256036,
-          "y": 581.7642905495384
-        },
-        "meshKeys": [
-          "character:SPOS:F:pose:lod2"
-        ]
-      }
-    },
-    {
-      "name": "poss-portrait",
-      "image": "poss-portrait-egl.png",
+      "name": "sarg-portrait",
+      "image": "sarg-portrait-egl.png",
       "camera": {
         "x": 1062,
         "y": -3589,
@@ -985,11 +600,11 @@
         "angle": -1.7894652726688387,
         "pitch": 0
       },
-      "uniqueColors": 33990,
+      "uniqueColors": 38019,
       "meanRGB": [
-        40.9322421875,
-        41.01673828125,
-        39.3090068359375
+        32.369048828125,
+        35.474015625,
+        32.8019794921875
       ],
       "visibility": {
         "total": 1,
@@ -1001,14 +616,14 @@
           1
         ]
       },
-      "submittedModelTriangles": 33596,
+      "submittedModelTriangles": 33324,
       "fixture": {
         "scope": "Close study of actual generated head geometry and procedural surface materials.",
         "entity": {
-          "id": "POSS",
-          "base": "POSS",
+          "id": "SARG",
+          "base": "SARG",
           "enemy": true,
-          "sprite": "POSSA1",
+          "sprite": "SARGA1",
           "alive": true,
           "state": "idle",
           "fullbright": true,
@@ -1022,13 +637,13 @@
           "y": 1412.0458878256334
         },
         "meshKeys": [
-          "character:POSS:A:idle:lod2"
+          "character:SARG:A:idle:lod2"
         ]
       }
     },
     {
-      "name": "spos-portrait",
-      "image": "spos-portrait-egl.png",
+      "name": "boss-portrait",
+      "image": "boss-portrait-egl.png",
       "camera": {
         "x": 1062,
         "y": -3589,
@@ -1036,11 +651,11 @@
         "angle": -1.7894652726688387,
         "pitch": 0
       },
-      "uniqueColors": 29296,
+      "uniqueColors": 33159,
       "meanRGB": [
-        32.0665126953125,
-        32.03662890625,
-        32.5113095703125
+        50.5581396484375,
+        49.88892578125,
+        36.2952939453125
       ],
       "visibility": {
         "total": 1,
@@ -1052,14 +667,14 @@
           1
         ]
       },
-      "submittedModelTriangles": 30240,
+      "submittedModelTriangles": 15476,
       "fixture": {
         "scope": "Close study of actual generated head geometry and procedural surface materials.",
         "entity": {
-          "id": "SPOS",
-          "base": "SPOS",
+          "id": "BOSS",
+          "base": "BOSS",
           "enemy": true,
-          "sprite": "SPOSA1",
+          "sprite": "BOSSA1",
           "alive": true,
           "state": "idle",
           "fullbright": true,
@@ -1073,76 +688,25 @@
           "y": 1412.0458878256334
         },
         "meshKeys": [
-          "character:SPOS:A:idle:lod2"
+          "character:BOSS:A:idle:lod2"
         ]
       }
     },
     {
-      "name": "troo-portrait",
-      "image": "troo-portrait-egl.png",
+      "name": "bkey-detail",
+      "image": "bkey-detail-egl.png",
       "camera": {
-        "x": 1062,
-        "y": -3589,
-        "z": 49,
-        "angle": -1.7894652726688387,
-        "pitch": 0
-      },
-      "uniqueColors": 26459,
-      "meanRGB": [
-        38.154427734375,
-        32.2709228515625,
-        28.011244140625
-      ],
-      "visibility": {
-        "total": 1,
-        "visible": 1,
-        "culled": 0,
-        "lods": [
-          0,
-          0,
-          1
-        ]
-      },
-      "submittedModelTriangles": 25288,
-      "fixture": {
-        "scope": "Close study of actual generated head geometry and procedural surface materials.",
-        "entity": {
-          "id": "TROO",
-          "base": "TROO",
-          "enemy": true,
-          "sprite": "TROOA1",
-          "alive": true,
-          "state": "idle",
-          "fullbright": true,
-          "x": 1056,
-          "y": -3616,
-          "z": 0,
-          "angle": 1.5707963267948966
-        },
-        "anchorScreen": {
-          "x": 639.9979808338863,
-          "y": 1412.0458878256334
-        },
-        "meshKeys": [
-          "character:TROO:A:idle:lod2"
-        ]
-      }
-    },
-    {
-      "name": "bar1-detail",
-      "image": "bar1-detail-egl.png",
-      "camera": {
-        "x": 1076.098199935913,
-        "y": -3589.2024000854494,
-        "z": 22.86,
+        "x": 1066.6005,
+        "y": -3601.866,
+        "z": 10.98,
         "angle": -2.214297435588181,
-        "pitch": -0.20558016594179337
+        "pitch": -0.18766224670594836
       },
-      "uniqueColors": 21499,
+      "uniqueColors": 10013,
       "meanRGB": [
-        31.495306640625,
-        35.917865234375,
-        29.9031181640625
+        21.9427333984375,
+        25.8566748046875,
+        38.6565517578125
       ],
       "visibility": {
         "total": 1,
@@ -1154,13 +718,13 @@
           1
         ]
       },
-      "submittedModelTriangles": 6440,
+      "submittedModelTriangles": 1464,
       "fixture": {
         "scope": "Close three-quarter view of an actual generated prop; uniform studio sector light.",
         "entity": {
-          "id": "BAR1",
-          "type": 2035,
-          "sprite": "BAR1A0",
+          "id": "BKEY",
+          "type": 5,
+          "sprite": "BKEYA0",
           "fullbright": true,
           "x": 1056,
           "y": -3616,
@@ -1168,29 +732,29 @@
           "angle": 1.5707963267948966
         },
         "anchorScreen": {
-          "x": 639.9934497399679,
-          "y": 637.0049923837441
+          "x": 639.9873561484218,
+          "y": 620.5214409312259
         },
         "meshKeys": [
-          "object:BAR1:0:d2"
+          "object:BKEY:0:d2"
         ]
       }
     },
     {
-      "name": "colu-detail",
-      "image": "colu-detail-egl.png",
+      "name": "ykey-detail",
+      "image": "ykey-detail-egl.png",
       "camera": {
-        "x": 1084.656,
-        "y": -3577.792,
-        "z": 34.56,
+        "x": 1066.6005,
+        "y": -3601.866,
+        "z": 10.98,
         "angle": -2.214297435588181,
-        "pitch": -0.21760455032061152
+        "pitch": -0.18766224670594836
       },
-      "uniqueColors": 5354,
+      "uniqueColors": 12126,
       "meanRGB": [
-        20.5467783203125,
-        22.6213525390625,
-        25.212443359375
+        35.3277978515625,
+        35.715552734375,
+        26.0386826171875
       ],
       "visibility": {
         "total": 1,
@@ -1202,13 +766,13 @@
           1
         ]
       },
-      "submittedModelTriangles": 3696,
+      "submittedModelTriangles": 1464,
       "fixture": {
         "scope": "Close three-quarter view of an actual generated prop; uniform studio sector light.",
         "entity": {
-          "id": "COLU",
-          "type": 2028,
-          "sprite": "COLUA0",
+          "id": "YKEY",
+          "type": 6,
+          "sprite": "YKEYA0",
           "fullbright": true,
           "x": 1056,
           "y": -3616,
@@ -1216,29 +780,29 @@
           "angle": 1.5707963267948966
         },
         "anchorScreen": {
-          "x": 639.9954642452844,
-          "y": 647.4702942267643
+          "x": 639.9873561484218,
+          "y": 620.5214409312259
         },
         "meshKeys": [
-          "object:COLU:0:d2"
+          "object:YKEY:0:d2"
         ]
       }
     },
     {
-      "name": "elec-detail",
-      "image": "elec-detail-egl.png",
+      "name": "rkey-detail",
+      "image": "rkey-detail-egl.png",
       "camera": {
-        "x": 1125.276,
-        "y": -3523.632,
-        "z": 92.16,
+        "x": 1066.6005,
+        "y": -3601.866,
+        "z": 10.98,
         "angle": -2.214297435588181,
-        "pitch": -0.23922362462341276
+        "pitch": -0.18766224670594836
       },
-      "uniqueColors": 11831,
+      "uniqueColors": 9953,
       "meanRGB": [
-        20.360001953125,
-        22.575119140625,
-        25.3426552734375
+        33.0372861328125,
+        23.7833359375,
+        25.8622001953125
       ],
       "visibility": {
         "total": 1,
@@ -1250,13 +814,13 @@
           1
         ]
       },
-      "submittedModelTriangles": 11840,
+      "submittedModelTriangles": 1464,
       "fixture": {
         "scope": "Close three-quarter view of an actual generated prop; uniform studio sector light.",
         "entity": {
-          "id": "ELEC",
-          "type": 48,
-          "sprite": "ELECA0",
+          "id": "RKEY",
+          "type": 13,
+          "sprite": "RKEYA0",
           "fullbright": true,
           "x": 1056,
           "y": -3616,
@@ -1264,29 +828,29 @@
           "angle": 1.5707963267948966
         },
         "anchorScreen": {
-          "x": 639.9981690695731,
-          "y": 665.0524485278545
+          "x": 639.9873561484218,
+          "y": 620.5214409312259
         },
         "meshKeys": [
-          "object:ELEC:0:d2"
+          "object:RKEY:0:d2"
         ]
       }
     },
     {
-      "name": "medi-detail",
-      "image": "medi-detail-egl.png",
+      "name": "bpak-detail",
+      "image": "bpak-detail-egl.png",
       "camera": {
-        "x": 1075.4454005355835,
-        "y": -3590.072799285889,
-        "z": 13.075199890136718,
+        "x": 1069.8153602142334,
+        "y": -3597.5795197143557,
+        "z": 11.267999725341797,
         "angle": -2.214297435588181,
-        "pitch": -0.12265557768657426
+        "pitch": -0.14842948912958742
       },
-      "uniqueColors": 10035,
+      "uniqueColors": 9041,
       "meanRGB": [
-        37.18133984375,
-        39.3981142578125,
-        41.069400390625
+        24.941787109375,
+        29.1405283203125,
+        28.479416015625
       ],
       "visibility": {
         "total": 1,
@@ -1298,13 +862,13 @@
           1
         ]
       },
-      "submittedModelTriangles": 2836,
+      "submittedModelTriangles": 1656,
       "fixture": {
         "scope": "Close three-quarter view of an actual generated prop; uniform studio sector light.",
         "entity": {
-          "id": "MEDI",
-          "type": 2012,
-          "sprite": "MEDIA0",
+          "id": "BPAK",
+          "type": 8,
+          "sprite": "BPAKA0",
           "fullbright": true,
           "x": 1056,
           "y": -3616,
@@ -1312,29 +876,29 @@
           "angle": 1.5707963267948966
         },
         "anchorScreen": {
-          "x": 639.9927333044789,
-          "y": 552.4668098314143
+          "x": 639.9899600807065,
+          "y": 580.9006300861042
         },
         "meshKeys": [
-          "object:MEDI:0:d2"
+          "object:BPAK:0:d2"
         ]
       }
     },
     {
-      "name": "bon1-detail",
-      "image": "bon1-detail-egl.png",
+      "name": "rock-detail",
+      "image": "rock-detail-egl.png",
       "camera": {
-        "x": 1066.468800195694,
-        "y": -3602.0415997390746,
-        "z": 11.952000274658202,
+        "x": 1071.444,
+        "y": -3595.408,
+        "z": 12.6,
         "angle": -2.214297435588181,
-        "pitch": -0.20632900258513145
+        "pitch": -0.14847197480207144
       },
-      "uniqueColors": 13501,
+      "uniqueColors": 11553,
       "meanRGB": [
-        17.6773935546875,
-        19.961154296875,
-        39.0238330078125
+        24.8143896484375,
+        28.3663564453125,
+        27.9708935546875
       ],
       "visibility": {
         "total": 1,
@@ -1346,13 +910,13 @@
           1
         ]
       },
-      "submittedModelTriangles": 2672,
+      "submittedModelTriangles": 1296,
       "fixture": {
         "scope": "Close three-quarter view of an actual generated prop; uniform studio sector light.",
         "entity": {
-          "id": "BON1",
-          "type": 2014,
-          "sprite": "BON1A0",
+          "id": "ROCK",
+          "type": 2010,
+          "sprite": "ROCKA0",
           "fullbright": true,
           "x": 1056,
           "y": -3616,
@@ -1360,29 +924,29 @@
           "angle": 1.5707963267948966
         },
         "anchorScreen": {
-          "x": 639.987434397867,
-          "y": 637.6723374676873
+          "x": 639.9910192075442,
+          "y": 580.9439508212253
         },
         "meshKeys": [
-          "object:BON1:0:d2"
+          "object:ROCK:0:d2"
         ]
       }
     },
     {
-      "name": "bon2-detail",
-      "image": "bon2-detail-egl.png",
+      "name": "soul-detail",
+      "image": "soul-detail-egl.png",
       "camera": {
-        "x": 1066.0237403697968,
-        "y": -3602.635012840271,
-        "z": 9.002607192993164,
+        "x": 1069.1975994644165,
+        "y": -3598.4032007141113,
+        "z": 10.655999450683593,
         "angle": -2.214297435588181,
-        "pitch": -0.1631925908121305
+        "pitch": -0.14695972123819914
       },
-      "uniqueColors": 16633,
+      "uniqueColors": 15314,
       "meanRGB": [
-        31.00707421875,
-        33.11296484375,
-        33.61128515625
+        46.1436376953125,
+        28.714998046875,
+        26.6979560546875
       ],
       "visibility": {
         "total": 1,
@@ -1394,13 +958,13 @@
           1
         ]
       },
-      "submittedModelTriangles": 2344,
+      "submittedModelTriangles": 2192,
       "fixture": {
         "scope": "Close three-quarter view of an actual generated prop; uniform studio sector light.",
         "entity": {
-          "id": "BON2",
-          "type": 2015,
-          "sprite": "BON2A0",
+          "id": "SOUL",
+          "type": 2013,
+          "sprite": "SOULA0",
           "fullbright": true,
           "x": 1056,
           "y": -3616,
@@ -1408,29 +972,29 @@
           "angle": 1.5707963267948966
         },
         "anchorScreen": {
-          "x": 639.9863284575324,
-          "y": 596.3537877208208
+          "x": 639.9894780872825,
+          "y": 579.3275169447454
         },
         "meshKeys": [
-          "object:BON2:0:d2"
+          "object:SOUL:0:d2"
         ]
       }
     },
     {
-      "name": "arm1-detail",
-      "image": "arm1-detail-egl.png",
+      "name": "brok-detail",
+      "image": "brok-detail-egl.png",
       "camera": {
-        "x": 1076.3007354125978,
-        "y": -3588.932352783203,
-        "z": 12.200133361816405,
+        "x": 1067.863800066948,
+        "y": -3600.181599910736,
+        "z": 9.56542854309082,
         "angle": -2.214297435588181,
-        "pitch": -0.10973523422859065
+        "pitch": -0.14675352533638295
       },
-      "uniqueColors": 18225,
+      "uniqueColors": 9408,
       "meanRGB": [
-        20.4356552734375,
-        29.2889423828125,
-        24.4557900390625
+        24.0552451171875,
+        25.18912890625,
+        27.6949599609375
       ],
       "visibility": {
         "total": 1,
@@ -1442,13 +1006,13 @@
           1
         ]
       },
-      "submittedModelTriangles": 8400,
+      "submittedModelTriangles": 1148,
       "fixture": {
         "scope": "Close three-quarter view of an actual generated prop; uniform studio sector light.",
         "entity": {
-          "id": "ARM1",
-          "type": 2018,
-          "sprite": "ARM1A0",
+          "id": "BROK",
+          "type": 2046,
+          "sprite": "BROKA0",
           "fullbright": true,
           "x": 1056,
           "y": -3616,
@@ -1456,29 +1020,29 @@
           "angle": 1.5707963267948966
         },
         "anchorScreen": {
-          "x": 639.9929831103182,
-          "y": 537.5795597959931
+          "x": 639.9882932784909,
+          "y": 579.1058682034651
         },
         "meshKeys": [
-          "object:ARM1:0:d2"
+          "object:BROK:0:d2"
         ]
       }
     },
     {
-      "name": "sbox-detail",
-      "image": "sbox-detail-egl.png",
+      "name": "pins-detail",
+      "image": "pins-detail-egl.png",
       "camera": {
-        "x": 1078.464,
-        "y": -3586.048,
-        "z": 10.226160049438477,
+        "x": 1064.5977001876831,
+        "y": -3604.5363997497557,
+        "z": 9.432000274658202,
         "angle": -2.214297435588181,
-        "pitch": -0.08326483844233427
+        "pitch": -0.19847567005760683
       },
-      "uniqueColors": 8235,
+      "uniqueColors": 9559,
       "meanRGB": [
-        25.8867158203125,
-        27.124455078125,
-        28.55384765625
+        62.0857978515625,
+        48.559275390625,
+        40.2616875
       ],
       "visibility": {
         "total": 1,
@@ -1490,13 +1054,13 @@
           1
         ]
       },
-      "submittedModelTriangles": 1788,
+      "submittedModelTriangles": 864,
       "fixture": {
         "scope": "Close three-quarter view of an actual generated prop; uniform studio sector light.",
         "entity": {
-          "id": "SBOX",
-          "type": 2049,
-          "sprite": "SBOXA0",
+          "id": "PINS",
+          "type": 2024,
+          "sprite": "PINSA0",
           "fullbright": true,
           "x": 1056,
           "y": -3616,
@@ -1504,29 +1068,29 @@
           "angle": 1.5707963267948966
         },
         "anchorScreen": {
-          "x": 639.993570333326,
-          "y": 505.9396744921268
+          "x": 639.9845760167132,
+          "y": 630.5955882899547
         },
         "meshKeys": [
-          "object:SBOX:0:d2"
+          "object:PINS:0:d2"
         ]
       }
     },
     {
-      "name": "playw-detail",
-      "image": "playw-detail-egl.png",
+      "name": "suit-detail",
+      "image": "suit-detail-egl.png",
       "camera": {
-        "x": 1086,
-        "y": -3576,
-        "z": 24,
+        "x": 1080.9888007507325,
+        "y": -3582.6815989990237,
+        "z": 29.80800109863281,
         "angle": -2.214297435588181,
-        "pitch": -0.3588334681147114
+        "pitch": -0.21530041471949132
       },
-      "uniqueColors": 15862,
+      "uniqueColors": 13373,
       "meanRGB": [
-        21.327265625,
-        21.6173486328125,
-        24.55323828125
+        22.113443359375,
+        31.064376953125,
+        28.7061279296875
       ],
       "visibility": {
         "total": 1,
@@ -1538,13 +1102,13 @@
           1
         ]
       },
-      "submittedModelTriangles": 10684,
+      "submittedModelTriangles": 2196,
       "fixture": {
         "scope": "Close three-quarter view of an actual generated prop; uniform studio sector light.",
         "entity": {
-          "id": "PLAYW",
-          "type": 10,
-          "sprite": "PLAYWA0",
+          "id": "SUIT",
+          "type": 2025,
+          "sprite": "SUITA0",
           "fullbright": true,
           "x": 1056,
           "y": -3616,
@@ -1552,29 +1116,29 @@
           "angle": 1.5707963267948966
         },
         "anchorScreen": {
-          "x": 639.99555858003,
-          "y": 450.7967936428034
+          "x": 639.9947855908656,
+          "y": 645.504013137198
         },
         "meshKeys": [
-          "object:PLAYW:0:d2"
+          "object:SUIT:0:d2"
         ]
       }
     },
     {
-      "name": "playn-detail",
-      "image": "playn-detail-egl.png",
+      "name": "pmap-detail",
+      "image": "pmap-detail-egl.png",
       "camera": {
-        "x": 1086,
-        "y": -3576,
-        "z": 24,
+        "x": 1070.625,
+        "y": -3596.5,
+        "z": 17.099999999999998,
         "angle": -2.214297435588181,
-        "pitch": -0.38141923589833426
+        "pitch": -0.21116337594869486
       },
-      "uniqueColors": 14333,
+      "uniqueColors": 4522,
       "meanRGB": [
-        20.607724609375,
-        22.850611328125,
-        24.9719521484375
+        36.44540234375,
+        37.2630498046875,
+        39.0586376953125
       ],
       "visibility": {
         "total": 1,
@@ -1586,13 +1150,13 @@
           1
         ]
       },
-      "submittedModelTriangles": 9684,
+      "submittedModelTriangles": 796,
       "fixture": {
         "scope": "Close three-quarter view of an actual generated prop; uniform studio sector light.",
         "entity": {
-          "id": "PLAYN",
-          "type": 15,
-          "sprite": "PLAYNA0",
+          "id": "PMAP",
+          "type": 2026,
+          "sprite": "PMAPA0",
           "fullbright": true,
           "x": 1056,
           "y": -3616,
@@ -1600,29 +1164,29 @@
           "angle": 1.5707963267948966
         },
         "anchorScreen": {
-          "x": 639.9955663406953,
-          "y": 437.81560526756226
+          "x": 639.9910509953438,
+          "y": 641.9242572218307
         },
         "meshKeys": [
-          "object:PLAYN:0:d2"
+          "object:PMAP:0:d2"
         ]
       }
     },
     {
-      "name": "pol5-detail",
-      "image": "pol5-detail-egl.png",
+      "name": "pvis-detail",
+      "image": "pvis-detail-egl.png",
       "camera": {
-        "x": 1086,
-        "y": -3576,
-        "z": 24,
+        "x": 1067.5127997322084,
+        "y": -3600.6496003570555,
+        "z": 3.167999725341797,
         "angle": -2.214297435588181,
-        "pitch": -0.4180414626141114
+        "pitch": -0.050405461598151347
       },
-      "uniqueColors": 9926,
+      "uniqueColors": 2930,
       "meanRGB": [
-        20.05537890625,
-        21.080228515625,
-        24.1141640625
+        21.7863974609375,
+        26.4683984375,
+        28.1505712890625
       ],
       "visibility": {
         "total": 1,
@@ -1634,13 +1198,13 @@
           1
         ]
       },
-      "submittedModelTriangles": 6400,
+      "submittedModelTriangles": 756,
       "fixture": {
         "scope": "Close three-quarter view of an actual generated prop; uniform studio sector light.",
         "entity": {
-          "id": "POL5",
-          "type": 24,
-          "sprite": "POL5A0",
+          "id": "PVIS",
+          "type": 2045,
+          "sprite": "PVISA0",
           "fullbright": true,
           "x": 1056,
           "y": -3616,
@@ -1648,99 +1212,29 @@
           "angle": 1.5707963267948966
         },
         "anchorScreen": {
-          "x": 639.9955741001737,
-          "y": 416.844023776
+          "x": 639.987302326821,
+          "y": 464.95636902217854
         },
         "meshKeys": [
-          "object:POL5:0:d2"
+          "object:PVIS:0:d2"
         ]
       }
     },
     {
-      "name": "door151-open",
-      "image": "door151-open-egl.png",
+      "name": "cand-detail",
+      "image": "cand-detail-egl.png",
       "camera": {
-        "x": 1408,
-        "y": -2496,
-        "z": 41,
-        "angle": 0,
-        "pitch": 0
+        "x": 1068.4770000400542,
+        "y": -3599.363999946594,
+        "z": 14.94,
+        "angle": -2.214297435588181,
+        "pitch": -0.21609616131204257
       },
-      "uniqueColors": 39964,
+      "uniqueColors": 11147,
       "meanRGB": [
-        91.224390625,
-        92.443705078125,
-        77.349228515625
-      ],
-      "visibility": {
-        "total": 0,
-        "visible": 0,
-        "culled": 0,
-        "lods": [
-          0,
-          0,
-          0
-        ]
-      },
-      "submittedModelTriangles": 0,
-      "fixture": {
-        "scope": "Door opened by production action, empty passage baseline.",
-        "door": {
-          "line": 151,
-          "sector": 4,
-          "floor": 0,
-          "ceiling": 68,
-          "endpoints": [
-            {
-              "x": 1536,
-              "y": -2432
-            },
-            {
-              "x": 1536,
-              "y": -2560
-            }
-          ],
-          "center": {
-            "x": 1544,
-            "y": -2496
-          },
-          "ticks": 68
-        },
-        "portalScreen": [
-          {
-            "x": 354.37023162841746,
-            "y": 582.9814672470096
-          },
-          {
-            "x": 354.37023162841746,
-            "y": 279.50001060962654
-          },
-          {
-            "x": 925.6294250488287,
-            "y": 582.9814672470096
-          },
-          {
-            "x": 925.6294250488287,
-            "y": 279.50001060962654
-          }
-        ]
-      }
-    },
-    {
-      "name": "door151-model-front",
-      "image": "door151-model-front-egl.png",
-      "camera": {
-        "x": 1408,
-        "y": -2496,
-        "z": 41,
-        "angle": 0,
-        "pitch": 0
-      },
-      "uniqueColors": 45975,
-      "meanRGB": [
-        92.054458984375,
-        92.7384482421875,
-        77.149595703125
+        28.10189453125,
+        28.7405673828125,
+        27.306693359375
       ],
       "visibility": {
         "total": 1,
@@ -1752,2119 +1246,170 @@
           1
         ]
       },
-      "submittedModelTriangles": 25288,
+      "submittedModelTriangles": 2288,
       "fixture": {
-        "scope": "3D imp deliberately centred in doorway for an occlusion/anchor check; not a reproduced player encounter.",
-        "door": {
-          "line": 151,
-          "sector": 4,
-          "floor": 0,
-          "ceiling": 68,
-          "endpoints": [
-            {
-              "x": 1536,
-              "y": -2432
-            },
-            {
-              "x": 1536,
-              "y": -2560
-            }
-          ],
-          "center": {
-            "x": 1544,
-            "y": -2496
-          },
-          "ticks": 68
-        },
+        "scope": "Close three-quarter view of an actual generated prop; uniform studio sector light.",
         "entity": {
-          "id": "door-model",
-          "base": "TROO",
-          "enemy": true,
-          "sprite": "TROOA1",
-          "alive": true,
-          "state": "idle",
-          "x": 1544,
-          "y": -2496,
-          "z": 0,
-          "angle": 3.141592653589793
-        },
-        "anchorScreen": {
-          "x": 639.9998384363511,
-          "y": 572.2178515265972
-        },
-        "meshKeys": [
-          "character:TROO:A:idle:lod2"
-        ],
-        "portalScreen": [
-          {
-            "x": 354.37023162841746,
-            "y": 582.9814672470096
-          },
-          {
-            "x": 354.37023162841746,
-            "y": 279.50001060962654
-          },
-          {
-            "x": 925.6294250488287,
-            "y": 582.9814672470096
-          },
-          {
-            "x": 925.6294250488287,
-            "y": 279.50001060962654
-          }
-        ],
-        "visibleActor": {
-          "pixels": 25678,
-          "boundsXY": [
-            541,
-            340,
-            738,
-            597
-          ],
-          "centroidXY": [
-            640.1946413272061,
-            481.41482981540616
-          ],
-          "pixelsInsideOpening": 25678,
-          "check": "Actor and shadow differences from the identical open-door baseline. Actor anchor and visible changes inside the opening checked; shadows can extend beyond jambs. Not a combat or AI test."
-        }
-      }
-    },
-    {
-      "name": "door151-model-side",
-      "image": "door151-model-side-egl.png",
-      "camera": {
-        "x": 1408,
-        "y": -2496,
-        "z": 41,
-        "angle": 0,
-        "pitch": 0
-      },
-      "uniqueColors": 44385,
-      "meanRGB": [
-        91.4996650390625,
-        92.4517373046875,
-        77.1333291015625
-      ],
-      "visibility": {
-        "total": 1,
-        "visible": 1,
-        "culled": 0,
-        "lods": [
-          0,
-          0,
-          1
-        ]
-      },
-      "submittedModelTriangles": 25288,
-      "fixture": {
-        "scope": "3D imp deliberately centred in doorway for an occlusion/anchor check; not a reproduced player encounter.",
-        "door": {
-          "line": 151,
-          "sector": 4,
-          "floor": 0,
-          "ceiling": 68,
-          "endpoints": [
-            {
-              "x": 1536,
-              "y": -2432
-            },
-            {
-              "x": 1536,
-              "y": -2560
-            }
-          ],
-          "center": {
-            "x": 1544,
-            "y": -2496
-          },
-          "ticks": 68
-        },
-        "entity": {
-          "id": "door-model",
-          "base": "TROO",
-          "enemy": true,
-          "sprite": "TROOA1",
-          "alive": true,
-          "state": "idle",
-          "x": 1544,
-          "y": -2496,
+          "id": "CAND",
+          "type": 34,
+          "sprite": "CANDA0",
+          "fullbright": true,
+          "x": 1056,
+          "y": -3616,
           "z": 0,
           "angle": 1.5707963267948966
         },
         "anchorScreen": {
-          "x": 639.9998384363511,
-          "y": 572.2178515265972
+          "x": 639.9895656185835,
+          "y": 646.1857647588826
         },
         "meshKeys": [
-          "character:TROO:A:idle:lod2"
-        ],
-        "portalScreen": [
-          {
-            "x": 354.37023162841746,
-            "y": 582.9814672470096
-          },
-          {
-            "x": 354.37023162841746,
-            "y": 279.50001060962654
-          },
-          {
-            "x": 925.6294250488287,
-            "y": 582.9814672470096
-          },
-          {
-            "x": 925.6294250488287,
-            "y": 279.50001060962654
-          }
-        ],
-        "visibleActor": {
-          "pixels": 13824,
-          "boundsXY": [
-            575,
-            342,
-            688,
-            587
-          ],
-          "centroidXY": [
-            633.7643229166666,
-            483.9089265046296
-          ],
-          "pixelsInsideOpening": 13824,
-          "check": "Actor and shadow differences from the identical open-door baseline. Actor anchor and visible changes inside the opening checked; shadows can extend beyond jambs. Not a combat or AI test."
-        }
-      }
-    },
-    {
-      "name": "secret68-closed",
-      "image": "secret68-closed-egl.png",
-      "camera": {
-        "x": 2988,
-        "y": -3840,
-        "z": 17,
-        "angle": 3.141592653589793,
-        "pitch": 0
-      },
-      "uniqueColors": 1184,
-      "meanRGB": [
-        3.8414521484375,
-        3.6635087890625,
-        2.1837900390625
-      ],
-      "visibility": {
-        "total": 91,
-        "visible": 33,
-        "culled": 58,
-        "lods": [
-          27,
-          5,
-          1
+          "object:CAND:0:d2"
         ]
-      },
-      "submittedModelTriangles": 17718,
-      "fixture": {
-        "scope": "Inspection camera; secret mechanism operated by real use/crossing/update. Continuous gameplay is verified separately.",
-        "state": {
-          "heights": [
-            {
-              "floor": 0,
-              "ceiling": 72
-            },
-            {
-              "floor": 32,
-              "ceiling": 88
-            },
-            {
-              "floor": 0,
-              "ceiling": 144
-            },
-            {
-              "floor": 0,
-              "ceiling": 88
-            },
-            {
-              "floor": 0,
-              "ceiling": 0
-            },
-            {
-              "floor": -56,
-              "ceiling": 216
-            },
-            {
-              "floor": 32,
-              "ceiling": 88
-            },
-            {
-              "floor": 0,
-              "ceiling": 224
-            },
-            {
-              "floor": 8,
-              "ceiling": 152
-            },
-            {
-              "floor": 0,
-              "ceiling": 224
-            },
-            {
-              "floor": 0,
-              "ceiling": 96
-            },
-            {
-              "floor": 0,
-              "ceiling": 224
-            },
-            {
-              "floor": 0,
-              "ceiling": 96
-            },
-            {
-              "floor": -80,
-              "ceiling": 216
-            },
-            {
-              "floor": 8,
-              "ceiling": 192
-            },
-            {
-              "floor": 8,
-              "ceiling": 192
-            },
-            {
-              "floor": -136,
-              "ceiling": -40
-            },
-            {
-              "floor": -120,
-              "ceiling": 16
-            },
-            {
-              "floor": -104,
-              "ceiling": 16
-            },
-            {
-              "floor": -88,
-              "ceiling": 16
-            },
-            {
-              "floor": -56,
-              "ceiling": 24
-            },
-            {
-              "floor": -72,
-              "ceiling": 16
-            },
-            {
-              "floor": -56,
-              "ceiling": 64
-            },
-            {
-              "floor": -56,
-              "ceiling": 16
-            },
-            {
-              "floor": -8,
-              "ceiling": 224
-            },
-            {
-              "floor": 40,
-              "ceiling": 224
-            },
-            {
-              "floor": 56,
-              "ceiling": 224
-            },
-            {
-              "floor": 72,
-              "ceiling": 224
-            },
-            {
-              "floor": 0,
-              "ceiling": 128
-            },
-            {
-              "floor": 104,
-              "ceiling": 264
-            },
-            {
-              "floor": 0,
-              "ceiling": 264
-            },
-            {
-              "floor": 136,
-              "ceiling": 240
-            },
-            {
-              "floor": 128,
-              "ceiling": 264
-            },
-            {
-              "floor": 136,
-              "ceiling": 240
-            },
-            {
-              "floor": 136,
-              "ceiling": 240
-            },
-            {
-              "floor": 104,
-              "ceiling": 192
-            },
-            {
-              "floor": 88,
-              "ceiling": 224
-            },
-            {
-              "floor": -8,
-              "ceiling": 120
-            },
-            {
-              "floor": 0,
-              "ceiling": 72
-            },
-            {
-              "floor": -16,
-              "ceiling": 200
-            },
-            {
-              "floor": 0,
-              "ceiling": 72
-            },
-            {
-              "floor": -8,
-              "ceiling": 120
-            },
-            {
-              "floor": 8,
-              "ceiling": 224
-            },
-            {
-              "floor": 24,
-              "ceiling": 224
-            },
-            {
-              "floor": 40,
-              "ceiling": 184
-            },
-            {
-              "floor": 40,
-              "ceiling": 184
-            },
-            {
-              "floor": 0,
-              "ceiling": 136
-            },
-            {
-              "floor": -56,
-              "ceiling": 24
-            },
-            {
-              "floor": -136,
-              "ceiling": -40
-            },
-            {
-              "floor": -120,
-              "ceiling": 48
-            },
-            {
-              "floor": -104,
-              "ceiling": 48
-            },
-            {
-              "floor": 16,
-              "ceiling": 152
-            },
-            {
-              "floor": 24,
-              "ceiling": 152
-            },
-            {
-              "floor": -16,
-              "ceiling": 72
-            },
-            {
-              "floor": -8,
-              "ceiling": 72
-            },
-            {
-              "floor": -48,
-              "ceiling": 176
-            },
-            {
-              "floor": -24,
-              "ceiling": 176
-            },
-            {
-              "floor": -48,
-              "ceiling": 176
-            },
-            {
-              "floor": -48,
-              "ceiling": 104
-            },
-            {
-              "floor": 96,
-              "ceiling": 176
-            },
-            {
-              "floor": -24,
-              "ceiling": 176
-            },
-            {
-              "floor": -48,
-              "ceiling": 176
-            },
-            {
-              "floor": 104,
-              "ceiling": 184
-            },
-            {
-              "floor": -88,
-              "ceiling": 48
-            },
-            {
-              "floor": -72,
-              "ceiling": 48
-            },
-            {
-              "floor": -56,
-              "ceiling": 48
-            },
-            {
-              "floor": -40,
-              "ceiling": 48
-            },
-            {
-              "floor": -24,
-              "ceiling": 48
-            },
-            {
-              "floor": -24,
-              "ceiling": -24
-            },
-            {
-              "floor": -48,
-              "ceiling": 32
-            },
-            {
-              "floor": 104,
-              "ceiling": 184
-            },
-            {
-              "floor": -24,
-              "ceiling": 176
-            },
-            {
-              "floor": -24,
-              "ceiling": 104
-            },
-            {
-              "floor": -24,
-              "ceiling": 48
-            },
-            {
-              "floor": -24,
-              "ceiling": 48
-            },
-            {
-              "floor": -24,
-              "ceiling": 48
-            },
-            {
-              "floor": -24,
-              "ceiling": -24
-            },
-            {
-              "floor": -136,
-              "ceiling": -24
-            },
-            {
-              "floor": -24,
-              "ceiling": 72
-            },
-            {
-              "floor": -24,
-              "ceiling": 56
-            },
-            {
-              "floor": -24,
-              "ceiling": 48
-            },
-            {
-              "floor": -24,
-              "ceiling": -24
-            },
-            {
-              "floor": -24,
-              "ceiling": 88
-            },
-            {
-              "floor": -24,
-              "ceiling": 72
-            },
-            {
-              "floor": -24,
-              "ceiling": 48
-            }
-          ],
-          "actions": [],
-          "player": {
-            "x": 2988,
-            "y": -3840,
-            "z": -24,
-            "sector": 56
-          },
-          "time": 0
-        }
       }
     },
     {
-      "name": "secret68-open",
-      "image": "secret68-open-egl.png",
+      "name": "mgun-detail",
+      "image": "mgun-detail-egl.png",
       "camera": {
-        "x": 2988,
-        "y": -3840,
-        "z": 17,
-        "angle": 3.141592653589793,
-        "pitch": 0
+        "x": 1080.4295994644165,
+        "y": -3583.427200714111,
+        "z": 9.792000274658204,
+        "angle": -2.214297435588181,
+        "pitch": -0.07335278369202909
       },
-      "uniqueColors": 6005,
+      "uniqueColors": 5510,
       "meanRGB": [
-        26.2858603515625,
-        23.1200498046875,
-        15.402337890625
+        18.8791201171875,
+        20.9772451171875,
+        23.9483623046875
       ],
       "visibility": {
-        "total": 91,
-        "visible": 33,
-        "culled": 58,
-        "lods": [
-          27,
-          5,
-          1
-        ]
-      },
-      "submittedModelTriangles": 17718,
-      "fixture": {
-        "scope": "Inspection camera; secret mechanism operated by real use/crossing/update. Continuous gameplay is verified separately.",
-        "state": {
-          "heights": [
-            {
-              "floor": 0,
-              "ceiling": 72
-            },
-            {
-              "floor": 32,
-              "ceiling": 88
-            },
-            {
-              "floor": 0,
-              "ceiling": 144
-            },
-            {
-              "floor": 0,
-              "ceiling": 88
-            },
-            {
-              "floor": 0,
-              "ceiling": 0
-            },
-            {
-              "floor": -56,
-              "ceiling": 216
-            },
-            {
-              "floor": 32,
-              "ceiling": 88
-            },
-            {
-              "floor": 0,
-              "ceiling": 224
-            },
-            {
-              "floor": 8,
-              "ceiling": 152
-            },
-            {
-              "floor": 0,
-              "ceiling": 224
-            },
-            {
-              "floor": 0,
-              "ceiling": 96
-            },
-            {
-              "floor": 0,
-              "ceiling": 224
-            },
-            {
-              "floor": 0,
-              "ceiling": 96
-            },
-            {
-              "floor": -80,
-              "ceiling": 216
-            },
-            {
-              "floor": 8,
-              "ceiling": 192
-            },
-            {
-              "floor": 8,
-              "ceiling": 192
-            },
-            {
-              "floor": -136,
-              "ceiling": -40
-            },
-            {
-              "floor": -120,
-              "ceiling": 16
-            },
-            {
-              "floor": -104,
-              "ceiling": 16
-            },
-            {
-              "floor": -88,
-              "ceiling": 16
-            },
-            {
-              "floor": -56,
-              "ceiling": 24
-            },
-            {
-              "floor": -72,
-              "ceiling": 16
-            },
-            {
-              "floor": -56,
-              "ceiling": 64
-            },
-            {
-              "floor": -56,
-              "ceiling": 16
-            },
-            {
-              "floor": -8,
-              "ceiling": 224
-            },
-            {
-              "floor": 40,
-              "ceiling": 224
-            },
-            {
-              "floor": 56,
-              "ceiling": 224
-            },
-            {
-              "floor": 72,
-              "ceiling": 224
-            },
-            {
-              "floor": 0,
-              "ceiling": 128
-            },
-            {
-              "floor": 104,
-              "ceiling": 264
-            },
-            {
-              "floor": 0,
-              "ceiling": 264
-            },
-            {
-              "floor": 136,
-              "ceiling": 240
-            },
-            {
-              "floor": 128,
-              "ceiling": 264
-            },
-            {
-              "floor": 136,
-              "ceiling": 240
-            },
-            {
-              "floor": 136,
-              "ceiling": 240
-            },
-            {
-              "floor": 104,
-              "ceiling": 192
-            },
-            {
-              "floor": 88,
-              "ceiling": 224
-            },
-            {
-              "floor": -8,
-              "ceiling": 120
-            },
-            {
-              "floor": 0,
-              "ceiling": 72
-            },
-            {
-              "floor": -16,
-              "ceiling": 200
-            },
-            {
-              "floor": 0,
-              "ceiling": 72
-            },
-            {
-              "floor": -8,
-              "ceiling": 120
-            },
-            {
-              "floor": 8,
-              "ceiling": 224
-            },
-            {
-              "floor": 24,
-              "ceiling": 224
-            },
-            {
-              "floor": 40,
-              "ceiling": 184
-            },
-            {
-              "floor": 40,
-              "ceiling": 184
-            },
-            {
-              "floor": 0,
-              "ceiling": 136
-            },
-            {
-              "floor": -56,
-              "ceiling": 24
-            },
-            {
-              "floor": -136,
-              "ceiling": -40
-            },
-            {
-              "floor": -120,
-              "ceiling": 48
-            },
-            {
-              "floor": -104,
-              "ceiling": 48
-            },
-            {
-              "floor": 16,
-              "ceiling": 152
-            },
-            {
-              "floor": 24,
-              "ceiling": 152
-            },
-            {
-              "floor": -16,
-              "ceiling": 72
-            },
-            {
-              "floor": -8,
-              "ceiling": 72
-            },
-            {
-              "floor": -48,
-              "ceiling": 176
-            },
-            {
-              "floor": -24,
-              "ceiling": 176
-            },
-            {
-              "floor": -48,
-              "ceiling": 176
-            },
-            {
-              "floor": -48,
-              "ceiling": 104
-            },
-            {
-              "floor": 96,
-              "ceiling": 176
-            },
-            {
-              "floor": -24,
-              "ceiling": 176
-            },
-            {
-              "floor": -48,
-              "ceiling": 176
-            },
-            {
-              "floor": 104,
-              "ceiling": 184
-            },
-            {
-              "floor": -88,
-              "ceiling": 48
-            },
-            {
-              "floor": -72,
-              "ceiling": 48
-            },
-            {
-              "floor": -56,
-              "ceiling": 48
-            },
-            {
-              "floor": -40,
-              "ceiling": 48
-            },
-            {
-              "floor": -24,
-              "ceiling": 48
-            },
-            {
-              "floor": -24,
-              "ceiling": 44
-            },
-            {
-              "floor": -48,
-              "ceiling": 32
-            },
-            {
-              "floor": 104,
-              "ceiling": 184
-            },
-            {
-              "floor": -24,
-              "ceiling": 176
-            },
-            {
-              "floor": -24,
-              "ceiling": 104
-            },
-            {
-              "floor": -24,
-              "ceiling": 48
-            },
-            {
-              "floor": -24,
-              "ceiling": 48
-            },
-            {
-              "floor": -24,
-              "ceiling": 48
-            },
-            {
-              "floor": -24,
-              "ceiling": -24
-            },
-            {
-              "floor": -136,
-              "ceiling": -24
-            },
-            {
-              "floor": -24,
-              "ceiling": 72
-            },
-            {
-              "floor": -24,
-              "ceiling": 56
-            },
-            {
-              "floor": -24,
-              "ceiling": 48
-            },
-            {
-              "floor": -24,
-              "ceiling": -24
-            },
-            {
-              "floor": -24,
-              "ceiling": 88
-            },
-            {
-              "floor": -24,
-              "ceiling": 72
-            },
-            {
-              "floor": -24,
-              "ceiling": 48
-            }
-          ],
-          "actions": [
-            {
-              "sector": 68,
-              "kind": "door",
-              "phase": "wait",
-              "target": 44,
-              "base": -24,
-              "wait": 4.242857142857143
-            }
-          ],
-          "player": {
-            "x": 2988,
-            "y": -3840,
-            "z": -24,
-            "sector": 56
-          },
-          "time": 1.0142857142857127
-        }
-      }
-    },
-    {
-      "name": "secret69-open",
-      "image": "secret69-open-egl.png",
-      "camera": {
-        "x": 3424,
-        "y": -3856,
-        "z": -7,
-        "angle": 3.141592653589793,
-        "pitch": 0
-      },
-      "uniqueColors": 21682,
-      "meanRGB": [
-        34.0870234375,
-        39.5648662109375,
-        31.69826171875
-      ],
-      "visibility": {
-        "total": 91,
-        "visible": 56,
-        "culled": 35,
-        "lods": [
-          41,
-          12,
-          3
-        ]
-      },
-      "submittedModelTriangles": 46788,
-      "fixture": {
-        "scope": "Inspection camera; secret mechanism operated by real use/crossing/update. Continuous gameplay is verified separately.",
-        "state": {
-          "heights": [
-            {
-              "floor": 0,
-              "ceiling": 72
-            },
-            {
-              "floor": 32,
-              "ceiling": 88
-            },
-            {
-              "floor": 0,
-              "ceiling": 144
-            },
-            {
-              "floor": 0,
-              "ceiling": 88
-            },
-            {
-              "floor": 0,
-              "ceiling": 0
-            },
-            {
-              "floor": -56,
-              "ceiling": 216
-            },
-            {
-              "floor": 32,
-              "ceiling": 88
-            },
-            {
-              "floor": 0,
-              "ceiling": 224
-            },
-            {
-              "floor": 8,
-              "ceiling": 152
-            },
-            {
-              "floor": 0,
-              "ceiling": 224
-            },
-            {
-              "floor": 0,
-              "ceiling": 96
-            },
-            {
-              "floor": 0,
-              "ceiling": 224
-            },
-            {
-              "floor": 0,
-              "ceiling": 96
-            },
-            {
-              "floor": -80,
-              "ceiling": 216
-            },
-            {
-              "floor": 8,
-              "ceiling": 192
-            },
-            {
-              "floor": 8,
-              "ceiling": 192
-            },
-            {
-              "floor": -136,
-              "ceiling": -40
-            },
-            {
-              "floor": -120,
-              "ceiling": 16
-            },
-            {
-              "floor": -104,
-              "ceiling": 16
-            },
-            {
-              "floor": -88,
-              "ceiling": 16
-            },
-            {
-              "floor": -56,
-              "ceiling": 24
-            },
-            {
-              "floor": -72,
-              "ceiling": 16
-            },
-            {
-              "floor": -56,
-              "ceiling": 64
-            },
-            {
-              "floor": -56,
-              "ceiling": 16
-            },
-            {
-              "floor": -8,
-              "ceiling": 224
-            },
-            {
-              "floor": 40,
-              "ceiling": 224
-            },
-            {
-              "floor": 56,
-              "ceiling": 224
-            },
-            {
-              "floor": 72,
-              "ceiling": 224
-            },
-            {
-              "floor": 0,
-              "ceiling": 128
-            },
-            {
-              "floor": 104,
-              "ceiling": 264
-            },
-            {
-              "floor": 0,
-              "ceiling": 264
-            },
-            {
-              "floor": 136,
-              "ceiling": 240
-            },
-            {
-              "floor": 128,
-              "ceiling": 264
-            },
-            {
-              "floor": 136,
-              "ceiling": 240
-            },
-            {
-              "floor": 136,
-              "ceiling": 240
-            },
-            {
-              "floor": 104,
-              "ceiling": 192
-            },
-            {
-              "floor": 88,
-              "ceiling": 224
-            },
-            {
-              "floor": -8,
-              "ceiling": 120
-            },
-            {
-              "floor": 0,
-              "ceiling": 72
-            },
-            {
-              "floor": -16,
-              "ceiling": 200
-            },
-            {
-              "floor": 0,
-              "ceiling": 72
-            },
-            {
-              "floor": -8,
-              "ceiling": 120
-            },
-            {
-              "floor": 8,
-              "ceiling": 224
-            },
-            {
-              "floor": 24,
-              "ceiling": 224
-            },
-            {
-              "floor": 40,
-              "ceiling": 184
-            },
-            {
-              "floor": 40,
-              "ceiling": 184
-            },
-            {
-              "floor": 0,
-              "ceiling": 136
-            },
-            {
-              "floor": -56,
-              "ceiling": 24
-            },
-            {
-              "floor": -136,
-              "ceiling": -40
-            },
-            {
-              "floor": -120,
-              "ceiling": 48
-            },
-            {
-              "floor": -104,
-              "ceiling": 48
-            },
-            {
-              "floor": 16,
-              "ceiling": 152
-            },
-            {
-              "floor": 24,
-              "ceiling": 152
-            },
-            {
-              "floor": -16,
-              "ceiling": 72
-            },
-            {
-              "floor": -8,
-              "ceiling": 72
-            },
-            {
-              "floor": -48,
-              "ceiling": 176
-            },
-            {
-              "floor": -24,
-              "ceiling": 176
-            },
-            {
-              "floor": -48,
-              "ceiling": 176
-            },
-            {
-              "floor": -48,
-              "ceiling": 104
-            },
-            {
-              "floor": -40,
-              "ceiling": 176
-            },
-            {
-              "floor": -24,
-              "ceiling": 176
-            },
-            {
-              "floor": -48,
-              "ceiling": 176
-            },
-            {
-              "floor": 104,
-              "ceiling": 184
-            },
-            {
-              "floor": -88,
-              "ceiling": 48
-            },
-            {
-              "floor": -72,
-              "ceiling": 48
-            },
-            {
-              "floor": -56,
-              "ceiling": 48
-            },
-            {
-              "floor": -40,
-              "ceiling": 48
-            },
-            {
-              "floor": -24,
-              "ceiling": 48
-            },
-            {
-              "floor": -24,
-              "ceiling": -24
-            },
-            {
-              "floor": -48,
-              "ceiling": 32
-            },
-            {
-              "floor": 104,
-              "ceiling": 184
-            },
-            {
-              "floor": -24,
-              "ceiling": 176
-            },
-            {
-              "floor": -24,
-              "ceiling": 104
-            },
-            {
-              "floor": -24,
-              "ceiling": 48
-            },
-            {
-              "floor": -24,
-              "ceiling": 48
-            },
-            {
-              "floor": -24,
-              "ceiling": 48
-            },
-            {
-              "floor": -24,
-              "ceiling": -24
-            },
-            {
-              "floor": -136,
-              "ceiling": -24
-            },
-            {
-              "floor": -24,
-              "ceiling": 72
-            },
-            {
-              "floor": -24,
-              "ceiling": 56
-            },
-            {
-              "floor": -24,
-              "ceiling": 48
-            },
-            {
-              "floor": -24,
-              "ceiling": -24
-            },
-            {
-              "floor": -24,
-              "ceiling": 88
-            },
-            {
-              "floor": -24,
-              "ceiling": 72
-            },
-            {
-              "floor": -24,
-              "ceiling": 48
-            }
-          ],
-          "actions": [],
-          "player": {
-            "x": 3008,
-            "y": -4240.000000000011,
-            "z": -24,
-            "sector": 72
-          },
-          "time": 1.7999999999999956
-        }
-      }
-    },
-    {
-      "name": "secret70-low",
-      "image": "secret70-low-egl.png",
-      "camera": {
-        "x": 3488,
-        "y": -3872,
-        "z": -7,
-        "angle": 0,
-        "pitch": 0
-      },
-      "uniqueColors": 1583,
-      "meanRGB": [
-        5.5730029296875,
-        7.6654658203125,
-        6.1593291015625
-      ],
-      "visibility": {
-        "total": 91,
-        "visible": 2,
-        "culled": 89,
+        "total": 1,
+        "visible": 1,
+        "culled": 0,
         "lods": [
           0,
-          1,
+          0,
           1
         ]
       },
-      "submittedModelTriangles": 3876,
+      "submittedModelTriangles": 2240,
       "fixture": {
-        "scope": "Inspection camera; secret mechanism operated by real use/crossing/update. Continuous gameplay is verified separately.",
-        "state": {
-          "heights": [
-            {
-              "floor": 0,
-              "ceiling": 72
-            },
-            {
-              "floor": 32,
-              "ceiling": 88
-            },
-            {
-              "floor": 0,
-              "ceiling": 144
-            },
-            {
-              "floor": 0,
-              "ceiling": 88
-            },
-            {
-              "floor": 0,
-              "ceiling": 0
-            },
-            {
-              "floor": -56,
-              "ceiling": 216
-            },
-            {
-              "floor": 32,
-              "ceiling": 88
-            },
-            {
-              "floor": 0,
-              "ceiling": 224
-            },
-            {
-              "floor": 8,
-              "ceiling": 152
-            },
-            {
-              "floor": 0,
-              "ceiling": 224
-            },
-            {
-              "floor": 0,
-              "ceiling": 96
-            },
-            {
-              "floor": 0,
-              "ceiling": 224
-            },
-            {
-              "floor": 0,
-              "ceiling": 96
-            },
-            {
-              "floor": -80,
-              "ceiling": 216
-            },
-            {
-              "floor": 8,
-              "ceiling": 192
-            },
-            {
-              "floor": 8,
-              "ceiling": 192
-            },
-            {
-              "floor": -136,
-              "ceiling": -40
-            },
-            {
-              "floor": -120,
-              "ceiling": 16
-            },
-            {
-              "floor": -104,
-              "ceiling": 16
-            },
-            {
-              "floor": -88,
-              "ceiling": 16
-            },
-            {
-              "floor": -56,
-              "ceiling": 24
-            },
-            {
-              "floor": -72,
-              "ceiling": 16
-            },
-            {
-              "floor": -56,
-              "ceiling": 64
-            },
-            {
-              "floor": -56,
-              "ceiling": 16
-            },
-            {
-              "floor": -8,
-              "ceiling": 224
-            },
-            {
-              "floor": 40,
-              "ceiling": 224
-            },
-            {
-              "floor": 56,
-              "ceiling": 224
-            },
-            {
-              "floor": 72,
-              "ceiling": 224
-            },
-            {
-              "floor": 0,
-              "ceiling": 128
-            },
-            {
-              "floor": 104,
-              "ceiling": 264
-            },
-            {
-              "floor": 0,
-              "ceiling": 264
-            },
-            {
-              "floor": 136,
-              "ceiling": 240
-            },
-            {
-              "floor": 128,
-              "ceiling": 264
-            },
-            {
-              "floor": 136,
-              "ceiling": 240
-            },
-            {
-              "floor": 136,
-              "ceiling": 240
-            },
-            {
-              "floor": 104,
-              "ceiling": 192
-            },
-            {
-              "floor": 88,
-              "ceiling": 224
-            },
-            {
-              "floor": -8,
-              "ceiling": 120
-            },
-            {
-              "floor": 0,
-              "ceiling": 72
-            },
-            {
-              "floor": -16,
-              "ceiling": 200
-            },
-            {
-              "floor": 0,
-              "ceiling": 72
-            },
-            {
-              "floor": -8,
-              "ceiling": 120
-            },
-            {
-              "floor": 8,
-              "ceiling": 224
-            },
-            {
-              "floor": 24,
-              "ceiling": 224
-            },
-            {
-              "floor": 40,
-              "ceiling": 184
-            },
-            {
-              "floor": 40,
-              "ceiling": 184
-            },
-            {
-              "floor": 0,
-              "ceiling": 136
-            },
-            {
-              "floor": -56,
-              "ceiling": 24
-            },
-            {
-              "floor": -136,
-              "ceiling": -40
-            },
-            {
-              "floor": -120,
-              "ceiling": 48
-            },
-            {
-              "floor": -104,
-              "ceiling": 48
-            },
-            {
-              "floor": 16,
-              "ceiling": 152
-            },
-            {
-              "floor": 24,
-              "ceiling": 152
-            },
-            {
-              "floor": -16,
-              "ceiling": 72
-            },
-            {
-              "floor": -8,
-              "ceiling": 72
-            },
-            {
-              "floor": -48,
-              "ceiling": 176
-            },
-            {
-              "floor": -24,
-              "ceiling": 176
-            },
-            {
-              "floor": -48,
-              "ceiling": 176
-            },
-            {
-              "floor": -48,
-              "ceiling": 104
-            },
-            {
-              "floor": -40,
-              "ceiling": 176
-            },
-            {
-              "floor": -24,
-              "ceiling": 176
-            },
-            {
-              "floor": -48,
-              "ceiling": 176
-            },
-            {
-              "floor": 104,
-              "ceiling": 184
-            },
-            {
-              "floor": -88,
-              "ceiling": 48
-            },
-            {
-              "floor": -72,
-              "ceiling": 48
-            },
-            {
-              "floor": -56,
-              "ceiling": 48
-            },
-            {
-              "floor": -40,
-              "ceiling": 48
-            },
-            {
-              "floor": -24,
-              "ceiling": 48
-            },
-            {
-              "floor": -24,
-              "ceiling": -24
-            },
-            {
-              "floor": -48,
-              "ceiling": 32
-            },
-            {
-              "floor": -48,
-              "ceiling": 184
-            },
-            {
-              "floor": -24,
-              "ceiling": 176
-            },
-            {
-              "floor": -24,
-              "ceiling": 104
-            },
-            {
-              "floor": -24,
-              "ceiling": 48
-            },
-            {
-              "floor": -24,
-              "ceiling": 48
-            },
-            {
-              "floor": -24,
-              "ceiling": 48
-            },
-            {
-              "floor": -24,
-              "ceiling": -24
-            },
-            {
-              "floor": -136,
-              "ceiling": -24
-            },
-            {
-              "floor": -24,
-              "ceiling": 72
-            },
-            {
-              "floor": -24,
-              "ceiling": 56
-            },
-            {
-              "floor": -24,
-              "ceiling": 48
-            },
-            {
-              "floor": -24,
-              "ceiling": -24
-            },
-            {
-              "floor": -24,
-              "ceiling": 88
-            },
-            {
-              "floor": -24,
-              "ceiling": 72
-            },
-            {
-              "floor": -24,
-              "ceiling": 48
-            }
-          ],
-          "actions": [
-            {
-              "sector": 70,
-              "kind": "lift",
-              "phase": "wait",
-              "target": -48,
-              "base": 104,
-              "wait": 2.7285714285714295
-            }
-          ],
-          "player": {
-            "x": 2896,
-            "y": -2999.999999999996,
-            "z": -24,
-            "sector": 60
-          },
-          "time": 3.2999999999999905
-        }
+        "scope": "Close three-quarter view of an actual generated prop; uniform studio sector light.",
+        "entity": {
+          "id": "MGUN",
+          "type": 2002,
+          "sprite": "MGUNA0",
+          "fullbright": true,
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 639.9940625262511,
+          "y": 493.749230353119
+        },
+        "meshKeys": [
+          "object:MGUN:0:d2"
+        ]
       }
     },
     {
-      "name": "secret70-high",
-      "image": "secret70-high-egl.png",
+      "name": "laun-detail",
+      "image": "laun-detail-egl.png",
       "camera": {
-        "x": 3648,
-        "y": -3808,
-        "z": 145,
-        "angle": 1.5707963267948966,
-        "pitch": 0
+        "x": 1083.7009193572999,
+        "y": -3579.0654408569335,
+        "z": 15.479999999999999,
+        "angle": -2.214297435588181,
+        "pitch": -0.10209526003052824
       },
-      "uniqueColors": 1204,
+      "uniqueColors": 13359,
       "meanRGB": [
-        6.411857421875,
-        8.4745009765625,
-        8.1387451171875
+        24.7110380859375,
+        23.885701171875,
+        25.2998212890625
       ],
       "visibility": {
-        "total": 91,
-        "visible": 27,
-        "culled": 64,
+        "total": 1,
+        "visible": 1,
+        "culled": 0,
         "lods": [
-          20,
-          5,
-          2
+          0,
+          0,
+          1
         ]
       },
-      "submittedModelTriangles": 22190,
+      "submittedModelTriangles": 1748,
       "fixture": {
-        "scope": "Inspection camera; secret mechanism operated by real use/crossing/update. Continuous gameplay is verified separately.",
-        "state": {
-          "heights": [
-            {
-              "floor": 0,
-              "ceiling": 72
-            },
-            {
-              "floor": 32,
-              "ceiling": 88
-            },
-            {
-              "floor": 0,
-              "ceiling": 144
-            },
-            {
-              "floor": 0,
-              "ceiling": 88
-            },
-            {
-              "floor": 0,
-              "ceiling": 0
-            },
-            {
-              "floor": -56,
-              "ceiling": 216
-            },
-            {
-              "floor": 32,
-              "ceiling": 88
-            },
-            {
-              "floor": 0,
-              "ceiling": 224
-            },
-            {
-              "floor": 8,
-              "ceiling": 152
-            },
-            {
-              "floor": 0,
-              "ceiling": 224
-            },
-            {
-              "floor": 0,
-              "ceiling": 96
-            },
-            {
-              "floor": 0,
-              "ceiling": 224
-            },
-            {
-              "floor": 0,
-              "ceiling": 96
-            },
-            {
-              "floor": -80,
-              "ceiling": 216
-            },
-            {
-              "floor": 8,
-              "ceiling": 192
-            },
-            {
-              "floor": 8,
-              "ceiling": 192
-            },
-            {
-              "floor": -136,
-              "ceiling": -40
-            },
-            {
-              "floor": -120,
-              "ceiling": 16
-            },
-            {
-              "floor": -104,
-              "ceiling": 16
-            },
-            {
-              "floor": -88,
-              "ceiling": 16
-            },
-            {
-              "floor": -56,
-              "ceiling": 24
-            },
-            {
-              "floor": -72,
-              "ceiling": 16
-            },
-            {
-              "floor": -56,
-              "ceiling": 64
-            },
-            {
-              "floor": -56,
-              "ceiling": 16
-            },
-            {
-              "floor": -8,
-              "ceiling": 224
-            },
-            {
-              "floor": 40,
-              "ceiling": 224
-            },
-            {
-              "floor": 56,
-              "ceiling": 224
-            },
-            {
-              "floor": 72,
-              "ceiling": 224
-            },
-            {
-              "floor": 0,
-              "ceiling": 128
-            },
-            {
-              "floor": 104,
-              "ceiling": 264
-            },
-            {
-              "floor": 0,
-              "ceiling": 264
-            },
-            {
-              "floor": 136,
-              "ceiling": 240
-            },
-            {
-              "floor": 128,
-              "ceiling": 264
-            },
-            {
-              "floor": 136,
-              "ceiling": 240
-            },
-            {
-              "floor": 136,
-              "ceiling": 240
-            },
-            {
-              "floor": 104,
-              "ceiling": 192
-            },
-            {
-              "floor": 88,
-              "ceiling": 224
-            },
-            {
-              "floor": -8,
-              "ceiling": 120
-            },
-            {
-              "floor": 0,
-              "ceiling": 72
-            },
-            {
-              "floor": -16,
-              "ceiling": 200
-            },
-            {
-              "floor": 0,
-              "ceiling": 72
-            },
-            {
-              "floor": -8,
-              "ceiling": 120
-            },
-            {
-              "floor": 8,
-              "ceiling": 224
-            },
-            {
-              "floor": 24,
-              "ceiling": 224
-            },
-            {
-              "floor": 40,
-              "ceiling": 184
-            },
-            {
-              "floor": 40,
-              "ceiling": 184
-            },
-            {
-              "floor": 0,
-              "ceiling": 136
-            },
-            {
-              "floor": -56,
-              "ceiling": 24
-            },
-            {
-              "floor": -136,
-              "ceiling": -40
-            },
-            {
-              "floor": -120,
-              "ceiling": 48
-            },
-            {
-              "floor": -104,
-              "ceiling": 48
-            },
-            {
-              "floor": 16,
-              "ceiling": 152
-            },
-            {
-              "floor": 24,
-              "ceiling": 152
-            },
-            {
-              "floor": -16,
-              "ceiling": 72
-            },
-            {
-              "floor": -8,
-              "ceiling": 72
-            },
-            {
-              "floor": -48,
-              "ceiling": 176
-            },
-            {
-              "floor": -24,
-              "ceiling": 176
-            },
-            {
-              "floor": -48,
-              "ceiling": 176
-            },
-            {
-              "floor": -48,
-              "ceiling": 104
-            },
-            {
-              "floor": -40,
-              "ceiling": 176
-            },
-            {
-              "floor": -24,
-              "ceiling": 176
-            },
-            {
-              "floor": -48,
-              "ceiling": 176
-            },
-            {
-              "floor": 104,
-              "ceiling": 184
-            },
-            {
-              "floor": -88,
-              "ceiling": 48
-            },
-            {
-              "floor": -72,
-              "ceiling": 48
-            },
-            {
-              "floor": -56,
-              "ceiling": 48
-            },
-            {
-              "floor": -40,
-              "ceiling": 48
-            },
-            {
-              "floor": -24,
-              "ceiling": 48
-            },
-            {
-              "floor": -24,
-              "ceiling": -24
-            },
-            {
-              "floor": -48,
-              "ceiling": 32
-            },
-            {
-              "floor": 104,
-              "ceiling": 184
-            },
-            {
-              "floor": -24,
-              "ceiling": 176
-            },
-            {
-              "floor": -24,
-              "ceiling": 104
-            },
-            {
-              "floor": -24,
-              "ceiling": 48
-            },
-            {
-              "floor": -24,
-              "ceiling": 48
-            },
-            {
-              "floor": -24,
-              "ceiling": 48
-            },
-            {
-              "floor": -24,
-              "ceiling": -24
-            },
-            {
-              "floor": -136,
-              "ceiling": -24
-            },
-            {
-              "floor": -24,
-              "ceiling": 72
-            },
-            {
-              "floor": -24,
-              "ceiling": 56
-            },
-            {
-              "floor": -24,
-              "ceiling": 48
-            },
-            {
-              "floor": -24,
-              "ceiling": -24
-            },
-            {
-              "floor": -24,
-              "ceiling": 88
-            },
-            {
-              "floor": -24,
-              "ceiling": 72
-            },
-            {
-              "floor": -24,
-              "ceiling": 48
-            }
-          ],
-          "actions": [],
-          "player": {
-            "x": 3553.7142857142812,
-            "y": -3872,
-            "z": 104,
-            "sector": 70
-          },
-          "time": 7.628571428571404
-        }
+        "scope": "Close three-quarter view of an actual generated prop; uniform studio sector light.",
+        "entity": {
+          "id": "LAUN",
+          "type": 2003,
+          "sprite": "LAUNA0",
+          "fullbright": true,
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 639.9948350962756,
+          "y": 528.5968501555193
+        },
+        "meshKeys": [
+          "object:LAUN:0:d2"
+        ]
+      }
+    },
+    {
+      "name": "csaw-detail",
+      "image": "csaw-detail-egl.png",
+      "camera": {
+        "x": 1074.5047200937272,
+        "y": -3591.3270398750306,
+        "z": 7.416000137329101,
+        "angle": -2.214297435588181,
+        "pitch": -0.07334136376808878
+      },
+      "uniqueColors": 7469,
+      "meanRGB": [
+        22.7234462890625,
+        22.8245244140625,
+        24.6706201171875
+      ],
+      "visibility": {
+        "total": 1,
+        "visible": 1,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          1
+        ]
+      },
+      "submittedModelTriangles": 1628,
+      "fixture": {
+        "scope": "Close three-quarter view of an actual generated prop; uniform studio sector light.",
+        "entity": {
+          "id": "CSAW",
+          "type": 2005,
+          "sprite": "CSAWA0",
+          "fullbright": true,
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 639.9921613771603,
+          "y": 493.7357466428404
+        },
+        "meshKeys": [
+          "object:CSAW:0:d2"
+        ]
       }
     }
   ]

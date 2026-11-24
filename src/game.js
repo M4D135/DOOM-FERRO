@@ -13,11 +13,11 @@ const isDemon = type => type === 3001 || type === 58 || type === 3003;
 const ENEMIES = {
   3004: {base: 'POSS', hp: 20, radius: 20, height: 56, speed: 68, death: 'HIJKL', pain: 'G', attack: 'EF', damage: 5, shots: 1},
   9: {base: 'SPOS', hp: 30, radius: 20, height: 56, speed: 65, death: 'HIJKL', pain: 'G', attack: 'EF', damage: 5, shots: 3},
-  3002: {base: 'POSS', hp: 30, radius: 20, height: 56, speed: 65, death: 'HIJKL', pain: 'G', attack: 'EF', damage: 5, shots: 3},
+  3002: {base: 'SARG', hp: 30, radius: 20, height: 56, speed: 65, death: 'HIJKL', pain: 'G', attack: 'EF', damage: 5, shots: 3},
   3001: {base: 'TROO', hp: 60, radius: 20, height: 56, speed: 72, death: 'IJKLM', pain: 'H', attack: 'EFG', damage: 8},
-  // Barons and spectres share the SARG body; the spectre only shimmers (MF_SHADOW).
-  58: {base: 'SARG', hp: 150, radius: 20, height: 56, speed: 72, death: 'HIJKLM', pain: 'G', attack: 'EF', damage: 18, melee: 24, fireball: true, shadow: true},
-  3003: {base: 'SARG', hp: 1000, radius: 20, height: 56, speed: 65, death: 'HIJKLM', pain: 'G', attack: 'EF', damage: 22, melee: 28, fireball: true},
+  // Barons and spectres share the BOSS body; the spectre only shimmers (MF_SHADOW).
+  58: {base: 'BOSS', hp: 150, radius: 20, height: 56, speed: 72, death: 'HIJKLM', pain: 'G', attack: 'EF', damage: 18, melee: 24, fireball: true, shadow: true},
+  3003: {base: 'BOSS', hp: 1000, radius: 20, height: 56, speed: 65, death: 'HIJKLM', pain: 'G', attack: 'EF', damage: 22, melee: 28, fireball: true},
 };
 const PICKUPS = {
   2011: {sprite: 'STIMA0', kind: 'health', amount: 10, text: 'Stimulant'},

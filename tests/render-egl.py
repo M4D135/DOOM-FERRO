@@ -59,9 +59,12 @@ const cases=[{name:'spawn-north',x:1056,y:-3616,z:41,angle:Math.PI/2,weapon:'pis
  {name:'shotgun-reload',x:1056,y:-3616,z:41,angle:Math.PI/2,weapon:'shotgun',phase:.3},
  {name:'pistol-fire',x:1056,y:-3616,z:41,angle:Math.PI/2,weapon:'pistol',phase:.03},
  {name:'shotgun-fire',x:1056,y:-3616,z:41,angle:Math.PI/2,weapon:'shotgun',phase:.03},
- {name:'fist-punch',x:1056,y:-3616,z:41,angle:Math.PI/2,weapon:'fist',phase:.12}];
+ {name:'fist-punch',x:1056,y:-3616,z:41,angle:Math.PI/2,weapon:'fist',phase:.12},
+ {name:'chaingun-fire',x:1056,y:-3616,z:41,angle:Math.PI/2,weapon:'chaingun',phase:.03},
+ {name:'launcher-fire',x:1056,y:-3616,z:41,angle:Math.PI/2,weapon:'launcher',phase:.03},
+ {name:'chainsaw-swing',x:1056,y:-3616,z:41,angle:Math.PI/2,weapon:'chainsaw',phase:.05}];
 // Same generated mesh, fixed actor heading; the camera alone orbits it.
-for(const family of ['POSS','SPOS','TROO'])for(const [view,dx,dy,angle] of [
+for(const family of ['POSS','SPOS','TROO','SARG','BOSS'])for(const [view,dx,dy,angle] of [
  ['front',0,88,-Math.PI/2],['side',88,0,Math.PI],['back',0,-88,Math.PI/2]]){
  cases.push({name:family.toLowerCase()+'-'+view,x:1056+dx,y:-3616+dy,z:28,angle,studio:true,
   fixture:{scope:'One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.',
@@ -69,18 +72,20 @@ for(const family of ['POSS','SPOS','TROO'])for(const [view,dx,dy,angle] of [
 }
 // The upper-arm skin and sleeve must stay nested when the elbow moves forward
 // to aim. Side and rear views expose intersections hidden by the front view.
-for(const family of ['POSS','SPOS'])for(const [view,dx,dy,angle] of [
+for(const family of ['POSS','SPOS','SARG'])for(const [view,dx,dy,angle] of [
  ['side',88,0,Math.PI],['back',0,-88,Math.PI/2]]){
  cases.push({name:family.toLowerCase()+'-attack-'+view,x:1056+dx,y:-3616+dy,z:28,angle,studio:true,
   fixture:{scope:'Production attack pose viewed from the side and rear to inspect the moving upper-arm/sleeve junction.',
    entity:{id:family+'-attack',base:family,enemy:true,sprite:family+'F1',alive:true,state:'attack',fullbright:true,x:1056,y:-3616,z:0,angle:Math.PI/2}}});
 }
-for(const family of ['POSS','SPOS','TROO']){
+for(const family of ['POSS','SPOS','TROO','SARG','BOSS']){
  cases.push({name:family.toLowerCase()+'-portrait',x:1062,y:-3589,z:49,angle:Math.atan2(-27,-6),studio:true,
   fixture:{scope:'Close study of actual generated head geometry and procedural surface materials.',
    entity:{id:family,base:family,enemy:true,sprite:family+'A1',alive:true,state:'idle',fullbright:true,x:1056,y:-3616,z:0,angle:Math.PI/2}}});
 }
-for(const [family,type] of [['BAR1',2035],['COLU',2028],['ELEC',48],['MEDI',2012],['BON1',2014],['BON2',2015],['ARM1',2018],['SBOX',2049],['PLAYW',10],['PLAYN',15],['POL5',24]]){
+for(const [family,type] of [['BAR1',2035],['COLU',2028],['ELEC',48],['MEDI',2012],['BON1',2014],['BON2',2015],['ARM1',2018],['SBOX',2049],['PLAYW',10],['PLAYN',15],['POL5',24],
+ ['BKEY',5],['YKEY',6],['RKEY',13],['BPAK',8],['ROCK',2010],['SOUL',2013],['BROK',2046],['PINS',2024],['SUIT',2025],['PMAP',2026],['PVIS',2045],['CAND',34],
+ ['MGUN',2002],['LAUN',2003],['CSAW',2005]]){
  const entity={id:family,type,sprite:family+'A0',fullbright:true,x:1056,y:-3616,z:0,angle:Math.PI/2};
  const mesh=modelForEntity(entity),h=mesh.bounds.max[2],w=Math.max(mesh.bounds.max[0]-mesh.bounds.min[0],mesh.bounds.max[1]-mesh.bounds.min[1]);
  const remains=/^PLAY|^POL5/.test(family);

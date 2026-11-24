@@ -39,8 +39,10 @@ test('sergeants, spectres and barons are distinct fighters with real meshes', ()
   const spectre = fresh.entities.find(entity => entity.type === 58);
   const baron = new DoomGame(resources.map('E1M8'), {skill: 3}).entities.find(entity => entity.type === 3003);
   assert.ok(sergeant && spectre && baron, 'the surveyed levels must contain each new species');
-  assert.equal(sergeant.config.base, 'POSS');
+  assert.equal(sergeant.config.base, 'SARG', 'the sergeant belongs to its own species, not the zombieman');
   assert.equal(sergeant.config.shots, 3, 'the sergeant fires a three-round burst');
+  assert.equal(spectre.config.base, 'BOSS', 'the spectre is a shimmering baron');
+  assert.equal(baron.config.base, 'BOSS');
   assert.equal(spectre.shadow, true, 'the spectre keeps the Doom shadow cue');
   assert.notEqual(baron.shadow, true, 'the baron is fully visible');
   assert.ok(baron.config.hp > spectre.config.hp * 4, 'a baron must be far tougher than a spectre');
@@ -55,6 +57,16 @@ test('sergeants, spectres and barons are distinct fighters with real meshes', ()
       assert.ok(!/billboard|sprite/i.test(mesh.key), `${entity.type} must not be a billboard`);
     }
   }
+  // Four humanoids and one baron body: no species may borrow another's sculpt.
+  const zombieman = fresh.entities.find(entity => entity.type === 3004);
+  const shotgunner = fresh.entities.find(entity => entity.type === 9);
+  for (const entity of [sergeant, zombieman, shotgunner, spectre, baron]) {
+    Object.assign(entity, {state: 'idle', alive: true, stateTime: 0});
+  }
+  const sculpt = entity => modelForEntity(entity, 0, 2).key;
+  const keys = [sergeant, zombieman, shotgunner, baron].map(sculpt);
+  assert.equal(new Set(keys).size, 4, `species share a sculpt: ${keys.join(' ')}`);
+  assert.equal(sculpt(spectre), sculpt(baron), 'the spectre borrows the baron body and only shimmers');
 });
 
 test('barons spit a heavy fireball and the spectre shimmers instead of blending', () => {
