@@ -20,8 +20,8 @@
   "mapGenerator": "sector-trapezoid-sweep-v1",
   "resources": {
     "mode": "procedural",
-    "generatedImages": 104,
-    "rgbaBytes": 3374080,
+    "generatedImages": 118,
+    "rgbaBytes": 3824640,
     "importedAssets": 0
   },
   "modelMeshes": 78,
@@ -30,96 +30,6 @@
   "materialCoordinates": "primitive-local surface coordinates preserved through pose transforms",
   "shaderCompilation": "10 unmodified GLSL ES 3.00 production shaders compiled; 5 programs linked",
   "missingMaterials": [
-    {
-      "name": "flat:FLOOR0_1",
-      "maps": [
-        "E1M3"
-      ]
-    },
-    {
-      "name": "flat:CEIL3_2",
-      "maps": [
-        "E1M3"
-      ]
-    },
-    {
-      "name": "flat:FLOOR1_7",
-      "maps": [
-        "E1M3",
-        "E1M6"
-      ]
-    },
-    {
-      "name": "wall:BRNSMALC",
-      "maps": [
-        "E1M3"
-      ]
-    },
-    {
-      "name": "wall:SW1DIRT",
-      "maps": [
-        "E1M3",
-        "E1M4"
-      ]
-    },
-    {
-      "name": "wall:GRAY5",
-      "maps": [
-        "E1M3"
-      ]
-    },
-    {
-      "name": "wall:SW1STONE",
-      "maps": [
-        "E1M3",
-        "E1M5"
-      ]
-    },
-    {
-      "name": "wall:COMP2",
-      "maps": [
-        "E1M3"
-      ]
-    },
-    {
-      "name": "wall:LITEBLU4",
-      "maps": [
-        "E1M3",
-        "E1M6"
-      ]
-    },
-    {
-      "name": "wall:BRNSMALL",
-      "maps": [
-        "E1M3"
-      ]
-    },
-    {
-      "name": "wall:BRNSMALR",
-      "maps": [
-        "E1M3"
-      ]
-    },
-    {
-      "name": "wall:BRNPOIS2",
-      "maps": [
-        "E1M3"
-      ]
-    },
-    {
-      "name": "wall:SW1BRCOM",
-      "maps": [
-        "E1M3",
-        "E1M8",
-        "E1M9"
-      ]
-    },
-    {
-      "name": "wall:STONPOIS",
-      "maps": [
-        "E1M3"
-      ]
-    },
     {
       "name": "flat:FLAT5",
       "maps": [
@@ -304,7 +214,7 @@
     "512px fitted view-weapon self-shadow combined with room shadow",
     "analytic distance haze; disabled in model studios"
   ],
-  "textureMipBytes": 335558656,
+  "textureMipBytes": 373808128,
   "mapTriangles": 2025,
   "sceneTriangles": {
     "base": 2025,
@@ -347,7 +257,7 @@
     "src/procedural-interface.js": "af287b0e0573e6432d1d41a7a3076c6335a84b2d807ca710e4c72e0c1a19de8a",
     "src/procedural-lighting.js": "386ec4afda6fd66def7ce7c110d58a62e1e6eac1b8b09f653b70ccf1c91b75e8",
     "src/procedural-map.js": "f44e2bbb75c2ab39db94081ec8d068575ca3404a6550b9ffb5e67978379a1dd9",
-    "src/procedural-materials.js": "17d03aee83bf2e0383d9a30c496508d29b0f4846b6f5e8d679efbe369868c75b",
+    "src/procedural-materials.js": "c8b0da9c8096f11b3d2f37d33dd70c2999827880e6f83270b5f427f48efa644a",
     "src/procedural-mesh.js": "f7c1c90ff94caa95c15e03e29878e8777c0b3a1b2ce39f7a1215b1f5e79b5890",
     "src/procedural-models.js": "cf5dc5ad1249a6e674b15825f285dd058302cb63483435f557e810486c278532",
     "src/procedural-object-finish.js": "dc19036074d2da300a011697b042399fea8e0e7340218af021aad9f58d647c72",

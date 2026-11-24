@@ -56,7 +56,7 @@
     <div id="error" role="alert" hidden><h1>Le Hangar n’a pas pu démarrer.</h1><p id="errorText"></p><button onclick="location.reload()">RÉESSAYER</button></div>
     <p id="accessibleStatus" class="sr-only" aria-live="off"></p>
   </main>
-  <script id="build-info" type="application/json">{"version": "0.6.0", "revision": "0.6.0-f08b877aa3f0", "generation": "procedural", "distribution": "single self-contained HTML", "offline": true, "runtimeFiles": 1, "levels": ["E1M1", "E1M2", "E1M3", "E1M4", "E1M5", "E1M6", "E1M7", "E1M8", "E1M9"], "level": "E1M1 / E1M2 / E1M3 / E1M4 / E1M5 / E1M6 / E1M7 / E1M8 / E1M9", "mapGenerator": "sector contour sweep", "importedMediaFiles": 0, "worldBillboards": 0, "worldRepresentation": "instanced procedural 3D triangle meshes", "runtimeModules": 37, "worldDetailLevels": 3, "proceduralSurfaceMaterials": true, "modelGpuCacheMiB": 64, "physicallyBasedMaterials": true, "surfaceMapsPerMaterial": 3, "surfaceCpuCacheMiB": 48, "shadowMaps": 2, "shadowFilter": "hardware bilinear comparison, 3x3 PCF", "smoothNormalBuffer": true, "contactAO": "12 samples, indirect fraction", "ferroVersion": "0.3.33", "ferroModules": [{"file": "fmath.js", "bytes": 19961, "sha256": "bb001302bd2d57239c86183615c921563cf21f0490d67eef42586d1fc3457c9f", "gitBlobSha": "a8020d15c3755e0bcdb475c624a76294a539f91f", "loaded": true}, {"file": "surface.js", "bytes": 3419, "sha256": "46915edee28daa0408ea1c18abd664babef76e2e6bce52c2990a431f90cee77e", "gitBlobSha": "017271a036bec6191a98ee92d8e5ed2004643490", "loaded": true}, {"file": "renderer.js", "bytes": 355730, "sha256": "415eda20f5a3629348b3bfde3bd9e2a0a6a6c8badb671415f14d87d0b9c778a0", "gitBlobSha": "2a7f9894ceaa1d903f22f851609f73e006142fc3", "loaded": true}, {"file": "engine.js", "bytes": 2025, "sha256": "bf8cb3e1e1bade027bc10a843c1e61d1cb930350cbcab092990b546ba447f631", "gitBlobSha": "9cfa70571cc8b3134a752b0ef84d6d52bc790403", "loaded": true}]}</script>
+  <script id="build-info" type="application/json">{"version": "0.6.0", "revision": "0.6.0-80993ab88028", "generation": "procedural", "distribution": "single self-contained HTML", "offline": true, "runtimeFiles": 1, "levels": ["E1M1", "E1M2", "E1M3", "E1M4", "E1M5", "E1M6", "E1M7", "E1M8", "E1M9"], "level": "E1M1 / E1M2 / E1M3 / E1M4 / E1M5 / E1M6 / E1M7 / E1M8 / E1M9", "mapGenerator": "sector contour sweep", "importedMediaFiles": 0, "worldBillboards": 0, "worldRepresentation": "instanced procedural 3D triangle meshes", "runtimeModules": 37, "worldDetailLevels": 3, "proceduralSurfaceMaterials": true, "modelGpuCacheMiB": 64, "physicallyBasedMaterials": true, "surfaceMapsPerMaterial": 3, "surfaceCpuCacheMiB": 48, "shadowMaps": 2, "shadowFilter": "hardware bilinear comparison, 3x3 PCF", "smoothNormalBuffer": true, "contactAO": "12 samples, indirect fraction", "ferroVersion": "0.3.33", "ferroModules": [{"file": "fmath.js", "bytes": 19961, "sha256": "bb001302bd2d57239c86183615c921563cf21f0490d67eef42586d1fc3457c9f", "gitBlobSha": "a8020d15c3755e0bcdb475c624a76294a539f91f", "loaded": true}, {"file": "surface.js", "bytes": 3419, "sha256": "46915edee28daa0408ea1c18abd664babef76e2e6bce52c2990a431f90cee77e", "gitBlobSha": "017271a036bec6191a98ee92d8e5ed2004643490", "loaded": true}, {"file": "renderer.js", "bytes": 355730, "sha256": "415eda20f5a3629348b3bfde3bd9e2a0a6a6c8badb671415f14d87d0b9c778a0", "gitBlobSha": "2a7f9894ceaa1d903f22f851609f73e006142fc3", "loaded": true}, {"file": "engine.js", "bytes": 2025, "sha256": "bf8cb3e1e1bade027bc10a843c1e61d1cb930350cbcab092990b546ba447f631", "gitBlobSha": "9cfa70571cc8b3134a752b0ef84d6d52bc790403", "loaded": true}]}</script>
 <script data-ferro-module="fmath.js">/* FERRO — FMath: sin, cos, atan, atan2 and hypot identical on every platform.
  *
  * A plain-JavaScript port of fdlibm 5.3 as adapted by V8 (src/base/ieee754.cc):
@@ -33445,10 +33445,12 @@ const TEXTURE_DIMENSIONS = Object.freeze({
   DOORBLU:[8,128], DOORYEL:[8,128], STONE:[256,128], STEP2:[32,8], STEP4:[32,16],
   SW1COMP:[64,128], SW1BRNGN:[64,128], SW1SLAD:[64,128], SW1STON1:[64,128],
   SW1PIPE:[128,128], TEKWALL2:[128,128], TEKWALL5:[128,128],
-  COMPSTA1:[128,128], COMPSTA2:[128,128], PIPE2:[256,128]
+  COMPSTA1:[128,128], COMPSTA2:[128,128], PIPE2:[256,128],
+  BRNSMALC:[64,64], BRNSMALR:[32,64], BRNSMALL:[32,64], BRNPOIS2:[64,128], STONPOIS:[64,128],
+  SW1DIRT:[64,128], SW1STONE:[64,128], SW1BRCOM:[128,128], GRAY5:[64,128], LITEBLU4:[16,128], COMP2:[256,128]
 });
-const FLAT_NAMES = Object.freeze(['CEIL3_5','CEIL3_1','CEIL4_3','CEIL5_1','CEIL5_2','CONS1_1','CONS1_5','CONS1_7','FLAT10','FLAT14','FLAT18','FLAT20','FLAT22','FLAT23','FLAT5_4','FLAT5_5','MFLR8_1',
-  'FLOOR0_3','FLOOR1_1','FLOOR3_3','FLOOR4_1','FLOOR4_5','FLOOR4_8','FLOOR5_1','FLOOR5_2','FLOOR5_3','FLOOR5_4',
+const FLAT_NAMES = Object.freeze(['CEIL3_5','CEIL3_1','CEIL3_2','CEIL4_3','CEIL5_1','CEIL5_2','CONS1_1','CONS1_5','CONS1_7','FLAT10','FLAT14','FLAT18','FLAT20','FLAT22','FLAT23','FLAT5_4','FLAT5_5','MFLR8_1',
+  'FLOOR0_1','FLOOR0_3','FLOOR1_1','FLOOR1_7','FLOOR3_3','FLOOR4_1','FLOOR4_5','FLOOR4_8','FLOOR5_1','FLOOR5_2','FLOOR5_3','FLOOR5_4',
   'FLOOR6_1','FLOOR6_2','FLOOR7_1','FLOOR7_2',
   'NUKAGE1','NUKAGE2','NUKAGE3','STEP1','STEP2','TLITE6_1','TLITE6_4','TLITE6_5','TLITE6_6','F_SKY1']);
 const walls=new Map(),flats=new Map(),TAU=Math.PI*2;
@@ -33908,10 +33910,36 @@ function pipeRack(image,seed) {
   }
   for(let x=132;x<256;x+=22)image.rect(x,0,1,128,shade(tan,.72));
 }
-function switchPlate(image,on) {
-  image.bevel(21,72,25,32,[119,119,111]);image.bevel(24,75,10,24,[57,57,51],true);
-  image.bevel(26,77,8,8,on?[103,0,0]:[200,0,0]);image.bevel(26,91,8,8,on?[56,106,26]:[21,46,12]);
-  image.rect(39,79,2,18,[63,63,54]);image.rect(40,80,1,15,[93,93,82]);image.bevel(38,on?91:80,4,3,[137,132,105]);
+function poisonEmblem(image,cx,cy,seed) {
+  image.polygon([[cx,cy-16],[cx+19,cy+12],[cx-19,cy+12]],(x,y)=>shade([214,168,26],.7+smoothNoise(x/3,y/3,seed)*.42,rough(x,y,seed)*.8));
+  image.polygon([[cx,cy-12],[cx+15,cy+9],[cx-15,cy+9]],[24,20,6]);
+  image.text('POISON',cx-9,cy-8,4,[232,186,32]);
+  image.ellipse(cx,cy+4,3,2.4,[226,220,192]);
+  image.rect(cx-2,cy+6,4,1,[226,220,192]);
+  image.rect(cx-2,cy+3,1,1,[16,14,4]);image.rect(cx+1,cy+3,1,1,[16,14,4]);
+}
+function bronzeField(image,width,height,seed,slats=0) {
+  const bronze=[96,74,34];
+  image.rect(0,0,width,height,(x,y)=>grain(bronze,x,y,seed,1.2));
+  for(let x=0;x<width;x+=5)if(noise(x,0,seed+2)>.4)image.rect(x,0,1,height,shade(bronze,.72));
+  for(let x=2;x<width;x+=9)image.rect(x,0,2,height,shade(bronze,1.16));
+  if(slats){const cw=Math.floor((width-8)/slats);
+    for(let i=0;i<slats;i++){image.bevel(4+i*cw,4,cw-6,22,[112,88,42],true);
+      for(let y=7;y<24;y+=3)image.rect(6+i*cw,y,cw-10,1,shade(bronze,1.3));}}
+}
+function stoneBrickBands(image,width,height,seed) {
+  const stone=[128,128,126];
+  image.rect(0,0,width,height,(x,y)=>grain(stone,x,y,seed,1.3));
+  for(let row=0;row<8;row++){const y=row*16;
+    image.rect(0,y,width,1,[62,62,60]);image.rect(0,y+1,width,1,[178,178,174]);
+    for(let x=mod(row*17,32);x<width;x+=32)image.rect(x,y,1,16,[70,70,68]);}
+  image.rect(0,62,width,5,(x,y)=>grain([186,186,182],x,y,seed+5));
+  image.rect(0,62,width,1,[214,214,210]);image.rect(0,66,width,1,[96,96,94]);
+}
+function switchPlate(image,on,x=21) {
+  image.bevel(x,72,25,32,[119,119,111]);image.bevel(x+3,75,10,24,[57,57,51],true);
+  image.bevel(x+5,77,8,8,on?[103,0,0]:[200,0,0]);image.bevel(x+5,91,8,8,on?[56,106,26]:[21,46,12]);
+  image.rect(x+18,79,2,18,[63,63,54]);image.rect(x+19,80,1,15,[93,93,82]);image.bevel(x+17,on?91:80,4,3,[137,132,105]);
 }
 function technicalWall(image,name) {
   const bronze=name==='TEKWALL4',seed=seedOf(name);image.rect(0,0,128,128,(x,y)=>grain(bronze?[35,29,15]:[15,18,12],x,y,seed));
@@ -34043,13 +34071,7 @@ function proceduralTexture(value) {
           image.pixel(x,y,shade([24,150,30],.35+n*.9+bell(y-62-len,3)*.6,rough(x,y,seed)*.6));}
       }
     }else{
-      const cx=32,cy=50;
-      image.polygon([[cx,cy-16],[cx+19,cy+12],[cx-19,cy+12]],(x,y)=>shade([214,168,26],.7+smoothNoise(x/3,y/3,seed)*.42,rough(x,y,seed)*.8));
-      image.polygon([[cx,cy-12],[cx+15,cy+9],[cx-15,cy+9]],[24,20,6]);
-      image.text('POISON',cx-9,cy-8,4,[232,186,32]);
-      image.ellipse(cx,cy+4,3,2.4,[226,220,192]);
-      image.rect(cx-2,cy+6,4,1,[226,220,192]);
-      image.rect(cx-2,cy+3,1,1,[16,14,4]);image.rect(cx+1,cy+3,1,1,[16,14,4]);
+      poisonEmblem(image,32,50,seed);
     }
   }else if(name==='STONE2'){
     image.rect(0,0,128,128,(x,y)=>grain([86,86,84],x,y,seed,1.3));
@@ -34102,6 +34124,49 @@ function proceduralTexture(value) {
     image.rect(58,0,6,72,(x,y)=>grain(tan,x,y,seed));
     image.rect(0,64,64,8,(x,y)=>grain([120,120,116],x,y,seed+3));
     image.rect(0,0,64,1,[206,176,132]);image.rect(0,71,64,1,[70,58,40]);
+  }else if(name==='BRNSMALC'||name==='BRNSMALR'||name==='BRNSMALL'){
+    const width=name==='BRNSMALC'?64:32;
+    bronzeField(image,width,64,seed,0);
+    image.rect(0,0,width,1,[126,102,54]);image.rect(0,58,width,1,[64,48,20]);image.rect(0,62,width,2,[54,40,16]);
+    const slot=(pts)=>image.polygon(pts,[8,8,8]);
+    if(name==='BRNSMALC'){slot([[4,12],[16,12],[28,50],[16,50]]);slot([[35,12],[47,12],[59,50],[47,50]]);}
+    else if(name==='BRNSMALR'){slot([[2,10],[12,10],[22,40],[12,40]]);slot([[6,44],[16,44],[26,58],[16,58]]);}
+    else slot([[18,12],[30,12],[32,34],[24,34]]);
+  }else if(name==='BRNPOIS2'){
+    bronzeField(image,64,128,seed,4);
+    image.rect(0,30,64,2,[54,40,16]);image.rect(0,32,64,1,[126,102,54]);
+    for(let x=0;x<64;x+=16)image.rect(x,34,1,94,[62,46,18]);
+    poisonEmblem(image,32,88,seed);
+  }else if(name==='STONPOIS'){
+    stoneBrickBands(image,64,128,seed);
+    poisonEmblem(image,32,44,seed);
+  }else if(name==='SW1DIRT'){
+    image.rect(0,0,64,128,(x,y)=>shade([52,50,22],.45+smoothNoise(x/3,y/4,seed)*.6,rough(x,y,seed)*1.1));
+    for(let i=0;i<120;i++){const x=Math.floor(noise(i,3,seed)*64),y=Math.floor(noise(i,9,seed+2)*128);
+      image.rect(x,y,1,2+Math.floor(noise(i,5,seed)*3),shade([74,76,30],.45+noise(i,7,seed)*.55));}
+    for(let i=0;i<40;i++){const x=Math.floor(noise(i,13,seed)*64),y=Math.floor(noise(i,17,seed+2)*128);
+      image.rect(x,y,2,2,shade([58,44,20],.5+noise(i,19,seed)*.5));}
+    wallSwitch(image,17,22,[200,0,0]);
+  }else if(name==='SW1STONE'){
+    stoneBrickBands(image,64,128,seed);
+    switchPlate(image,false);
+  }else if(name==='SW1BRCOM'){
+    bronzeField(image,128,128,seed,4);
+    image.rect(0,30,128,2,[54,40,16]);image.rect(0,32,128,1,[126,102,54]);
+    switchPlate(image,false,48);
+  }else if(name==='GRAY5'){
+    image.rect(0,0,64,128,(x,y)=>grain([150,150,148],x,y,seed,1.2));
+    for(let x=0;x<64;x+=4)if(noise(x,0,seed+3)>.45)image.rect(x,0,1,128,shade([150,150,148],.8));
+    image.rect(0,62,64,3,(x,y)=>grain([112,112,110],x,y,seed+5));
+    image.rect(0,62,64,1,[186,186,182]);image.rect(0,64,64,1,[70,70,68]);
+  }else if(name==='LITEBLU4'){
+    image.rect(0,0,16,128,(x,y)=>grain([34,34,32],x,y,seed));
+    image.rect(2,0,12,128,[10,14,86]);
+    for(let y=0;y<128;y++)for(let x=3;x<13;x++){
+      const n=smoothNoise(x/2,y/9,seed+7);
+      image.pixel(x,y,shade([16,38,186],.5+n*.75+bell(mod(y,16)-8,7)*.2,rough(x,y,seed)*.4));}
+    for(let y=0;y<128;y+=8){image.rect(2,y,12,1,[26,26,24]);image.rect(3,y+1,10,1,[70,110,236]);}
+    image.rect(0,0,2,128,[54,54,50]);image.rect(14,0,2,128,[54,54,50]);
   }else if(/^BROWN|^SLAD/.test(name))brownWall(image,name);
   else if(/^BRNBIG/.test(name))brownGrille(image,name);
   else if(/^COMPSTA/.test(name))consoleStation(image,name==='COMPSTA2'?2:1,seed);
@@ -34360,7 +34425,29 @@ function proceduralFlat(value) {
   else if(name==='FLOOR5_3')hexFloor(image,seed);
   else if(name==='FLOOR5_4')slabFloor(image,seed,[100,70,32],4,[13,19,23]);
   else if(name==='FLOOR0_3')slabFloor(image,seed,[110,110,106],4,[11,17,21]);
-  else if(name==='FLOOR3_3'){
+  else if(name==='FLOOR0_1'){
+    image.rect(0,0,64,64,(x,y)=>grain([150,124,92],x,y,seed,1.2));
+    for(let row=0;row<4;row++){const y=row*16;
+      image.rect(0,y,64,1,[86,68,48]);
+      for(let x=mod(row*16,32);x<64;x+=32)image.rect(x,y,1,16,[86,68,48]);}
+    for(let i=0;i<120;i++){const x=Math.floor(noise(i,3,seed)*64),y=Math.floor(noise(i,9,seed+2)*64);
+      image.rect(x,y,1+Math.floor(noise(i,5,seed)*2),1+Math.floor(noise(i,7,seed)*2),
+        shade([176,110,50],.5+noise(i,11,seed)*.8));}
+  }else if(name==='CEIL3_2'){
+    image.rect(0,0,64,64,(x,y)=>grain([124,104,72],x,y,seed,1.1));
+    image.rect(31,0,2,64,[86,70,46]);image.rect(0,31,64,2,[86,70,46]);
+    for(const [x,y] of [[6,6],[38,6],[6,38],[38,38]])image.rect(x,y,20,1,[104,86,58]);
+    for(const [x,y] of [[6,6],[38,6],[6,38],[38,38]])image.rect(x,y,1,20,[104,86,58]);
+  }else if(name==='FLOOR1_7'){
+    image.rect(0,0,64,64,(x,y)=>{const n=noise(x*2,y*2,seed);
+      return shade([112,10,10],.45+n*.75,(n-.5)*30);});
+    for(let y=0;y<64;y++)for(let x=0;x<64;x++){
+      const dx=Math.max(0,Math.max(16-x,x-47)),dy=Math.max(0,Math.max(22-y,y-41));
+      const d=Math.hypot(dx,dy);if(d>=9)continue;
+      const hot=clamp(1-d/9);
+      image.pixel(x,y,mix([150,16,12],[252,244,240],hot*hot*hot));}
+    image.rect(16,22,32,1,[255,252,250]);image.rect(16,41,32,1,[186,60,52]);
+  }else if(name==='FLOOR3_3'){
     image.rect(0,0,64,64,(x,y)=>grain([142,122,88],x,y,seed,1.2));
     for(let y=0;y<64;y++)for(let x=0;x<64;x++){
       const moss=smoothNoise(x/3+y/6,y/3,seed+21);
