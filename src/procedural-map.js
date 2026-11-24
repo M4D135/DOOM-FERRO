@@ -7,6 +7,7 @@
  * used. Rendering and sector queries share the resulting cells exactly.
  */
 import {E1M1_PLAN} from './e1m1-plan.js';
+import {EPISODE_PLANS} from './episode-plans.js';
 
 const EPSILON = 1e-7;
 const GRID_SIZE = 128;
@@ -28,13 +29,24 @@ function sweepSector(sector, edges) {
   const levels = [...new Set(edges.flatMap(edge => [edge.a.y, edge.b.y]))].sort((a, b) => a - b);
   const cells = [];
   const at = (edge, y) => edge.a.x + (y - edge.a.y) * (edge.b.x - edge.a.x) / (edge.b.y - edge.a.y);
+  // A band midpoint never sits on a contour vertex. A tiny probe offset is the
+  // only defence left when two contours touch exactly on that shared ordinate.
+  const probes = [0, 1e-4, -1e-4, 1e-3, -1e-3];
   for (let band = 0; band < levels.length - 1; band++) {
-    const bottom = levels[band], top = levels[band + 1], middle = (bottom + top) / 2;
-    const crossings = edges.filter(edge => Math.min(edge.a.y, edge.b.y) < middle
-      && Math.max(edge.a.y, edge.b.y) > middle)
-      .map(edge => ({edge, x: at(edge, middle)}))
-      .sort((a, b) => a.x - b.x || a.edge.id - b.edge.id);
-    if (crossings.length % 2) fail(`sector ${sector} has an open contour at y=${middle}`);
+    const bottom = levels[band], top = levels[band + 1];
+    let crossings = null;
+    for (const probe of probes) {
+      const middle = (bottom + top) / 2 + probe * Math.max(1, top - bottom);
+      if (middle <= bottom || middle >= top) continue;
+      const found = edges.filter(edge => Math.min(edge.a.y, edge.b.y) < middle
+        && Math.max(edge.a.y, edge.b.y) > middle)
+        .map(edge => ({edge, x: at(edge, middle)}))
+        .sort((a, b) => a.x - b.x || a.edge.id - b.edge.id);
+      if (found.length && !(found.length % 2)) { crossings = found; break; }
+      crossings ||= found;
+    }
+    if (!crossings) continue;
+    if (crossings.length % 2) fail(`sector ${sector} has an open contour at y=${(bottom + top) / 2}`);
     for (let i = 0; i < crossings.length; i += 2) {
       const left = crossings[i], right = crossings[i + 1];
       if (right.x - left.x <= EPSILON) continue;
@@ -82,6 +94,7 @@ export function buildProceduralMap(plan) {
     if (!finite(side.xOffset) || !finite(side.yOffset)) fail(`face ${side.id} has invalid offsets`);
   }
   const boundaries = sectors.map(() => []);
+  const sharedEdges = new Map();
   for (const line of lines) {
     if (!Number.isInteger(line.v1) || !Number.isInteger(line.v2)
       || !vertices[line.v1] || !vertices[line.v2]) fail(`wall ${line.id} has an invalid endpoint`);
@@ -93,7 +106,11 @@ export function buildProceduralMap(plan) {
     const back = line.left < 0 ? -1 : sides[line.left].sector;
     // A line within the same sector controls gameplay or decoration, not its footprint.
     if (front === back) continue;
-    const edge = {id: line.id, a, b};
+    // Two-sided neighbours can describe the same contour twice; a duplicated
+    // span would be paired with itself and silently erase real floor area.
+    const key = line.v1 < line.v2 ? `${line.v1}:${line.v2}` : `${line.v2}:${line.v1}`;
+    let edge = sharedEdges.get(key);
+    if (!edge) { edge = {id: line.id, a, b}; sharedEdges.set(key, edge); }
     if (front >= 0) boundaries[front].push(edge);
     if (back >= 0) boundaries[back].push(edge);
   }
@@ -152,5 +169,12 @@ export function buildProceduralMap(plan) {
 }
 
 export function createE1M1Map() { return buildProceduralMap(E1M1_PLAN); }
+
+/** Build one surveyed Episode 1 level by id; unknown ids are a hard error. */
+export function createEpisodeMap(id) {
+  const plan = EPISODE_PLANS[id];
+  if (!plan) fail(`unknown episode level ${id}`);
+  return buildProceduralMap(plan);
+}
 
 export default createE1M1Map;
