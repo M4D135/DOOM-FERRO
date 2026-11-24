@@ -172,13 +172,25 @@ Les tests de commandes exécutent les gestionnaires de l’application avec un D
 
 Les tests de modèles vérifient les volumes, les normales, les poses, les limites de cache, les objets des trois difficultés et l’indépendance par rapport à la caméra. Ils contrôlent aussi la fermeture des nouvelles primitives, la conservation des coordonnées de matière lors des transformations, les limites du champ de vision, l’hystérésis des niveaux de détail et la libération effective des buffers GPU. Les tests de l’interface empêchent le retour d’une image de personnage ou d’arme par l’API du HUD.
 
-Le script `python3 tests/render-egl.py` compile les dix shaders de production, lie cinq programmes et produit 43 images de contrôle en 1280 × 800 avec EGL/Mesa : niveau, armes au repos et en action, personnages de face/profil/dos, portraits, quatre vues de profil/dos des humains en attaque, objets et corps en gros plan, porte ouverte et cinq états des passages secrets. Son rapport `docs/qa/egl-report.json` enregistre la géométrie, les niveaux de détail, les vues et les empreintes des modules utilisés. Les scènes de studio, de porte contenant un acteur et les caméras de secrets sont des placements contrôlés pour la vérification visuelle. Les hauteurs des secrets sont obtenues par les véritables actions utiliser/franchir puis la simulation, et chaque scène recharge son propre état complet. Les captures activent les ombres, les trois cartes de matière, les cibles de normales lisses, l’occlusion de contact et la passe dédiée à l’arme.
+Le script `python3 tests/render-egl.py` compile les dix shaders de production, lie cinq programmes et produit 80 images de contrôle en 1280 × 800 avec EGL/Mesa : niveau, armes au repos et en action, personnages de face/profil/dos, portraits, quatre vues de profil/dos des humains en attaque, objets et corps en gros plan, porte ouverte, cinq états des passages secrets et une caméra d’arrivée sur chacune des neuf missions de l’Épisode 1. Son rapport `docs/qa/egl-report.json` enregistre la géométrie, les niveaux de détail, les vues, les matières manquantes et les empreintes des modules utilisés. Les scènes de studio, de porte contenant un acteur et les caméras de secrets sont des placements contrôlés pour la vérification visuelle. Les hauteurs des secrets sont obtenues par les véritables actions utiliser/franchir puis la simulation, et chaque scène recharge son propre état complet. Les captures activent les ombres, les trois cartes de matière, les cibles de normales lisses, l’occlusion de contact et la passe dédiée à l’arme.
 
 ![Départ d’E1M1, rendu procédural de contrôle EGL](docs/qa/spawn-north-egl.png)
 
-Ces images sont des **rendus OpenGL hors écran des shaders et données de production**, pas des captures de partie dans un navigateur. Un candidat HTML autonome de la 0.6.0 a été ouvert dans l’aperçu de contrôle le 24 novembre 2026 : la page et sa console indiquent que ce navigateur ne fournit pas de contexte WebGL 2. L’écran d’erreur prévu s’affiche correctement. La vérification interactive complète, l’ouverture réelle depuis une URL `file:`, le mixage audible, une manette physique et les performances sur téléphone/Xbox restent à confirmer sur ces appareils.
+Ces images sont des **rendus OpenGL hors écran des shaders et données de production**, pas des captures de partie dans un navigateur. Le 24 novembre 2026, le build publié `0.6.0-9e7af34b256f` a été ouvert dans Google Chrome sans interface (SwiftShader) depuis l’URL publique : il atteint le menu principal avec les neuf missions déclarées, sans erreur de page. Une exécution forcée sans accélération graphique affiche l’écran d’erreur WebGL 2 prévu, ce qui confirme que le repli fonctionne. Le mixage audible, une manette physique et les performances sur téléphone/Xbox restent à confirmer sur ces appareils.
 
-GitHub Actions n’a pas pu démarrer lors de la qualification précédente, à cause d’un blocage de facturation ou de plafond du compte. Les résultats locaux et EGL sont distincts de cette qualification distante. Le workflow conserve le contrôle `--check-committed` pour comparer les fichiers de `dist/` à un nouveau build.
+GitHub Actions exécute `tools/verify.py --check-committed` à chaque poussée sur `main`. La qualification du 24 novembre 2026 sur `9cdf5f8` est terminée avec succès ([run 45482580685](https://github.com/M4D135/DOOM-FERRO/actions/runs/45482580685)) et publie l’artefact `dist/`. Les résultats locaux et EGL restent distincts de cette qualification distante.
+
+## Publication
+
+`python3 deploy/publish.py` publie l’artefact **commité** de `main` sur l’hôte partagé, dans la layout commune aux autres sites : un répertoire par commit sous `~/apps/doom/releases`, un lien `current` déplacé atomiquement et le vhost Caddy existant de `doom.estrasse.fr`. Le fichier est contrôlé par SHA-256 des deux côtés du transfert, les trois versions précédentes sont conservées, et la publication échoue si l’octet servi diffère de l’artefact du commit publié.
+
+```sh
+python3 deploy/publish.py --dry-run      # plan sans toucher l’hôte
+python3 deploy/publish.py                # publier main (idempotent)
+python3 deploy/publish.py --rollback     # revenir à la release précédente
+```
+
+Le jeu est en ligne sur <https://doom.estrasse.fr/> : une seule page autonome, zéro ressource externe, zéro média importé.
 
 ## Référence et provenance
 
