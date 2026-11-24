@@ -30,7 +30,7 @@ test('the eight remaining levels report their unimplemented surfaces', () => {
   const total = new Set(Object.values(gap).flat()).size;
   // This number is a debt ceiling: writing a recipe must lower it, never raise it.
   assert.ok(total > 0, 'the survey gap below has been closed and must be re-measured');
-  assert.equal(total, 91, `unimplemented surfaces changed from the recorded 91 to ${total}: `
+  assert.equal(total, 69, `unimplemented surfaces changed from the recorded 69 to ${total}: `
     + Object.entries(gap).map(([id, names]) => `${id}=${names.length}`).join(' '));
   assert.deepEqual(Object.keys(gap), ['E1M2', 'E1M3', 'E1M4', 'E1M5', 'E1M6', 'E1M7', 'E1M8', 'E1M9'],
     'every level beyond E1M1 is expected to still need recipes');
