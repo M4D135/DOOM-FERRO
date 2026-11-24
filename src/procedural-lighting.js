@@ -2,9 +2,9 @@
  * Coordinates are FERRO metres (32 Doom units). Area/bounce illumination is
  * approximated by bounded local lights; this is not a global-illumination solve. */
 export const MAX_SCENE_LIGHTS = 8;
-const ENTRY_RANGE = 1.25;
-const RETENTION_RANGE = 1.55;
-const FADE_SECONDS = 0.18;
+export const ENTRY_RANGE = 1.4;
+export const RETENTION_RANGE = 1.7;
+export const FADE_SECONDS = 0.18;
 const dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
 const sub=(a,b)=>a.map((v,i)=>v-b[i]);
 const unit=a=>{const n=Math.hypot(...a)||1;return a.map(x=>x/n);};
@@ -257,7 +257,7 @@ function updateLightingState(previousState,desired,time){
     const weight=wanted?Math.min(1,(previous?.weight??0)+rate):Math.max(0,(previous?.weight??0)-rate);
     if(weight>.02)lights.push({...base,weight,desired:!!wanted,transient:!!base.transient});
   }
-  lights.sort((a,b)=>(b.desired-a.desired)||(b.score*b.weight-a.score*a.weight));
+  lights.sort((a,b)=>b.score*b.weight-a.score*a.weight);
   const final=lights.slice(0,MAX_SCENE_LIGHTS);
   return {
     time,
@@ -311,7 +311,7 @@ export function sceneLighting(rig,view,entities=[],time=0,weapon=null,previous=n
     rejected:fixed.rejected,
     budget:{max:MAX_SCENE_LIGHTS,fixedMax,accepted:state.lights.length}
   };
-  return pack(state.lights,eye,target,.64+Math.max(0,(sector?.light??160)/255)*.22,outside?1:0,outside?.009:.014,key,{...debug,...(options.debug||{})});
+  return {...pack(state.lights,eye,target,.64+Math.max(0,(sector?.light??160)/255)*.22,outside?1:0,outside?.009:.014,key,{...debug,...(options.debug||{})}),state};
 }
 
 /** Controlled portrait lighting used by the model inspection fixtures. */

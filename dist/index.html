@@ -56,7 +56,7 @@
     <div id="error" role="alert" hidden><h1>Le Hangar n’a pas pu démarrer.</h1><p id="errorText"></p><button onclick="location.reload()">RÉESSAYER</button></div>
     <p id="accessibleStatus" class="sr-only" aria-live="off"></p>
   </main>
-  <script id="build-info" type="application/json">{"version": "0.6.0", "revision": "0.6.0-5b35eaaebba3", "generation": "procedural", "distribution": "single self-contained HTML", "offline": true, "runtimeFiles": 1, "levels": ["E1M1", "E1M2", "E1M3", "E1M4", "E1M5", "E1M6", "E1M7", "E1M8", "E1M9"], "level": "E1M1 / E1M2 / E1M3 / E1M4 / E1M5 / E1M6 / E1M7 / E1M8 / E1M9", "mapGenerator": "sector contour sweep", "importedMediaFiles": 0, "worldBillboards": 0, "worldRepresentation": "instanced procedural 3D triangle meshes", "runtimeModules": 38, "worldDetailLevels": 3, "proceduralSurfaceMaterials": true, "modelGpuCacheMiB": 64, "physicallyBasedMaterials": true, "surfaceMapsPerMaterial": 3, "surfaceCpuCacheMiB": 48, "shadowMaps": 2, "shadowFilter": "hardware bilinear comparison, 3x3 PCF", "smoothNormalBuffer": true, "contactAO": "12 samples, indirect fraction", "ferroVersion": "0.3.33", "ferroModules": [{"file": "fmath.js", "bytes": 19961, "sha256": "bb001302bd2d57239c86183615c921563cf21f0490d67eef42586d1fc3457c9f", "gitBlobSha": "a8020d15c3755e0bcdb475c624a76294a539f91f", "loaded": true}, {"file": "surface.js", "bytes": 3419, "sha256": "46915edee28daa0408ea1c18abd664babef76e2e6bce52c2990a431f90cee77e", "gitBlobSha": "017271a036bec6191a98ee92d8e5ed2004643490", "loaded": true}, {"file": "renderer.js", "bytes": 355730, "sha256": "415eda20f5a3629348b3bfde3bd9e2a0a6a6c8badb671415f14d87d0b9c778a0", "gitBlobSha": "2a7f9894ceaa1d903f22f851609f73e006142fc3", "loaded": true}, {"file": "engine.js", "bytes": 2025, "sha256": "bf8cb3e1e1bade027bc10a843c1e61d1cb930350cbcab092990b546ba447f631", "gitBlobSha": "9cfa70571cc8b3134a752b0ef84d6d52bc790403", "loaded": true}]}</script>
+  <script id="build-info" type="application/json">{"version": "0.6.0", "revision": "0.6.0-27278c18ffdf", "generation": "procedural", "distribution": "single self-contained HTML", "offline": true, "runtimeFiles": 1, "levels": ["E1M1", "E1M2", "E1M3", "E1M4", "E1M5", "E1M6", "E1M7", "E1M8", "E1M9"], "level": "E1M1 / E1M2 / E1M3 / E1M4 / E1M5 / E1M6 / E1M7 / E1M8 / E1M9", "mapGenerator": "sector contour sweep", "importedMediaFiles": 0, "worldBillboards": 0, "worldRepresentation": "instanced procedural 3D triangle meshes", "runtimeModules": 38, "worldDetailLevels": 3, "proceduralSurfaceMaterials": true, "modelGpuCacheMiB": 64, "physicallyBasedMaterials": true, "surfaceMapsPerMaterial": 3, "surfaceCpuCacheMiB": 48, "shadowMaps": 2, "shadowFilter": "hardware bilinear comparison, 3x3 PCF", "smoothNormalBuffer": true, "contactAO": "12 samples, indirect fraction", "ferroVersion": "0.3.33", "ferroModules": [{"file": "fmath.js", "bytes": 19961, "sha256": "bb001302bd2d57239c86183615c921563cf21f0490d67eef42586d1fc3457c9f", "gitBlobSha": "a8020d15c3755e0bcdb475c624a76294a539f91f", "loaded": true}, {"file": "surface.js", "bytes": 3419, "sha256": "46915edee28daa0408ea1c18abd664babef76e2e6bce52c2990a431f90cee77e", "gitBlobSha": "017271a036bec6191a98ee92d8e5ed2004643490", "loaded": true}, {"file": "renderer.js", "bytes": 355730, "sha256": "415eda20f5a3629348b3bfde3bd9e2a0a6a6c8badb671415f14d87d0b9c778a0", "gitBlobSha": "2a7f9894ceaa1d903f22f851609f73e006142fc3", "loaded": true}, {"file": "engine.js", "bytes": 2025, "sha256": "bf8cb3e1e1bade027bc10a843c1e61d1cb930350cbcab092990b546ba447f631", "gitBlobSha": "9cfa70571cc8b3134a752b0ef84d6d52bc790403", "loaded": true}]}</script>
 <script data-ferro-module="fmath.js">/* FERRO — FMath: sin, cos, atan, atan2 and hypot identical on every platform.
  *
  * A plain-JavaScript port of fdlibm 5.3 as adapted by V8 (src/base/ieee754.cc):
@@ -35827,8 +35827,8 @@ __modules["src/procedural-lighting.js"] = (() => {
  * Coordinates are FERRO metres (32 Doom units). Area/bounce illumination is
  * approximated by bounded local lights; this is not a global-illumination solve. */
 const MAX_SCENE_LIGHTS = 8;
-const ENTRY_RANGE = 1.25;
-const RETENTION_RANGE = 1.55;
+const ENTRY_RANGE = 1.4;
+const RETENTION_RANGE = 1.7;
 const FADE_SECONDS = 0.18;
 const dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
 const sub=(a,b)=>a.map((v,i)=>v-b[i]);
@@ -36082,7 +36082,7 @@ function updateLightingState(previousState,desired,time){
     const weight=wanted?Math.min(1,(previous?.weight??0)+rate):Math.max(0,(previous?.weight??0)-rate);
     if(weight>.02)lights.push({...base,weight,desired:!!wanted,transient:!!base.transient});
   }
-  lights.sort((a,b)=>(b.desired-a.desired)||(b.score*b.weight-a.score*a.weight));
+  lights.sort((a,b)=>b.score*b.weight-a.score*a.weight);
   const final=lights.slice(0,MAX_SCENE_LIGHTS);
   return {
     time,
@@ -36136,7 +36136,7 @@ function sceneLighting(rig,view,entities=[],time=0,weapon=null,previous=null,opt
     rejected:fixed.rejected,
     budget:{max:MAX_SCENE_LIGHTS,fixedMax,accepted:state.lights.length}
   };
-  return pack(state.lights,eye,target,.64+Math.max(0,(sector?.light??160)/255)*.22,outside?1:0,outside?.009:.014,key,{...debug,...(options.debug||{})});
+  return {...pack(state.lights,eye,target,.64+Math.max(0,(sector?.light??160)/255)*.22,outside?1:0,outside?.009:.014,key,{...debug,...(options.debug||{})}),state};
 }
 
 /** Controlled portrait lighting used by the model inspection fixtures. */
@@ -36150,7 +36150,7 @@ function studioLighting(view,target){
   ],view.oeil,center,.9,0,0,{id:'studio-key',position:at(-2.7,-3.4,3.8),range:14});
 }
 
-return Object.freeze({"MAX_SCENE_LIGHTS": MAX_SCENE_LIGHTS, "sectorLightPulse": sectorLightPulse, "shadowProjection": shadowProjection, "weaponShadowProjection": weaponShadowProjection, "buildLightingRig": buildLightingRig, "lightPathOpen": lightPathOpen, "sceneLighting": sceneLighting, "studioLighting": studioLighting});
+return Object.freeze({"MAX_SCENE_LIGHTS": MAX_SCENE_LIGHTS, "ENTRY_RANGE": ENTRY_RANGE, "RETENTION_RANGE": RETENTION_RANGE, "FADE_SECONDS": FADE_SECONDS, "sectorLightPulse": sectorLightPulse, "shadowProjection": shadowProjection, "weaponShadowProjection": weaponShadowProjection, "buildLightingRig": buildLightingRig, "lightPathOpen": lightPathOpen, "sceneLighting": sceneLighting, "studioLighting": studioLighting});
 })();
 
 __modules["src/procedural-shaders.js"] = (() => {

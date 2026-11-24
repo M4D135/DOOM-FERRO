@@ -81,7 +81,7 @@
     "src/procedural-audio.js": "a54f8143f151e62bfcc64b65286af4fff2ac7ee7f9d79e516df85396af03e4e6",
     "src/procedural-characters.js": "d2a7119223c15116b98d0bedc4e0ea4ec234f2730bd1c98a29f42289840a0e8c",
     "src/procedural-interface.js": "af287b0e0573e6432d1d41a7a3076c6335a84b2d807ca710e4c72e0c1a19de8a",
-    "src/procedural-lighting.js": "a70ce359acf29b23874cc6698fe8851fb7c8fc3700d1563c97f24b7cd5c75538",
+    "src/procedural-lighting.js": "02fc2b542576073e464bcc663c4c5ecb7b329627e522c0c206c2601ebe61d763",
     "src/procedural-map.js": "f44e2bbb75c2ab39db94081ec8d068575ca3404a6550b9ffb5e67978379a1dd9",
     "src/procedural-materials.js": "e607ba200d2354f72bb854924be947f3403392c6e81fb8e50df4bad5eb98c701",
     "src/procedural-mesh.js": "f7c1c90ff94caa95c15e03e29878e8777c0b3a1b2ce39f7a1215b1f5e79b5890",
@@ -92,15 +92,15 @@
     "src/procedural-raster.js": "3b372674f3004fbe0de245ae359f5895ce72a4bc48a515e4e3a55acbebe7bdb5",
     "src/procedural-remains.js": "ccd3f16d09c29d1fba3d438360f78a959edb6b5b51deb692d54e602b12ba32b1",
     "src/procedural-resources.js": "a12afda693840c0c63a82d6afbf49768372de146ead9beb75b9e154ef5830d1b",
-    "src/procedural-shaders.js": "3f512a35f52ecf5e58d8ca5f11a4ff892fb2c59fb1d4ee1d1b61e8a8c0fa179f",
+    "src/procedural-shaders.js": "43bf889ac29943b2cf7f2070b7682ba169fdb02a3471f461e93c0be7adfd7ea9",
     "src/procedural-surface-detail.js": "67c3253e6391090cead7c0dcc9ef605abfad6c484a1ef5f555e1df1c8be6d8bf",
     "src/procedural-weapons.js": "b439504a1f6f619750f353faac4a2f9b7b98fc61bf0eb9aaff2bbd111d226d2d"
   },
   "shaderSha256": {
     "WORLD_VERTEX": "51cfbcbd50cdfac3e2d4bab23e70c61ab340bec8e6994a6750291d1ff3ed92d7",
-    "WORLD_FRAGMENT": "cd3c63821921388dd086b83a7e5e73431cc9be5cd05885b1d036c05e83e6f619",
+    "WORLD_FRAGMENT": "5e7e9bfde4bcc9e3b316b89ecdb7710e7f8e9703f0666605935c36eb38751830",
     "MODEL_VERTEX": "5335e1649f25800e5c4f4e670dc5d45ed2720d4d4d344e0988650c5940fecee4",
-    "MODEL_FRAGMENT": "3dfe43a0bff35bc08599ebf02091b788e6f9635036ecaf548f4c48ff78299bea",
+    "MODEL_FRAGMENT": "9d8a245618cd726f3fc5a607e41d9425676b5a5f96aa862f0180d9864140b926",
     "SKY_VERTEX": "0619a596c2fddc0c3dc31b472ae2b4fd3cfa9bdca612db0c01d9f2a1d0cce430",
     "SKY_FRAGMENT": "a0a3c1f8154614e9ac3eb83e82fce6852752876780265924a47b6f620f1c9c7a",
     "SHADOW_VERTEX": "c66a7f0ef1c77eedd8efcbbabb62a5eb11c89d34279b509787c4b4559e84b782",
@@ -175,11 +175,11 @@
         "angle": 3.141592653589793,
         "pitch": 0
       },
-      "uniqueColors": 6510,
+      "uniqueColors": 13052,
       "meanRGB": [
-        44.5876904296875,
-        47.71327734375,
-        45.261435546875
+        46.1455009765625,
+        49.245169921875,
+        46.6016142578125
       ],
       "visibility": {
         "total": 91,
@@ -203,11 +203,11 @@
         "angle": -1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 5841,
+      "uniqueColors": 6383,
       "meanRGB": [
-        13.1776455078125,
-        15.458677734375,
-        16.9141337890625
+        13.3990771484375,
+        15.6999326171875,
+        17.1485869140625
       ],
       "visibility": {
         "total": 91,

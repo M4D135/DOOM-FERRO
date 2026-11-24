@@ -1,6 +1,6 @@
 {
   "version": "0.6.0",
-  "nodeTests": 161,
+  "nodeTests": 163,
   "nodeTestsPassed": true,
   "reproducibleBuild": true,
   "buildFiles": 1,
@@ -40,11 +40,11 @@
     "tests/renderer-passes.test.mjs",
     "tests/renderer.test.mjs"
   ],
-  "testLogSha256": "95fc71c2f52acf1a45573588acd3bec613f62aa1ffea3d8bee4867fc281b7c83",
+  "testLogSha256": "a63100e4f84fbb2094729ba3660be3444e010954851f88ce05c351d93390485a",
   "generation": "procedural",
-  "buildRevision": "0.6.0-5b35eaaebba3",
+  "buildRevision": "0.6.0-27278c18ffdf",
   "importedMediaFiles": 0,
-  "buildBytes": 1841416,
+  "buildBytes": 1841494,
   "doorTraversal": "eight faces of four doors passed while advancing during opening with the complete scene; reported previous-version blockage not reproduced",
   "proceduralLayout": "fixed E1M1 reference plan; runtime sector contour sweep generates 295 convex cells; no original BSP or triangles",
   "proceduralVisuals": "reference-guided continuous HD PBR maps and UI; continuous anatomical and implicit hand meshes, three geometry levels; no world or held-weapon billboard",
@@ -82,18 +82,18 @@
     "allE1M1GpuMipMiBCoarse": 42.109
   },
   "glPassTests": "production host pass under a stateful simulated WebGL2: MRT completeness, sampler feedback prevention, FERRO target/viewport restoration, resize/disposal and no retained CPU map arrays; native GLSL/pixels checked separately",
-  "visualInspection": "all 80 EGL views reviewed across level, weapon, secret, actor, prop, corpse and arrival cameras; the ten browser lighting views were compared before and after the lighting fix on the same cameras, and the accepted fixture set, room fill and shadow source were read from the renderer statistics on each step",
+  "visualInspection": "all 80 EGL views reviewed across level, weapon, secret, actor, prop, corpse and arrival cameras; the twelve browser lighting views were compared before and after the lighting fix on identical cameras, and the accepted fixture set, room fill and shadow source were read from the rig state on every replayed frame",
   "visualLimitations": "anatomical models and especially faces remain stylized; tiny dark barrel-rib speckles remain visible in close views; physical material equations and geometry counts are not evidence that photorealism has been reached; the lighting before/after sheets come from the SwiftShader software rasteriser and no pixel-difference metric or hardware-accelerated clip has been produced yet",
   "releaseDate": "2026-11-24",
   "distribution": "single self-contained HTML",
   "offlineRuntimeFiles": 1,
   "singleFileVerification": "one HTML with inline CSS, four byte-identical canonical FERRO scripts and a scope-isolated linked game bundle; no external assets or runtime network loaders; deterministic build without reference archive; inline scripts parse and boot through the intentional missing-WebGL fallback under a simulated DOM, not a real file-URL browser session",
   "secretMechanisms": "original E1M1 sectors 68, 69 and 70; hidden courtyard door, permanent floor lowering on line 308 and repeatable timed lift on line 195; floor-contact discovery, monster activation restrictions and return window verified",
-  "lighting": "reference sector light levels retained; up to eight local sources from ceilings, wall lamps, screens, exterior openings, toxic pools and transient fire effects; selection is carried frame to frame with a 1.25 entry and 1.55 retention range and a 0.18 s fade, so a neighbouring lamp can no longer pop in or out on a one-unit step; room fill is anchored to the lit sector centroid, the world shadow key and its projection frame come from the sector and stay fixed during a head turn, and muzzle or projectile effects use a separate transient budget that never displaces fixed lamps; cool low ambient bounce and a discreet distance haze keep the gloomy mood; blinking and pulsing sectors still modulate direct light; a depth map drives world shadows and a second one fitted to the visible weapon geometry resolves small contacts around the hands; off-frame objects can still cast into view; filtered depth comparisons are completed by contact AO from smooth normals plus a light edge filter",
+  "lighting": "reference sector light levels retained; up to eight local sources from ceilings, wall lamps, screens, exterior openings, toxic pools and transient fire effects; the selection is carried frame to frame through the renderer state, a lamp entering needs distance within 1.4 times its range and leaving needs 1.7 times it, with a 0.18 s fade on both sides, so a neighbouring lamp can no longer pop in or out on a one-unit step; room fill is anchored to the lit sector centroid, the world shadow key and its projection frame come from the sector, and muzzle or projectile effects use a separate transient budget that never displaces a fixed lamp; a light that is still fading keeps its slot instead of being evicted by a newcomer; cool low ambient bounce and a discreet distance haze keep the gloomy mood; blinking and pulsing sectors still modulate direct light; a depth map drives world shadows and a second one fitted to the visible weapon geometry resolves small contacts around the hands; off-frame objects can still cast into view; filtered depth comparisons are completed by contact AO from smooth normals plus a light edge filter",
   "sleeveContinuity": "shared upper-arm/sleeve bend and embedded shoulder pivot; covered skin starts inside cuff; idle and production attack poses inspected from side and rear at close detail",
   "remainsMaterials": "PLAYW and POL5 retain distinct geometry; locally varying coagulated-tissue roughness with small moist folds; matching matte coarse LOD",
-  "lightingStability": "tests/lighting-stability.test.mjs replays three one-unit E1M1 moves plus a head turn and a muzzle flash on the real generated map: the accepted fixture set, the sector room fill and the shadow source must be identical before and after each step, the shadow projection matrix must not move with the camera yaw, and a transient flash must not remove a fixed lamp; docs/qa/lighting-stability-before-after.png shows the same ten browser views before and after the fix",
+  "lightingStability": "tools/measure-lighting.mjs replays four E1M1 camera paths through the production rig, once stateless (the behaviour before the stability pass) and once continuous. Measured in docs/qa/lighting-stability.json: stateless 8 hard pops, 1 shadow-owner change and 1 shadow-projection jump; continuous 0 hard pops, 0 shadow-owner changes, 0 shadow-projection jumps and 0 settled intensity jumps, with the largest single-frame weight move at 0.089, exactly the 0.18 s fade rate at 60 Hz. tests/lighting-stability.test.mjs asserts the state survives the renderer round trip, that an arriving light is mid-fade while the room lights keep their weight, and that a full budget never evicts a light that is still fading",
   "frameTiming": "src/frame-timing.js separates the real elapsed delta used for the displayed FPS and millisecond readout from the simulation delta capped at 0.05 s, and is reset when play starts; tests/frame-timing.test.mjs covers the first frame, a long stall and the cap",
   "deathFrames": "every bestiary death frame (SARG HIJKL, BOSS and Spectre HIJKLM) is asserted finite, bounded and floor-touching at all three detail levels; the former baron collapse produced 26784 non-finite vertex components and now clamps its collapse index",
-  "browserLightingSequence": "tests/browser-lighting.html instantiates the real production resources, simulation and renderer in headless Chrome with SwiftShader and draws the three E1M1 lighting moves, a head turn and door 151 closed then opened by the internal action mechanism; contact sheets are docs/qa/lighting-stability-before-after.png; software rasteriser only, so no hardware FPS or GPU fidelity claim, and the scripted door is a controlled placement rather than real gameplay traversal"
+  "browserLightingSequence": "tests/browser-lighting.html instantiates the real production resources, simulation and renderer in headless Chrome with SwiftShader and draws twelve views: the three E1M1 lighting moves each before, immediately after the step and once the fade has settled, a head turn, and door 151 closed then opened by the internal action mechanism. Each group restarts from a reset rig so a camera jump is not read as a fade. Mean tile luminance on the B case goes 25.0 to 27.2 in one frame before the fix and 25.0 to 25.3 to 27.2 over three frames after it, reaching the same settled value. The C step change is the one-unit perspective shift, identical on both sides, not a lighting change. Contact sheet: docs/qa/lighting-stability-before-after.png. Software rasteriser only, so no hardware FPS or GPU fidelity claim, and the scripted door is a controlled placement rather than real gameplay traversal"
 }

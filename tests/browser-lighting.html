@@ -48,12 +48,17 @@
       frameCanvas.width=1280;frameCanvas.height=800;
       const frameCtx=frameCanvas.getContext('2d');
       const pixels=new Uint8Array(1280*800*4),smallPixels=new Uint8ClampedArray(320*200*4);
-      async function draw(label,camera){
+      let clock=0;
+      async function draw(label,camera,{settle=0,reset=false}={}){
         const col=frame%4,row=Math.floor(frame/4);
         note(`draw ${frame+1} ${label}`);
         try{
-          renderer.draw({x:camera.x,y:camera.y,z:camera.z,angle:camera.angle,pitch:0,fov:70},
-            {entities:game.entities,time:frame*0.016,weapon});
+          if(reset)renderer.lastLighting=null;
+          for(let pass=0;pass<=settle;pass++){
+            clock+=0.03;
+            renderer.draw({x:camera.x,y:camera.y,z:camera.z,angle:camera.angle,pitch:0,fov:70},
+              {entities:game.entities,time:clock,weapon});
+          }
           const gl=renderer.gl,target=renderer.sceneTarget||{framebuffer:null,width:1280,height:800};
           gl.bindFramebuffer(gl.FRAMEBUFFER,target.framebuffer);
           gl.readPixels(0,0,target.width,target.height,gl.RGBA,gl.UNSIGNED_BYTE,pixels);
@@ -77,23 +82,28 @@
         frame++;
       }
 
-      await draw('A avant',( {x:2499,y:-2285,z:73,angle:Math.PI/2}));
-      await draw('A +1',( {x:2500,y:-2285,z:73,angle:Math.PI/2}));
-      await draw('A -1',( {x:2499,y:-2285,z:73,angle:Math.PI/2}));
-      await draw('A rotation',( {x:2499,y:-2285,z:73,angle:0}));
-      await draw('B avant',( {x:1651,y:-2525,z:41,angle:Math.PI/2}));
-      await draw('B +1',( {x:1652,y:-2525,z:41,angle:Math.PI/2}));
-      await draw('C avant',( {x:739,y:-3405,z:41,angle:Math.PI/2}));
-      await draw('C +1',( {x:740,y:-3405,z:41,angle:Math.PI/2}));
+      const A={x:2499,y:-2285,z:73,angle:Math.PI/2},A1={x:2500,y:-2285,z:73,angle:Math.PI/2};
+      const B={x:1651,y:-2525,z:41,angle:Math.PI/2},B1={x:1652,y:-2525,z:41,angle:Math.PI/2};
+      const C={x:739,y:-3405,z:41,angle:Math.PI/2},C1={x:740,y:-3405,z:41,angle:Math.PI/2};
+      await draw('A avant',A,{reset:true});
+      await draw('A +1 immediat',A1);
+      await draw('A +1 stabilise',A1,{settle:8});
+      await draw('A rotation',{...A,angle:0},{settle:8});
+      await draw('B avant',B,{reset:true});
+      await draw('B +1 immediat',B1);
+      await draw('B +1 stabilise',B1,{settle:8});
+      await draw('C avant',C,{reset:true});
+      await draw('C +1 immediat',C1);
+      await draw('C +1 stabilise',C1,{settle:8});
 
       const door=game.lines[151],doorSector=map.sectors[door.back];
       const doorPoints=map.floorPolygons.filter(p=>p.sector===door.back).flatMap(p=>p.points);
       const centerY=(Math.min(...doorPoints.map(p=>p.y))+Math.max(...doorPoints.map(p=>p.y)))/2;
       const doorCamera={x:door.ax-128,y:centerY,z:41,angle:0};
-      await draw('porte fermée',doorCamera);
+      await draw('porte fermée',doorCamera,{settle:8,reset:true});
       game._openDoor(door);
       for(let tick=0;tick<140 && game.actions.get(door.back)?.phase==='up';tick++)game._updateActions(1/70);
-      await draw('porte ouverte',doorCamera);
+      await draw('porte ouverte',doorCamera,{settle:8});
 
       ctx.fillStyle='#fff';ctx.fillText(`mode=${params.get('mode')||'current'} · ${renderer.stats.localLights||0} lumières · ombre ${renderer.stats.shadowSource||'?'}`,8,592);
       document.title='ready';

@@ -1,0 +1,149 @@
+{
+  "scope": "Replayed E1M1 camera paths through the production lighting rig. Stateless frames re-pick their sources every frame, which is the behaviour before the stability pass; continuous frames hand the previous lighting back to the rig. A hard pop is a source whose weight moves by more than 0.5 in a single frame, which no 0.18 s fade can produce; a settled intensity jump is a source already at full weight whose emitted power changes by more than 15 per cent between two frames. Values are counts over the transitions of each path, not pixels.",
+  "map": "E1M1",
+  "maxSceneLights": 8,
+  "entryRange": 1.4,
+  "retentionRange": 1.7,
+  "fadeSeconds": 0.18,
+  "paths": {
+    "A wall lamp corridor": {
+      "stateless": {
+        "frames": 11,
+        "setChanges": 2,
+        "hardPops": 4,
+        "settledIntensityJumps": 0,
+        "shadowOwnerChanges": 0,
+        "shadowProjectionJumps": 0,
+        "worstWeightJump": 1,
+        "worstSettledIntensityJump": 0,
+        "worstShadowProjectionDelta": 0,
+        "appeared": [
+          "wall-399-0-middle-1",
+          "sector-7-6"
+        ],
+        "disappeared": [
+          "wall-373-0-upper-0",
+          "wall-399-0-middle-1"
+        ]
+      },
+      "continuous": {
+        "frames": 11,
+        "setChanges": 0,
+        "hardPops": 0,
+        "settledIntensityJumps": 0,
+        "shadowOwnerChanges": 0,
+        "shadowProjectionJumps": 0,
+        "worstWeightJump": 0.08888888888888896,
+        "worstSettledIntensityJump": 0.08888888888888889,
+        "worstShadowProjectionDelta": 0,
+        "appeared": [],
+        "disappeared": []
+      }
+    },
+    "B sector light room": {
+      "stateless": {
+        "frames": 11,
+        "setChanges": 2,
+        "hardPops": 2,
+        "settledIntensityJumps": 0,
+        "shadowOwnerChanges": 0,
+        "shadowProjectionJumps": 0,
+        "worstWeightJump": 1,
+        "worstSettledIntensityJump": 0,
+        "worstShadowProjectionDelta": 0,
+        "appeared": [
+          "sector-10-9",
+          "sector-8-7"
+        ],
+        "disappeared": []
+      },
+      "continuous": {
+        "frames": 11,
+        "setChanges": 2,
+        "hardPops": 0,
+        "settledIntensityJumps": 0,
+        "shadowOwnerChanges": 0,
+        "shadowProjectionJumps": 0,
+        "worstWeightJump": 0.08888888888888898,
+        "worstSettledIntensityJump": 0,
+        "worstShadowProjectionDelta": 0,
+        "appeared": [
+          "sector-10-9",
+          "sector-8-7"
+        ],
+        "disappeared": []
+      }
+    },
+    "C fill only room": {
+      "stateless": {
+        "frames": 11,
+        "setChanges": 1,
+        "hardPops": 2,
+        "settledIntensityJumps": 0,
+        "shadowOwnerChanges": 1,
+        "shadowProjectionJumps": 1,
+        "worstWeightJump": 1,
+        "worstSettledIntensityJump": 0,
+        "worstShadowProjectionDelta": 68.12535858154297,
+        "appeared": [
+          "sector-41-43"
+        ],
+        "disappeared": [
+          "room-fill-38"
+        ]
+      },
+      "continuous": {
+        "frames": 11,
+        "setChanges": 1,
+        "hardPops": 0,
+        "settledIntensityJumps": 0,
+        "shadowOwnerChanges": 0,
+        "shadowProjectionJumps": 0,
+        "worstWeightJump": 0.08888888888888902,
+        "worstSettledIntensityJump": 0.08888888888888893,
+        "worstShadowProjectionDelta": 0,
+        "appeared": [
+          "sector-41-43"
+        ],
+        "disappeared": []
+      }
+    },
+    "D head turn": {
+      "stateless": {
+        "frames": 9,
+        "setChanges": 0,
+        "hardPops": 0,
+        "settledIntensityJumps": 0,
+        "shadowOwnerChanges": 0,
+        "shadowProjectionJumps": 0,
+        "worstWeightJump": 0,
+        "worstSettledIntensityJump": 0,
+        "worstShadowProjectionDelta": 0,
+        "appeared": [],
+        "disappeared": []
+      },
+      "continuous": {
+        "frames": 9,
+        "setChanges": 0,
+        "hardPops": 0,
+        "settledIntensityJumps": 0,
+        "shadowOwnerChanges": 0,
+        "shadowProjectionJumps": 0,
+        "worstWeightJump": 0,
+        "worstSettledIntensityJump": 0,
+        "worstShadowProjectionDelta": 0,
+        "appeared": [],
+        "disappeared": []
+      }
+    }
+  },
+  "summary": {
+    "statelessHardPops": 8,
+    "continuousHardPops": 0,
+    "statelessShadowChanges": 1,
+    "continuousShadowChanges": 0,
+    "statelessShadowProjectionJumps": 1,
+    "continuousShadowProjectionJumps": 0,
+    "continuousSettledIntensityJumps": 0
+  }
+}
