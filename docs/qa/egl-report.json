@@ -20,15 +20,695 @@
   "mapGenerator": "sector-trapezoid-sweep-v1",
   "resources": {
     "mode": "procedural",
-    "generatedImages": 53,
-    "rgbaBytes": 1723392,
+    "generatedImages": 55,
+    "rgbaBytes": 1854464,
     "importedAssets": 0
   },
-  "modelMeshes": 30,
+  "modelMeshes": 78,
   "worldBillboards": 0,
   "modelVertexStride": 17,
   "materialCoordinates": "primitive-local surface coordinates preserved through pose transforms",
   "shaderCompilation": "10 unmodified GLSL ES 3.00 production shaders compiled; 5 programs linked",
+  "missingMaterials": [
+    {
+      "name": "flat:CONS1_1",
+      "maps": [
+        "E1M2",
+        "E1M5"
+      ]
+    },
+    {
+      "name": "flat:FLAT22",
+      "maps": [
+        "E1M2",
+        "E1M6"
+      ]
+    },
+    {
+      "name": "flat:CONS1_7",
+      "maps": [
+        "E1M2",
+        "E1M5"
+      ]
+    },
+    {
+      "name": "flat:FLOOR0_3",
+      "maps": [
+        "E1M2",
+        "E1M3"
+      ]
+    },
+    {
+      "name": "flat:FLOOR4_1",
+      "maps": [
+        "E1M2",
+        "E1M4"
+      ]
+    },
+    {
+      "name": "flat:FLAT10",
+      "maps": [
+        "E1M2",
+        "E1M6",
+        "E1M7",
+        "E1M8",
+        "E1M9"
+      ]
+    },
+    {
+      "name": "flat:FLOOR5_4",
+      "maps": [
+        "E1M2",
+        "E1M4",
+        "E1M5"
+      ]
+    },
+    {
+      "name": "flat:MFLR8_1",
+      "maps": [
+        "E1M2",
+        "E1M4",
+        "E1M5",
+        "E1M6",
+        "E1M7",
+        "E1M8"
+      ]
+    },
+    {
+      "name": "flat:CONS1_5",
+      "maps": [
+        "E1M2"
+      ]
+    },
+    {
+      "name": "flat:STEP1",
+      "maps": [
+        "E1M2",
+        "E1M4",
+        "E1M5",
+        "E1M7",
+        "E1M8",
+        "E1M9"
+      ]
+    },
+    {
+      "name": "flat:FLOOR3_3",
+      "maps": [
+        "E1M2",
+        "E1M5",
+        "E1M9"
+      ]
+    },
+    {
+      "name": "flat:FLOOR4_5",
+      "maps": [
+        "E1M2",
+        "E1M4",
+        "E1M8"
+      ]
+    },
+    {
+      "name": "flat:FLOOR5_3",
+      "maps": [
+        "E1M2",
+        "E1M4",
+        "E1M5",
+        "E1M6",
+        "E1M8",
+        "E1M9"
+      ]
+    },
+    {
+      "name": "wall:LITEBLU3",
+      "maps": [
+        "E1M2",
+        "E1M3",
+        "E1M7"
+      ]
+    },
+    {
+      "name": "wall:STEP3",
+      "maps": [
+        "E1M2",
+        "E1M3",
+        "E1M7"
+      ]
+    },
+    {
+      "name": "wall:LITE5",
+      "maps": [
+        "E1M2",
+        "E1M4"
+      ]
+    },
+    {
+      "name": "wall:LITE4",
+      "maps": [
+        "E1M2",
+        "E1M3",
+        "E1M5",
+        "E1M6",
+        "E1M7"
+      ]
+    },
+    {
+      "name": "wall:COMPSTA1",
+      "maps": [
+        "E1M2",
+        "E1M4"
+      ]
+    },
+    {
+      "name": "wall:COMPSTA2",
+      "maps": [
+        "E1M2"
+      ]
+    },
+    {
+      "name": "wall:PIPE2",
+      "maps": [
+        "E1M2"
+      ]
+    },
+    {
+      "name": "wall:STEP5",
+      "maps": [
+        "E1M2",
+        "E1M4",
+        "E1M8"
+      ]
+    },
+    {
+      "name": "wall:GRAYTALL",
+      "maps": [
+        "E1M2"
+      ]
+    },
+    {
+      "name": "wall:PLAT1",
+      "maps": [
+        "E1M2",
+        "E1M4",
+        "E1M5",
+        "E1M6",
+        "E1M7",
+        "E1M9"
+      ]
+    },
+    {
+      "name": "wall:DOOR1",
+      "maps": [
+        "E1M2"
+      ]
+    },
+    {
+      "name": "wall:STONE3",
+      "maps": [
+        "E1M2",
+        "E1M3",
+        "E1M5",
+        "E1M8"
+      ]
+    },
+    {
+      "name": "wall:TEKWALL2",
+      "maps": [
+        "E1M2",
+        "E1M4",
+        "E1M6",
+        "E1M7"
+      ]
+    },
+    {
+      "name": "wall:SW1COMP",
+      "maps": [
+        "E1M2",
+        "E1M3",
+        "E1M5",
+        "E1M6",
+        "E1M7"
+      ]
+    },
+    {
+      "name": "wall:STONE2",
+      "maps": [
+        "E1M2",
+        "E1M3",
+        "E1M4",
+        "E1M5",
+        "E1M8"
+      ]
+    },
+    {
+      "name": "wall:METAL1",
+      "maps": [
+        "E1M2",
+        "E1M3",
+        "E1M4",
+        "E1M5",
+        "E1M7",
+        "E1M8"
+      ]
+    },
+    {
+      "name": "wall:DOORRED",
+      "maps": [
+        "E1M2",
+        "E1M6",
+        "E1M7",
+        "E1M9"
+      ]
+    },
+    {
+      "name": "wall:SW1SLAD",
+      "maps": [
+        "E1M2",
+        "E1M4",
+        "E1M7"
+      ]
+    },
+    {
+      "name": "wall:BROWNHUG",
+      "maps": [
+        "E1M2",
+        "E1M3",
+        "E1M4",
+        "E1M6",
+        "E1M8"
+      ]
+    },
+    {
+      "name": "wall:NUKESLAD",
+      "maps": [
+        "E1M2",
+        "E1M4",
+        "E1M7"
+      ]
+    },
+    {
+      "name": "wall:SLADRIP2",
+      "maps": [
+        "E1M2"
+      ]
+    },
+    {
+      "name": "wall:SW1STON1",
+      "maps": [
+        "E1M2",
+        "E1M5",
+        "E1M8"
+      ]
+    },
+    {
+      "name": "wall:STARG1",
+      "maps": [
+        "E1M2",
+        "E1M4",
+        "E1M5",
+        "E1M7"
+      ]
+    },
+    {
+      "name": "wall:SW1PIPE",
+      "maps": [
+        "E1M2"
+      ]
+    },
+    {
+      "name": "wall:TEKWALL5",
+      "maps": [
+        "E1M2",
+        "E1M3",
+        "E1M4",
+        "E1M6"
+      ]
+    },
+    {
+      "name": "wall:SLADPOIS",
+      "maps": [
+        "E1M2"
+      ]
+    },
+    {
+      "name": "flat:FLAT5_4",
+      "maps": [
+        "E1M3",
+        "E1M4",
+        "E1M5",
+        "E1M6",
+        "E1M7",
+        "E1M9"
+      ]
+    },
+    {
+      "name": "flat:FLOOR0_1",
+      "maps": [
+        "E1M3"
+      ]
+    },
+    {
+      "name": "flat:CEIL4_3",
+      "maps": [
+        "E1M3",
+        "E1M5",
+        "E1M7"
+      ]
+    },
+    {
+      "name": "flat:CEIL3_2",
+      "maps": [
+        "E1M3"
+      ]
+    },
+    {
+      "name": "flat:FLOOR1_7",
+      "maps": [
+        "E1M3",
+        "E1M6"
+      ]
+    },
+    {
+      "name": "wall:BRNSMALC",
+      "maps": [
+        "E1M3"
+      ]
+    },
+    {
+      "name": "wall:STONE",
+      "maps": [
+        "E1M3",
+        "E1M4",
+        "E1M5",
+        "E1M7"
+      ]
+    },
+    {
+      "name": "wall:STEP2",
+      "maps": [
+        "E1M3",
+        "E1M4",
+        "E1M5",
+        "E1M6",
+        "E1M8",
+        "E1M9"
+      ]
+    },
+    {
+      "name": "wall:SW1DIRT",
+      "maps": [
+        "E1M3",
+        "E1M4"
+      ]
+    },
+    {
+      "name": "wall:STEP4",
+      "maps": [
+        "E1M3",
+        "E1M5",
+        "E1M6",
+        "E1M8"
+      ]
+    },
+    {
+      "name": "wall:GRAY5",
+      "maps": [
+        "E1M3"
+      ]
+    },
+    {
+      "name": "wall:SW1STONE",
+      "maps": [
+        "E1M3",
+        "E1M5"
+      ]
+    },
+    {
+      "name": "wall:COMP2",
+      "maps": [
+        "E1M3"
+      ]
+    },
+    {
+      "name": "wall:LITEBLU4",
+      "maps": [
+        "E1M3",
+        "E1M6"
+      ]
+    },
+    {
+      "name": "wall:SW1BRNGN",
+      "maps": [
+        "E1M3",
+        "E1M5",
+        "E1M6",
+        "E1M8",
+        "E1M9"
+      ]
+    },
+    {
+      "name": "wall:DOORBLU",
+      "maps": [
+        "E1M3",
+        "E1M4",
+        "E1M5",
+        "E1M6",
+        "E1M7",
+        "E1M9"
+      ]
+    },
+    {
+      "name": "wall:BRNSMALL",
+      "maps": [
+        "E1M3"
+      ]
+    },
+    {
+      "name": "wall:BRNSMALR",
+      "maps": [
+        "E1M3"
+      ]
+    },
+    {
+      "name": "wall:BRNPOIS2",
+      "maps": [
+        "E1M3"
+      ]
+    },
+    {
+      "name": "wall:SW1BRCOM",
+      "maps": [
+        "E1M3",
+        "E1M8",
+        "E1M9"
+      ]
+    },
+    {
+      "name": "wall:DOORYEL",
+      "maps": [
+        "E1M3",
+        "E1M4",
+        "E1M5",
+        "E1M6",
+        "E1M7",
+        "E1M9"
+      ]
+    },
+    {
+      "name": "wall:STONPOIS",
+      "maps": [
+        "E1M3"
+      ]
+    },
+    {
+      "name": "flat:FLAT5",
+      "maps": [
+        "E1M4"
+      ]
+    },
+    {
+      "name": "flat:FLAT2",
+      "maps": [
+        "E1M4"
+      ]
+    },
+    {
+      "name": "wall:SLADRIP3",
+      "maps": [
+        "E1M4"
+      ]
+    },
+    {
+      "name": "wall:LITE2",
+      "maps": [
+        "E1M4",
+        "E1M6"
+      ]
+    },
+    {
+      "name": "wall:NUKEDGE1",
+      "maps": [
+        "E1M4"
+      ]
+    },
+    {
+      "name": "wall:BIGDOOR1",
+      "maps": [
+        "E1M4",
+        "E1M5"
+      ]
+    },
+    {
+      "name": "wall:BRNPOIS",
+      "maps": [
+        "E1M4"
+      ]
+    },
+    {
+      "name": "wall:SW2BROWN",
+      "maps": [
+        "E1M4",
+        "E1M6"
+      ]
+    },
+    {
+      "name": "wall:SW1METAL",
+      "maps": [
+        "E1M4",
+        "E1M7"
+      ]
+    },
+    {
+      "name": "flat:CEIL3_1",
+      "maps": [
+        "E1M5",
+        "E1M6"
+      ]
+    },
+    {
+      "name": "flat:FLOOR6_1",
+      "maps": [
+        "E1M5",
+        "E1M8",
+        "E1M9"
+      ]
+    },
+    {
+      "name": "flat:FLOOR4_6",
+      "maps": [
+        "E1M5"
+      ]
+    },
+    {
+      "name": "flat:CEIL4_2",
+      "maps": [
+        "E1M5"
+      ]
+    },
+    {
+      "name": "wall:REDWALL1",
+      "maps": [
+        "E1M5",
+        "E1M8",
+        "E1M9"
+      ]
+    },
+    {
+      "name": "flat:FLOOR0_6",
+      "maps": [
+        "E1M6"
+      ]
+    },
+    {
+      "name": "wall:SW1BRN2",
+      "maps": [
+        "E1M6"
+      ]
+    },
+    {
+      "name": "wall:LITEBLU1",
+      "maps": [
+        "E1M6"
+      ]
+    },
+    {
+      "name": "wall:BROWNPIP",
+      "maps": [
+        "E1M6"
+      ]
+    },
+    {
+      "name": "wall:SW1BRN1",
+      "maps": [
+        "E1M6"
+      ]
+    },
+    {
+      "name": "wall:BRNSMAL1",
+      "maps": [
+        "E1M6"
+      ]
+    },
+    {
+      "name": "wall:BRNSMAL2",
+      "maps": [
+        "E1M6"
+      ]
+    },
+    {
+      "name": "wall:LITEBLU2",
+      "maps": [
+        "E1M7"
+      ]
+    },
+    {
+      "name": "wall:TEKWALL3",
+      "maps": [
+        "E1M7"
+      ]
+    },
+    {
+      "name": "wall:SW1COMM",
+      "maps": [
+        "E1M7"
+      ]
+    },
+    {
+      "name": "flat:DEM1_3",
+      "maps": [
+        "E1M8"
+      ]
+    },
+    {
+      "name": "flat:DEM1_4",
+      "maps": [
+        "E1M8"
+      ]
+    },
+    {
+      "name": "flat:DEM1_1",
+      "maps": [
+        "E1M8"
+      ]
+    },
+    {
+      "name": "flat:DEM1_2",
+      "maps": [
+        "E1M8"
+      ]
+    },
+    {
+      "name": "wall:SW1STON2",
+      "maps": [
+        "E1M8"
+      ]
+    },
+    {
+      "name": "wall:SHAWN2",
+      "maps": [
+        "E1M8"
+      ]
+    }
+  ],
   "passes": [
     "1024px primary-light depth shadow with 3x3 PCF",
     "linear-light GGX/Smith/Schlick world and model materials",
@@ -38,7 +718,7 @@
     "512px fitted view-weapon self-shadow combined with room shadow",
     "analytic distance haze; disabled in model studios"
   ],
-  "textureMipBytes": 176357376,
+  "textureMipBytes": 184928256,
   "mapTriangles": 2025,
   "sceneTriangles": {
     "base": 2025,
@@ -47,7 +727,16 @@
     "secret68-open": 2033,
     "secret69-open": 2029,
     "secret70-low": 2029,
-    "secret70-high": 2029
+    "secret70-high": 2029,
+    "e1m1-arrival": 2029,
+    "e1m2-arrival": 4281,
+    "e1m3-arrival": 4568,
+    "e1m4-arrival": 3584,
+    "e1m5-arrival": 3651,
+    "e1m6-arrival": 5496,
+    "e1m7-arrival": 4130,
+    "e1m8-arrival": 1285,
+    "e1m9-arrival": 2579
   },
   "adapterSha256": "889c510bd8f87f717e7d1d59e041cf10c7f89ce591623361f2e98397ddf32571",
   "sourceSha256": {
@@ -98,6 +787,230 @@
     "POST_FRAGMENT": "f4ae159b0de1505f78296e12cf70b43343304b1e167098e5d69fc49dfc785269"
   },
   "cases": [
+    {
+      "name": "spawn-north",
+      "image": "spawn-north-egl.png",
+      "camera": {
+        "x": 1056,
+        "y": -3616,
+        "z": 41,
+        "angle": 1.5707963267948966,
+        "pitch": 0
+      },
+      "uniqueColors": 5081,
+      "meanRGB": [
+        18.678599609375,
+        22.2463017578125,
+        21.70933984375
+      ],
+      "visibility": {
+        "total": 91,
+        "visible": 22,
+        "culled": 69,
+        "lods": [
+          14,
+          8,
+          0
+        ]
+      },
+      "submittedModelTriangles": 18190
+    },
+    {
+      "name": "spawn-west",
+      "image": "spawn-west-egl.png",
+      "camera": {
+        "x": 1056,
+        "y": -3616,
+        "z": 41,
+        "angle": 3.141592653589793,
+        "pitch": 0
+      },
+      "uniqueColors": 11500,
+      "meanRGB": [
+        19.5772197265625,
+        21.472091796875,
+        18.8932294921875
+      ],
+      "visibility": {
+        "total": 91,
+        "visible": 16,
+        "culled": 75,
+        "lods": [
+          11,
+          5,
+          0
+        ]
+      },
+      "submittedModelTriangles": 7872
+    },
+    {
+      "name": "courtyard",
+      "image": "courtyard-egl.png",
+      "camera": {
+        "x": 2488,
+        "y": -3504,
+        "z": -15,
+        "angle": 3.141592653589793,
+        "pitch": 0
+      },
+      "uniqueColors": 13052,
+      "meanRGB": [
+        46.1455009765625,
+        49.245169921875,
+        46.6016142578125
+      ],
+      "visibility": {
+        "total": 91,
+        "visible": 26,
+        "culled": 65,
+        "lods": [
+          25,
+          1,
+          0
+        ]
+      },
+      "submittedModelTriangles": 8626
+    },
+    {
+      "name": "start-hall",
+      "image": "start-hall-egl.png",
+      "camera": {
+        "x": 1110.8979591836735,
+        "y": -2957.224489795918,
+        "z": 41,
+        "angle": -1.5707963267948966,
+        "pitch": 0
+      },
+      "uniqueColors": 6386,
+      "meanRGB": [
+        13.39908984375,
+        15.699953125,
+        17.148591796875
+      ],
+      "visibility": {
+        "total": 91,
+        "visible": 17,
+        "culled": 74,
+        "lods": [
+          11,
+          5,
+          1
+        ]
+      },
+      "submittedModelTriangles": 19356
+    },
+    {
+      "name": "shotgun-reload",
+      "image": "shotgun-reload-egl.png",
+      "camera": {
+        "x": 1056,
+        "y": -3616,
+        "z": 41,
+        "angle": 1.5707963267948966,
+        "pitch": 0
+      },
+      "uniqueColors": 5863,
+      "meanRGB": [
+        17.43544921875,
+        20.9982509765625,
+        20.71946875
+      ],
+      "visibility": {
+        "total": 91,
+        "visible": 22,
+        "culled": 69,
+        "lods": [
+          14,
+          8,
+          0
+        ]
+      },
+      "submittedModelTriangles": 18190
+    },
+    {
+      "name": "pistol-fire",
+      "image": "pistol-fire-egl.png",
+      "camera": {
+        "x": 1056,
+        "y": -3616,
+        "z": 41,
+        "angle": 1.5707963267948966,
+        "pitch": 0
+      },
+      "uniqueColors": 18482,
+      "meanRGB": [
+        44.7189599609375,
+        39.9909375,
+        28.106802734375
+      ],
+      "visibility": {
+        "total": 91,
+        "visible": 22,
+        "culled": 69,
+        "lods": [
+          14,
+          8,
+          0
+        ]
+      },
+      "submittedModelTriangles": 18190
+    },
+    {
+      "name": "shotgun-fire",
+      "image": "shotgun-fire-egl.png",
+      "camera": {
+        "x": 1056,
+        "y": -3616,
+        "z": 41,
+        "angle": 1.5707963267948966,
+        "pitch": 0
+      },
+      "uniqueColors": 22450,
+      "meanRGB": [
+        45.6739619140625,
+        40.931603515625,
+        29.1289365234375
+      ],
+      "visibility": {
+        "total": 91,
+        "visible": 22,
+        "culled": 69,
+        "lods": [
+          14,
+          8,
+          0
+        ]
+      },
+      "submittedModelTriangles": 18190
+    },
+    {
+      "name": "fist-punch",
+      "image": "fist-punch-egl.png",
+      "camera": {
+        "x": 1056,
+        "y": -3616,
+        "z": 41,
+        "angle": 1.5707963267948966,
+        "pitch": 0
+      },
+      "uniqueColors": 4993,
+      "meanRGB": [
+        23.389953125,
+        25.283802734375,
+        23.5528408203125
+      ],
+      "visibility": {
+        "total": 91,
+        "visible": 22,
+        "culled": 69,
+        "lods": [
+          14,
+          8,
+          0
+        ]
+      },
+      "submittedModelTriangles": 18190
+    },
     {
       "name": "chaingun-fire",
       "image": "chaingun-fire-egl.png",
@@ -183,6 +1096,465 @@
       "submittedModelTriangles": 18190
     },
     {
+      "name": "poss-front",
+      "image": "poss-front-egl.png",
+      "camera": {
+        "x": 1056,
+        "y": -3528,
+        "z": 28,
+        "angle": -1.5707963267948966,
+        "pitch": 0
+      },
+      "uniqueColors": 18629,
+      "meanRGB": [
+        21.0964794921875,
+        22.7879638671875,
+        24.9064521484375
+      ],
+      "visibility": {
+        "total": 1,
+        "visible": 1,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          1
+        ]
+      },
+      "submittedModelTriangles": 33596,
+      "fixture": {
+        "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
+        "entity": {
+          "id": "POSS",
+          "base": "POSS",
+          "enemy": true,
+          "sprite": "POSSA1",
+          "alive": true,
+          "state": "idle",
+          "fullbright": true,
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 640.0002080743989,
+          "y": 581.7642905495384
+        },
+        "meshKeys": [
+          "character:POSS:A:idle:lod2"
+        ]
+      }
+    },
+    {
+      "name": "poss-side",
+      "image": "poss-side-egl.png",
+      "camera": {
+        "x": 1144,
+        "y": -3616,
+        "z": 28,
+        "angle": 3.141592653589793,
+        "pitch": 0
+      },
+      "uniqueColors": 10955,
+      "meanRGB": [
+        19.962443359375,
+        21.7452744140625,
+        24.19244921875
+      ],
+      "visibility": {
+        "total": 1,
+        "visible": 1,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          1
+        ]
+      },
+      "submittedModelTriangles": 33596,
+      "fixture": {
+        "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
+        "entity": {
+          "id": "POSS",
+          "base": "POSS",
+          "enemy": true,
+          "sprite": "POSSA1",
+          "alive": true,
+          "state": "idle",
+          "fullbright": true,
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 640.0004300204191,
+          "y": 581.7642905495388
+        },
+        "meshKeys": [
+          "character:POSS:A:idle:lod2"
+        ]
+      }
+    },
+    {
+      "name": "poss-back",
+      "image": "poss-back-egl.png",
+      "camera": {
+        "x": 1056,
+        "y": -3704,
+        "z": 28,
+        "angle": 1.5707963267948966,
+        "pitch": 0
+      },
+      "uniqueColors": 12742,
+      "meanRGB": [
+        21.1175869140625,
+        22.8585986328125,
+        24.847666015625
+      ],
+      "visibility": {
+        "total": 1,
+        "visible": 1,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          1
+        ]
+      },
+      "submittedModelTriangles": 33596,
+      "fixture": {
+        "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
+        "entity": {
+          "id": "POSS",
+          "base": "POSS",
+          "enemy": true,
+          "sprite": "POSSA1",
+          "alive": true,
+          "state": "idle",
+          "fullbright": true,
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 639.9997919256036,
+          "y": 581.7642905495384
+        },
+        "meshKeys": [
+          "character:POSS:A:idle:lod2"
+        ]
+      }
+    },
+    {
+      "name": "spos-front",
+      "image": "spos-front-egl.png",
+      "camera": {
+        "x": 1056,
+        "y": -3528,
+        "z": 28,
+        "angle": -1.5707963267948966,
+        "pitch": 0
+      },
+      "uniqueColors": 14274,
+      "meanRGB": [
+        20.0126376953125,
+        21.52259375,
+        24.1341357421875
+      ],
+      "visibility": {
+        "total": 1,
+        "visible": 1,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          1
+        ]
+      },
+      "submittedModelTriangles": 30240,
+      "fixture": {
+        "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
+        "entity": {
+          "id": "SPOS",
+          "base": "SPOS",
+          "enemy": true,
+          "sprite": "SPOSA1",
+          "alive": true,
+          "state": "idle",
+          "fullbright": true,
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 640.0002080743989,
+          "y": 581.7642905495384
+        },
+        "meshKeys": [
+          "character:SPOS:A:idle:lod2"
+        ]
+      }
+    },
+    {
+      "name": "spos-side",
+      "image": "spos-side-egl.png",
+      "camera": {
+        "x": 1144,
+        "y": -3616,
+        "z": 28,
+        "angle": 3.141592653589793,
+        "pitch": 0
+      },
+      "uniqueColors": 8054,
+      "meanRGB": [
+        19.3247412109375,
+        20.9966953125,
+        23.756755859375
+      ],
+      "visibility": {
+        "total": 1,
+        "visible": 1,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          1
+        ]
+      },
+      "submittedModelTriangles": 30240,
+      "fixture": {
+        "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
+        "entity": {
+          "id": "SPOS",
+          "base": "SPOS",
+          "enemy": true,
+          "sprite": "SPOSA1",
+          "alive": true,
+          "state": "idle",
+          "fullbright": true,
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 640.0004300204191,
+          "y": 581.7642905495388
+        },
+        "meshKeys": [
+          "character:SPOS:A:idle:lod2"
+        ]
+      }
+    },
+    {
+      "name": "spos-back",
+      "image": "spos-back-egl.png",
+      "camera": {
+        "x": 1056,
+        "y": -3704,
+        "z": 28,
+        "angle": 1.5707963267948966,
+        "pitch": 0
+      },
+      "uniqueColors": 7718,
+      "meanRGB": [
+        19.41334765625,
+        21.1130703125,
+        23.805154296875
+      ],
+      "visibility": {
+        "total": 1,
+        "visible": 1,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          1
+        ]
+      },
+      "submittedModelTriangles": 30240,
+      "fixture": {
+        "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
+        "entity": {
+          "id": "SPOS",
+          "base": "SPOS",
+          "enemy": true,
+          "sprite": "SPOSA1",
+          "alive": true,
+          "state": "idle",
+          "fullbright": true,
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 639.9997919256036,
+          "y": 581.7642905495384
+        },
+        "meshKeys": [
+          "character:SPOS:A:idle:lod2"
+        ]
+      }
+    },
+    {
+      "name": "troo-front",
+      "image": "troo-front-egl.png",
+      "camera": {
+        "x": 1056,
+        "y": -3528,
+        "z": 28,
+        "angle": -1.5707963267948966,
+        "pitch": 0
+      },
+      "uniqueColors": 12932,
+      "meanRGB": [
+        21.8908564453125,
+        22.4295986328125,
+        24.0675068359375
+      ],
+      "visibility": {
+        "total": 1,
+        "visible": 1,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          1
+        ]
+      },
+      "submittedModelTriangles": 25288,
+      "fixture": {
+        "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
+        "entity": {
+          "id": "TROO",
+          "base": "TROO",
+          "enemy": true,
+          "sprite": "TROOA1",
+          "alive": true,
+          "state": "idle",
+          "fullbright": true,
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 640.0002080743989,
+          "y": 581.7642905495384
+        },
+        "meshKeys": [
+          "character:TROO:A:idle:lod2"
+        ]
+      }
+    },
+    {
+      "name": "troo-side",
+      "image": "troo-side-egl.png",
+      "camera": {
+        "x": 1144,
+        "y": -3616,
+        "z": 28,
+        "angle": 3.141592653589793,
+        "pitch": 0
+      },
+      "uniqueColors": 9908,
+      "meanRGB": [
+        20.2948896484375,
+        21.409423828125,
+        23.600099609375
+      ],
+      "visibility": {
+        "total": 1,
+        "visible": 1,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          1
+        ]
+      },
+      "submittedModelTriangles": 25288,
+      "fixture": {
+        "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
+        "entity": {
+          "id": "TROO",
+          "base": "TROO",
+          "enemy": true,
+          "sprite": "TROOA1",
+          "alive": true,
+          "state": "idle",
+          "fullbright": true,
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 640.0004300204191,
+          "y": 581.7642905495388
+        },
+        "meshKeys": [
+          "character:TROO:A:idle:lod2"
+        ]
+      }
+    },
+    {
+      "name": "troo-back",
+      "image": "troo-back-egl.png",
+      "camera": {
+        "x": 1056,
+        "y": -3704,
+        "z": 28,
+        "angle": 1.5707963267948966,
+        "pitch": 0
+      },
+      "uniqueColors": 10941,
+      "meanRGB": [
+        21.219322265625,
+        21.8996982421875,
+        23.69998046875
+      ],
+      "visibility": {
+        "total": 1,
+        "visible": 1,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          1
+        ]
+      },
+      "submittedModelTriangles": 25288,
+      "fixture": {
+        "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
+        "entity": {
+          "id": "TROO",
+          "base": "TROO",
+          "enemy": true,
+          "sprite": "TROOA1",
+          "alive": true,
+          "state": "idle",
+          "fullbright": true,
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 639.9997919256036,
+          "y": 581.7642905495384
+        },
+        "meshKeys": [
+          "character:TROO:A:idle:lod2"
+        ]
+      }
+    },
+    {
       "name": "sarg-front",
       "image": "sarg-front-egl.png",
       "camera": {
@@ -192,11 +1564,11 @@
         "angle": -1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 17042,
+      "uniqueColors": 17223,
       "meanRGB": [
-        20.019578125,
-        21.8014794921875,
-        24.1118056640625
+        20.0207998046875,
+        21.79892578125,
+        24.1098564453125
       ],
       "visibility": {
         "total": 1,
@@ -243,11 +1615,11 @@
         "angle": 3.141592653589793,
         "pitch": 0
       },
-      "uniqueColors": 10388,
+      "uniqueColors": 10405,
       "meanRGB": [
-        19.27984765625,
-        21.125103515625,
-        23.7048896484375
+        19.2800654296875,
+        21.1246318359375,
+        23.7045341796875
       ],
       "visibility": {
         "total": 1,
@@ -489,6 +1861,210 @@
       }
     },
     {
+      "name": "poss-attack-side",
+      "image": "poss-attack-side-egl.png",
+      "camera": {
+        "x": 1144,
+        "y": -3616,
+        "z": 28,
+        "angle": 3.141592653589793,
+        "pitch": 0
+      },
+      "uniqueColors": 11579,
+      "meanRGB": [
+        20.1201767578125,
+        21.890873046875,
+        24.18081640625
+      ],
+      "visibility": {
+        "total": 1,
+        "visible": 1,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          1
+        ]
+      },
+      "submittedModelTriangles": 33696,
+      "fixture": {
+        "scope": "Production attack pose viewed from the side and rear to inspect the moving upper-arm/sleeve junction.",
+        "entity": {
+          "id": "POSS-attack",
+          "base": "POSS",
+          "enemy": true,
+          "sprite": "POSSF1",
+          "alive": true,
+          "state": "attack",
+          "fullbright": true,
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 640.0004300204191,
+          "y": 581.7642905495388
+        },
+        "meshKeys": [
+          "character:POSS:F:pose:lod2"
+        ]
+      }
+    },
+    {
+      "name": "poss-attack-back",
+      "image": "poss-attack-back-egl.png",
+      "camera": {
+        "x": 1056,
+        "y": -3704,
+        "z": 28,
+        "angle": 1.5707963267948966,
+        "pitch": 0
+      },
+      "uniqueColors": 12775,
+      "meanRGB": [
+        21.1428876953125,
+        22.881880859375,
+        24.8700537109375
+      ],
+      "visibility": {
+        "total": 1,
+        "visible": 1,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          1
+        ]
+      },
+      "submittedModelTriangles": 33696,
+      "fixture": {
+        "scope": "Production attack pose viewed from the side and rear to inspect the moving upper-arm/sleeve junction.",
+        "entity": {
+          "id": "POSS-attack",
+          "base": "POSS",
+          "enemy": true,
+          "sprite": "POSSF1",
+          "alive": true,
+          "state": "attack",
+          "fullbright": true,
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 639.9997919256036,
+          "y": 581.7642905495384
+        },
+        "meshKeys": [
+          "character:POSS:F:pose:lod2"
+        ]
+      }
+    },
+    {
+      "name": "spos-attack-side",
+      "image": "spos-attack-side-egl.png",
+      "camera": {
+        "x": 1144,
+        "y": -3616,
+        "z": 28,
+        "angle": 3.141592653589793,
+        "pitch": 0
+      },
+      "uniqueColors": 8714,
+      "meanRGB": [
+        19.45980078125,
+        21.1091455078125,
+        23.7181455078125
+      ],
+      "visibility": {
+        "total": 1,
+        "visible": 1,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          1
+        ]
+      },
+      "submittedModelTriangles": 30340,
+      "fixture": {
+        "scope": "Production attack pose viewed from the side and rear to inspect the moving upper-arm/sleeve junction.",
+        "entity": {
+          "id": "SPOS-attack",
+          "base": "SPOS",
+          "enemy": true,
+          "sprite": "SPOSF1",
+          "alive": true,
+          "state": "attack",
+          "fullbright": true,
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 640.0004300204191,
+          "y": 581.7642905495388
+        },
+        "meshKeys": [
+          "character:SPOS:F:pose:lod2"
+        ]
+      }
+    },
+    {
+      "name": "spos-attack-back",
+      "image": "spos-attack-back-egl.png",
+      "camera": {
+        "x": 1056,
+        "y": -3704,
+        "z": 28,
+        "angle": 1.5707963267948966,
+        "pitch": 0
+      },
+      "uniqueColors": 7931,
+      "meanRGB": [
+        19.44212890625,
+        21.1358779296875,
+        23.825328125
+      ],
+      "visibility": {
+        "total": 1,
+        "visible": 1,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          1
+        ]
+      },
+      "submittedModelTriangles": 30340,
+      "fixture": {
+        "scope": "Production attack pose viewed from the side and rear to inspect the moving upper-arm/sleeve junction.",
+        "entity": {
+          "id": "SPOS-attack",
+          "base": "SPOS",
+          "enemy": true,
+          "sprite": "SPOSF1",
+          "alive": true,
+          "state": "attack",
+          "fullbright": true,
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 639.9997919256036,
+          "y": 581.7642905495384
+        },
+        "meshKeys": [
+          "character:SPOS:F:pose:lod2"
+        ]
+      }
+    },
+    {
       "name": "sarg-attack-side",
       "image": "sarg-attack-side-egl.png",
       "camera": {
@@ -498,11 +2074,11 @@
         "angle": 3.141592653589793,
         "pitch": 0
       },
-      "uniqueColors": 10835,
+      "uniqueColors": 10869,
       "meanRGB": [
-        19.3932236328125,
-        21.24148828125,
-        23.6936904296875
+        19.393681640625,
+        21.2406025390625,
+        23.693044921875
       ],
       "visibility": {
         "total": 1,
@@ -591,6 +2167,159 @@
       }
     },
     {
+      "name": "poss-portrait",
+      "image": "poss-portrait-egl.png",
+      "camera": {
+        "x": 1062,
+        "y": -3589,
+        "z": 49,
+        "angle": -1.7894652726688387,
+        "pitch": 0
+      },
+      "uniqueColors": 33558,
+      "meanRGB": [
+        40.9268486328125,
+        41.0124638671875,
+        39.3056796875
+      ],
+      "visibility": {
+        "total": 1,
+        "visible": 1,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          1
+        ]
+      },
+      "submittedModelTriangles": 33596,
+      "fixture": {
+        "scope": "Close study of actual generated head geometry and procedural surface materials.",
+        "entity": {
+          "id": "POSS",
+          "base": "POSS",
+          "enemy": true,
+          "sprite": "POSSA1",
+          "alive": true,
+          "state": "idle",
+          "fullbright": true,
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 639.9979808338863,
+          "y": 1412.0458878256334
+        },
+        "meshKeys": [
+          "character:POSS:A:idle:lod2"
+        ]
+      }
+    },
+    {
+      "name": "spos-portrait",
+      "image": "spos-portrait-egl.png",
+      "camera": {
+        "x": 1062,
+        "y": -3589,
+        "z": 49,
+        "angle": -1.7894652726688387,
+        "pitch": 0
+      },
+      "uniqueColors": 28960,
+      "meanRGB": [
+        32.0608984375,
+        32.0314677734375,
+        32.50888671875
+      ],
+      "visibility": {
+        "total": 1,
+        "visible": 1,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          1
+        ]
+      },
+      "submittedModelTriangles": 30240,
+      "fixture": {
+        "scope": "Close study of actual generated head geometry and procedural surface materials.",
+        "entity": {
+          "id": "SPOS",
+          "base": "SPOS",
+          "enemy": true,
+          "sprite": "SPOSA1",
+          "alive": true,
+          "state": "idle",
+          "fullbright": true,
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 639.9979808338863,
+          "y": 1412.0458878256334
+        },
+        "meshKeys": [
+          "character:SPOS:A:idle:lod2"
+        ]
+      }
+    },
+    {
+      "name": "troo-portrait",
+      "image": "troo-portrait-egl.png",
+      "camera": {
+        "x": 1062,
+        "y": -3589,
+        "z": 49,
+        "angle": -1.7894652726688387,
+        "pitch": 0
+      },
+      "uniqueColors": 26474,
+      "meanRGB": [
+        38.148126953125,
+        32.2692333984375,
+        28.008482421875
+      ],
+      "visibility": {
+        "total": 1,
+        "visible": 1,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          1
+        ]
+      },
+      "submittedModelTriangles": 25288,
+      "fixture": {
+        "scope": "Close study of actual generated head geometry and procedural surface materials.",
+        "entity": {
+          "id": "TROO",
+          "base": "TROO",
+          "enemy": true,
+          "sprite": "TROOA1",
+          "alive": true,
+          "state": "idle",
+          "fullbright": true,
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 639.9979808338863,
+          "y": 1412.0458878256334
+        },
+        "meshKeys": [
+          "character:TROO:A:idle:lod2"
+        ]
+      }
+    },
+    {
       "name": "sarg-portrait",
       "image": "sarg-portrait-egl.png",
       "camera": {
@@ -600,11 +2329,11 @@
         "angle": -1.7894652726688387,
         "pitch": 0
       },
-      "uniqueColors": 38019,
+      "uniqueColors": 38498,
       "meanRGB": [
-        32.369048828125,
-        35.474015625,
-        32.8019794921875
+        32.371626953125,
+        35.4672939453125,
+        32.79597265625
       ],
       "visibility": {
         "total": 1,
@@ -689,6 +2418,534 @@
         },
         "meshKeys": [
           "character:BOSS:A:idle:lod2"
+        ]
+      }
+    },
+    {
+      "name": "bar1-detail",
+      "image": "bar1-detail-egl.png",
+      "camera": {
+        "x": 1076.098199935913,
+        "y": -3589.2024000854494,
+        "z": 22.86,
+        "angle": -2.214297435588181,
+        "pitch": -0.20558016594179337
+      },
+      "uniqueColors": 21529,
+      "meanRGB": [
+        31.4913212890625,
+        35.91223046875,
+        29.898853515625
+      ],
+      "visibility": {
+        "total": 1,
+        "visible": 1,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          1
+        ]
+      },
+      "submittedModelTriangles": 6440,
+      "fixture": {
+        "scope": "Close three-quarter view of an actual generated prop; uniform studio sector light.",
+        "entity": {
+          "id": "BAR1",
+          "type": 2035,
+          "sprite": "BAR1A0",
+          "fullbright": true,
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 639.9934497399679,
+          "y": 637.0049923837441
+        },
+        "meshKeys": [
+          "object:BAR1:0:d2"
+        ]
+      }
+    },
+    {
+      "name": "colu-detail",
+      "image": "colu-detail-egl.png",
+      "camera": {
+        "x": 1084.656,
+        "y": -3577.792,
+        "z": 34.56,
+        "angle": -2.214297435588181,
+        "pitch": -0.21760455032061152
+      },
+      "uniqueColors": 5397,
+      "meanRGB": [
+        20.5431884765625,
+        22.6186025390625,
+        25.2093837890625
+      ],
+      "visibility": {
+        "total": 1,
+        "visible": 1,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          1
+        ]
+      },
+      "submittedModelTriangles": 3696,
+      "fixture": {
+        "scope": "Close three-quarter view of an actual generated prop; uniform studio sector light.",
+        "entity": {
+          "id": "COLU",
+          "type": 2028,
+          "sprite": "COLUA0",
+          "fullbright": true,
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 639.9954642452844,
+          "y": 647.4702942267643
+        },
+        "meshKeys": [
+          "object:COLU:0:d2"
+        ]
+      }
+    },
+    {
+      "name": "elec-detail",
+      "image": "elec-detail-egl.png",
+      "camera": {
+        "x": 1125.276,
+        "y": -3523.632,
+        "z": 92.16,
+        "angle": -2.214297435588181,
+        "pitch": -0.23922362462341276
+      },
+      "uniqueColors": 11732,
+      "meanRGB": [
+        20.3633310546875,
+        22.5794169921875,
+        25.3461064453125
+      ],
+      "visibility": {
+        "total": 1,
+        "visible": 1,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          1
+        ]
+      },
+      "submittedModelTriangles": 11840,
+      "fixture": {
+        "scope": "Close three-quarter view of an actual generated prop; uniform studio sector light.",
+        "entity": {
+          "id": "ELEC",
+          "type": 48,
+          "sprite": "ELECA0",
+          "fullbright": true,
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 639.9981690695731,
+          "y": 665.0524485278545
+        },
+        "meshKeys": [
+          "object:ELEC:0:d2"
+        ]
+      }
+    },
+    {
+      "name": "medi-detail",
+      "image": "medi-detail-egl.png",
+      "camera": {
+        "x": 1075.4454005355835,
+        "y": -3590.072799285889,
+        "z": 13.075199890136718,
+        "angle": -2.214297435588181,
+        "pitch": -0.12265557768657426
+      },
+      "uniqueColors": 9906,
+      "meanRGB": [
+        37.17911328125,
+        39.3958818359375,
+        41.067962890625
+      ],
+      "visibility": {
+        "total": 1,
+        "visible": 1,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          1
+        ]
+      },
+      "submittedModelTriangles": 2836,
+      "fixture": {
+        "scope": "Close three-quarter view of an actual generated prop; uniform studio sector light.",
+        "entity": {
+          "id": "MEDI",
+          "type": 2012,
+          "sprite": "MEDIA0",
+          "fullbright": true,
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 639.9927333044789,
+          "y": 552.4668098314143
+        },
+        "meshKeys": [
+          "object:MEDI:0:d2"
+        ]
+      }
+    },
+    {
+      "name": "bon1-detail",
+      "image": "bon1-detail-egl.png",
+      "camera": {
+        "x": 1066.468800195694,
+        "y": -3602.0415997390746,
+        "z": 11.952000274658202,
+        "angle": -2.214297435588181,
+        "pitch": -0.20632900258513145
+      },
+      "uniqueColors": 13501,
+      "meanRGB": [
+        17.6724638671875,
+        19.9567783203125,
+        39.020005859375
+      ],
+      "visibility": {
+        "total": 1,
+        "visible": 1,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          1
+        ]
+      },
+      "submittedModelTriangles": 2672,
+      "fixture": {
+        "scope": "Close three-quarter view of an actual generated prop; uniform studio sector light.",
+        "entity": {
+          "id": "BON1",
+          "type": 2014,
+          "sprite": "BON1A0",
+          "fullbright": true,
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 639.987434397867,
+          "y": 637.6723374676873
+        },
+        "meshKeys": [
+          "object:BON1:0:d2"
+        ]
+      }
+    },
+    {
+      "name": "bon2-detail",
+      "image": "bon2-detail-egl.png",
+      "camera": {
+        "x": 1066.0237403697968,
+        "y": -3602.635012840271,
+        "z": 9.002607192993164,
+        "angle": -2.214297435588181,
+        "pitch": -0.1631925908121305
+      },
+      "uniqueColors": 16531,
+      "meanRGB": [
+        31.0010078125,
+        33.107181640625,
+        33.6056591796875
+      ],
+      "visibility": {
+        "total": 1,
+        "visible": 1,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          1
+        ]
+      },
+      "submittedModelTriangles": 2344,
+      "fixture": {
+        "scope": "Close three-quarter view of an actual generated prop; uniform studio sector light.",
+        "entity": {
+          "id": "BON2",
+          "type": 2015,
+          "sprite": "BON2A0",
+          "fullbright": true,
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 639.9863284575324,
+          "y": 596.3537877208208
+        },
+        "meshKeys": [
+          "object:BON2:0:d2"
+        ]
+      }
+    },
+    {
+      "name": "arm1-detail",
+      "image": "arm1-detail-egl.png",
+      "camera": {
+        "x": 1076.3007354125978,
+        "y": -3588.932352783203,
+        "z": 12.200133361816405,
+        "angle": -2.214297435588181,
+        "pitch": -0.10973523422859065
+      },
+      "uniqueColors": 18152,
+      "meanRGB": [
+        20.43708984375,
+        29.2871171875,
+        24.456318359375
+      ],
+      "visibility": {
+        "total": 1,
+        "visible": 1,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          1
+        ]
+      },
+      "submittedModelTriangles": 8400,
+      "fixture": {
+        "scope": "Close three-quarter view of an actual generated prop; uniform studio sector light.",
+        "entity": {
+          "id": "ARM1",
+          "type": 2018,
+          "sprite": "ARM1A0",
+          "fullbright": true,
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 639.9929831103182,
+          "y": 537.5795597959931
+        },
+        "meshKeys": [
+          "object:ARM1:0:d2"
+        ]
+      }
+    },
+    {
+      "name": "sbox-detail",
+      "image": "sbox-detail-egl.png",
+      "camera": {
+        "x": 1078.464,
+        "y": -3586.048,
+        "z": 10.226160049438477,
+        "angle": -2.214297435588181,
+        "pitch": -0.08326483844233427
+      },
+      "uniqueColors": 8218,
+      "meanRGB": [
+        25.8847236328125,
+        27.12532421875,
+        28.5564072265625
+      ],
+      "visibility": {
+        "total": 1,
+        "visible": 1,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          1
+        ]
+      },
+      "submittedModelTriangles": 1788,
+      "fixture": {
+        "scope": "Close three-quarter view of an actual generated prop; uniform studio sector light.",
+        "entity": {
+          "id": "SBOX",
+          "type": 2049,
+          "sprite": "SBOXA0",
+          "fullbright": true,
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 639.993570333326,
+          "y": 505.9396744921268
+        },
+        "meshKeys": [
+          "object:SBOX:0:d2"
+        ]
+      }
+    },
+    {
+      "name": "playw-detail",
+      "image": "playw-detail-egl.png",
+      "camera": {
+        "x": 1086,
+        "y": -3576,
+        "z": 24,
+        "angle": -2.214297435588181,
+        "pitch": -0.3588334681147114
+      },
+      "uniqueColors": 15963,
+      "meanRGB": [
+        21.3275615234375,
+        21.61784765625,
+        24.5540146484375
+      ],
+      "visibility": {
+        "total": 1,
+        "visible": 1,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          1
+        ]
+      },
+      "submittedModelTriangles": 10684,
+      "fixture": {
+        "scope": "Close three-quarter view of an actual generated prop; uniform studio sector light.",
+        "entity": {
+          "id": "PLAYW",
+          "type": 10,
+          "sprite": "PLAYWA0",
+          "fullbright": true,
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 639.99555858003,
+          "y": 450.7967936428034
+        },
+        "meshKeys": [
+          "object:PLAYW:0:d2"
+        ]
+      }
+    },
+    {
+      "name": "playn-detail",
+      "image": "playn-detail-egl.png",
+      "camera": {
+        "x": 1086,
+        "y": -3576,
+        "z": 24,
+        "angle": -2.214297435588181,
+        "pitch": -0.38141923589833426
+      },
+      "uniqueColors": 14301,
+      "meanRGB": [
+        20.6084677734375,
+        22.851146484375,
+        24.9730390625
+      ],
+      "visibility": {
+        "total": 1,
+        "visible": 1,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          1
+        ]
+      },
+      "submittedModelTriangles": 9684,
+      "fixture": {
+        "scope": "Close three-quarter view of an actual generated prop; uniform studio sector light.",
+        "entity": {
+          "id": "PLAYN",
+          "type": 15,
+          "sprite": "PLAYNA0",
+          "fullbright": true,
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 639.9955663406953,
+          "y": 437.81560526756226
+        },
+        "meshKeys": [
+          "object:PLAYN:0:d2"
+        ]
+      }
+    },
+    {
+      "name": "pol5-detail",
+      "image": "pol5-detail-egl.png",
+      "camera": {
+        "x": 1086,
+        "y": -3576,
+        "z": 24,
+        "angle": -2.214297435588181,
+        "pitch": -0.4180414626141114
+      },
+      "uniqueColors": 9869,
+      "meanRGB": [
+        20.055080078125,
+        21.0801962890625,
+        24.1138818359375
+      ],
+      "visibility": {
+        "total": 1,
+        "visible": 1,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          1
+        ]
+      },
+      "submittedModelTriangles": 6400,
+      "fixture": {
+        "scope": "Close three-quarter view of an actual generated prop; uniform studio sector light.",
+        "entity": {
+          "id": "POL5",
+          "type": 24,
+          "sprite": "POL5A0",
+          "fullbright": true,
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 639.9955741001737,
+          "y": 416.844023776
+        },
+        "meshKeys": [
+          "object:POL5:0:d2"
         ]
       }
     },
@@ -1410,6 +3667,2496 @@
         "meshKeys": [
           "object:CSAW:0:d2"
         ]
+      }
+    },
+    {
+      "name": "door151-open",
+      "image": "door151-open-egl.png",
+      "camera": {
+        "x": 1408,
+        "y": -2496,
+        "z": 41,
+        "angle": 0,
+        "pitch": 0
+      },
+      "uniqueColors": 37733,
+      "meanRGB": [
+        90.70330859375,
+        91.9157119140625,
+        76.81709375
+      ],
+      "visibility": {
+        "total": 0,
+        "visible": 0,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          0
+        ]
+      },
+      "submittedModelTriangles": 0,
+      "fixture": {
+        "scope": "Door opened by production action, empty passage baseline.",
+        "door": {
+          "line": 151,
+          "sector": 4,
+          "floor": 0,
+          "ceiling": 68,
+          "endpoints": [
+            {
+              "x": 1536,
+              "y": -2432
+            },
+            {
+              "x": 1536,
+              "y": -2560
+            }
+          ],
+          "center": {
+            "x": 1544,
+            "y": -2496
+          },
+          "ticks": 68
+        },
+        "portalScreen": [
+          {
+            "x": 354.37023162841746,
+            "y": 582.9814672470096
+          },
+          {
+            "x": 354.37023162841746,
+            "y": 279.50001060962654
+          },
+          {
+            "x": 925.6294250488287,
+            "y": 582.9814672470096
+          },
+          {
+            "x": 925.6294250488287,
+            "y": 279.50001060962654
+          }
+        ]
+      }
+    },
+    {
+      "name": "door151-model-front",
+      "image": "door151-model-front-egl.png",
+      "camera": {
+        "x": 1408,
+        "y": -2496,
+        "z": 41,
+        "angle": 0,
+        "pitch": 0
+      },
+      "uniqueColors": 43779,
+      "meanRGB": [
+        91.5540224609375,
+        92.23290234375,
+        76.6430087890625
+      ],
+      "visibility": {
+        "total": 1,
+        "visible": 1,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          1
+        ]
+      },
+      "submittedModelTriangles": 25288,
+      "fixture": {
+        "scope": "3D imp deliberately centred in doorway for an occlusion/anchor check; not a reproduced player encounter.",
+        "door": {
+          "line": 151,
+          "sector": 4,
+          "floor": 0,
+          "ceiling": 68,
+          "endpoints": [
+            {
+              "x": 1536,
+              "y": -2432
+            },
+            {
+              "x": 1536,
+              "y": -2560
+            }
+          ],
+          "center": {
+            "x": 1544,
+            "y": -2496
+          },
+          "ticks": 68
+        },
+        "entity": {
+          "id": "door-model",
+          "base": "TROO",
+          "enemy": true,
+          "sprite": "TROOA1",
+          "alive": true,
+          "state": "idle",
+          "x": 1544,
+          "y": -2496,
+          "z": 0,
+          "angle": 3.141592653589793
+        },
+        "anchorScreen": {
+          "x": 639.9998384363511,
+          "y": 572.2178515265972
+        },
+        "meshKeys": [
+          "character:TROO:A:idle:lod2"
+        ],
+        "portalScreen": [
+          {
+            "x": 354.37023162841746,
+            "y": 582.9814672470096
+          },
+          {
+            "x": 354.37023162841746,
+            "y": 279.50001060962654
+          },
+          {
+            "x": 925.6294250488287,
+            "y": 582.9814672470096
+          },
+          {
+            "x": 925.6294250488287,
+            "y": 279.50001060962654
+          }
+        ],
+        "visibleActor": {
+          "pixels": 24906,
+          "boundsXY": [
+            541,
+            341,
+            738,
+            602
+          ],
+          "centroidXY": [
+            640.1775475788967,
+            479.6097325945555
+          ],
+          "pixelsInsideOpening": 24906,
+          "check": "Actor and shadow differences from the identical open-door baseline. Actor anchor and visible changes inside the opening checked; shadows can extend beyond jambs. Not a combat or AI test."
+        }
+      }
+    },
+    {
+      "name": "door151-model-side",
+      "image": "door151-model-side-egl.png",
+      "camera": {
+        "x": 1408,
+        "y": -2496,
+        "z": 41,
+        "angle": 0,
+        "pitch": 0
+      },
+      "uniqueColors": 42171,
+      "meanRGB": [
+        90.990078125,
+        91.93613671875,
+        76.615115234375
+      ],
+      "visibility": {
+        "total": 1,
+        "visible": 1,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          1
+        ]
+      },
+      "submittedModelTriangles": 25288,
+      "fixture": {
+        "scope": "3D imp deliberately centred in doorway for an occlusion/anchor check; not a reproduced player encounter.",
+        "door": {
+          "line": 151,
+          "sector": 4,
+          "floor": 0,
+          "ceiling": 68,
+          "endpoints": [
+            {
+              "x": 1536,
+              "y": -2432
+            },
+            {
+              "x": 1536,
+              "y": -2560
+            }
+          ],
+          "center": {
+            "x": 1544,
+            "y": -2496
+          },
+          "ticks": 68
+        },
+        "entity": {
+          "id": "door-model",
+          "base": "TROO",
+          "enemy": true,
+          "sprite": "TROOA1",
+          "alive": true,
+          "state": "idle",
+          "x": 1544,
+          "y": -2496,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 639.9998384363511,
+          "y": 572.2178515265972
+        },
+        "meshKeys": [
+          "character:TROO:A:idle:lod2"
+        ],
+        "portalScreen": [
+          {
+            "x": 354.37023162841746,
+            "y": 582.9814672470096
+          },
+          {
+            "x": 354.37023162841746,
+            "y": 279.50001060962654
+          },
+          {
+            "x": 925.6294250488287,
+            "y": 582.9814672470096
+          },
+          {
+            "x": 925.6294250488287,
+            "y": 279.50001060962654
+          }
+        ],
+        "visibleActor": {
+          "pixels": 14273,
+          "boundsXY": [
+            575,
+            342,
+            688,
+            605
+          ],
+          "centroidXY": [
+            633.7908638688433,
+            488.0194072724725
+          ],
+          "pixelsInsideOpening": 14273,
+          "check": "Actor and shadow differences from the identical open-door baseline. Actor anchor and visible changes inside the opening checked; shadows can extend beyond jambs. Not a combat or AI test."
+        }
+      }
+    },
+    {
+      "name": "secret68-closed",
+      "image": "secret68-closed-egl.png",
+      "camera": {
+        "x": 2988,
+        "y": -3840,
+        "z": 17,
+        "angle": 3.141592653589793,
+        "pitch": 0
+      },
+      "uniqueColors": 1160,
+      "meanRGB": [
+        3.80046484375,
+        3.6162919921875,
+        2.1343369140625
+      ],
+      "visibility": {
+        "total": 91,
+        "visible": 33,
+        "culled": 58,
+        "lods": [
+          27,
+          5,
+          1
+        ]
+      },
+      "submittedModelTriangles": 17718,
+      "fixture": {
+        "scope": "Inspection camera; secret mechanism operated by real use/crossing/update. Continuous gameplay is verified separately.",
+        "state": {
+          "heights": [
+            {
+              "floor": 0,
+              "ceiling": 72
+            },
+            {
+              "floor": 32,
+              "ceiling": 88
+            },
+            {
+              "floor": 0,
+              "ceiling": 144
+            },
+            {
+              "floor": 0,
+              "ceiling": 88
+            },
+            {
+              "floor": 0,
+              "ceiling": 68
+            },
+            {
+              "floor": -56,
+              "ceiling": 216
+            },
+            {
+              "floor": 32,
+              "ceiling": 88
+            },
+            {
+              "floor": 0,
+              "ceiling": 224
+            },
+            {
+              "floor": 8,
+              "ceiling": 152
+            },
+            {
+              "floor": 0,
+              "ceiling": 224
+            },
+            {
+              "floor": 0,
+              "ceiling": 96
+            },
+            {
+              "floor": 0,
+              "ceiling": 224
+            },
+            {
+              "floor": 0,
+              "ceiling": 96
+            },
+            {
+              "floor": -80,
+              "ceiling": 216
+            },
+            {
+              "floor": 8,
+              "ceiling": 192
+            },
+            {
+              "floor": 8,
+              "ceiling": 192
+            },
+            {
+              "floor": -136,
+              "ceiling": -40
+            },
+            {
+              "floor": -120,
+              "ceiling": 16
+            },
+            {
+              "floor": -104,
+              "ceiling": 16
+            },
+            {
+              "floor": -88,
+              "ceiling": 16
+            },
+            {
+              "floor": -56,
+              "ceiling": 24
+            },
+            {
+              "floor": -72,
+              "ceiling": 16
+            },
+            {
+              "floor": -56,
+              "ceiling": 64
+            },
+            {
+              "floor": -56,
+              "ceiling": 16
+            },
+            {
+              "floor": -8,
+              "ceiling": 224
+            },
+            {
+              "floor": 40,
+              "ceiling": 224
+            },
+            {
+              "floor": 56,
+              "ceiling": 224
+            },
+            {
+              "floor": 72,
+              "ceiling": 224
+            },
+            {
+              "floor": 0,
+              "ceiling": 128
+            },
+            {
+              "floor": 104,
+              "ceiling": 264
+            },
+            {
+              "floor": 0,
+              "ceiling": 264
+            },
+            {
+              "floor": 136,
+              "ceiling": 240
+            },
+            {
+              "floor": 128,
+              "ceiling": 264
+            },
+            {
+              "floor": 136,
+              "ceiling": 240
+            },
+            {
+              "floor": 136,
+              "ceiling": 240
+            },
+            {
+              "floor": 104,
+              "ceiling": 192
+            },
+            {
+              "floor": 88,
+              "ceiling": 224
+            },
+            {
+              "floor": -8,
+              "ceiling": 120
+            },
+            {
+              "floor": 0,
+              "ceiling": 72
+            },
+            {
+              "floor": -16,
+              "ceiling": 200
+            },
+            {
+              "floor": 0,
+              "ceiling": 72
+            },
+            {
+              "floor": -8,
+              "ceiling": 120
+            },
+            {
+              "floor": 8,
+              "ceiling": 224
+            },
+            {
+              "floor": 24,
+              "ceiling": 224
+            },
+            {
+              "floor": 40,
+              "ceiling": 184
+            },
+            {
+              "floor": 40,
+              "ceiling": 184
+            },
+            {
+              "floor": 0,
+              "ceiling": 136
+            },
+            {
+              "floor": -56,
+              "ceiling": 24
+            },
+            {
+              "floor": -136,
+              "ceiling": -40
+            },
+            {
+              "floor": -120,
+              "ceiling": 48
+            },
+            {
+              "floor": -104,
+              "ceiling": 48
+            },
+            {
+              "floor": 16,
+              "ceiling": 152
+            },
+            {
+              "floor": 24,
+              "ceiling": 152
+            },
+            {
+              "floor": -16,
+              "ceiling": 72
+            },
+            {
+              "floor": -8,
+              "ceiling": 72
+            },
+            {
+              "floor": -48,
+              "ceiling": 176
+            },
+            {
+              "floor": -24,
+              "ceiling": 176
+            },
+            {
+              "floor": -48,
+              "ceiling": 176
+            },
+            {
+              "floor": -48,
+              "ceiling": 104
+            },
+            {
+              "floor": 96,
+              "ceiling": 176
+            },
+            {
+              "floor": -24,
+              "ceiling": 176
+            },
+            {
+              "floor": -48,
+              "ceiling": 176
+            },
+            {
+              "floor": 104,
+              "ceiling": 184
+            },
+            {
+              "floor": -88,
+              "ceiling": 48
+            },
+            {
+              "floor": -72,
+              "ceiling": 48
+            },
+            {
+              "floor": -56,
+              "ceiling": 48
+            },
+            {
+              "floor": -40,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": -24
+            },
+            {
+              "floor": -48,
+              "ceiling": 32
+            },
+            {
+              "floor": 104,
+              "ceiling": 184
+            },
+            {
+              "floor": -24,
+              "ceiling": 176
+            },
+            {
+              "floor": -24,
+              "ceiling": 104
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": -24
+            },
+            {
+              "floor": -136,
+              "ceiling": -24
+            },
+            {
+              "floor": -24,
+              "ceiling": 72
+            },
+            {
+              "floor": -24,
+              "ceiling": 56
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": -24
+            },
+            {
+              "floor": -24,
+              "ceiling": 88
+            },
+            {
+              "floor": -24,
+              "ceiling": 72
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            }
+          ],
+          "actions": [],
+          "player": {
+            "x": 2988,
+            "y": -3840,
+            "z": -24,
+            "sector": 56
+          },
+          "time": 0
+        }
+      }
+    },
+    {
+      "name": "secret68-open",
+      "image": "secret68-open-egl.png",
+      "camera": {
+        "x": 2988,
+        "y": -3840,
+        "z": 17,
+        "angle": 3.141592653589793,
+        "pitch": 0
+      },
+      "uniqueColors": 5821,
+      "meanRGB": [
+        26.3219287109375,
+        23.1896552734375,
+        15.5471796875
+      ],
+      "visibility": {
+        "total": 91,
+        "visible": 33,
+        "culled": 58,
+        "lods": [
+          27,
+          5,
+          1
+        ]
+      },
+      "submittedModelTriangles": 17718,
+      "fixture": {
+        "scope": "Inspection camera; secret mechanism operated by real use/crossing/update. Continuous gameplay is verified separately.",
+        "state": {
+          "heights": [
+            {
+              "floor": 0,
+              "ceiling": 72
+            },
+            {
+              "floor": 32,
+              "ceiling": 88
+            },
+            {
+              "floor": 0,
+              "ceiling": 144
+            },
+            {
+              "floor": 0,
+              "ceiling": 88
+            },
+            {
+              "floor": 0,
+              "ceiling": 68
+            },
+            {
+              "floor": -56,
+              "ceiling": 216
+            },
+            {
+              "floor": 32,
+              "ceiling": 88
+            },
+            {
+              "floor": 0,
+              "ceiling": 224
+            },
+            {
+              "floor": 8,
+              "ceiling": 152
+            },
+            {
+              "floor": 0,
+              "ceiling": 224
+            },
+            {
+              "floor": 0,
+              "ceiling": 96
+            },
+            {
+              "floor": 0,
+              "ceiling": 224
+            },
+            {
+              "floor": 0,
+              "ceiling": 96
+            },
+            {
+              "floor": -80,
+              "ceiling": 216
+            },
+            {
+              "floor": 8,
+              "ceiling": 192
+            },
+            {
+              "floor": 8,
+              "ceiling": 192
+            },
+            {
+              "floor": -136,
+              "ceiling": -40
+            },
+            {
+              "floor": -120,
+              "ceiling": 16
+            },
+            {
+              "floor": -104,
+              "ceiling": 16
+            },
+            {
+              "floor": -88,
+              "ceiling": 16
+            },
+            {
+              "floor": -56,
+              "ceiling": 24
+            },
+            {
+              "floor": -72,
+              "ceiling": 16
+            },
+            {
+              "floor": -56,
+              "ceiling": 64
+            },
+            {
+              "floor": -56,
+              "ceiling": 16
+            },
+            {
+              "floor": -8,
+              "ceiling": 224
+            },
+            {
+              "floor": 40,
+              "ceiling": 224
+            },
+            {
+              "floor": 56,
+              "ceiling": 224
+            },
+            {
+              "floor": 72,
+              "ceiling": 224
+            },
+            {
+              "floor": 0,
+              "ceiling": 128
+            },
+            {
+              "floor": 104,
+              "ceiling": 264
+            },
+            {
+              "floor": 0,
+              "ceiling": 264
+            },
+            {
+              "floor": 136,
+              "ceiling": 240
+            },
+            {
+              "floor": 128,
+              "ceiling": 264
+            },
+            {
+              "floor": 136,
+              "ceiling": 240
+            },
+            {
+              "floor": 136,
+              "ceiling": 240
+            },
+            {
+              "floor": 104,
+              "ceiling": 192
+            },
+            {
+              "floor": 88,
+              "ceiling": 224
+            },
+            {
+              "floor": -8,
+              "ceiling": 120
+            },
+            {
+              "floor": 0,
+              "ceiling": 72
+            },
+            {
+              "floor": -16,
+              "ceiling": 200
+            },
+            {
+              "floor": 0,
+              "ceiling": 72
+            },
+            {
+              "floor": -8,
+              "ceiling": 120
+            },
+            {
+              "floor": 8,
+              "ceiling": 224
+            },
+            {
+              "floor": 24,
+              "ceiling": 224
+            },
+            {
+              "floor": 40,
+              "ceiling": 184
+            },
+            {
+              "floor": 40,
+              "ceiling": 184
+            },
+            {
+              "floor": 0,
+              "ceiling": 136
+            },
+            {
+              "floor": -56,
+              "ceiling": 24
+            },
+            {
+              "floor": -136,
+              "ceiling": -40
+            },
+            {
+              "floor": -120,
+              "ceiling": 48
+            },
+            {
+              "floor": -104,
+              "ceiling": 48
+            },
+            {
+              "floor": 16,
+              "ceiling": 152
+            },
+            {
+              "floor": 24,
+              "ceiling": 152
+            },
+            {
+              "floor": -16,
+              "ceiling": 72
+            },
+            {
+              "floor": -8,
+              "ceiling": 72
+            },
+            {
+              "floor": -48,
+              "ceiling": 176
+            },
+            {
+              "floor": -24,
+              "ceiling": 176
+            },
+            {
+              "floor": -48,
+              "ceiling": 176
+            },
+            {
+              "floor": -48,
+              "ceiling": 104
+            },
+            {
+              "floor": 96,
+              "ceiling": 176
+            },
+            {
+              "floor": -24,
+              "ceiling": 176
+            },
+            {
+              "floor": -48,
+              "ceiling": 176
+            },
+            {
+              "floor": 104,
+              "ceiling": 184
+            },
+            {
+              "floor": -88,
+              "ceiling": 48
+            },
+            {
+              "floor": -72,
+              "ceiling": 48
+            },
+            {
+              "floor": -56,
+              "ceiling": 48
+            },
+            {
+              "floor": -40,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": 44
+            },
+            {
+              "floor": -48,
+              "ceiling": 32
+            },
+            {
+              "floor": 104,
+              "ceiling": 184
+            },
+            {
+              "floor": -24,
+              "ceiling": 176
+            },
+            {
+              "floor": -24,
+              "ceiling": 104
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": -24
+            },
+            {
+              "floor": -136,
+              "ceiling": -24
+            },
+            {
+              "floor": -24,
+              "ceiling": 72
+            },
+            {
+              "floor": -24,
+              "ceiling": 56
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": -24
+            },
+            {
+              "floor": -24,
+              "ceiling": 88
+            },
+            {
+              "floor": -24,
+              "ceiling": 72
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            }
+          ],
+          "actions": [
+            {
+              "sector": 68,
+              "kind": "door",
+              "phase": "wait",
+              "target": 44,
+              "base": -24,
+              "wait": 4.242857142857143
+            }
+          ],
+          "player": {
+            "x": 2988,
+            "y": -3840,
+            "z": -24,
+            "sector": 56
+          },
+          "time": 1.0142857142857127
+        }
+      }
+    },
+    {
+      "name": "secret69-open",
+      "image": "secret69-open-egl.png",
+      "camera": {
+        "x": 3424,
+        "y": -3856,
+        "z": -7,
+        "angle": 3.141592653589793,
+        "pitch": 0
+      },
+      "uniqueColors": 21130,
+      "meanRGB": [
+        34.1200400390625,
+        39.6360283203125,
+        31.8154423828125
+      ],
+      "visibility": {
+        "total": 91,
+        "visible": 56,
+        "culled": 35,
+        "lods": [
+          41,
+          12,
+          3
+        ]
+      },
+      "submittedModelTriangles": 46788,
+      "fixture": {
+        "scope": "Inspection camera; secret mechanism operated by real use/crossing/update. Continuous gameplay is verified separately.",
+        "state": {
+          "heights": [
+            {
+              "floor": 0,
+              "ceiling": 72
+            },
+            {
+              "floor": 32,
+              "ceiling": 88
+            },
+            {
+              "floor": 0,
+              "ceiling": 144
+            },
+            {
+              "floor": 0,
+              "ceiling": 88
+            },
+            {
+              "floor": 0,
+              "ceiling": 68
+            },
+            {
+              "floor": -56,
+              "ceiling": 216
+            },
+            {
+              "floor": 32,
+              "ceiling": 88
+            },
+            {
+              "floor": 0,
+              "ceiling": 224
+            },
+            {
+              "floor": 8,
+              "ceiling": 152
+            },
+            {
+              "floor": 0,
+              "ceiling": 224
+            },
+            {
+              "floor": 0,
+              "ceiling": 96
+            },
+            {
+              "floor": 0,
+              "ceiling": 224
+            },
+            {
+              "floor": 0,
+              "ceiling": 96
+            },
+            {
+              "floor": -80,
+              "ceiling": 216
+            },
+            {
+              "floor": 8,
+              "ceiling": 192
+            },
+            {
+              "floor": 8,
+              "ceiling": 192
+            },
+            {
+              "floor": -136,
+              "ceiling": -40
+            },
+            {
+              "floor": -120,
+              "ceiling": 16
+            },
+            {
+              "floor": -104,
+              "ceiling": 16
+            },
+            {
+              "floor": -88,
+              "ceiling": 16
+            },
+            {
+              "floor": -56,
+              "ceiling": 24
+            },
+            {
+              "floor": -72,
+              "ceiling": 16
+            },
+            {
+              "floor": -56,
+              "ceiling": 64
+            },
+            {
+              "floor": -56,
+              "ceiling": 16
+            },
+            {
+              "floor": -8,
+              "ceiling": 224
+            },
+            {
+              "floor": 40,
+              "ceiling": 224
+            },
+            {
+              "floor": 56,
+              "ceiling": 224
+            },
+            {
+              "floor": 72,
+              "ceiling": 224
+            },
+            {
+              "floor": 0,
+              "ceiling": 128
+            },
+            {
+              "floor": 104,
+              "ceiling": 264
+            },
+            {
+              "floor": 0,
+              "ceiling": 264
+            },
+            {
+              "floor": 136,
+              "ceiling": 240
+            },
+            {
+              "floor": 128,
+              "ceiling": 264
+            },
+            {
+              "floor": 136,
+              "ceiling": 240
+            },
+            {
+              "floor": 136,
+              "ceiling": 240
+            },
+            {
+              "floor": 104,
+              "ceiling": 192
+            },
+            {
+              "floor": 88,
+              "ceiling": 224
+            },
+            {
+              "floor": -8,
+              "ceiling": 120
+            },
+            {
+              "floor": 0,
+              "ceiling": 72
+            },
+            {
+              "floor": -16,
+              "ceiling": 200
+            },
+            {
+              "floor": 0,
+              "ceiling": 72
+            },
+            {
+              "floor": -8,
+              "ceiling": 120
+            },
+            {
+              "floor": 8,
+              "ceiling": 224
+            },
+            {
+              "floor": 24,
+              "ceiling": 224
+            },
+            {
+              "floor": 40,
+              "ceiling": 184
+            },
+            {
+              "floor": 40,
+              "ceiling": 184
+            },
+            {
+              "floor": 0,
+              "ceiling": 136
+            },
+            {
+              "floor": -56,
+              "ceiling": 24
+            },
+            {
+              "floor": -136,
+              "ceiling": -40
+            },
+            {
+              "floor": -120,
+              "ceiling": 48
+            },
+            {
+              "floor": -104,
+              "ceiling": 48
+            },
+            {
+              "floor": 16,
+              "ceiling": 152
+            },
+            {
+              "floor": 24,
+              "ceiling": 152
+            },
+            {
+              "floor": -16,
+              "ceiling": 72
+            },
+            {
+              "floor": -8,
+              "ceiling": 72
+            },
+            {
+              "floor": -48,
+              "ceiling": 176
+            },
+            {
+              "floor": -24,
+              "ceiling": 176
+            },
+            {
+              "floor": -48,
+              "ceiling": 176
+            },
+            {
+              "floor": -48,
+              "ceiling": 104
+            },
+            {
+              "floor": -40,
+              "ceiling": 176
+            },
+            {
+              "floor": -24,
+              "ceiling": 176
+            },
+            {
+              "floor": -48,
+              "ceiling": 176
+            },
+            {
+              "floor": 104,
+              "ceiling": 184
+            },
+            {
+              "floor": -88,
+              "ceiling": 48
+            },
+            {
+              "floor": -72,
+              "ceiling": 48
+            },
+            {
+              "floor": -56,
+              "ceiling": 48
+            },
+            {
+              "floor": -40,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": -24
+            },
+            {
+              "floor": -48,
+              "ceiling": 32
+            },
+            {
+              "floor": 104,
+              "ceiling": 184
+            },
+            {
+              "floor": -24,
+              "ceiling": 176
+            },
+            {
+              "floor": -24,
+              "ceiling": 104
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": -24
+            },
+            {
+              "floor": -136,
+              "ceiling": -24
+            },
+            {
+              "floor": -24,
+              "ceiling": 72
+            },
+            {
+              "floor": -24,
+              "ceiling": 56
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": -24
+            },
+            {
+              "floor": -24,
+              "ceiling": 88
+            },
+            {
+              "floor": -24,
+              "ceiling": 72
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            }
+          ],
+          "actions": [],
+          "player": {
+            "x": 3008,
+            "y": -4240.000000000011,
+            "z": -24,
+            "sector": 72
+          },
+          "time": 1.7999999999999956
+        }
+      }
+    },
+    {
+      "name": "secret70-low",
+      "image": "secret70-low-egl.png",
+      "camera": {
+        "x": 3488,
+        "y": -3872,
+        "z": -7,
+        "angle": 0,
+        "pitch": 0
+      },
+      "uniqueColors": 1517,
+      "meanRGB": [
+        5.6056865234375,
+        7.6876923828125,
+        6.1947958984375
+      ],
+      "visibility": {
+        "total": 91,
+        "visible": 2,
+        "culled": 89,
+        "lods": [
+          0,
+          1,
+          1
+        ]
+      },
+      "submittedModelTriangles": 3876,
+      "fixture": {
+        "scope": "Inspection camera; secret mechanism operated by real use/crossing/update. Continuous gameplay is verified separately.",
+        "state": {
+          "heights": [
+            {
+              "floor": 0,
+              "ceiling": 72
+            },
+            {
+              "floor": 32,
+              "ceiling": 88
+            },
+            {
+              "floor": 0,
+              "ceiling": 144
+            },
+            {
+              "floor": 0,
+              "ceiling": 88
+            },
+            {
+              "floor": 0,
+              "ceiling": 68
+            },
+            {
+              "floor": -56,
+              "ceiling": 216
+            },
+            {
+              "floor": 32,
+              "ceiling": 88
+            },
+            {
+              "floor": 0,
+              "ceiling": 224
+            },
+            {
+              "floor": 8,
+              "ceiling": 152
+            },
+            {
+              "floor": 0,
+              "ceiling": 224
+            },
+            {
+              "floor": 0,
+              "ceiling": 96
+            },
+            {
+              "floor": 0,
+              "ceiling": 224
+            },
+            {
+              "floor": 0,
+              "ceiling": 96
+            },
+            {
+              "floor": -80,
+              "ceiling": 216
+            },
+            {
+              "floor": 8,
+              "ceiling": 192
+            },
+            {
+              "floor": 8,
+              "ceiling": 192
+            },
+            {
+              "floor": -136,
+              "ceiling": -40
+            },
+            {
+              "floor": -120,
+              "ceiling": 16
+            },
+            {
+              "floor": -104,
+              "ceiling": 16
+            },
+            {
+              "floor": -88,
+              "ceiling": 16
+            },
+            {
+              "floor": -56,
+              "ceiling": 24
+            },
+            {
+              "floor": -72,
+              "ceiling": 16
+            },
+            {
+              "floor": -56,
+              "ceiling": 64
+            },
+            {
+              "floor": -56,
+              "ceiling": 16
+            },
+            {
+              "floor": -8,
+              "ceiling": 224
+            },
+            {
+              "floor": 40,
+              "ceiling": 224
+            },
+            {
+              "floor": 56,
+              "ceiling": 224
+            },
+            {
+              "floor": 72,
+              "ceiling": 224
+            },
+            {
+              "floor": 0,
+              "ceiling": 128
+            },
+            {
+              "floor": 104,
+              "ceiling": 264
+            },
+            {
+              "floor": 0,
+              "ceiling": 264
+            },
+            {
+              "floor": 136,
+              "ceiling": 240
+            },
+            {
+              "floor": 128,
+              "ceiling": 264
+            },
+            {
+              "floor": 136,
+              "ceiling": 240
+            },
+            {
+              "floor": 136,
+              "ceiling": 240
+            },
+            {
+              "floor": 104,
+              "ceiling": 192
+            },
+            {
+              "floor": 88,
+              "ceiling": 224
+            },
+            {
+              "floor": -8,
+              "ceiling": 120
+            },
+            {
+              "floor": 0,
+              "ceiling": 72
+            },
+            {
+              "floor": -16,
+              "ceiling": 200
+            },
+            {
+              "floor": 0,
+              "ceiling": 72
+            },
+            {
+              "floor": -8,
+              "ceiling": 120
+            },
+            {
+              "floor": 8,
+              "ceiling": 224
+            },
+            {
+              "floor": 24,
+              "ceiling": 224
+            },
+            {
+              "floor": 40,
+              "ceiling": 184
+            },
+            {
+              "floor": 40,
+              "ceiling": 184
+            },
+            {
+              "floor": 0,
+              "ceiling": 136
+            },
+            {
+              "floor": -56,
+              "ceiling": 24
+            },
+            {
+              "floor": -136,
+              "ceiling": -40
+            },
+            {
+              "floor": -120,
+              "ceiling": 48
+            },
+            {
+              "floor": -104,
+              "ceiling": 48
+            },
+            {
+              "floor": 16,
+              "ceiling": 152
+            },
+            {
+              "floor": 24,
+              "ceiling": 152
+            },
+            {
+              "floor": -16,
+              "ceiling": 72
+            },
+            {
+              "floor": -8,
+              "ceiling": 72
+            },
+            {
+              "floor": -48,
+              "ceiling": 176
+            },
+            {
+              "floor": -24,
+              "ceiling": 176
+            },
+            {
+              "floor": -48,
+              "ceiling": 176
+            },
+            {
+              "floor": -48,
+              "ceiling": 104
+            },
+            {
+              "floor": -40,
+              "ceiling": 176
+            },
+            {
+              "floor": -24,
+              "ceiling": 176
+            },
+            {
+              "floor": -48,
+              "ceiling": 176
+            },
+            {
+              "floor": 104,
+              "ceiling": 184
+            },
+            {
+              "floor": -88,
+              "ceiling": 48
+            },
+            {
+              "floor": -72,
+              "ceiling": 48
+            },
+            {
+              "floor": -56,
+              "ceiling": 48
+            },
+            {
+              "floor": -40,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": -24
+            },
+            {
+              "floor": -48,
+              "ceiling": 32
+            },
+            {
+              "floor": -48,
+              "ceiling": 184
+            },
+            {
+              "floor": -24,
+              "ceiling": 176
+            },
+            {
+              "floor": -24,
+              "ceiling": 104
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": -24
+            },
+            {
+              "floor": -136,
+              "ceiling": -24
+            },
+            {
+              "floor": -24,
+              "ceiling": 72
+            },
+            {
+              "floor": -24,
+              "ceiling": 56
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": -24
+            },
+            {
+              "floor": -24,
+              "ceiling": 88
+            },
+            {
+              "floor": -24,
+              "ceiling": 72
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            }
+          ],
+          "actions": [
+            {
+              "sector": 70,
+              "kind": "lift",
+              "phase": "wait",
+              "target": -48,
+              "base": 104,
+              "wait": 2.7285714285714295
+            }
+          ],
+          "player": {
+            "x": 2896,
+            "y": -2999.999999999996,
+            "z": -24,
+            "sector": 60
+          },
+          "time": 3.2999999999999905
+        }
+      }
+    },
+    {
+      "name": "secret70-high",
+      "image": "secret70-high-egl.png",
+      "camera": {
+        "x": 3648,
+        "y": -3808,
+        "z": 145,
+        "angle": 1.5707963267948966,
+        "pitch": 0
+      },
+      "uniqueColors": 1167,
+      "meanRGB": [
+        6.490958984375,
+        8.5752626953125,
+        8.2348955078125
+      ],
+      "visibility": {
+        "total": 91,
+        "visible": 27,
+        "culled": 64,
+        "lods": [
+          20,
+          5,
+          2
+        ]
+      },
+      "submittedModelTriangles": 22190,
+      "fixture": {
+        "scope": "Inspection camera; secret mechanism operated by real use/crossing/update. Continuous gameplay is verified separately.",
+        "state": {
+          "heights": [
+            {
+              "floor": 0,
+              "ceiling": 72
+            },
+            {
+              "floor": 32,
+              "ceiling": 88
+            },
+            {
+              "floor": 0,
+              "ceiling": 144
+            },
+            {
+              "floor": 0,
+              "ceiling": 88
+            },
+            {
+              "floor": 0,
+              "ceiling": 68
+            },
+            {
+              "floor": -56,
+              "ceiling": 216
+            },
+            {
+              "floor": 32,
+              "ceiling": 88
+            },
+            {
+              "floor": 0,
+              "ceiling": 224
+            },
+            {
+              "floor": 8,
+              "ceiling": 152
+            },
+            {
+              "floor": 0,
+              "ceiling": 224
+            },
+            {
+              "floor": 0,
+              "ceiling": 96
+            },
+            {
+              "floor": 0,
+              "ceiling": 224
+            },
+            {
+              "floor": 0,
+              "ceiling": 96
+            },
+            {
+              "floor": -80,
+              "ceiling": 216
+            },
+            {
+              "floor": 8,
+              "ceiling": 192
+            },
+            {
+              "floor": 8,
+              "ceiling": 192
+            },
+            {
+              "floor": -136,
+              "ceiling": -40
+            },
+            {
+              "floor": -120,
+              "ceiling": 16
+            },
+            {
+              "floor": -104,
+              "ceiling": 16
+            },
+            {
+              "floor": -88,
+              "ceiling": 16
+            },
+            {
+              "floor": -56,
+              "ceiling": 24
+            },
+            {
+              "floor": -72,
+              "ceiling": 16
+            },
+            {
+              "floor": -56,
+              "ceiling": 64
+            },
+            {
+              "floor": -56,
+              "ceiling": 16
+            },
+            {
+              "floor": -8,
+              "ceiling": 224
+            },
+            {
+              "floor": 40,
+              "ceiling": 224
+            },
+            {
+              "floor": 56,
+              "ceiling": 224
+            },
+            {
+              "floor": 72,
+              "ceiling": 224
+            },
+            {
+              "floor": 0,
+              "ceiling": 128
+            },
+            {
+              "floor": 104,
+              "ceiling": 264
+            },
+            {
+              "floor": 0,
+              "ceiling": 264
+            },
+            {
+              "floor": 136,
+              "ceiling": 240
+            },
+            {
+              "floor": 128,
+              "ceiling": 264
+            },
+            {
+              "floor": 136,
+              "ceiling": 240
+            },
+            {
+              "floor": 136,
+              "ceiling": 240
+            },
+            {
+              "floor": 104,
+              "ceiling": 192
+            },
+            {
+              "floor": 88,
+              "ceiling": 224
+            },
+            {
+              "floor": -8,
+              "ceiling": 120
+            },
+            {
+              "floor": 0,
+              "ceiling": 72
+            },
+            {
+              "floor": -16,
+              "ceiling": 200
+            },
+            {
+              "floor": 0,
+              "ceiling": 72
+            },
+            {
+              "floor": -8,
+              "ceiling": 120
+            },
+            {
+              "floor": 8,
+              "ceiling": 224
+            },
+            {
+              "floor": 24,
+              "ceiling": 224
+            },
+            {
+              "floor": 40,
+              "ceiling": 184
+            },
+            {
+              "floor": 40,
+              "ceiling": 184
+            },
+            {
+              "floor": 0,
+              "ceiling": 136
+            },
+            {
+              "floor": -56,
+              "ceiling": 24
+            },
+            {
+              "floor": -136,
+              "ceiling": -40
+            },
+            {
+              "floor": -120,
+              "ceiling": 48
+            },
+            {
+              "floor": -104,
+              "ceiling": 48
+            },
+            {
+              "floor": 16,
+              "ceiling": 152
+            },
+            {
+              "floor": 24,
+              "ceiling": 152
+            },
+            {
+              "floor": -16,
+              "ceiling": 72
+            },
+            {
+              "floor": -8,
+              "ceiling": 72
+            },
+            {
+              "floor": -48,
+              "ceiling": 176
+            },
+            {
+              "floor": -24,
+              "ceiling": 176
+            },
+            {
+              "floor": -48,
+              "ceiling": 176
+            },
+            {
+              "floor": -48,
+              "ceiling": 104
+            },
+            {
+              "floor": -40,
+              "ceiling": 176
+            },
+            {
+              "floor": -24,
+              "ceiling": 176
+            },
+            {
+              "floor": -48,
+              "ceiling": 176
+            },
+            {
+              "floor": 104,
+              "ceiling": 184
+            },
+            {
+              "floor": -88,
+              "ceiling": 48
+            },
+            {
+              "floor": -72,
+              "ceiling": 48
+            },
+            {
+              "floor": -56,
+              "ceiling": 48
+            },
+            {
+              "floor": -40,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": -24
+            },
+            {
+              "floor": -48,
+              "ceiling": 32
+            },
+            {
+              "floor": 104,
+              "ceiling": 184
+            },
+            {
+              "floor": -24,
+              "ceiling": 176
+            },
+            {
+              "floor": -24,
+              "ceiling": 104
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": -24
+            },
+            {
+              "floor": -136,
+              "ceiling": -24
+            },
+            {
+              "floor": -24,
+              "ceiling": 72
+            },
+            {
+              "floor": -24,
+              "ceiling": 56
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": -24
+            },
+            {
+              "floor": -24,
+              "ceiling": 88
+            },
+            {
+              "floor": -24,
+              "ceiling": 72
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            }
+          ],
+          "actions": [],
+          "player": {
+            "x": 3553.7142857142812,
+            "y": -3872,
+            "z": 104,
+            "sector": 70
+          },
+          "time": 7.628571428571404
+        }
+      }
+    },
+    {
+      "name": "e1m1-arrival",
+      "image": "e1m1-arrival-egl.png",
+      "camera": {
+        "x": 1056,
+        "y": -3616,
+        "z": 41,
+        "angle": 1.5707963267948966,
+        "pitch": 0
+      },
+      "uniqueColors": 4619,
+      "meanRGB": [
+        18.6996220703125,
+        22.267326171875,
+        21.7520341796875
+      ],
+      "visibility": {
+        "total": 0,
+        "visible": 0,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          0
+        ]
+      },
+      "submittedModelTriangles": 0,
+      "fixture": {
+        "scope": "Arrival camera at the generated player start of E1M1; geometry, lighting and models come from the production map build."
+      }
+    },
+    {
+      "name": "e1m2-arrival",
+      "image": "e1m2-arrival-egl.png",
+      "camera": {
+        "x": -32,
+        "y": -240,
+        "z": 65,
+        "angle": 1.5707963267948966,
+        "pitch": 0
+      },
+      "uniqueColors": 2986,
+      "meanRGB": [
+        13.7232841796875,
+        15.9171337890625,
+        15.5132529296875
+      ],
+      "visibility": {
+        "total": 0,
+        "visible": 0,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          0
+        ]
+      },
+      "submittedModelTriangles": 0,
+      "fixture": {
+        "scope": "Arrival camera at the generated player start of E1M2; geometry, lighting and models come from the production map build."
+      }
+    },
+    {
+      "name": "e1m3-arrival",
+      "image": "e1m3-arrival-egl.png",
+      "camera": {
+        "x": -1472,
+        "y": -3344,
+        "z": 105,
+        "angle": 1.5707963267948966,
+        "pitch": 0
+      },
+      "uniqueColors": 22599,
+      "meanRGB": [
+        44.4380595703125,
+        42.866001953125,
+        33.4359072265625
+      ],
+      "visibility": {
+        "total": 0,
+        "visible": 0,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          0
+        ]
+      },
+      "submittedModelTriangles": 0,
+      "fixture": {
+        "scope": "Arrival camera at the generated player start of E1M3; geometry, lighting and models come from the production map build."
+      }
+    },
+    {
+      "name": "e1m4-arrival",
+      "image": "e1m4-arrival-egl.png",
+      "camera": {
+        "x": 2032,
+        "y": 1120,
+        "z": 41,
+        "angle": 3.141592653589793,
+        "pitch": 0
+      },
+      "uniqueColors": 6753,
+      "meanRGB": [
+        25.061806640625,
+        23.049119140625,
+        16.029677734375
+      ],
+      "visibility": {
+        "total": 0,
+        "visible": 0,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          0
+        ]
+      },
+      "submittedModelTriangles": 0,
+      "fixture": {
+        "scope": "Arrival camera at the generated player start of E1M4; geometry, lighting and models come from the production map build."
+      }
+    },
+    {
+      "name": "e1m5-arrival",
+      "image": "e1m5-arrival-egl.png",
+      "camera": {
+        "x": -224,
+        "y": -624,
+        "z": 41,
+        "angle": 1.5707963267948966,
+        "pitch": 0
+      },
+      "uniqueColors": 6414,
+      "meanRGB": [
+        16.9763291015625,
+        20.835328125,
+        16.3712666015625
+      ],
+      "visibility": {
+        "total": 0,
+        "visible": 0,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          0
+        ]
+      },
+      "submittedModelTriangles": 0,
+      "fixture": {
+        "scope": "Arrival camera at the generated player start of E1M5; geometry, lighting and models come from the production map build."
+      }
+    },
+    {
+      "name": "e1m6-arrival",
+      "image": "e1m6-arrival-egl.png",
+      "camera": {
+        "x": 32,
+        "y": -1376,
+        "z": 89,
+        "angle": 1.5707963267948966,
+        "pitch": 0
+      },
+      "uniqueColors": 12802,
+      "meanRGB": [
+        23.525291015625,
+        23.4565625,
+        19.36355078125
+      ],
+      "visibility": {
+        "total": 0,
+        "visible": 0,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          0
+        ]
+      },
+      "submittedModelTriangles": 0,
+      "fixture": {
+        "scope": "Arrival camera at the generated player start of E1M6; geometry, lighting and models come from the production map build."
+      }
+    },
+    {
+      "name": "e1m7-arrival",
+      "image": "e1m7-arrival-egl.png",
+      "camera": {
+        "x": 96,
+        "y": 528,
+        "z": 41,
+        "angle": 4.71238898038469,
+        "pitch": 0
+      },
+      "uniqueColors": 3952,
+      "meanRGB": [
+        14.123509765625,
+        13.6273896484375,
+        10.6066083984375
+      ],
+      "visibility": {
+        "total": 0,
+        "visible": 0,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          0
+        ]
+      },
+      "submittedModelTriangles": 0,
+      "fixture": {
+        "scope": "Arrival camera at the generated player start of E1M7; geometry, lighting and models come from the production map build."
+      }
+    },
+    {
+      "name": "e1m8-arrival",
+      "image": "e1m8-arrival-egl.png",
+      "camera": {
+        "x": -128,
+        "y": -224,
+        "z": 121,
+        "angle": 0,
+        "pitch": 0
+      },
+      "uniqueColors": 935,
+      "meanRGB": [
+        5.7428427734375,
+        4.8980546875,
+        4.1899619140625
+      ],
+      "visibility": {
+        "total": 0,
+        "visible": 0,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          0
+        ]
+      },
+      "submittedModelTriangles": 0,
+      "fixture": {
+        "scope": "Arrival camera at the generated player start of E1M8; geometry, lighting and models come from the production map build."
+      }
+    },
+    {
+      "name": "e1m9-arrival",
+      "image": "e1m9-arrival-egl.png",
+      "camera": {
+        "x": 96,
+        "y": -272,
+        "z": 241,
+        "angle": 0,
+        "pitch": 0
+      },
+      "uniqueColors": 4625,
+      "meanRGB": [
+        17.1999833984375,
+        18.672962890625,
+        16.7059287109375
+      ],
+      "visibility": {
+        "total": 0,
+        "visible": 0,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          0
+        ]
+      },
+      "submittedModelTriangles": 0,
+      "fixture": {
+        "scope": "Arrival camera at the generated player start of E1M9; geometry, lighting and models come from the production map build."
       }
     }
   ]

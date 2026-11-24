@@ -32,6 +32,7 @@ def source_hashes():
 EXTRACT = r"""
 import fs from 'node:fs';
 import {ProceduralResources} from './src/procedural-resources.js';
+import {EPISODE_PLANS} from './src/episode-plans.js';
 import {DoomGame} from './src/game.js';
 import {collectModelBatches,collectShadowBatches,viewWeaponBatch,modelForEntity,MODEL_VERTEX_STRIDE} from './src/procedural-models.js';
 import {buildMapGeometry} from './src/ferro-doom-renderer.js';
@@ -45,8 +46,16 @@ const snapshotHeights=()=>map.sectors.map(s=>({floor:s.floor,ceiling:s.ceiling})
 const applyHeights=heights=>map.sectors.forEach((sector,i)=>Object.assign(sector,heights[i]));
 const groups=buildMapGeometry(resources,map),textures=new Map(),catalog=new Map();
 const bytes=x=>Buffer.from(x.buffer,x.byteOffset,x.byteLength).toString('base64');
-function tex(kind,name){if(!needsWorld)return;const key=kind+':'+name,t=kind==='flat'?resources.flat(name):resources.texture(name);
- if(!t)throw Error('Missing generated material '+key);if(!textures.has(key)){const d=surfaceDetail(kind,name,t);textures.set(key,{key,width:d.width,height:d.height,baseWidth:d.baseWidth,baseHeight:d.baseHeight,heightScale:d.heightScale,pixels:bytes(d.pixels),normalRoughness:bytes(d.normalRoughness),surface:bytes(d.surface)});}}
+// E1M1 is qualified: a missing material there is a regression. The eight other
+// surveyed levels still use names the material library has not been written
+// for; they render with the same 2x2 placeholder the production renderer uses
+// and are reported as a measured gap instead of being silently hidden.
+const PLACEHOLDER={width:2,height:2,pixels:new Uint8Array([120,100,90,255,80,65,55,255,80,65,55,255,120,100,90,255])};
+const missingMaterials=new Map();
+function tex(kind,name,mapId){if(!needsWorld)return;const key=kind+':'+name;let t=kind==='flat'?resources.flat(name):resources.texture(name);
+ if(!t){if(!mapId||mapId==='E1M1')throw Error('Missing generated material '+key);
+  if(!missingMaterials.has(key))missingMaterials.set(key,[]);if(!missingMaterials.get(key).includes(mapId))missingMaterials.get(key).push(mapId);t=PLACEHOLDER;}
+ if(!textures.has(key)){const d=surfaceDetail(kind,name,t);textures.set(key,{key,width:d.width,height:d.height,baseWidth:d.baseWidth,baseHeight:d.baseHeight,heightScale:d.heightScale,pixels:bytes(d.pixels),normalRoughness:bytes(d.normalRoughness),surface:bytes(d.surface)});}}
 function pack(batch){if(!batch)return null;const m=batch.mesh;
  if(!catalog.has(m.key))catalog.set(m.key,{key:m.key,vertices:bytes(m.vertices),stride:m.stride,count:m.vertices.length/m.stride,bounds:m.bounds});
  return {key:m.key,instances:bytes(batch.instances),count:batch.count};}
@@ -137,13 +146,25 @@ for(const [name,state]of Object.entries(secretSnapshots())){
  cases.push({name,scene:name,...secretCameras[name],weapon:'pistol',mapEntities:true,
   fixture:{scope:'Inspection camera; secret mechanism operated by real use/crossing/update. Continuous gameplay is verified separately.',state}});
 }
+// One arrival camera per surveyed level: the real player start of a real game,
+// so the eight levels beyond E1M1 are also proven as rendered pixels.
+const otherMaps=new Map(),otherGames=new Map();
+for(const id of Object.keys(EPISODE_PLANS)){
+ const other=resources.map(id),qa=new DoomGame(other,{skill:2}),p=qa.player;
+ otherMaps.set(id,other);const name=id.toLowerCase()+'-arrival';otherGames.set(name,qa);
+ const groups=buildMapGeometry(resources,other);for(const g of groups)tex(g.kind,g.name,id);
+ scenes.push({name,groups,heights:other.sectors.map(s=>({floor:s.floor,ceiling:s.ceiling}))});
+ cases.push({name,scene:name,mapId:id,x:p.x,y:p.y,z:p.z+41,angle:p.angle,weapon:'pistol',
+  fixture:{scope:`Arrival camera at the generated player start of ${id}; geometry, lighting and models come from the production map build.`}});
+}
 const requested=(process.env.DOOM_QA_VIEWS||'').split(',').filter(Boolean),wanted=new Set(requested);
 for(const name of requested)if(!cases.some(camera=>camera.name===name))throw Error('Unknown QA view: '+name);
 if(requested.some(name=>name.startsWith('door151-model-')))wanted.add('door151-open');
 const width=1280,height=800,views=[];
 for(const camera of cases.filter(camera=>!wanted.size||wanted.has(camera.name))){
- applyHeights(scenes.find(s=>s.name===(camera.scene||'base')).heights);
- const rig=buildLightingRig(map);
+  const activeMap=camera.mapId?otherMaps.get(camera.mapId):map;
+  if(!camera.mapId)applyHeights(scenes.find(s=>s.name===(camera.scene||'base')).heights);
+  const rig=buildLightingRig(activeMap);
  const position=[camera.x/32,camera.z/32,-camera.y/32],axes=FRender.shared.cameraAxes({yaw:Math.PI/2-camera.angle,pitch:camera.pitch||0});
  const r=axes.right,u=axes.up,f=axes.forward;
  const v=new Float32Array([r[0],u[0],-f[0],0,r[1],u[1],-f[1],0,r[2],u[2],-f[2],0,
@@ -153,19 +174,19 @@ for(const camera of cases.filter(camera=>!wanted.size||wanted.has(camera.name)))
  const project=(x,y,z)=>{const point=[x/32,z/32,-y/32,1],c=Array.from({length:4},(_,row)=>point.reduce((sum,value,col)=>sum+value*vp[col*4+row],0));return{x:(c[0]/c[3]+1)*width/2,y:(1-c[1]/c[3])*height/2};};
  const entities=camera.fixture&&!camera.mapEntities?(camera.fixture.entity?[camera.fixture.entity]:[]):game.entities;
  const renderView={oeil:position,avant:f,droite:r,haut:u,tangente:1/focal,largeur:width,hauteur:height};
- const batches=collectModelBatches(map,entities,0,renderView),models=batches.map(pack);
+ const batches=collectModelBatches(activeMap,entities,0,renderView),models=batches.map(pack);
  if(camera.fixture?.entity){const e=camera.fixture.entity;camera.fixture.anchorScreen=project(e.x,e.y,e.z);camera.fixture.meshKeys=models.map(m=>m.key);}
  if(camera.fixture?.door){const d=camera.fixture.door;camera.fixture.portalScreen=d.endpoints.flatMap(p=>[project(p.x,p.y,d.floor),project(p.x,p.y,d.ceiling)]);}
  const e=camera.fixture?.entity,target=e?[e.x/32,((e.z||0)+(camera.name.endsWith('portrait')?49:28))/32,-e.y/32]:null;
  const lights=camera.studio?studioLighting(renderView,target):sceneLighting(rig,renderView,entities,0,camera.weapon?{kind:camera.weapon,phase:camera.phase??Infinity}:null);
  const weaponBatch=viewWeaponBatch(camera.weapon?{kind:camera.weapon,phase:camera.phase??Infinity}:null,0);
  if(weaponBatch)lights.weaponShadowVP=Array.from(weaponShadowProjection(lights.positions.subarray(0,3),renderView,weaponBatch));
- const shadowModels=(camera.studio?batches:collectShadowBatches(map,entities,0,lights,batches)).map(pack);
+ const shadowModels=(camera.studio?batches:collectShadowBatches(activeMap,entities,0,lights,batches)).map(pack);
  const lighting={...lights,positions:Array.from(lights.positions),colors:Array.from(lights.colors),shadowVP:Array.from(lights.shadowVP)};
  views.push({scene:'base',...camera,position,right:r,up:u,forward:f,tangent:1/focal,vp:Array.from(vp),models,visibility:batches.summary,lighting,shadowModels,
   weaponModel:pack(weaponBatch)});
 }
-console.log(JSON.stringify({width,height,shaders,models:[...catalog.values()],scenes:scenes.map(s=>({name:s.name,groups:s.groups.map(g=>({key:g.key,vertices:bytes(g.vertices),count:g.vertices.length/7}))})),textures:[...textures.values()],views,
+console.log(JSON.stringify({width,height,missingMaterials:[...missingMaterials].map(([name,maps])=>({name,maps})),shaders,models:[...catalog.values()],scenes:scenes.map(s=>({name:s.name,groups:s.groups.map(g=>({key:g.key,vertices:bytes(g.vertices),count:g.vertices.length/7}))})),textures:[...textures.values()],views,
  engineVersion:FERRO.version,sectors:map.sectors.length,subsectors:map.subsectors.length,mapGenerator:map.generator,resources:resources.stats(),modelVertexStride:MODEL_VERTEX_STRIDE}));
 """
 
@@ -418,6 +439,7 @@ def main():
         'mapGenerator':data['mapGenerator'],'resources':data['resources'],'modelMeshes':len(models),'worldBillboards':0,
         'modelVertexStride':data['modelVertexStride'],'materialCoordinates':'primitive-local surface coordinates preserved through pose transforms',
         'shaderCompilation':'10 unmodified GLSL ES 3.00 production shaders compiled; 5 programs linked',
+        'missingMaterials':data['missingMaterials'],
         'passes':['1024px primary-light depth shadow with 3x3 PCF','linear-light GGX/Smith/Schlick world and model materials','procedural HD albedo, tangent normal, roughness, metallic, AO, emission and height','scene color/smooth-normal/depth targets','12-sample screen contact AO and edge filtering','512px fitted view-weapon self-shadow combined with room shadow','analytic distance haze; disabled in model studios'],
         'textureMipBytes':sum(t['width']*t['height']*12*4//3 for t in data['textures']),'mapTriangles':sum(m['count']//3 for m in data['scenes'][0]['groups']),
         'sceneTriangles':{scene['name']:sum(m['count']//3 for m in scene['groups']) for scene in data['scenes']},
