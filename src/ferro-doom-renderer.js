@@ -344,7 +344,7 @@ export class FerroDoomRenderer {
   async prepareModels(progress=()=>{}) {
     const tasks=[...this.meshes.values()].map(m=>()=>this._texture(m.kind,m.name));
     for(const name of ['NUKAGE1','NUKAGE2','NUKAGE3'])tasks.push(()=>this._texture('flat',name));
-    for(const kind of ['pistol','shotgun','fist'])for(const phase of [Infinity,0])tasks.push(()=>this._uploadModel(viewWeaponBatch({kind,phase})));
+    for(const kind of ['pistol','shotgun','fist','chaingun','launcher','chainsaw'])for(const phase of [Infinity,0])tasks.push(()=>this._uploadModel(viewWeaponBatch({kind,phase})));
     for(const family of ['POSS','SPOS','TROO'])tasks.push(()=>{
       const actor={id:family,base:family,sprite:family+'A1',enemy:true,alive:true,state:'idle',x:0,y:0,z:0};
       for(const batch of collectModelBatches(this.map,[actor],0))this._uploadModel(batch);

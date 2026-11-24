@@ -159,10 +159,12 @@ function toggleMap() {
   $('mapButton').setAttribute('aria-pressed', String(mapOpen));
 }
 
+const WEAPON_ORDER = ['fist', 'pistol', 'shotgun', 'chaingun', 'launcher', 'chainsaw'];
+
 function cycleWeapon() {
   if (!game || mode !== 'playing') return;
-  const weapons = ['fist', 'pistol', ...(game.player.weapons.has('shotgun') ? ['shotgun'] : [])];
-  requestedWeapon = weapons[(weapons.indexOf(game.player.weapon) + 1) % weapons.length];
+  const owned = WEAPON_ORDER.filter(kind => game.player.weapons.has(kind));
+  requestedWeapon = owned[(owned.indexOf(game.player.weapon) + 1) % owned.length];
 }
 
 function gamepad(dt) {
@@ -225,14 +227,19 @@ function drawHud(time) {
   const signature = [p.ammo, p.shells, p.health, p.armor, p.weapon, face, p.weapons.size].join('|');
   if (signature === lastHud) return; lastHud = signature;
   hctx.clearRect(0, 0, 320, 32); patch(hctx, 'STBAR', 0, 0);
-  if (p.weapon !== 'fist') number(p.weapon === 'shotgun' ? p.shells : p.ammo, 44, 3);
+  if (p.weapon !== 'fist' && p.weapon !== 'chainsaw')
+    number(p.weapon === 'shotgun' ? p.shells : p.weapon === 'launcher' ? p.rockets : p.ammo, 44, 3);
   number(p.health, 90, 3); patch(hctx, 'STTPRCNT', 90, 3);
   number(p.armor, 221, 3); patch(hctx, 'STTPRCNT', 221, 3);
   patch(hctx, image(face) ? face : 'STFST00', 143, 0, 1, true);
-  for (let n = 2; n <= 7; n++) patch(hctx, `${n === 2 || (n === 3 && p.weapons.has('shotgun')) ? 'STYSNUM' : 'STGNUM'}${n}`, 111 + ((n - 2) % 3) * 12, 4 + Math.floor((n - 2) / 3) * 10);
+  for (let n = 2; n <= 7; n++) {
+    const slot = {2: 'pistol', 3: 'shotgun', 4: 'chaingun', 5: 'launcher', 6: 'chainsaw'}[n];
+    patch(hctx, `${n === 2 || (slot && p.weapons.has(slot)) ? 'STYSNUM' : 'STGNUM'}${n}`, 111 + ((n - 2) % 3) * 12, 4 + Math.floor((n - 2) / 3) * 10);
+  }
   [p.ammo, p.shells, 0, 0].forEach((count, i) => number(count, 288, 5 + i * 6, 'STYSNUM'));
   [200, 50, 50, 300].forEach((count, i) => number(count, 314, 5 + i * 6, 'STYSNUM'));
-  hud.setAttribute('aria-label', `Santé ${Math.round(p.health)} %, armure ${Math.round(p.armor)} %, ${p.ammo} balles, ${p.shells} cartouches.`);
+  hud.setAttribute('aria-label', `Santé ${Math.round(p.health)} %, armure ${Math.round(p.armor)} %, `
+    + `${p.ammo} balles, ${p.shells} cartouches, ${p.rockets} missiles, ${p.weapon}.`);
 }
 
 

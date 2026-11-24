@@ -283,6 +283,59 @@ function shotgunBody(detail=2,includePump=true){return remember(`part:shotgun-bo
 
 export function worldShotgunMesh(detail=2){return shotgunBody(Math.max(0,Math.min(2,detail)),true);}
 
+function chaingunBody(detail=2){return remember(`part:chaingun-body:d${detail}`,()=>{
+ const b=new MeshBuilder(),high=detail===2,seg=high?20:10;
+ box(b,[0,-1.2,0],[4.8,12,5.2],[54,61,64],.34,'metal');
+ box(b,[0,-7.4,0],[4.2,5.6,4.4],[38,43,46],.3,'metal');
+ box(b,[0,4.6,.4],[4.2,4.4,4.6],[62,69,72],.3,'metal');
+ for(let i=0;i<6;i++){const a=i*TAU/6;
+  line(b,[Math.cos(a)*2.5,7,Math.sin(a)*2.5],[Math.cos(a)*2.5,30,Math.sin(a)*2.5],1.05,[46,52,55],'metal',high?12:6);}
+ b.cylinder([0,7,.2],[0,9.4,.2],3.9,[70,77,80],{segments:seg,material:'metal'});
+ b.cylinder([0,29,.2],[0,31.6,.2],3.9,[70,77,80],{segments:seg,material:'metal'});
+ ring(b,[0,31.8,.2],3.6,.34,EDGE,[Math.PI/2,0,0],seg);
+ b.cylinder([-3.9,-1.4,1.6],[-3.9,-1.4,6.4],2.9,[58,64,67],{segments:seg,material:'metal'});
+ box(b,[-2.6,3.4,1.6],[2.6,4.6,2.6],[48,54,57],.24,'metal');
+ if(high)for(let i=0;i<7;i++)box(b,[-3.9,-1.4,2+i*.6],[3.1,.5,.34],[176,146,62],.06,'metal');
+ box(b,[0,-8.6,-1.6],[3.4,4.6,3.4],[44,49,52],.3,'metal');
+ triggerGuard(b,[0,-3.4,-3.2],2.6,1.5,1.1,.26,high?24:12);
+ if(high){for(const y of[-4.4,1.6])ring(b,[0,y,.2],4.1,.28,EDGE,[Math.PI/2,0,0],seg);
+  for(const side of[-1,1])for(const y of[-6.4,-1.4])screw(b,[side*2.5,y,1.9],.22,[0,Math.PI/2,0]);
+  box(b,[0,-6.2,2.6],[.7,1.1,.26],[126,134,134],.08,'metal');}
+ return b.finish(`part:chaingun-body:d${detail}`);
+});}
+
+function launcherBody(detail=2){return remember(`part:launcher-body:d${detail}`,()=>{
+ const b=new MeshBuilder(),high=detail===2,seg=high?22:10;
+ b.tube([0,-6,0],[0,30,0],[[0,3.4,3.4],[.06,3.3,3.3],[.9,3.3,3.3],[1,3,3]],[62,69,72],
+  {segments:seg,material:'metal',cap:true,smoothProfile:true});
+ b.cylinder([0,16,6.2],[0,26,6.2],2.1,[142,72,36],{segments:seg,material:'paint'});
+ b.cone([0,26,6.2],[0,30.4,6.2],2.1,[176,96,44],{segments:seg,material:'paint'});
+ for(let i=0;i<3;i++){const f=new MeshBuilder();f.box([0,0,2.2],[.28,3.2,4.4],[126,64,32],{material:'paint'});
+  b.add(f.finish('launcher-fin'),{translation:[0,20,6.2],rotation:[i*TAU/3,0,0]});}
+ box(b,[0,-7.6,-3.4],[3.2,4.4,4.6],[44,49,52],.3,'metal');
+ triggerGuard(b,[0,-4.6,-3],2.4,1.4,1,.24,high?24:12);
+ box(b,[0,-9.6,.6],[4.4,3.4,3.4],[54,60,63],.34,'metal');
+ box(b,[2.9,2.4,3.4],[1.4,7.2,1.2],[40,45,48],.2,'metal');
+ if(high){ring(b,[0,30.2,0],3.3,.3,EDGE,[Math.PI/2,0,0],seg);
+  for(const y of[-2,10,20])ring(b,[0,y,0],3.5,.24,EDGE,[Math.PI/2,0,0],seg);
+  for(const side of[-1,1])screw(b,[side*3.2,-2.4,2.4],.22,[0,Math.PI/2,0]);}
+ return b.finish(`part:launcher-body:d${detail}`);
+});}
+
+function chainsawBody(detail=2){return remember(`part:chainsaw-body:d${detail}`,()=>{
+ const b=new MeshBuilder(),high=detail===2,seg=high?18:8;
+ box(b,[0,-2.4,0],[5.6,9.4,5.4],[168,86,26],.36,'paint');
+ box(b,[0,-8.4,-.4],[4.6,4.4,4.6],[54,58,60],.3,'metal');
+ box(b,[0,13.4,1.2],[2.2,17,2.6],[150,156,156],.2,'metal');
+ if(high)for(let i=0;i<14;i++)box(b,[(i%2?1:-1)*1.35,5.6+i*1.3,2.7],[.6,.62,.5],[196,200,198],.05,'metal');
+ box(b,[0,1.4,4.6],[4.4,10,1.1],[46,50,52],.24,'metal');
+ for(const y of[-3.2,5.6])box(b,[0,y,2.6],[3.2,1.2,4.2],[50,55,58],.24,'metal');
+ b.cylinder([2.9,-4.4,2.2],[4.6,-4.4,2.2],.55,[36,40,42],{segments:high?10:6,material:'metal'});
+ if(high){ring(b,[0,-2.4,3],2.2,.3,EDGE,[Math.PI/2,0,0],seg);
+  for(const x of[-2.4,2.4])for(const y of[-6.2,-1.2])screw(b,[x,y,2.4],.2);}
+ return b.finish(`part:chainsaw-body:d${detail}`);
+});}
+
 function flash(b,p,large){
  const r=large?3.7:2.5;ell(b,[p[0],p[1]+1,p[2]],[r*.8,2,r*.8],[255,241,163],'glow',12,6,{emissive:1});
  for(let i=0;i<5;i++){const a=i*TAU/5+.2;b.cone([p[0]+Math.cos(a)*.3,p[1]+.6,p[2]+Math.sin(a)*.3],[p[0]+Math.cos(a)*r*1.55,p[1]+r*2.1,p[2]+Math.sin(a)*r*1.55],r*.4,[255,135+i*11,24],{segments:7,material:'glow',emissive:1});}
@@ -296,12 +349,17 @@ function shotgunRig(){return[{mesh:shotgunBody(2,false),shift:[0,23,-8.6],scale:
  {mesh:gripHand(),shift:[-.7,20.1,-12.3],rotation:[.22,0,-.06],scale:.95}];}
 function pumpRig(pump=0){return[{mesh:shotgunPump(2),shift:[0,23+pump*.73,-8.6],scale:.73},
  {mesh:gripHand(),shift:[-1.15,33.5+pump*.73,-12.5],rotation:[Math.PI/2,0,Math.PI],scale:.82}];}
-function flashMesh(kind){return remember('part:flash:'+kind,()=>{const b=new MeshBuilder();flash(b,kind==='pistol'?[0,37.2,-6.75]:[0,50.5,-7.75],kind==='shotgun');return b.finish('part:flash:'+kind);});}
+function chaingunRig(){return[{mesh:chaingunBody(2)},{mesh:gripHand(),shift:[-.7,1.2,-4.6],rotation:[.18,0,-.05],scale:.9}];}
+function launcherRig(){return[{mesh:launcherBody(2)},{mesh:gripHand(),shift:[-.6,-6.2,-4.4],rotation:[.2,0,-.04],scale:.9}];}
+function chainsawRig(){return[{mesh:chainsawBody(2)},{mesh:gripHand(),shift:[-.4,-7.4,-2.2],rotation:[.1,0,.02],scale:.88}];}
+const MUZZLES={pistol:[0,37.2,-6.75],shotgun:[0,50.5,-7.75],chaingun:[0,33.4,.2],launcher:[0,31.4,0]};
+function flashMesh(kind){return remember('part:flash:'+kind,()=>{const b=new MeshBuilder();flash(b,MUZZLES[kind]||[0,32,0],kind==='shotgun');return b.finish('part:flash:'+kind);});}
 
 /** Quantised articulated poses are bounded in time and memory (30 samples/sec). */
 export function weaponMesh(kind='pistol',phase=Infinity){
- if(!['pistol','shotgun','fist'].includes(kind))return null;
- const duration=kind==='shotgun'?.65:kind==='fist'?.4:.3;
+ if(!['pistol','shotgun','fist','chaingun','launcher','chainsaw'].includes(kind))return null;
+ const duration=kind==='shotgun'?.65:kind==='fist'?.4:kind==='chaingun'?.14:kind==='launcher'?.95
+  :kind==='chainsaw'?.24:.3;
  const tick=Number.isFinite(phase)&&phase>=0&&phase<duration?Math.floor(phase*30):-1,t=tick<0?Infinity:tick/30,key=`weapon:${kind}:${tick}`;
  return remember(key,()=>{
   if(kind==='pistol'){
@@ -312,6 +370,17 @@ export function weaponMesh(kind='pistol',phase=Infinity){
    const sources=[...shotgunRig(),...pumpRig(pump)];if(t<.08)sources.push({mesh:flashMesh(kind)});
    const rotation=[.7*lift+.08*recoil,0,.1*lift],pivot=[0,18,-11],rotated=rotateEuler(pivot,rotation);
    return poseMesh(key,sources,rotation,[-7*lift-rotated[0],18-2*recoil-rotated[1],-11-1.5*lift-rotated[2]]);
+  }else if(kind==='chaingun'){
+   const sources=chaingunRig();if(t<.06)sources.push({mesh:flashMesh(kind)});
+   const recoil=t<.25?Math.exp(-t*18):0;
+   return poseMesh(key,sources,[.1*recoil,0,0],[0,-2.2*recoil,.5*recoil]);
+  }else if(kind==='launcher'){
+   const sources=launcherRig();if(t<.09)sources.push({mesh:flashMesh(kind)});
+   const recoil=t<.4?Math.exp(-t*11):0;
+   return poseMesh(key,sources,[.16*recoil,0,0],[0,-6.5*recoil,1.8*recoil]);
+  }else if(kind==='chainsaw'){
+   const shake=Number.isFinite(t)?Math.sin(t*58)*.022:0;
+   return poseMesh(key,chainsawRig(),[shake,.02+shake,shake*.6],[0,0,0]);
   }else{
    const extension=t<.12?Math.sin(t/.12*Math.PI/2):t<.36?1-(t-.12)/.24:0;
    return poseMesh(key,[{mesh:fistHand()}],[-.12+.18*extension,.14*(1-extension),-.25+.3*extension],[3-5*extension,25-4*extension,-13+8.5*extension]);

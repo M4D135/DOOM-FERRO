@@ -42,6 +42,9 @@ const PICKUPS = {
   2025: {sprite: 'SUITA0', kind: 'suit', text: 'Combinaison d’irradiation'},
   2026: {sprite: 'PMAPA0', kind: 'map', text: 'Carte de mission'},
   2045: {sprite: 'PVISA0', kind: 'visor', text: 'Lunettes infrarouges'},
+  2002: {sprite: 'MGUNA0', kind: 'weapon', weapon: 'chaingun', ammo: 'ammo', amount: 20, text: 'Mitrallette'},
+  2003: {sprite: 'LAUNA0', kind: 'weapon', weapon: 'launcher', ammo: 'rockets', amount: 2, text: 'Lance-missiles'},
+  2005: {sprite: 'CSAWA0', kind: 'weapon', weapon: 'chainsaw', text: 'Tronçonneuse'},
 };
 /** Manual use doors that demand a key card: p_switch.c colours each variant. */
 const LOCKED_DOORS = {26: 'blue', 32: 'blue', 27: 'yellow', 34: 'yellow', 28: 'red', 33: 'red'};
@@ -510,23 +513,30 @@ export class DoomGame {
   }
 
   selectWeapon(value) {
-    const weapon = ({1: 'fist', 2: 'pistol', 3: 'shotgun'})[value] || value;
+    const weapon = ({1: 'fist', 2: 'pistol', 3: 'shotgun', 4: 'chaingun', 5: 'launcher',
+      6: 'chainsaw'})[value] || value;
     if (this.player.weapons.has(weapon)) this.player.weapon = weapon;
   }
 
   fire() {
     const p = this.player;
     if (this.completed || p.health <= 0 || this._weaponCooldown > 0) return false;
-    const shotgun = p.weapon === 'shotgun', fist = p.weapon === 'fist';
-    if (!fist && (shotgun ? p.shells : p.ammo) <= 0) {
+    const kind = p.weapon;
+    const melee = kind === 'fist' || kind === 'chainsaw';
+    const pool = kind === 'shotgun' ? 'shells' : kind === 'launcher' ? 'rockets' : 'ammo';
+    if (!melee && p[pool] <= 0) {
       this.onMessage('Plus de munitions'); this._weaponCooldown = 0.2; return false;
     }
-    if (!fist) { if (shotgun) p.shells--; else p.ammo--; }
-    this._weaponCooldown = fist ? 0.4 : shotgun ? 0.9 : 0.28;
+    if (!melee) p[pool]--;
+    this._weaponCooldown = ({fist: 0.4, chainsaw: 0.22, shotgun: 0.9, chaingun: 0.085,
+      launcher: 0.95})[kind] ?? 0.28;
     this.shotTime = this._weaponCooldown; this.lastShot = this.time;
-    this.muzzleFlash = fist ? 0 : 0.09;
-    if (!fist) this._sound(shotgun ? 'DSSHOTGN' : 'DSPISTOL');
-    const range = fist ? 64 : 2048, shotZ = p.z + 32;
+    this.muzzleFlash = kind === 'fist' ? 0 : 0.09;
+    const report = {weapon: kind, hits: 0};
+    const sound = kind === 'fist' ? null : kind === 'shotgun' ? 'DSSHOTGN'
+      : kind === 'chainsaw' ? 'DSSWING' : kind === 'launcher' ? 'DSFIRSHT' : 'DSPISTOL';
+    if (sound) this._sound(sound, p);
+    const range = melee ? 64 : 2048, shotZ = p.z + 32;
     // Original-style vertical autoaim keeps the stairs and windows playable.
     let aimSlope = Math.tan(p.pitch), aimDistance = Infinity;
     for (const e of this.entities) {
@@ -537,22 +547,48 @@ export class DoomGame {
         aimSlope = (e.z + e.height * 0.55 - shotZ) / distance; aimDistance = distance;
       }
     }
-    let hitCount = 0;
-    for (let i = 0; i < (shotgun ? 7 : 1); i++) {
-      const angle = p.angle + (shotgun ? (this.random() - this.random()) * 0.09 : 0);
-      const damage = fist ? (1 + Math.floor(this.random() * 10)) * (p.berserk ? 20 : 2)
-        : (1 + Math.floor(this.random() * 3)) * 5;
-      const hit = this._hitscan(p.x, p.y, shotZ, angle, range, aimSlope, p);
-      if (hit.entity) { this.damageEntity(hit.entity, damage, p); hitCount++; }
+    if (kind === 'launcher') {
+      this.entities.push({id: `rocket-${this.time.toFixed(4)}-${this.entities.length}`, type: 'rocket',
+        projectile: true, owner: p, x: p.x + Math.cos(p.angle) * 24, y: p.y + Math.sin(p.angle) * 24,
+        z: p.z + 28, vx: Math.cos(p.angle) * 700, vy: Math.sin(p.angle) * 700, vz: aimSlope * 700,
+        sprite: 'MISLA0', radius: 8, height: 14, damage: 20, splash: 128, scale: 1,
+        sector: p.sector, alive: true, solid: false, fullbright: true, flip: false, removed: false, age: 0});
     }
-    if (fist && hitCount) this._sound('DSPUNCH');
-    if (!fist) {
+    let hitCount = 0;
+    if (kind !== 'launcher') {
+      const pellets = kind === 'shotgun' ? 7 : 1;
+      const spread = kind === 'shotgun' ? 0.09 : kind === 'chaingun' ? 0.045 : 0;
+      for (let i = 0; i < pellets; i++) {
+        const angle = p.angle + (spread ? (this.random() - this.random()) * spread : 0);
+        const damage = kind === 'fist' ? (1 + Math.floor(this.random() * 10)) * (p.berserk ? 20 : 2)
+          : kind === 'chainsaw' ? (1 + Math.floor(this.random() * 10)) * 4
+          : (1 + Math.floor(this.random() * 3)) * 5;
+        const hit = this._hitscan(p.x, p.y, shotZ, angle, range, aimSlope, p);
+        if (hit.entity) { this.damageEntity(hit.entity, damage, p); hitCount++; }
+      }
+    }
+    if (kind === 'fist' && hitCount) this._sound('DSPUNCH', p);
+    if (kind !== 'fist') {
       for (const enemy of this.entities) {
         if (enemy.enemy && enemy.alive && !enemy.ambush && Math.hypot(enemy.x - p.x, enemy.y - p.y) < 1400
           && this.lineOfSight(p.x, p.y, p.z + 32, enemy.x, enemy.y, enemy.z + 32)) enemy.awake = true;
       }
     }
-    return {weapon: p.weapon, hits: hitCount};
+    return Object.assign(report, {hits: hitCount});
+  }
+
+  /** Rocket splash damage falls off linearly, as in the original. */
+  _splash(projectile) {
+    const radius = projectile.splash;
+    for (const target of [this.player, ...this.entities]) {
+      if (target === projectile || target.projectile || target.removed || !target.solid) continue;
+      const distance = Math.hypot(target.x - projectile.x, target.y - projectile.y);
+      if (distance > radius + target.radius) continue;
+      const damage = Math.max(1, Math.round((projectile.damage ?? 20) * (1 - distance / (radius + target.radius))));
+      if (target === this.player) {
+        if (projectile.owner !== this.player) this.damagePlayer(damage, projectile.owner);
+      } else if (target.alive && (target.enemy || target.barrel)) this.damageEntity(target, damage, projectile.owner);
+    }
   }
 
   _hitscan(x, y, z, angle, range, slope, owner) {
@@ -620,6 +656,15 @@ export class DoomGame {
     const item = entity.pickup, p = this.player;
     let taken = false;
     switch (item.kind) {
+      case 'weapon': {
+        const owned = p.weapons.has(item.weapon);
+        const room = !item.ammo || p[item.ammo] < (item.ammo === 'rockets' ? 50 : 200);
+        if (!owned && !room) break;
+        p.weapons.add(item.weapon);
+        if (item.ammo) p[item.ammo] = Math.min(item.ammo === 'rockets' ? 50 : 200, p[item.ammo] + item.amount);
+        if (!owned) p.weapon = item.weapon;
+        taken = true; break;
+      }
       case 'key': if (!p.keys[item.colour]) { p.keys[item.colour] = 1; taken = true; } break;
       case 'health': {
         const cap = item.cap || 100;
@@ -653,7 +698,7 @@ export class DoomGame {
     if (!taken) return;
     entity.removed = true;
     if (item.countItem) this.items++;
-    this.pickupFlash = 0.18; this.onMessage(item.text); this._sound(item.kind === 'shotgun' ? 'DSWPNUP' : 'DSITEMUP');
+    this.pickupFlash = 0.18; this.onMessage(item.text); this._sound(item.kind === 'shotgun' || item.kind === 'weapon' ? 'DSWPNUP' : 'DSITEMUP');
   }
 
   _gravity(actor, dt) {
@@ -788,7 +833,10 @@ export class DoomGame {
         }
       }
     }
-    if (collided || projectile.age > 8) { projectile.alive = false; projectile.age = 0; this._sound('DSFIRXPL', projectile); }
+    if (collided || projectile.age > 8) {
+      projectile.alive = false; projectile.age = 0; this._sound('DSFIRXPL', projectile);
+      if (projectile.splash) this._splash(projectile);
+    }
     projectile.sprite = `BAL1${Math.floor(this.time * 8) % 2 ? 'B' : 'A'}0`;
   }
 

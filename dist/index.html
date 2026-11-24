@@ -56,7 +56,7 @@
     <div id="error" role="alert" hidden><h1>Le Hangar n’a pas pu démarrer.</h1><p id="errorText"></p><button onclick="location.reload()">RÉESSAYER</button></div>
     <p id="accessibleStatus" class="sr-only" aria-live="off"></p>
   </main>
-  <script id="build-info" type="application/json">{"version": "0.6.0", "revision": "0.6.0-9ac82af3ef52", "generation": "procedural", "distribution": "single self-contained HTML", "offline": true, "runtimeFiles": 1, "levels": ["E1M1", "E1M2", "E1M3", "E1M4", "E1M5", "E1M6", "E1M7", "E1M8", "E1M9"], "level": "E1M1 / E1M2 / E1M3 / E1M4 / E1M5 / E1M6 / E1M7 / E1M8 / E1M9", "mapGenerator": "sector contour sweep", "importedMediaFiles": 0, "worldBillboards": 0, "worldRepresentation": "instanced procedural 3D triangle meshes", "runtimeModules": 37, "worldDetailLevels": 3, "proceduralSurfaceMaterials": true, "modelGpuCacheMiB": 64, "physicallyBasedMaterials": true, "surfaceMapsPerMaterial": 3, "surfaceCpuCacheMiB": 48, "shadowMaps": 2, "shadowFilter": "hardware bilinear comparison, 3x3 PCF", "smoothNormalBuffer": true, "contactAO": "12 samples, indirect fraction", "ferroVersion": "0.3.33", "ferroModules": [{"file": "fmath.js", "bytes": 19961, "sha256": "bb001302bd2d57239c86183615c921563cf21f0490d67eef42586d1fc3457c9f", "gitBlobSha": "a8020d15c3755e0bcdb475c624a76294a539f91f", "loaded": true}, {"file": "surface.js", "bytes": 3419, "sha256": "46915edee28daa0408ea1c18abd664babef76e2e6bce52c2990a431f90cee77e", "gitBlobSha": "017271a036bec6191a98ee92d8e5ed2004643490", "loaded": true}, {"file": "renderer.js", "bytes": 355730, "sha256": "415eda20f5a3629348b3bfde3bd9e2a0a6a6c8badb671415f14d87d0b9c778a0", "gitBlobSha": "2a7f9894ceaa1d903f22f851609f73e006142fc3", "loaded": true}, {"file": "engine.js", "bytes": 2025, "sha256": "bf8cb3e1e1bade027bc10a843c1e61d1cb930350cbcab092990b546ba447f631", "gitBlobSha": "9cfa70571cc8b3134a752b0ef84d6d52bc790403", "loaded": true}]}</script>
+  <script id="build-info" type="application/json">{"version": "0.6.0", "revision": "0.6.0-600fa5095b87", "generation": "procedural", "distribution": "single self-contained HTML", "offline": true, "runtimeFiles": 1, "levels": ["E1M1", "E1M2", "E1M3", "E1M4", "E1M5", "E1M6", "E1M7", "E1M8", "E1M9"], "level": "E1M1 / E1M2 / E1M3 / E1M4 / E1M5 / E1M6 / E1M7 / E1M8 / E1M9", "mapGenerator": "sector contour sweep", "importedMediaFiles": 0, "worldBillboards": 0, "worldRepresentation": "instanced procedural 3D triangle meshes", "runtimeModules": 37, "worldDetailLevels": 3, "proceduralSurfaceMaterials": true, "modelGpuCacheMiB": 64, "physicallyBasedMaterials": true, "surfaceMapsPerMaterial": 3, "surfaceCpuCacheMiB": 48, "shadowMaps": 2, "shadowFilter": "hardware bilinear comparison, 3x3 PCF", "smoothNormalBuffer": true, "contactAO": "12 samples, indirect fraction", "ferroVersion": "0.3.33", "ferroModules": [{"file": "fmath.js", "bytes": 19961, "sha256": "bb001302bd2d57239c86183615c921563cf21f0490d67eef42586d1fc3457c9f", "gitBlobSha": "a8020d15c3755e0bcdb475c624a76294a539f91f", "loaded": true}, {"file": "surface.js", "bytes": 3419, "sha256": "46915edee28daa0408ea1c18abd664babef76e2e6bce52c2990a431f90cee77e", "gitBlobSha": "017271a036bec6191a98ee92d8e5ed2004643490", "loaded": true}, {"file": "renderer.js", "bytes": 355730, "sha256": "415eda20f5a3629348b3bfde3bd9e2a0a6a6c8badb671415f14d87d0b9c778a0", "gitBlobSha": "2a7f9894ceaa1d903f22f851609f73e006142fc3", "loaded": true}, {"file": "engine.js", "bytes": 2025, "sha256": "bf8cb3e1e1bade027bc10a843c1e61d1cb930350cbcab092990b546ba447f631", "gitBlobSha": "9cfa70571cc8b3134a752b0ef84d6d52bc790403", "loaded": true}]}</script>
 <script data-ferro-module="fmath.js">/* FERRO — FMath: sin, cos, atan, atan2 and hypot identical on every platform.
  *
  * A plain-JavaScript port of fdlibm 5.3 as adapted by V8 (src/base/ieee754.cc):
@@ -37442,6 +37442,59 @@ function shotgunBody(detail=2,includePump=true){return remember(`part:shotgun-bo
 
 function worldShotgunMesh(detail=2){return shotgunBody(Math.max(0,Math.min(2,detail)),true);}
 
+function chaingunBody(detail=2){return remember(`part:chaingun-body:d${detail}`,()=>{
+ const b=new MeshBuilder(),high=detail===2,seg=high?20:10;
+ box(b,[0,-1.2,0],[4.8,12,5.2],[54,61,64],.34,'metal');
+ box(b,[0,-7.4,0],[4.2,5.6,4.4],[38,43,46],.3,'metal');
+ box(b,[0,4.6,.4],[4.2,4.4,4.6],[62,69,72],.3,'metal');
+ for(let i=0;i<6;i++){const a=i*TAU/6;
+  line(b,[Math.cos(a)*2.5,7,Math.sin(a)*2.5],[Math.cos(a)*2.5,30,Math.sin(a)*2.5],1.05,[46,52,55],'metal',high?12:6);}
+ b.cylinder([0,7,.2],[0,9.4,.2],3.9,[70,77,80],{segments:seg,material:'metal'});
+ b.cylinder([0,29,.2],[0,31.6,.2],3.9,[70,77,80],{segments:seg,material:'metal'});
+ ring(b,[0,31.8,.2],3.6,.34,EDGE,[Math.PI/2,0,0],seg);
+ b.cylinder([-3.9,-1.4,1.6],[-3.9,-1.4,6.4],2.9,[58,64,67],{segments:seg,material:'metal'});
+ box(b,[-2.6,3.4,1.6],[2.6,4.6,2.6],[48,54,57],.24,'metal');
+ if(high)for(let i=0;i<7;i++)box(b,[-3.9,-1.4,2+i*.6],[3.1,.5,.34],[176,146,62],.06,'metal');
+ box(b,[0,-8.6,-1.6],[3.4,4.6,3.4],[44,49,52],.3,'metal');
+ triggerGuard(b,[0,-3.4,-3.2],2.6,1.5,1.1,.26,high?24:12);
+ if(high){for(const y of[-4.4,1.6])ring(b,[0,y,.2],4.1,.28,EDGE,[Math.PI/2,0,0],seg);
+  for(const side of[-1,1])for(const y of[-6.4,-1.4])screw(b,[side*2.5,y,1.9],.22,[0,Math.PI/2,0]);
+  box(b,[0,-6.2,2.6],[.7,1.1,.26],[126,134,134],.08,'metal');}
+ return b.finish(`part:chaingun-body:d${detail}`);
+});}
+
+function launcherBody(detail=2){return remember(`part:launcher-body:d${detail}`,()=>{
+ const b=new MeshBuilder(),high=detail===2,seg=high?22:10;
+ b.tube([0,-6,0],[0,30,0],[[0,3.4,3.4],[.06,3.3,3.3],[.9,3.3,3.3],[1,3,3]],[62,69,72],
+  {segments:seg,material:'metal',cap:true,smoothProfile:true});
+ b.cylinder([0,16,6.2],[0,26,6.2],2.1,[142,72,36],{segments:seg,material:'paint'});
+ b.cone([0,26,6.2],[0,30.4,6.2],2.1,[176,96,44],{segments:seg,material:'paint'});
+ for(let i=0;i<3;i++){const f=new MeshBuilder();f.box([0,0,2.2],[.28,3.2,4.4],[126,64,32],{material:'paint'});
+  b.add(f.finish('launcher-fin'),{translation:[0,20,6.2],rotation:[i*TAU/3,0,0]});}
+ box(b,[0,-7.6,-3.4],[3.2,4.4,4.6],[44,49,52],.3,'metal');
+ triggerGuard(b,[0,-4.6,-3],2.4,1.4,1,.24,high?24:12);
+ box(b,[0,-9.6,.6],[4.4,3.4,3.4],[54,60,63],.34,'metal');
+ box(b,[2.9,2.4,3.4],[1.4,7.2,1.2],[40,45,48],.2,'metal');
+ if(high){ring(b,[0,30.2,0],3.3,.3,EDGE,[Math.PI/2,0,0],seg);
+  for(const y of[-2,10,20])ring(b,[0,y,0],3.5,.24,EDGE,[Math.PI/2,0,0],seg);
+  for(const side of[-1,1])screw(b,[side*3.2,-2.4,2.4],.22,[0,Math.PI/2,0]);}
+ return b.finish(`part:launcher-body:d${detail}`);
+});}
+
+function chainsawBody(detail=2){return remember(`part:chainsaw-body:d${detail}`,()=>{
+ const b=new MeshBuilder(),high=detail===2,seg=high?18:8;
+ box(b,[0,-2.4,0],[5.6,9.4,5.4],[168,86,26],.36,'paint');
+ box(b,[0,-8.4,-.4],[4.6,4.4,4.6],[54,58,60],.3,'metal');
+ box(b,[0,13.4,1.2],[2.2,17,2.6],[150,156,156],.2,'metal');
+ if(high)for(let i=0;i<14;i++)box(b,[(i%2?1:-1)*1.35,5.6+i*1.3,2.7],[.6,.62,.5],[196,200,198],.05,'metal');
+ box(b,[0,1.4,4.6],[4.4,10,1.1],[46,50,52],.24,'metal');
+ for(const y of[-3.2,5.6])box(b,[0,y,2.6],[3.2,1.2,4.2],[50,55,58],.24,'metal');
+ b.cylinder([2.9,-4.4,2.2],[4.6,-4.4,2.2],.55,[36,40,42],{segments:high?10:6,material:'metal'});
+ if(high){ring(b,[0,-2.4,3],2.2,.3,EDGE,[Math.PI/2,0,0],seg);
+  for(const x of[-2.4,2.4])for(const y of[-6.2,-1.2])screw(b,[x,y,2.4],.2);}
+ return b.finish(`part:chainsaw-body:d${detail}`);
+});}
+
 function flash(b,p,large){
  const r=large?3.7:2.5;ell(b,[p[0],p[1]+1,p[2]],[r*.8,2,r*.8],[255,241,163],'glow',12,6,{emissive:1});
  for(let i=0;i<5;i++){const a=i*TAU/5+.2;b.cone([p[0]+Math.cos(a)*.3,p[1]+.6,p[2]+Math.sin(a)*.3],[p[0]+Math.cos(a)*r*1.55,p[1]+r*2.1,p[2]+Math.sin(a)*r*1.55],r*.4,[255,135+i*11,24],{segments:7,material:'glow',emissive:1});}
@@ -37455,12 +37508,17 @@ function shotgunRig(){return[{mesh:shotgunBody(2,false),shift:[0,23,-8.6],scale:
  {mesh:gripHand(),shift:[-.7,20.1,-12.3],rotation:[.22,0,-.06],scale:.95}];}
 function pumpRig(pump=0){return[{mesh:shotgunPump(2),shift:[0,23+pump*.73,-8.6],scale:.73},
  {mesh:gripHand(),shift:[-1.15,33.5+pump*.73,-12.5],rotation:[Math.PI/2,0,Math.PI],scale:.82}];}
-function flashMesh(kind){return remember('part:flash:'+kind,()=>{const b=new MeshBuilder();flash(b,kind==='pistol'?[0,37.2,-6.75]:[0,50.5,-7.75],kind==='shotgun');return b.finish('part:flash:'+kind);});}
+function chaingunRig(){return[{mesh:chaingunBody(2)},{mesh:gripHand(),shift:[-.7,1.2,-4.6],rotation:[.18,0,-.05],scale:.9}];}
+function launcherRig(){return[{mesh:launcherBody(2)},{mesh:gripHand(),shift:[-.6,-6.2,-4.4],rotation:[.2,0,-.04],scale:.9}];}
+function chainsawRig(){return[{mesh:chainsawBody(2)},{mesh:gripHand(),shift:[-.4,-7.4,-2.2],rotation:[.1,0,.02],scale:.88}];}
+const MUZZLES={pistol:[0,37.2,-6.75],shotgun:[0,50.5,-7.75],chaingun:[0,33.4,.2],launcher:[0,31.4,0]};
+function flashMesh(kind){return remember('part:flash:'+kind,()=>{const b=new MeshBuilder();flash(b,MUZZLES[kind]||[0,32,0],kind==='shotgun');return b.finish('part:flash:'+kind);});}
 
 /** Quantised articulated poses are bounded in time and memory (30 samples/sec). */
 function weaponMesh(kind='pistol',phase=Infinity){
- if(!['pistol','shotgun','fist'].includes(kind))return null;
- const duration=kind==='shotgun'?.65:kind==='fist'?.4:.3;
+ if(!['pistol','shotgun','fist','chaingun','launcher','chainsaw'].includes(kind))return null;
+ const duration=kind==='shotgun'?.65:kind==='fist'?.4:kind==='chaingun'?.14:kind==='launcher'?.95
+  :kind==='chainsaw'?.24:.3;
  const tick=Number.isFinite(phase)&&phase>=0&&phase<duration?Math.floor(phase*30):-1,t=tick<0?Infinity:tick/30,key=`weapon:${kind}:${tick}`;
  return remember(key,()=>{
   if(kind==='pistol'){
@@ -37471,6 +37529,17 @@ function weaponMesh(kind='pistol',phase=Infinity){
    const sources=[...shotgunRig(),...pumpRig(pump)];if(t<.08)sources.push({mesh:flashMesh(kind)});
    const rotation=[.7*lift+.08*recoil,0,.1*lift],pivot=[0,18,-11],rotated=rotateEuler(pivot,rotation);
    return poseMesh(key,sources,rotation,[-7*lift-rotated[0],18-2*recoil-rotated[1],-11-1.5*lift-rotated[2]]);
+  }else if(kind==='chaingun'){
+   const sources=chaingunRig();if(t<.06)sources.push({mesh:flashMesh(kind)});
+   const recoil=t<.25?Math.exp(-t*18):0;
+   return poseMesh(key,sources,[.1*recoil,0,0],[0,-2.2*recoil,.5*recoil]);
+  }else if(kind==='launcher'){
+   const sources=launcherRig();if(t<.09)sources.push({mesh:flashMesh(kind)});
+   const recoil=t<.4?Math.exp(-t*11):0;
+   return poseMesh(key,sources,[.16*recoil,0,0],[0,-6.5*recoil,1.8*recoil]);
+  }else if(kind==='chainsaw'){
+   const shake=Number.isFinite(t)?Math.sin(t*58)*.022:0;
+   return poseMesh(key,chainsawRig(),[shake,.02+shake,shake*.6],[0,0,0]);
   }else{
    const extension=t<.12?Math.sin(t/.12*Math.PI/2):t<.36?1-(t-.12)/.24:0;
    return poseMesh(key,[{mesh:fistHand()}],[-.12+.18*extension,.14*(1-extension),-.25+.3*extension],[3-5*extension,25-4*extension,-13+8.5*extension]);
@@ -37493,8 +37562,8 @@ const {weaponMesh, worldShotgunMesh, weaponCacheStats} = __modules["src/procedur
 const TAU=Math.PI*2,cache=new Map(),LIMIT=96,BYTE_LIMIT=12*1024*1024;
 let cacheBytes=0;
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
-const TYPES={2035:'BAR1',2028:'COLU',48:'ELEC',35:'CBRA',34:'CAND',10:'PLAYW',12:'PLAYW',15:'PLAYN',24:'POL5',2011:'STIM',2012:'MEDI',2014:'BON1',2015:'BON2',2018:'ARM1',2019:'ARM2',2007:'CLIP',2048:'AMMO',2008:'SHEL',2049:'SBOX',2001:'SHOT',5:'BKEY',6:'YKEY',13:'RKEY',8:'BPAK',2010:'ROCK',2013:'SOUL',2024:'PINS',2025:'SUIT',2026:'PMAP',2045:'PVIS',2046:'BROK'};
-const FAMILIES=new Set([...Object.values(TYPES),'BAL1','BEXP']);
+const TYPES={2035:'BAR1',2028:'COLU',48:'ELEC',35:'CBRA',34:'CAND',10:'PLAYW',12:'PLAYW',15:'PLAYN',24:'POL5',2011:'STIM',2012:'MEDI',2014:'BON1',2015:'BON2',2018:'ARM1',2019:'ARM2',2007:'CLIP',2048:'AMMO',2008:'SHEL',2049:'SBOX',2001:'SHOT',2002:'MGUN',2003:'LAUN',2005:'CSAW',5:'BKEY',6:'YKEY',13:'RKEY',8:'BPAK',2010:'ROCK',2013:'SOUL',2024:'PINS',2025:'SUIT',2026:'PMAP',2045:'PVIS',2046:'BROK'};
+const FAMILIES=new Set([...Object.values(TYPES),'BAL1','BEXP','MISL']);
 const DARK=[26,30,29],STEEL=[108,114,114],EDGE=[151,159,155],RED=[169,13,7],BRASS=[182,133,49];
 const cfg=q=>({q,s:[7,14,32][q],r:[3,6,12][q],thin:[4,6,10][q]});
 function remember(key,make){
@@ -37834,8 +37903,48 @@ function berserkFist(b,d){
   box(b,[0,-4.2,4],[9.4,1.6,5],[64,72,58],d,'leather',.4);
   if(d.q)for(const x of[-3,0,3])box(b,[x,5.1,12.6],[2.4,.3,2.6],[120,26,18],d,'paint',.05);
 }
+function chaingunPickup(b,d){
+  box(b,[0,0,4.4],[6.4,15,6.6],[52,58,62],d,'metal',.5);
+  box(b,[0,-6.6,2.2],[4.8,6.6,4],[36,41,44],d,'metal',.4);
+  for(let i=0;i<3;i++){const a=i*TAU/3;
+    cyl(b,[Math.cos(a)*2.1,7,8.8+Math.sin(a)*2.1],[Math.cos(a)*2.1,21,8.8+Math.sin(a)*2.1],1.3,[74,80,84],d,'metal');}
+  ring(b,[0,21,8.8],3.4,.5,STEEL,d,'metal');
+  cyl(b,[-4.4,2.4,7.2],[-4.4,2.4,13.8],3.4,[62,68,72],d,'metal');
+  box(b,[0,9.4,4],[2.4,3.4,3.4],[40,45,48],d,'metal',.3);
+  if(d.q){for(let i=0;i<6;i++)box(b,[-4.4,2.4,8+i*.9],[3.7,.42,.42],[178,150,64],d,'metal',.05);
+    for(const x of[-2,0,2])box(b,[x,-3.4,7.9],[1.2,4.4,.4],[126,132,132],d,'metal',.04);
+    lettering(b,'MG',[0,-7.7,4.6],.8,[196,200,196]);}
+}
+function launcherPickup(b,d){
+  cyl(b,[0,0,9],[0,26,9],3.6,[58,64,68],d,'metal');
+  cyl(b,[0,26,9],[0,30,9],2.7,[44,49,52],d,'metal');
+  box(b,[0,-3.4,4.6],[4.4,6,4.6],[40,45,48],d,'metal',.4);
+  box(b,[0,4.4,1.6],[3.4,7,2.6],[168,86,26],d,'paint',.3);
+  cyl(b,[0,20,17],[0,29,17],2.2,[142,72,36],d,'paint');
+  ell(b,[0,30.4,17],[1.6,2.4,2.2],[176,96,44],d,'paint');
+  for(let i=0;i<3;i++){const f=new MeshBuilder();f.box([0,0,2.4],[.3,3.4,4.8],[126,64,32],{material:'paint'});
+    b.add(f.finish('launcher-fin'),{translation:[0,24,17],rotation:[i*TAU/3,0,0]});}
+  if(d.q){ring(b,[0,26,9],3.8,.4,BRASS,d,'metal');lettering(b,'RL',[0,-6.6,6.4],.8,[226,226,214]);}
+}
+function chainsawPickup(b,d){
+  box(b,[0,0,5],[7,11,8],[168,86,26],d,'paint',.6);
+  box(b,[0,7.4,5.4],[5.4,2.6,5],[54,58,60],d,'metal',.4);
+  box(b,[0,14,6.6],[3.4,12,1.6],[150,156,156],d,'metal',.2);
+  if(d.q)for(let i=0;i<9;i++)box(b,[(i%2?1:-1)*1.5,8.8+i*1.2,7.6],[.7,.7,.5],[196,200,198],d,'metal',.05);
+  box(b,[0,-1.2,10.2],[7.6,7.4,1.2],[64,68,70],d,'metal',.3);
+  cyl(b,[-4.4,-1.2,10.2],[4.4,-1.2,10.2],1.1,[46,50,52],d,'metal');
+  if(d.q)lettering(b,'SAW',[0,-6.3,6.4],.8,[226,226,214]);
+}
+function rocketMissile(b,d){
+  cyl(b,[0,0,0],[0,14,0],2.6,[136,72,34],d,'paint');
+  ell(b,[0,16,0],[1.9,3.4,1.9],[176,96,44],d,'paint');
+  cyl(b,[0,-2.2,0],[0,0,0],3,[54,58,60],d,'metal');
+  ring(b,[0,4,0],2.8,.3,BRASS,d,'metal');
+  for(let i=0;i<3;i++){const f=new MeshBuilder();f.box([0,-1.4,2],[.25,3,2.6],[126,64,32],{material:'paint'});
+    b.add(f.finish('rocket-fin'),{rotation:[i*TAU/3,0,0]});}
+}
 function build(family,frame,key,q){
- const b=new MeshBuilder(),d=cfg(q);if(family==='BAR1')barrel(b,d,frame);else if(family==='COLU')lamp(b,d);else if(family==='ELEC')tech(b,d);else if(family==='CBRA')candles(b,d,frame);else if(family==='STIM'||family==='MEDI')medical(b,d,family==='MEDI');else if(family==='BON1')bottle(b,d,frame);else if(family==='BON2')helmet(b,d);else if(family==='ARM1'||family==='ARM2')armor(b,d,family==='ARM2',frame);else if(family==='CLIP')clip(b,d);else if(family==='AMMO')ammo(b,d);else if(family==='SHEL')for(const x of [-4.5,-1.5,1.5,4.5])shell(b,[x,0,0],d);else if(family==='SBOX')shellBox(b,d);else if(family==='SHOT')b.add(worldShotgunMesh(q),{rotation:[0,0,-Math.PI/2]});else if(family==='BKEY')keyCard(b,d,KEY_BLUE);else if(family==='YKEY')keyCard(b,d,KEY_YELLOW);else if(family==='RKEY')keyCard(b,d,KEY_RED);else if(family==='ROCK')rocketPack(b,d);else if(family==='SOUL')soulsphere(b,d,frame);else if(family==='BPAK')backpack(b,d);else if(family==='CAND')candlestick(b,d);else if(family==='SUIT')megasuit(b,d);else if(family==='PVIS')visor(b,d);else if(family==='PMAP')missionMap(b,d);else if(family==='BROK')bucket(b,d);else if(family==='PINS')berserkFist(b,d);else if(['PLAYW','PLAYN','POL5'].includes(family))body(b,d,family);else if(family==='BAL1')flame(b,d,[0,0,0],frame<2?7.3:13+(frame-2)*4,frame,false);else if(family==='BEXP'){if(frame===0){barrel(b,d,0);ell(b,[0,0,31],[5,5,5],[255,163,24],d,'glow',{emissive:1});}else flame(b,d,[0,0,17+frame*2],10+frame*4,frame,true);}const m=ageSurface(b.finish(key),family);m.detail=q;return family==='BAL1'?m:ground(m);
+ const b=new MeshBuilder(),d=cfg(q);if(family==='BAR1')barrel(b,d,frame);else if(family==='COLU')lamp(b,d);else if(family==='ELEC')tech(b,d);else if(family==='CBRA')candles(b,d,frame);else if(family==='STIM'||family==='MEDI')medical(b,d,family==='MEDI');else if(family==='BON1')bottle(b,d,frame);else if(family==='BON2')helmet(b,d);else if(family==='ARM1'||family==='ARM2')armor(b,d,family==='ARM2',frame);else if(family==='CLIP')clip(b,d);else if(family==='AMMO')ammo(b,d);else if(family==='SHEL')for(const x of [-4.5,-1.5,1.5,4.5])shell(b,[x,0,0],d);else if(family==='SBOX')shellBox(b,d);else if(family==='SHOT')b.add(worldShotgunMesh(q),{rotation:[0,0,-Math.PI/2]});else if(family==='BKEY')keyCard(b,d,KEY_BLUE);else if(family==='YKEY')keyCard(b,d,KEY_YELLOW);else if(family==='RKEY')keyCard(b,d,KEY_RED);else if(family==='ROCK')rocketPack(b,d);else if(family==='SOUL')soulsphere(b,d,frame);else if(family==='BPAK')backpack(b,d);else if(family==='CAND')candlestick(b,d);else if(family==='SUIT')megasuit(b,d);else if(family==='PVIS')visor(b,d);else if(family==='PMAP')missionMap(b,d);else if(family==='BROK')bucket(b,d);else if(family==='PINS')berserkFist(b,d);else if(family==='MGUN')chaingunPickup(b,d);else if(family==='LAUN')launcherPickup(b,d);else if(family==='CSAW')chainsawPickup(b,d);else if(family==='MISL')rocketMissile(b,d);else if(['PLAYW','PLAYN','POL5'].includes(family))body(b,d,family);else if(family==='BAL1')flame(b,d,[0,0,0],frame<2?7.3:13+(frame-2)*4,frame,false);else if(family==='BEXP'){if(frame===0){barrel(b,d,0);ell(b,[0,0,31],[5,5,5],[255,163,24],d,'glow',{emissive:1});}else flame(b,d,[0,0,17+frame*2],10+frame*4,frame,true);}const m=ageSurface(b.finish(key),family);m.detail=q;return family==='BAL1'?m:ground(m);
 }
 function objectMesh(entity,time=0,detail=2){
  if(!entity||entity.removed||entity.enemy)return null;const sprite=String(entity.sprite||'').toUpperCase();let family=sprite.startsWith('PLAY')?sprite.slice(0,5):sprite.slice(0,4);if(!family)family=entity.projectile?'BAL1':TYPES[entity.type];if(entity.barrel&&entity.state==='exploding')family='BEXP';if(!FAMILIES.has(family))return null;let frame=0;
@@ -38292,7 +38401,7 @@ class FerroDoomRenderer {
   async prepareModels(progress=()=>{}) {
     const tasks=[...this.meshes.values()].map(m=>()=>this._texture(m.kind,m.name));
     for(const name of ['NUKAGE1','NUKAGE2','NUKAGE3'])tasks.push(()=>this._texture('flat',name));
-    for(const kind of ['pistol','shotgun','fist'])for(const phase of [Infinity,0])tasks.push(()=>this._uploadModel(viewWeaponBatch({kind,phase})));
+    for(const kind of ['pistol','shotgun','fist','chaingun','launcher','chainsaw'])for(const phase of [Infinity,0])tasks.push(()=>this._uploadModel(viewWeaponBatch({kind,phase})));
     for(const family of ['POSS','SPOS','TROO'])tasks.push(()=>{
       const actor={id:family,base:family,sprite:family+'A1',enemy:true,alive:true,state:'idle',x:0,y:0,z:0};
       for(const batch of collectModelBatches(this.map,[actor],0))this._uploadModel(batch);
@@ -38484,6 +38593,9 @@ const PICKUPS = {
   2025: {sprite: 'SUITA0', kind: 'suit', text: 'Combinaison d’irradiation'},
   2026: {sprite: 'PMAPA0', kind: 'map', text: 'Carte de mission'},
   2045: {sprite: 'PVISA0', kind: 'visor', text: 'Lunettes infrarouges'},
+  2002: {sprite: 'MGUNA0', kind: 'weapon', weapon: 'chaingun', ammo: 'ammo', amount: 20, text: 'Mitrallette'},
+  2003: {sprite: 'LAUNA0', kind: 'weapon', weapon: 'launcher', ammo: 'rockets', amount: 2, text: 'Lance-missiles'},
+  2005: {sprite: 'CSAWA0', kind: 'weapon', weapon: 'chainsaw', text: 'Tronçonneuse'},
 };
 /** Manual use doors that demand a key card: p_switch.c colours each variant. */
 const LOCKED_DOORS = {26: 'blue', 32: 'blue', 27: 'yellow', 34: 'yellow', 28: 'red', 33: 'red'};
@@ -38952,23 +39064,30 @@ class DoomGame {
   }
 
   selectWeapon(value) {
-    const weapon = ({1: 'fist', 2: 'pistol', 3: 'shotgun'})[value] || value;
+    const weapon = ({1: 'fist', 2: 'pistol', 3: 'shotgun', 4: 'chaingun', 5: 'launcher',
+      6: 'chainsaw'})[value] || value;
     if (this.player.weapons.has(weapon)) this.player.weapon = weapon;
   }
 
   fire() {
     const p = this.player;
     if (this.completed || p.health <= 0 || this._weaponCooldown > 0) return false;
-    const shotgun = p.weapon === 'shotgun', fist = p.weapon === 'fist';
-    if (!fist && (shotgun ? p.shells : p.ammo) <= 0) {
+    const kind = p.weapon;
+    const melee = kind === 'fist' || kind === 'chainsaw';
+    const pool = kind === 'shotgun' ? 'shells' : kind === 'launcher' ? 'rockets' : 'ammo';
+    if (!melee && p[pool] <= 0) {
       this.onMessage('Plus de munitions'); this._weaponCooldown = 0.2; return false;
     }
-    if (!fist) { if (shotgun) p.shells--; else p.ammo--; }
-    this._weaponCooldown = fist ? 0.4 : shotgun ? 0.9 : 0.28;
+    if (!melee) p[pool]--;
+    this._weaponCooldown = ({fist: 0.4, chainsaw: 0.22, shotgun: 0.9, chaingun: 0.085,
+      launcher: 0.95})[kind] ?? 0.28;
     this.shotTime = this._weaponCooldown; this.lastShot = this.time;
-    this.muzzleFlash = fist ? 0 : 0.09;
-    if (!fist) this._sound(shotgun ? 'DSSHOTGN' : 'DSPISTOL');
-    const range = fist ? 64 : 2048, shotZ = p.z + 32;
+    this.muzzleFlash = kind === 'fist' ? 0 : 0.09;
+    const report = {weapon: kind, hits: 0};
+    const sound = kind === 'fist' ? null : kind === 'shotgun' ? 'DSSHOTGN'
+      : kind === 'chainsaw' ? 'DSSWING' : kind === 'launcher' ? 'DSFIRSHT' : 'DSPISTOL';
+    if (sound) this._sound(sound, p);
+    const range = melee ? 64 : 2048, shotZ = p.z + 32;
     // Original-style vertical autoaim keeps the stairs and windows playable.
     let aimSlope = Math.tan(p.pitch), aimDistance = Infinity;
     for (const e of this.entities) {
@@ -38979,22 +39098,48 @@ class DoomGame {
         aimSlope = (e.z + e.height * 0.55 - shotZ) / distance; aimDistance = distance;
       }
     }
-    let hitCount = 0;
-    for (let i = 0; i < (shotgun ? 7 : 1); i++) {
-      const angle = p.angle + (shotgun ? (this.random() - this.random()) * 0.09 : 0);
-      const damage = fist ? (1 + Math.floor(this.random() * 10)) * (p.berserk ? 20 : 2)
-        : (1 + Math.floor(this.random() * 3)) * 5;
-      const hit = this._hitscan(p.x, p.y, shotZ, angle, range, aimSlope, p);
-      if (hit.entity) { this.damageEntity(hit.entity, damage, p); hitCount++; }
+    if (kind === 'launcher') {
+      this.entities.push({id: `rocket-${this.time.toFixed(4)}-${this.entities.length}`, type: 'rocket',
+        projectile: true, owner: p, x: p.x + Math.cos(p.angle) * 24, y: p.y + Math.sin(p.angle) * 24,
+        z: p.z + 28, vx: Math.cos(p.angle) * 700, vy: Math.sin(p.angle) * 700, vz: aimSlope * 700,
+        sprite: 'MISLA0', radius: 8, height: 14, damage: 20, splash: 128, scale: 1,
+        sector: p.sector, alive: true, solid: false, fullbright: true, flip: false, removed: false, age: 0});
     }
-    if (fist && hitCount) this._sound('DSPUNCH');
-    if (!fist) {
+    let hitCount = 0;
+    if (kind !== 'launcher') {
+      const pellets = kind === 'shotgun' ? 7 : 1;
+      const spread = kind === 'shotgun' ? 0.09 : kind === 'chaingun' ? 0.045 : 0;
+      for (let i = 0; i < pellets; i++) {
+        const angle = p.angle + (spread ? (this.random() - this.random()) * spread : 0);
+        const damage = kind === 'fist' ? (1 + Math.floor(this.random() * 10)) * (p.berserk ? 20 : 2)
+          : kind === 'chainsaw' ? (1 + Math.floor(this.random() * 10)) * 4
+          : (1 + Math.floor(this.random() * 3)) * 5;
+        const hit = this._hitscan(p.x, p.y, shotZ, angle, range, aimSlope, p);
+        if (hit.entity) { this.damageEntity(hit.entity, damage, p); hitCount++; }
+      }
+    }
+    if (kind === 'fist' && hitCount) this._sound('DSPUNCH', p);
+    if (kind !== 'fist') {
       for (const enemy of this.entities) {
         if (enemy.enemy && enemy.alive && !enemy.ambush && Math.hypot(enemy.x - p.x, enemy.y - p.y) < 1400
           && this.lineOfSight(p.x, p.y, p.z + 32, enemy.x, enemy.y, enemy.z + 32)) enemy.awake = true;
       }
     }
-    return {weapon: p.weapon, hits: hitCount};
+    return Object.assign(report, {hits: hitCount});
+  }
+
+  /** Rocket splash damage falls off linearly, as in the original. */
+  _splash(projectile) {
+    const radius = projectile.splash;
+    for (const target of [this.player, ...this.entities]) {
+      if (target === projectile || target.projectile || target.removed || !target.solid) continue;
+      const distance = Math.hypot(target.x - projectile.x, target.y - projectile.y);
+      if (distance > radius + target.radius) continue;
+      const damage = Math.max(1, Math.round((projectile.damage ?? 20) * (1 - distance / (radius + target.radius))));
+      if (target === this.player) {
+        if (projectile.owner !== this.player) this.damagePlayer(damage, projectile.owner);
+      } else if (target.alive && (target.enemy || target.barrel)) this.damageEntity(target, damage, projectile.owner);
+    }
   }
 
   _hitscan(x, y, z, angle, range, slope, owner) {
@@ -39062,6 +39207,15 @@ class DoomGame {
     const item = entity.pickup, p = this.player;
     let taken = false;
     switch (item.kind) {
+      case 'weapon': {
+        const owned = p.weapons.has(item.weapon);
+        const room = !item.ammo || p[item.ammo] < (item.ammo === 'rockets' ? 50 : 200);
+        if (!owned && !room) break;
+        p.weapons.add(item.weapon);
+        if (item.ammo) p[item.ammo] = Math.min(item.ammo === 'rockets' ? 50 : 200, p[item.ammo] + item.amount);
+        if (!owned) p.weapon = item.weapon;
+        taken = true; break;
+      }
       case 'key': if (!p.keys[item.colour]) { p.keys[item.colour] = 1; taken = true; } break;
       case 'health': {
         const cap = item.cap || 100;
@@ -39095,7 +39249,7 @@ class DoomGame {
     if (!taken) return;
     entity.removed = true;
     if (item.countItem) this.items++;
-    this.pickupFlash = 0.18; this.onMessage(item.text); this._sound(item.kind === 'shotgun' ? 'DSWPNUP' : 'DSITEMUP');
+    this.pickupFlash = 0.18; this.onMessage(item.text); this._sound(item.kind === 'shotgun' || item.kind === 'weapon' ? 'DSWPNUP' : 'DSITEMUP');
   }
 
   _gravity(actor, dt) {
@@ -39230,7 +39384,10 @@ class DoomGame {
         }
       }
     }
-    if (collided || projectile.age > 8) { projectile.alive = false; projectile.age = 0; this._sound('DSFIRXPL', projectile); }
+    if (collided || projectile.age > 8) {
+      projectile.alive = false; projectile.age = 0; this._sound('DSFIRXPL', projectile);
+      if (projectile.splash) this._splash(projectile);
+    }
     projectile.sprite = `BAL1${Math.floor(this.time * 8) % 2 ? 'B' : 'A'}0`;
   }
 
@@ -39919,10 +40076,12 @@ function toggleMap() {
   $('mapButton').setAttribute('aria-pressed', String(mapOpen));
 }
 
+const WEAPON_ORDER = ['fist', 'pistol', 'shotgun', 'chaingun', 'launcher', 'chainsaw'];
+
 function cycleWeapon() {
   if (!game || mode !== 'playing') return;
-  const weapons = ['fist', 'pistol', ...(game.player.weapons.has('shotgun') ? ['shotgun'] : [])];
-  requestedWeapon = weapons[(weapons.indexOf(game.player.weapon) + 1) % weapons.length];
+  const owned = WEAPON_ORDER.filter(kind => game.player.weapons.has(kind));
+  requestedWeapon = owned[(owned.indexOf(game.player.weapon) + 1) % owned.length];
 }
 
 function gamepad(dt) {
@@ -39985,14 +40144,19 @@ function drawHud(time) {
   const signature = [p.ammo, p.shells, p.health, p.armor, p.weapon, face, p.weapons.size].join('|');
   if (signature === lastHud) return; lastHud = signature;
   hctx.clearRect(0, 0, 320, 32); patch(hctx, 'STBAR', 0, 0);
-  if (p.weapon !== 'fist') number(p.weapon === 'shotgun' ? p.shells : p.ammo, 44, 3);
+  if (p.weapon !== 'fist' && p.weapon !== 'chainsaw')
+    number(p.weapon === 'shotgun' ? p.shells : p.weapon === 'launcher' ? p.rockets : p.ammo, 44, 3);
   number(p.health, 90, 3); patch(hctx, 'STTPRCNT', 90, 3);
   number(p.armor, 221, 3); patch(hctx, 'STTPRCNT', 221, 3);
   patch(hctx, image(face) ? face : 'STFST00', 143, 0, 1, true);
-  for (let n = 2; n <= 7; n++) patch(hctx, `${n === 2 || (n === 3 && p.weapons.has('shotgun')) ? 'STYSNUM' : 'STGNUM'}${n}`, 111 + ((n - 2) % 3) * 12, 4 + Math.floor((n - 2) / 3) * 10);
+  for (let n = 2; n <= 7; n++) {
+    const slot = {2: 'pistol', 3: 'shotgun', 4: 'chaingun', 5: 'launcher', 6: 'chainsaw'}[n];
+    patch(hctx, `${n === 2 || (slot && p.weapons.has(slot)) ? 'STYSNUM' : 'STGNUM'}${n}`, 111 + ((n - 2) % 3) * 12, 4 + Math.floor((n - 2) / 3) * 10);
+  }
   [p.ammo, p.shells, 0, 0].forEach((count, i) => number(count, 288, 5 + i * 6, 'STYSNUM'));
   [200, 50, 50, 300].forEach((count, i) => number(count, 314, 5 + i * 6, 'STYSNUM'));
-  hud.setAttribute('aria-label', `Santé ${Math.round(p.health)} %, armure ${Math.round(p.armor)} %, ${p.ammo} balles, ${p.shells} cartouches.`);
+  hud.setAttribute('aria-label', `Santé ${Math.round(p.health)} %, armure ${Math.round(p.armor)} %, `
+    + `${p.ammo} balles, ${p.shells} cartouches, ${p.rockets} missiles, ${p.weapon}.`);
 }
 
 
