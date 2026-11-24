@@ -16,22 +16,26 @@ function missingFor(id) {
   return [...missing].sort();
 }
 
-test('E1M1 is fully covered by the procedural material library', () => {
-  assert.deepEqual(missingFor('E1M1'), [], 'the qualified level must never fall back to a placeholder');
+const QUALIFIED = ['E1M1', 'E1M2'];
+
+test('the qualified levels are fully covered by the procedural material library', () => {
+  for (const id of QUALIFIED) {
+    assert.deepEqual(missingFor(id), [], `${id} must never fall back to a placeholder`);
+  }
 });
 
-test('the eight remaining levels report their unimplemented surfaces', () => {
+test('the remaining levels report their unimplemented surfaces', () => {
   const gap = {};
   for (const id of Object.keys(EPISODE_PLANS)) {
-    if (id === 'E1M1') continue;
+    if (QUALIFIED.includes(id)) continue;
     const missing = missingFor(id);
     if (missing.length) gap[id] = missing;
   }
   const total = new Set(Object.values(gap).flat()).size;
   // This number is a debt ceiling: writing a recipe must lower it, never raise it.
   assert.ok(total > 0, 'the survey gap below has been closed and must be re-measured');
-  assert.equal(total, 45, `unimplemented surfaces changed from the recorded 45 to ${total}: `
+  assert.equal(total, 42, `unimplemented surfaces changed from the recorded 42 to ${total}: `
     + Object.entries(gap).map(([id, names]) => `${id}=${names.length}`).join(' '));
-  assert.deepEqual(Object.keys(gap), ['E1M2', 'E1M3', 'E1M4', 'E1M5', 'E1M6', 'E1M7', 'E1M8', 'E1M9'],
-    'every level beyond E1M1 is expected to still need recipes');
+  assert.deepEqual(Object.keys(gap), ['E1M3', 'E1M4', 'E1M5', 'E1M6', 'E1M7', 'E1M8', 'E1M9'],
+    'every level beyond the qualified ones is expected to still need recipes');
 });

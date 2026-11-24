@@ -20,8 +20,8 @@
   "mapGenerator": "sector-trapezoid-sweep-v1",
   "resources": {
     "mode": "procedural",
-    "generatedImages": 55,
-    "rgbaBytes": 1854464,
+    "generatedImages": 104,
+    "rgbaBytes": 3374080,
     "importedAssets": 0
   },
   "modelMeshes": 78,
@@ -31,347 +31,9 @@
   "shaderCompilation": "10 unmodified GLSL ES 3.00 production shaders compiled; 5 programs linked",
   "missingMaterials": [
     {
-      "name": "flat:CONS1_1",
-      "maps": [
-        "E1M2",
-        "E1M5"
-      ]
-    },
-    {
-      "name": "flat:FLAT22",
-      "maps": [
-        "E1M2",
-        "E1M6"
-      ]
-    },
-    {
-      "name": "flat:CONS1_7",
-      "maps": [
-        "E1M2",
-        "E1M5"
-      ]
-    },
-    {
-      "name": "flat:FLOOR0_3",
-      "maps": [
-        "E1M2",
-        "E1M3"
-      ]
-    },
-    {
-      "name": "flat:FLOOR4_1",
-      "maps": [
-        "E1M2",
-        "E1M4"
-      ]
-    },
-    {
-      "name": "flat:FLAT10",
-      "maps": [
-        "E1M2",
-        "E1M6",
-        "E1M7",
-        "E1M8",
-        "E1M9"
-      ]
-    },
-    {
-      "name": "flat:FLOOR5_4",
-      "maps": [
-        "E1M2",
-        "E1M4",
-        "E1M5"
-      ]
-    },
-    {
-      "name": "flat:MFLR8_1",
-      "maps": [
-        "E1M2",
-        "E1M4",
-        "E1M5",
-        "E1M6",
-        "E1M7",
-        "E1M8"
-      ]
-    },
-    {
-      "name": "flat:CONS1_5",
-      "maps": [
-        "E1M2"
-      ]
-    },
-    {
-      "name": "flat:STEP1",
-      "maps": [
-        "E1M2",
-        "E1M4",
-        "E1M5",
-        "E1M7",
-        "E1M8",
-        "E1M9"
-      ]
-    },
-    {
-      "name": "flat:FLOOR3_3",
-      "maps": [
-        "E1M2",
-        "E1M5",
-        "E1M9"
-      ]
-    },
-    {
-      "name": "flat:FLOOR4_5",
-      "maps": [
-        "E1M2",
-        "E1M4",
-        "E1M8"
-      ]
-    },
-    {
-      "name": "flat:FLOOR5_3",
-      "maps": [
-        "E1M2",
-        "E1M4",
-        "E1M5",
-        "E1M6",
-        "E1M8",
-        "E1M9"
-      ]
-    },
-    {
-      "name": "wall:LITEBLU3",
-      "maps": [
-        "E1M2",
-        "E1M3",
-        "E1M7"
-      ]
-    },
-    {
-      "name": "wall:STEP3",
-      "maps": [
-        "E1M2",
-        "E1M3",
-        "E1M7"
-      ]
-    },
-    {
-      "name": "wall:LITE5",
-      "maps": [
-        "E1M2",
-        "E1M4"
-      ]
-    },
-    {
-      "name": "wall:LITE4",
-      "maps": [
-        "E1M2",
-        "E1M3",
-        "E1M5",
-        "E1M6",
-        "E1M7"
-      ]
-    },
-    {
-      "name": "wall:COMPSTA1",
-      "maps": [
-        "E1M2",
-        "E1M4"
-      ]
-    },
-    {
-      "name": "wall:COMPSTA2",
-      "maps": [
-        "E1M2"
-      ]
-    },
-    {
-      "name": "wall:PIPE2",
-      "maps": [
-        "E1M2"
-      ]
-    },
-    {
-      "name": "wall:STEP5",
-      "maps": [
-        "E1M2",
-        "E1M4",
-        "E1M8"
-      ]
-    },
-    {
-      "name": "wall:GRAYTALL",
-      "maps": [
-        "E1M2"
-      ]
-    },
-    {
-      "name": "wall:PLAT1",
-      "maps": [
-        "E1M2",
-        "E1M4",
-        "E1M5",
-        "E1M6",
-        "E1M7",
-        "E1M9"
-      ]
-    },
-    {
-      "name": "wall:DOOR1",
-      "maps": [
-        "E1M2"
-      ]
-    },
-    {
-      "name": "wall:STONE3",
-      "maps": [
-        "E1M2",
-        "E1M3",
-        "E1M5",
-        "E1M8"
-      ]
-    },
-    {
-      "name": "wall:TEKWALL2",
-      "maps": [
-        "E1M2",
-        "E1M4",
-        "E1M6",
-        "E1M7"
-      ]
-    },
-    {
-      "name": "wall:SW1COMP",
-      "maps": [
-        "E1M2",
-        "E1M3",
-        "E1M5",
-        "E1M6",
-        "E1M7"
-      ]
-    },
-    {
-      "name": "wall:STONE2",
-      "maps": [
-        "E1M2",
-        "E1M3",
-        "E1M4",
-        "E1M5",
-        "E1M8"
-      ]
-    },
-    {
-      "name": "wall:METAL1",
-      "maps": [
-        "E1M2",
-        "E1M3",
-        "E1M4",
-        "E1M5",
-        "E1M7",
-        "E1M8"
-      ]
-    },
-    {
-      "name": "wall:DOORRED",
-      "maps": [
-        "E1M2",
-        "E1M6",
-        "E1M7",
-        "E1M9"
-      ]
-    },
-    {
-      "name": "wall:SW1SLAD",
-      "maps": [
-        "E1M2",
-        "E1M4",
-        "E1M7"
-      ]
-    },
-    {
-      "name": "wall:BROWNHUG",
-      "maps": [
-        "E1M2",
-        "E1M3",
-        "E1M4",
-        "E1M6",
-        "E1M8"
-      ]
-    },
-    {
-      "name": "wall:NUKESLAD",
-      "maps": [
-        "E1M2",
-        "E1M4",
-        "E1M7"
-      ]
-    },
-    {
-      "name": "wall:SLADRIP2",
-      "maps": [
-        "E1M2"
-      ]
-    },
-    {
-      "name": "wall:SW1STON1",
-      "maps": [
-        "E1M2",
-        "E1M5",
-        "E1M8"
-      ]
-    },
-    {
-      "name": "wall:STARG1",
-      "maps": [
-        "E1M2",
-        "E1M4",
-        "E1M5",
-        "E1M7"
-      ]
-    },
-    {
-      "name": "wall:SW1PIPE",
-      "maps": [
-        "E1M2"
-      ]
-    },
-    {
-      "name": "wall:TEKWALL5",
-      "maps": [
-        "E1M2",
-        "E1M3",
-        "E1M4",
-        "E1M6"
-      ]
-    },
-    {
-      "name": "wall:SLADPOIS",
-      "maps": [
-        "E1M2"
-      ]
-    },
-    {
-      "name": "flat:FLAT5_4",
-      "maps": [
-        "E1M3",
-        "E1M4",
-        "E1M5",
-        "E1M6",
-        "E1M7",
-        "E1M9"
-      ]
-    },
-    {
       "name": "flat:FLOOR0_1",
       "maps": [
         "E1M3"
-      ]
-    },
-    {
-      "name": "flat:CEIL4_3",
-      "maps": [
-        "E1M3",
-        "E1M5",
-        "E1M7"
       ]
     },
     {
@@ -394,39 +56,10 @@
       ]
     },
     {
-      "name": "wall:STONE",
-      "maps": [
-        "E1M3",
-        "E1M4",
-        "E1M5",
-        "E1M7"
-      ]
-    },
-    {
-      "name": "wall:STEP2",
-      "maps": [
-        "E1M3",
-        "E1M4",
-        "E1M5",
-        "E1M6",
-        "E1M8",
-        "E1M9"
-      ]
-    },
-    {
       "name": "wall:SW1DIRT",
       "maps": [
         "E1M3",
         "E1M4"
-      ]
-    },
-    {
-      "name": "wall:STEP4",
-      "maps": [
-        "E1M3",
-        "E1M5",
-        "E1M6",
-        "E1M8"
       ]
     },
     {
@@ -456,27 +89,6 @@
       ]
     },
     {
-      "name": "wall:SW1BRNGN",
-      "maps": [
-        "E1M3",
-        "E1M5",
-        "E1M6",
-        "E1M8",
-        "E1M9"
-      ]
-    },
-    {
-      "name": "wall:DOORBLU",
-      "maps": [
-        "E1M3",
-        "E1M4",
-        "E1M5",
-        "E1M6",
-        "E1M7",
-        "E1M9"
-      ]
-    },
-    {
       "name": "wall:BRNSMALL",
       "maps": [
         "E1M3"
@@ -499,17 +111,6 @@
       "maps": [
         "E1M3",
         "E1M8",
-        "E1M9"
-      ]
-    },
-    {
-      "name": "wall:DOORYEL",
-      "maps": [
-        "E1M3",
-        "E1M4",
-        "E1M5",
-        "E1M6",
-        "E1M7",
         "E1M9"
       ]
     },
@@ -575,21 +176,6 @@
       "maps": [
         "E1M4",
         "E1M7"
-      ]
-    },
-    {
-      "name": "flat:CEIL3_1",
-      "maps": [
-        "E1M5",
-        "E1M6"
-      ]
-    },
-    {
-      "name": "flat:FLOOR6_1",
-      "maps": [
-        "E1M5",
-        "E1M8",
-        "E1M9"
       ]
     },
     {
@@ -718,7 +304,7 @@
     "512px fitted view-weapon self-shadow combined with room shadow",
     "analytic distance haze; disabled in model studios"
   ],
-  "textureMipBytes": 184928256,
+  "textureMipBytes": 335558656,
   "mapTriangles": 2025,
   "sceneTriangles": {
     "base": 2025,
@@ -761,7 +347,7 @@
     "src/procedural-interface.js": "af287b0e0573e6432d1d41a7a3076c6335a84b2d807ca710e4c72e0c1a19de8a",
     "src/procedural-lighting.js": "386ec4afda6fd66def7ce7c110d58a62e1e6eac1b8b09f653b70ccf1c91b75e8",
     "src/procedural-map.js": "f44e2bbb75c2ab39db94081ec8d068575ca3404a6550b9ffb5e67978379a1dd9",
-    "src/procedural-materials.js": "64ed3877c4006d2e53652c9670831be6c3d208844ecdebf4374b26b94e458dee",
+    "src/procedural-materials.js": "17d03aee83bf2e0383d9a30c496508d29b0f4846b6f5e8d679efbe369868c75b",
     "src/procedural-mesh.js": "f7c1c90ff94caa95c15e03e29878e8777c0b3a1b2ce39f7a1215b1f5e79b5890",
     "src/procedural-models.js": "cf5dc5ad1249a6e674b15825f285dd058302cb63483435f557e810486c278532",
     "src/procedural-object-finish.js": "dc19036074d2da300a011697b042399fea8e0e7340218af021aad9f58d647c72",
@@ -5921,11 +5507,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 2986,
+      "uniqueColors": 2972,
       "meanRGB": [
-        13.7232841796875,
-        15.9171337890625,
-        15.5132529296875
+        13.7267607421875,
+        15.920517578125,
+        15.5160810546875
       ],
       "visibility": {
         "total": 0,
@@ -5983,11 +5569,11 @@
         "angle": 3.141592653589793,
         "pitch": 0
       },
-      "uniqueColors": 6753,
+      "uniqueColors": 6215,
       "meanRGB": [
-        25.061806640625,
-        23.049119140625,
-        16.029677734375
+        27.43044140625,
+        24.67736328125,
+        16.740015625
       ],
       "visibility": {
         "total": 0,
@@ -6014,11 +5600,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 6414,
+      "uniqueColors": 6342,
       "meanRGB": [
-        16.9763291015625,
-        20.835328125,
-        16.3712666015625
+        16.595337890625,
+        20.5178759765625,
+        16.2168212890625
       ],
       "visibility": {
         "total": 0,
@@ -6045,11 +5631,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 12802,
+      "uniqueColors": 12141,
       "meanRGB": [
-        23.525291015625,
-        23.4565625,
-        19.36355078125
+        23.4697138671875,
+        23.783232421875,
+        19.98528515625
       ],
       "visibility": {
         "total": 0,
@@ -6076,11 +5662,11 @@
         "angle": 4.71238898038469,
         "pitch": 0
       },
-      "uniqueColors": 3952,
+      "uniqueColors": 3962,
       "meanRGB": [
-        14.123509765625,
-        13.6273896484375,
-        10.6066083984375
+        13.85155078125,
+        13.37640625,
+        10.4729365234375
       ],
       "visibility": {
         "total": 0,
@@ -6107,11 +5693,11 @@
         "angle": 0,
         "pitch": 0
       },
-      "uniqueColors": 935,
+      "uniqueColors": 986,
       "meanRGB": [
-        5.7428427734375,
-        4.8980546875,
-        4.1899619140625
+        4.7714697265625,
+        4.810787109375,
+        4.533443359375
       ],
       "visibility": {
         "total": 0,
@@ -6140,9 +5726,9 @@
       },
       "uniqueColors": 4625,
       "meanRGB": [
-        17.1999833984375,
-        18.672962890625,
-        16.7059287109375
+        17.1999580078125,
+        18.6729482421875,
+        16.70590625
       ],
       "visibility": {
         "total": 0,
