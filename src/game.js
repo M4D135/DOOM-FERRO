@@ -34,6 +34,14 @@ const PICKUPS = {
   5: {sprite: 'BKEYA0', kind: 'key', colour: 'blue', text: 'Carte bleue trouvée'},
   6: {sprite: 'YKEYA0', kind: 'key', colour: 'yellow', text: 'Carte jaune trouvée'},
   13: {sprite: 'RKEYA0', kind: 'key', colour: 'red', text: 'Carte rouge trouvée'},
+  8: {sprite: 'BPAKA0', kind: 'backpack', text: 'Sac à dos'},
+  2010: {sprite: 'ROCKA0', kind: 'rockets', amount: 5, text: 'Missiles'},
+  2013: {sprite: 'SOULA0', kind: 'health', amount: 100, cap: 200, frames: 'ABCDCB', text: 'Super charge de vie'},
+  2046: {sprite: 'BROKA0', kind: 'bucket', amount: 100, text: 'Seau de soins'},
+  2024: {sprite: 'PINSA0', kind: 'berserk', text: 'Furie'},
+  2025: {sprite: 'SUITA0', kind: 'suit', text: 'Combinaison d’irradiation'},
+  2026: {sprite: 'PMAPA0', kind: 'map', text: 'Carte de mission'},
+  2045: {sprite: 'PVISA0', kind: 'visor', text: 'Lunettes infrarouges'},
 };
 /** Manual use doors that demand a key card: p_switch.c colours each variant. */
 const LOCKED_DOORS = {26: 'blue', 32: 'blue', 27: 'yellow', 34: 'yellow', 28: 'red', 33: 'red'};
@@ -53,6 +61,7 @@ const SCENERY = {
   48: {sprite: 'ELECA0', solid: true, radius: 16, height: 128},
   2028: {sprite: 'COLUA0', solid: true, radius: 16, height: 48, fullbright: true},
   35: {sprite: 'CBRAA0', solid: false, height: 60, fullbright: true},
+  34: {sprite: 'CANDA0', solid: false, height: 24, fullbright: true},
   10: {sprite: 'PLAYW0', solid: false, height: 16},
   12: {sprite: 'PLAYW0', solid: false, height: 16},
   15: {sprite: 'PLAYN0', solid: false, height: 16},
@@ -141,6 +150,7 @@ export class DoomGame {
       angle: spawn.angle * Math.PI / 180, pitch: 0, health: 100, armor: 0, armorType: 0,
       ammo: 50, shells: 0, weapon: 'pistol', weapons: new Set(['fist', 'pistol']),
       keys: {blue: 0, yellow: 0, red: 0},
+      rockets: 0, suit: false, visor: false, mapShown: false, berserk: false,
       sector: sector.id, vz: 0, alive: true, solid: true, moving: false, bob: 0};
     const flag = this.skill === 1 ? 1 : this.skill === 2 ? 2 : 4;
     this.entities = [];
@@ -530,7 +540,8 @@ export class DoomGame {
     let hitCount = 0;
     for (let i = 0; i < (shotgun ? 7 : 1); i++) {
       const angle = p.angle + (shotgun ? (this.random() - this.random()) * 0.09 : 0);
-      const damage = fist ? (1 + Math.floor(this.random() * 10)) * 2 : (1 + Math.floor(this.random() * 3)) * 5;
+      const damage = fist ? (1 + Math.floor(this.random() * 10)) * (p.berserk ? 20 : 2)
+        : (1 + Math.floor(this.random() * 3)) * 5;
       const hit = this._hitscan(p.x, p.y, shotZ, angle, range, aimSlope, p);
       if (hit.entity) { this.damageEntity(hit.entity, damage, p); hitCount++; }
     }
@@ -610,7 +621,21 @@ export class DoomGame {
     let taken = false;
     switch (item.kind) {
       case 'key': if (!p.keys[item.colour]) { p.keys[item.colour] = 1; taken = true; } break;
-      case 'health': if (p.health < 100) { p.health = Math.min(100, p.health + item.amount); taken = true; } break;
+      case 'health': {
+        const cap = item.cap || 100;
+        if (p.health < cap) { p.health = Math.min(cap, p.health + item.amount); taken = true; }
+        break;
+      }
+      case 'bucket': if (p.health < 200) { p.health = Math.min(200, p.health + item.amount); taken = true; } break;
+      case 'rockets': if (p.rockets < 50) { p.rockets = Math.min(50, p.rockets + item.amount); taken = true; } break;
+      case 'backpack':
+        p.ammo = Math.min(200, p.ammo + 10); p.shells = Math.min(50, p.shells + 4);
+        p.rockets = Math.min(50, p.rockets + 5); taken = true; break;
+      case 'berserk':
+        p.berserk = true; p.health = Math.max(p.health, 100); p.weapon = 'fist'; taken = true; break;
+      case 'suit': p.suit = true; taken = true; break;
+      case 'visor': p.visor = true; taken = true; break;
+      case 'map': p.mapShown = true; taken = true; break;
       case 'healthBonus': p.health = Math.min(200, p.health + item.amount); taken = true; break;
       case 'armorBonus': p.armor = Math.min(200, p.armor + item.amount); p.armorType ||= 1; taken = true; break;
       case 'armor': if (p.armor < item.amount) { p.armor = item.amount; p.armorType = item.armorType; taken = true; } break;
@@ -797,7 +822,7 @@ export class DoomGame {
         if (sector.special === 9 && Math.abs(p.z - sector.floor) <= 0.1 && !this.visitedSecrets.has(sector.id)) {
           this.visitedSecrets.add(sector.id); this.secrets++; this.onMessage('Un secret a été découvert !'); this._sound('DSITEMUP');
         }
-        const acid = DAMAGE_FLOORS[sector.special];
+        const acid = p.suit ? 0 : DAMAGE_FLOORS[sector.special];
         if (acid && p.z <= sector.floor + 0.1) {
           this._acidTimer += h;
           if (this._acidTimer >= 32 / 35) { this._acidTimer -= 32 / 35; this.damagePlayer(acid); }
