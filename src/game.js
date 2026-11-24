@@ -25,7 +25,24 @@ const PICKUPS = {
   2008: {sprite: 'SHELA0', kind: 'shells', amount: 4, text: 'Cartouches'},
   2049: {sprite: 'SBOXA0', kind: 'shells', amount: 20, text: 'Boîte de cartouches'},
   2001: {sprite: 'SHOTA0', kind: 'shotgun', amount: 8, text: 'Fusil à pompe'},
+  5: {sprite: 'BKEYA0', kind: 'key', colour: 'blue', text: 'Carte bleue trouvée'},
+  6: {sprite: 'YKEYA0', kind: 'key', colour: 'yellow', text: 'Carte jaune trouvée'},
+  13: {sprite: 'RKEYA0', kind: 'key', colour: 'red', text: 'Carte rouge trouvée'},
 };
+/** Manual use doors that demand a key card: p_switch.c colours each variant. */
+const LOCKED_DOORS = {26: 'blue', 32: 'blue', 27: 'yellow', 34: 'yellow', 28: 'red', 33: 'red'};
+const KEY_NAMES = {blue: 'bleue', yellow: 'jaune', red: 'rouge'};
+/** Floor damage per 35 Hz tick, from the sector special (p_spec.c). */
+const DAMAGE_FLOORS = {7: 5, 5: 5, 16: 100};
+/** Walk-over and switch specials that drive a tagged sector. */
+const DOOR_SPECIALS = new Map([[2, {closeAfter: true, once: true}], [5, {closeAfter: true, once: true}],
+  [10, {closeAfter: true, once: true}], [21, {closeAfter: true, once: true}],
+  [20, {closeAfter: false, once: true}], [46, {closeAfter: false, once: true}], [103, {closeAfter: false, once: true}],
+  [86, {closeAfter: false, once: false}], [90, {closeAfter: true, once: false}]]);
+const LOWER_FLOOR_SPECIALS = new Set([22, 48, 62, 63]);
+/** Line specials fired by crossing the line rather than by using it. */
+const CROSS_SPECIALS = new Set([2, 5, 10, 21, 36, 62, 63, 86, 88, 90, 91, 97, 98]);
+const W1_ONCE = new Set([2, 5, 10, 21]);
 const SCENERY = {
   48: {sprite: 'ELECA0', solid: true, radius: 16, height: 128},
   2028: {sprite: 'COLUA0', solid: true, radius: 16, height: 48, fullbright: true},
@@ -117,6 +134,7 @@ export class DoomGame {
     this.player = {x: spawn.x, y: spawn.y, z: sector.floor, height: 56, radius: 16,
       angle: spawn.angle * Math.PI / 180, pitch: 0, health: 100, armor: 0, armorType: 0,
       ammo: 50, shells: 0, weapon: 'pistol', weapons: new Set(['fist', 'pistol']),
+      keys: {blue: 0, yellow: 0, red: 0},
       sector: sector.id, vz: 0, alive: true, solid: true, moving: false, bob: 0};
     const flag = this.skill === 1 ? 1 : this.skill === 2 ? 2 : 4;
     this.entities = [];
@@ -249,7 +267,7 @@ export class DoomGame {
       if (actor.z < sector.floor) { actor.z = sector.floor; actor.vz = 0; }
       if (triggers) {
         for (const line of candidates) {
-          if ((line.special === 36 || line.special === 88)
+          if (CROSS_SPECIALS.has(line.special)
             && segmentIntersection(oldX, oldY, x, y, line.ax, line.ay, line.bx, line.by)) this._crossLine(line, actor);
         }
       }
@@ -288,7 +306,20 @@ export class DoomGame {
     }
     hits.sort((a, b) => a.t - b.t);
     for (const {line} of hits) {
-      if (line.special === 1) return this._openDoor(line);
+      if (line.special === 1 || line.special === 31) return this._openDoor(line);
+      const colour = LOCKED_DOORS[line.special];
+      if (colour) {
+        if (!this.player.keys[colour]) {
+          this._sound('DSNOWAY');
+          this.onMessage(`Il faut la carte ${KEY_NAMES[colour]}.`);
+          return false;
+        }
+        return this._openDoor(line);
+      }
+      if (DOOR_SPECIALS.has(line.special)) {
+        const opened = this._taggedDoor(line, DOOR_SPECIALS.get(line.special));
+        if (opened) return opened;
+      }
       if (line.special === 11 || line.special === 51) {
         this.completed = true; this.exitSecret = line.special === 51;
         const side = this.map.sides[line.right] || this.map.sides[line.left];
@@ -322,10 +353,72 @@ export class DoomGame {
     return {type: 'door', sector: sector.id};
   }
 
+  /** A door rises to the lowest neighbouring ceiling that is still above it. */
+  _doorTarget(sector) {
+    const above = [...this.neighbors[sector.id]].map(i => this.map.sectors[i].ceiling)
+      .filter(ceiling => ceiling > sector.ceiling + 4);
+    return above.length ? Math.min(...above) - 4 : null;
+  }
+
+  /** Switch and walk-over doors drive every sector sharing the line tag. */
+  _taggedDoor(line, {closeAfter, once}) {
+    const targets = this.map.sectors.filter(s => s.tag && s.tag === line.tag && !this.actions.has(s.id));
+    if (!targets.length) return false;
+    for (const sector of targets) {
+      const target = this._doorTarget(sector);
+      if (target === null) continue;
+      this.actions.set(sector.id, {kind: 'door', phase: 'up', target, base: sector.floor,
+        wait: closeAfter ? 150 / 35 : Infinity});
+    }
+    // A tagged sector already resting at its open height has nothing to raise,
+    // but the switch itself is still a valid, audible activation.
+    if (once) this._triggered.add(line.id);
+    this._sectorSound('DSDOROPN', targets[0]);
+    return {type: 'door', sector: targets[0].id};
+  }
+
+  /** Tagged floors descend to the lowest neighbour, or climb to the highest. */
+  _taggedFloor(line, mode, speed = 140) {
+    const targets = this.map.sectors.filter(s => s.tag && s.tag === line.tag && !this.actions.has(s.id));
+    if (!targets.length) return false;
+    let moved = 0;
+    for (const sector of targets) {
+      const floors = [...this.neighbors[sector.id]].map(i => this.map.sectors[i].floor);
+      if (!floors.length) continue;
+      const target = mode === 'raise' ? Math.max(...floors) : Math.min(...floors);
+      if (Math.abs(target - sector.floor) < 1) continue;
+      this.actions.set(sector.id, {kind: 'floor', target, speed});
+      moved++;
+    }
+    if (!moved) return false;
+    this._sectorSound('DSPSTART', targets[0]);
+    return {type: 'floor', sectors: targets.map(s => s.id)};
+  }
+
+  /** Walk-over teleport: the tagged sector owns the destination marker. */
+  _teleport(line, actor) {
+    const destination = this.map.things.find(thing => thing.type === 14
+      && this.map.sectorAt(thing.x, thing.y)?.tag === line.tag);
+    if (!destination) return false;
+    const sector = this.map.sectorAt(destination.x, destination.y);
+    if (!sector) return false;
+    actor.x = destination.x; actor.y = destination.y; actor.z = sector.floor;
+    actor.sector = sector.id; actor.vz = 0;
+    if (actor === this.player) actor.angle = destination.angle * Math.PI / 180;
+    this._sound('DSTELEPT', actor);
+    return {type: 'teleport', sector: sector.id};
+  }
+
   _crossLine(line, actor = this.player) {
+    const special = line.special;
     // p_spec.c allows monsters to retrigger type 88, but type 36 is player-only.
-    if (actor !== this.player && (!actor.enemy || line.special !== 88)) return;
-    if (line.special === 36 && this._triggered.has(line.id)) return;
+    if (actor !== this.player && (!actor.enemy || special !== 88)) return;
+    if (this._triggered.has(line.id) && (special === 36 || W1_ONCE.has(special))) return;
+    if (special === 97) { this._teleport(line, actor); return; }
+    if (DOOR_SPECIALS.has(special)) { this._taggedDoor(line, DOOR_SPECIALS.get(special)); return; }
+    if (LOWER_FLOOR_SPECIALS.has(special)) { this._taggedFloor(line, 'lower'); return; }
+    if (special === 91) { this._taggedFloor(line, 'raise'); return; }
+    if (special === 98) { this._taggedFloor(line, 'lower', 280); return; }
     const targets = this.map.sectors.filter(s => s.tag && s.tag === line.tag);
     for (const sector of targets) {
       if (this.actions.has(sector.id)) continue;
@@ -369,8 +462,15 @@ export class DoomGame {
           else { sector.ceiling = next; if (next <= action.base) this.actions.delete(id); }
         }
       } else if (action.kind === 'floor') {
-        sector.floor = Math.max(action.target, sector.floor - action.speed * dt);
-        if (sector.floor <= action.target) { this.actions.delete(id); this._sectorSound('DSPSTOP', sector); }
+        if (action.target < oldFloor) {
+          sector.floor = Math.max(action.target, sector.floor - action.speed * dt);
+          if (sector.floor <= action.target) { this.actions.delete(id); this._sectorSound('DSPSTOP', sector); }
+        } else {
+          const next = Math.min(action.target, sector.floor + action.speed * dt);
+          // A rising floor stops rather than crushing whatever it meets.
+          if (occupants.some(e => e.z + e.height > next)) { this.actions.delete(id); this._sectorSound('DSPSTOP', sector); }
+          else { sector.floor = next; if (next >= action.target) { this.actions.delete(id); this._sectorSound('DSPSTOP', sector); } }
+        }
       } else if (action.kind === 'lift') {
         if (action.phase === 'down') {
           sector.floor = Math.max(action.target, sector.floor - 140 * dt);
@@ -503,6 +603,7 @@ export class DoomGame {
     const item = entity.pickup, p = this.player;
     let taken = false;
     switch (item.kind) {
+      case 'key': if (!p.keys[item.colour]) { p.keys[item.colour] = 1; taken = true; } break;
       case 'health': if (p.health < 100) { p.health = Math.min(100, p.health + item.amount); taken = true; } break;
       case 'healthBonus': p.health = Math.min(200, p.health + item.amount); taken = true; break;
       case 'armorBonus': p.armor = Math.min(200, p.armor + item.amount); p.armorType ||= 1; taken = true; break;
@@ -680,9 +781,10 @@ export class DoomGame {
         if (sector.special === 9 && Math.abs(p.z - sector.floor) <= 0.1 && !this.visitedSecrets.has(sector.id)) {
           this.visitedSecrets.add(sector.id); this.secrets++; this.onMessage('Un secret a été découvert !'); this._sound('DSITEMUP');
         }
-        if (sector.special === 7 && p.z <= sector.floor + 0.1) {
+        const acid = DAMAGE_FLOORS[sector.special];
+        if (acid && p.z <= sector.floor + 0.1) {
           this._acidTimer += h;
-          if (this._acidTimer >= 32 / 35) { this._acidTimer -= 32 / 35; this.damagePlayer(5); }
+          if (this._acidTimer >= 32 / 35) { this._acidTimer -= 32 / 35; this.damagePlayer(acid); }
         } else this._acidTimer = 0;
         // Sector special 11 is the E1M8 exit hub. It hurts, but it ends the
         // level rather than killing the player, so the episode can be finished.
