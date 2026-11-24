@@ -16,7 +16,9 @@ export const TEXTURE_DIMENSIONS = Object.freeze({
   STEP1:[32,8], STEP6:[32,16], SUPPORT2:[64,128], SW1STRTN:[64,128], SW2STRTN:[64,128],
   TEKWALL1:[128,128], TEKWALL4:[128,128],
   BROWNHUG:[64,128], DOORRED:[8,128], LITE4:[16,128], LITE5:[16,128], LITEBLU3:[16,128],
-  METAL1:[64,128], STARG1:[64,128], STEP3:[32,8], STEP5:[32,16]
+  METAL1:[64,128], STARG1:[64,128], STEP3:[32,8], STEP5:[32,16],
+  DOOR1:[64,72], GRAYTALL:[128,128], NUKESLAD:[64,128], PLAT1:[128,128],
+  SLADRIP2:[64,128], SLADPOIS:[64,128], STONE2:[128,128], STONE3:[128,128]
 });
 export const FLAT_NAMES = Object.freeze(['CEIL3_5','CEIL5_1','CEIL5_2','CONS1_1','CONS1_5','CONS1_7','FLAT10','FLAT14','FLAT18','FLAT20','FLAT22','FLAT23','FLAT5_5','MFLR8_1',
   'FLOOR0_3','FLOOR1_1','FLOOR3_3','FLOOR4_1','FLOOR4_5','FLOOR4_8','FLOOR5_1','FLOOR5_2','FLOOR5_3','FLOOR5_4',
@@ -426,7 +428,85 @@ export function proceduralTexture(value) {
     }
   }else if(/^STAR/.test(name))starWall(image,name);
   else if(/^SW[12]STRTN$/.test(name)){starWall(image,'STARTAN1');switchPlate(image,name[2]==='2');}
-  else if(/^BROWN|^SLAD/.test(name))brownWall(image,name);
+  else if(name==='NUKESLAD'||name==='SLADRIP2'||name==='SLADPOIS'){
+    brownWall(image,'SLADWALL');
+    const seed=seedOf(name);
+    if(name==='NUKESLAD'){
+      for(let x=0;x<64;x+=16)image.rect(x+6,110,4,4,shade([30,120,26],.55+noise(x,0,seed+3)*.5));
+      for(let y=118;y<128;y++)for(let x=0;x<64;x++){
+        const n=smoothNoise(x/3,y/2,seed);
+        if(n>.4)image.pixel(x,y,shade([26,150,32],.4+n*.9,rough(x,y,seed)*.5));}
+    }else if(name==='SLADRIP2'){
+      image.rect(20,62,24,48,[5,8,3]);
+      for(let x=21;x<43;x+=4)image.rect(x,62,2,14,[9,11,7]);
+      for(let x=21;x<43;x++){
+        if(noise(x,3,seed+9)<.42)continue;
+        const len=14+Math.floor(noise(x,0,seed+5)*24);
+        for(let y=70;y<70+len;y++){
+          const n=smoothNoise(x/2,y/3,seed+7);
+          image.pixel(x,y,shade([24,150,30],.35+n*.9+bell(y-62-len,3)*.6,rough(x,y,seed)*.6));}
+      }
+    }else{
+      const cx=32,cy=50;
+      image.polygon([[cx,cy-16],[cx+19,cy+12],[cx-19,cy+12]],(x,y)=>shade([214,168,26],.7+smoothNoise(x/3,y/3,seed)*.42,rough(x,y,seed)*.8));
+      image.polygon([[cx,cy-12],[cx+15,cy+9],[cx-15,cy+9]],[24,20,6]);
+      image.text('POISON',cx-9,cy-8,4,[232,186,32]);
+      image.ellipse(cx,cy+4,3,2.4,[226,220,192]);
+      image.rect(cx-2,cy+6,4,1,[226,220,192]);
+      image.rect(cx-2,cy+3,1,1,[16,14,4]);image.rect(cx+1,cy+3,1,1,[16,14,4]);
+    }
+  }else if(name==='STONE2'){
+    image.rect(0,0,128,128,(x,y)=>grain([86,86,84],x,y,seed,1.3));
+    for(let row=0;row<8;row++){
+      const y=row*16;image.rect(0,y,128,1,[32,32,30]);image.rect(0,y+1,128,1,[106,106,102]);
+      for(let x=mod(row*17,32);x<128;x+=32){image.rect(x,y,1,16,[38,38,36]);image.rect(x+1,y,1,16,[112,112,108]);}
+    }
+    for(let i=0;i<520;i++){const x=Math.floor(noise(i,0,seed+3)*128),y=Math.floor(noise(i,1,seed+5)*128);
+      image.pixel(x,y,shade([86,86,84],.5+noise(i,2,seed)*.8));}
+  }else if(name==='STONE3'){
+    image.rect(0,0,128,128,(x,y)=>grain([86,92,80],x,y,seed,1.2));
+    for(let x=0;x<128;x+=16){
+      image.rect(x,0,1,128,[34,38,30]);image.rect(x+1,0,1,128,[104,110,96]);
+      for(let y=0;y<128;y++)if(noise(x,y,seed+7)>.8)image.rect(x+2,y,12,1,shade([76,84,68],.85));
+    }
+    for(let y=0;y<128;y++)for(let x=0;x<128;x++){
+      const moss=smoothNoise(x/4,y/5,seed+11);
+      if(moss>.88)image.pixel(x,y,shade([66,86,50],.66+moss*.34,rough(x,y,seed)*.45));}
+  }else if(name==='GRAYTALL'){
+    image.rect(0,0,128,128,(x,y)=>grain([140,140,136],x,y,seed,1.2));
+    for(let x=0;x<128;x++)if(smoothNoise(x*.7,0,seed+3)>.62)image.rect(x,0,1,128,shade([118,118,114],.9));
+    for(let y=0;y<128;y++)for(let x=99;x<103;x++)image.pixel(x,y,shade([126,20,14],.55+noise(x,y,seed+9)*.7));
+  }else if(name==='PLAT1'){
+    image.rect(0,0,128,128,(x,y)=>grain([92,94,92],x,y,seed,1.1));
+    for(const y of [0,116]){
+      image.rect(0,y,128,12,(x,yy)=>grain([78,80,78],x,yy,seed+2));
+      for(let x=6;x<128;x+=16)screw(image,x,y+5);
+    }
+    for(const x of [8,112]){
+      image.rect(x,12,10,104,(px,yy)=>shade([150,96,44],.6+smoothNoise(px/2,yy/9,seed+5)*.5,rough(px,yy,seed)*.7));
+      image.rect(x+1,12,3,104,[196,142,80]);
+      for(const y of [12,52,104])image.rect(x-1,y,12,8,(px,yy)=>grain([168,110,52],px,yy,seed+7));
+    }
+    for(let x=34;x<58;x+=4)image.rect(x,16,3,2,[186,26,18]);
+    image.rect(64,16,10,2,[36,150,44]);
+    image.bevel(38,52,18,12,[70,72,70],true);
+    for(let i=0;i<9;i++)image.line(39+i*2,53,41+i*2,63,1,[196,164,26]);
+    pipe(image,[[70,40],[86,40],[86,70]],3,[110,112,110]);
+    image.rect(96,60,16,20,(x,y)=>grain([64,66,64],x,y,seed+9));
+    for(let y=62;y<78;y+=3)image.rect(98,y,12,1,[36,38,36]);
+  }else if(name==='DOOR1'){
+    const tan=[176,138,96];
+    image.rect(0,0,64,72,(x,y)=>grain([150,150,146],x,y,seed,1.1));
+    image.polygon([[8,10],[8,60],[28,35]],(x,y)=>grain(shade(tan,.82),x,y,seed+7));
+    image.polygon([[56,10],[56,60],[36,35]],(x,y)=>grain(shade(tan,.82),x,y,seed+7));
+    image.line(8,8,56,62,4,(x,y)=>grain(tan,x,y,seed+5));
+    image.line(56,8,8,62,4,(x,y)=>grain(tan,x,y,seed+5));
+    image.rect(0,0,64,6,(x,y)=>grain(tan,x,y,seed));
+    image.rect(0,0,6,72,(x,y)=>grain(tan,x,y,seed));
+    image.rect(58,0,6,72,(x,y)=>grain(tan,x,y,seed));
+    image.rect(0,64,64,8,(x,y)=>grain([120,120,116],x,y,seed+3));
+    image.rect(0,0,64,1,[206,176,132]);image.rect(0,71,64,1,[70,58,40]);
+  }else if(/^BROWN|^SLAD/.test(name))brownWall(image,name);
   else if(/^BRNBIG/.test(name))brownGrille(image,name);
   else if(/^COMP/.test(name))computers(image,name);
   else if(name==='PLANET1')planetWall(image);
