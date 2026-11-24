@@ -17,6 +17,9 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import shutil
+import tempfile
+import re
 
 import numpy as np
 from PIL import Image
@@ -45,7 +48,11 @@ const resources=new ProceduralResources(),map=resources.map(),game=new DoomGame(
 const snapshotHeights=()=>map.sectors.map(s=>({floor:s.floor,ceiling:s.ceiling}));
 const applyHeights=heights=>map.sectors.forEach((sector,i)=>Object.assign(sector,heights[i]));
 const groups=buildMapGeometry(resources,map),textures=new Map(),catalog=new Map();
-const bytes=x=>Buffer.from(x.buffer,x.byteOffset,x.byteLength).toString('base64');
+const BLOB_DIR=process.env.DOOM_QA_BLOBS;
+let blobSeq=0;
+const bytes=x=>{const raw=Buffer.from(x.buffer,x.byteOffset,x.byteLength);
+ if(!BLOB_DIR)return raw.toString('base64');
+ const ref='b'+(blobSeq++)+'.b64';fs.writeFileSync(BLOB_DIR+'/'+ref,raw.toString('base64'));return ref;};
 // E1M1 is qualified: a missing material there is a regression. The eight other
 // surveyed levels still use names the material library has not been written
 // for; they render with the same 2x2 placeholder the production renderer uses
@@ -394,15 +401,28 @@ class Context:
         return np.flipud(pixels[:,:,:3]).copy()
 
 
+BLOB_REF=re.compile(r'b\d+\.b64')
+
+
+def resolve_blobs(node,blobs):
+    if isinstance(node,dict): return {k:resolve_blobs(v,blobs) for k,v in node.items()}
+    if isinstance(node,list): return [resolve_blobs(v,blobs) for v in node]
+    if isinstance(node,str) and BLOB_REF.fullmatch(node):
+        return (Path(blobs)/node).read_text()
+    return node
+
+
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('--output',type=Path,default=ROOT/'docs/qa')
     parser.add_argument('--views',default='',help='Comma-separated view names for focused visual iteration; omit for full qualification.')
     args=parser.parse_args();args.output.mkdir(parents=True,exist_ok=True)
     initial_hashes=source_hashes()
-    extraction=subprocess.run(['node','--input-type=module','-e',EXTRACT],cwd=ROOT,text=True,capture_output=True,env={**os.environ,'DOOM_QA_VIEWS':args.views})
+    blobs=tempfile.mkdtemp(prefix='doom-qa-blobs-')
+    extraction=subprocess.run(['node','--input-type=module','-e',EXTRACT],cwd=ROOT,text=True,capture_output=True,env={**os.environ,'DOOM_QA_VIEWS':args.views,'DOOM_QA_BLOBS':blobs})
     if extraction.returncode:
         raise SystemExit('Production model extraction failed:\n'+extraction.stderr)
-    data=json.loads(extraction.stdout)
+    data=resolve_blobs(json.loads(extraction.stdout),blobs)
+    shutil.rmtree(blobs,ignore_errors=True)
     context=Context(data['width'],data['height']);s=data['shaders']
     world=context.program(s['WORLD_VERTEX'],s['WORLD_FRAGMENT']);sky=context.program(s['SKY_VERTEX'],s['SKY_FRAGMENT'])
     model_program=context.program(s['MODEL_VERTEX'],s['MODEL_FRAGMENT'])

@@ -20,8 +20,8 @@
   "mapGenerator": "sector-trapezoid-sweep-v1",
   "resources": {
     "mode": "procedural",
-    "generatedImages": 118,
-    "rgbaBytes": 3824640,
+    "generatedImages": 127,
+    "rgbaBytes": 4168704,
     "importedAssets": 0
   },
   "modelMeshes": 78,
@@ -30,64 +30,6 @@
   "materialCoordinates": "primitive-local surface coordinates preserved through pose transforms",
   "shaderCompilation": "10 unmodified GLSL ES 3.00 production shaders compiled; 5 programs linked",
   "missingMaterials": [
-    {
-      "name": "flat:FLAT5",
-      "maps": [
-        "E1M4"
-      ]
-    },
-    {
-      "name": "flat:FLAT2",
-      "maps": [
-        "E1M4"
-      ]
-    },
-    {
-      "name": "wall:SLADRIP3",
-      "maps": [
-        "E1M4"
-      ]
-    },
-    {
-      "name": "wall:LITE2",
-      "maps": [
-        "E1M4",
-        "E1M6"
-      ]
-    },
-    {
-      "name": "wall:NUKEDGE1",
-      "maps": [
-        "E1M4"
-      ]
-    },
-    {
-      "name": "wall:BIGDOOR1",
-      "maps": [
-        "E1M4",
-        "E1M5"
-      ]
-    },
-    {
-      "name": "wall:BRNPOIS",
-      "maps": [
-        "E1M4"
-      ]
-    },
-    {
-      "name": "wall:SW2BROWN",
-      "maps": [
-        "E1M4",
-        "E1M6"
-      ]
-    },
-    {
-      "name": "wall:SW1METAL",
-      "maps": [
-        "E1M4",
-        "E1M7"
-      ]
-    },
     {
       "name": "flat:FLOOR4_6",
       "maps": [
@@ -214,7 +156,7 @@
     "512px fitted view-weapon self-shadow combined with room shadow",
     "analytic distance haze; disabled in model studios"
   ],
-  "textureMipBytes": 373808128,
+  "textureMipBytes": 402104320,
   "mapTriangles": 2025,
   "sceneTriangles": {
     "base": 2025,
@@ -257,7 +199,7 @@
     "src/procedural-interface.js": "af287b0e0573e6432d1d41a7a3076c6335a84b2d807ca710e4c72e0c1a19de8a",
     "src/procedural-lighting.js": "386ec4afda6fd66def7ce7c110d58a62e1e6eac1b8b09f653b70ccf1c91b75e8",
     "src/procedural-map.js": "f44e2bbb75c2ab39db94081ec8d068575ca3404a6550b9ffb5e67978379a1dd9",
-    "src/procedural-materials.js": "c8b0da9c8096f11b3d2f37d33dd70c2999827880e6f83270b5f427f48efa644a",
+    "src/procedural-materials.js": "71b731bbd9c99d55ff5ee40a3ca111b9ee6fff035c9e419af4d198be1bb9ec84",
     "src/procedural-mesh.js": "f7c1c90ff94caa95c15e03e29878e8777c0b3a1b2ce39f7a1215b1f5e79b5890",
     "src/procedural-models.js": "cf5dc5ad1249a6e674b15825f285dd058302cb63483435f557e810486c278532",
     "src/procedural-object-finish.js": "dc19036074d2da300a011697b042399fea8e0e7340218af021aad9f58d647c72",
@@ -5479,11 +5421,11 @@
         "angle": 3.141592653589793,
         "pitch": 0
       },
-      "uniqueColors": 6215,
+      "uniqueColors": 6227,
       "meanRGB": [
-        27.43044140625,
-        24.67736328125,
-        16.740015625
+        27.5397021484375,
+        24.76669140625,
+        16.7744384765625
       ],
       "visibility": {
         "total": 0,

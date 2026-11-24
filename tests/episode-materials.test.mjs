@@ -16,7 +16,7 @@ function missingFor(id) {
   return [...missing].sort();
 }
 
-const QUALIFIED = ['E1M1', 'E1M2', 'E1M3'];
+const QUALIFIED = ['E1M1', 'E1M2', 'E1M3', 'E1M4'];
 
 test('the qualified levels are fully covered by the procedural material library', () => {
   for (const id of QUALIFIED) {
@@ -34,8 +34,8 @@ test('the remaining levels report their unimplemented surfaces', () => {
   const total = new Set(Object.values(gap).flat()).size;
   // This number is a debt ceiling: writing a recipe must lower it, never raise it.
   assert.ok(total > 0, 'the survey gap below has been closed and must be re-measured');
-  assert.equal(total, 28, `unimplemented surfaces changed from the recorded 28 to ${total}: `
+  assert.equal(total, 19, `unimplemented surfaces changed from the recorded 19 to ${total}: `
     + Object.entries(gap).map(([id, names]) => `${id}=${names.length}`).join(' '));
-  assert.deepEqual(Object.keys(gap), ['E1M4', 'E1M5', 'E1M6', 'E1M7', 'E1M8', 'E1M9'],
+  assert.deepEqual(Object.keys(gap), ['E1M5', 'E1M6', 'E1M7', 'E1M8', 'E1M9'],
     'every level beyond the qualified ones is expected to still need recipes');
 });
