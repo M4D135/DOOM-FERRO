@@ -20,8 +20,8 @@
   "mapGenerator": "sector-trapezoid-sweep-v1",
   "resources": {
     "mode": "procedural",
-    "generatedImages": 127,
-    "rgbaBytes": 4168704,
+    "generatedImages": 130,
+    "rgbaBytes": 4267008,
     "importedAssets": 0
   },
   "modelMeshes": 78,
@@ -30,26 +30,6 @@
   "materialCoordinates": "primitive-local surface coordinates preserved through pose transforms",
   "shaderCompilation": "10 unmodified GLSL ES 3.00 production shaders compiled; 5 programs linked",
   "missingMaterials": [
-    {
-      "name": "flat:FLOOR4_6",
-      "maps": [
-        "E1M5"
-      ]
-    },
-    {
-      "name": "flat:CEIL4_2",
-      "maps": [
-        "E1M5"
-      ]
-    },
-    {
-      "name": "wall:REDWALL1",
-      "maps": [
-        "E1M5",
-        "E1M8",
-        "E1M9"
-      ]
-    },
     {
       "name": "flat:FLOOR0_6",
       "maps": [
@@ -156,7 +136,7 @@
     "512px fitted view-weapon self-shadow combined with room shadow",
     "analytic distance haze; disabled in model studios"
   ],
-  "textureMipBytes": 402104320,
+  "textureMipBytes": 414678016,
   "mapTriangles": 2025,
   "sceneTriangles": {
     "base": 2025,
@@ -199,7 +179,7 @@
     "src/procedural-interface.js": "af287b0e0573e6432d1d41a7a3076c6335a84b2d807ca710e4c72e0c1a19de8a",
     "src/procedural-lighting.js": "386ec4afda6fd66def7ce7c110d58a62e1e6eac1b8b09f653b70ccf1c91b75e8",
     "src/procedural-map.js": "f44e2bbb75c2ab39db94081ec8d068575ca3404a6550b9ffb5e67978379a1dd9",
-    "src/procedural-materials.js": "71b731bbd9c99d55ff5ee40a3ca111b9ee6fff035c9e419af4d198be1bb9ec84",
+    "src/procedural-materials.js": "36d7097357d8cb60ddf22d7b8b36bb02f42bea50e18082359342a987e1c64c88",
     "src/procedural-mesh.js": "f7c1c90ff94caa95c15e03e29878e8777c0b3a1b2ce39f7a1215b1f5e79b5890",
     "src/procedural-models.js": "cf5dc5ad1249a6e674b15825f285dd058302cb63483435f557e810486c278532",
     "src/procedural-object-finish.js": "dc19036074d2da300a011697b042399fea8e0e7340218af021aad9f58d647c72",

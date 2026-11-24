@@ -26,10 +26,10 @@ export const TEXTURE_DIMENSIONS = Object.freeze({
   BRNSMALC:[64,64], BRNSMALR:[32,64], BRNSMALL:[32,64], BRNPOIS2:[64,128], STONPOIS:[64,128],
   SW1DIRT:[64,128], SW1STONE:[64,128], SW1BRCOM:[128,128], GRAY5:[64,128], LITEBLU4:[16,128], COMP2:[256,128],
   SLADRIP3:[64,128], LITE2:[64,128], NUKEDGE1:[128,128], BIGDOOR1:[128,96], BRNPOIS:[64,128],
-  SW2BROWN:[128,128], SW1METAL:[64,128]
+  SW2BROWN:[128,128], SW1METAL:[64,128], REDWALL1:[128,128]
 });
 export const FLAT_NAMES = Object.freeze(['CEIL3_5','CEIL3_1','CEIL3_2','CEIL4_3','CEIL5_1','CEIL5_2','CONS1_1','CONS1_5','CONS1_7','FLAT2','FLAT5','FLAT10','FLAT14','FLAT18','FLAT20','FLAT22','FLAT23','FLAT5_4','FLAT5_5','MFLR8_1',
-  'FLOOR0_1','FLOOR0_3','FLOOR1_1','FLOOR1_7','FLOOR3_3','FLOOR4_1','FLOOR4_5','FLOOR4_8','FLOOR5_1','FLOOR5_2','FLOOR5_3','FLOOR5_4',
+  'CEIL4_2','FLOOR0_1','FLOOR0_3','FLOOR1_1','FLOOR1_7','FLOOR3_3','FLOOR4_1','FLOOR4_5','FLOOR4_6','FLOOR4_8','FLOOR5_1','FLOOR5_2','FLOOR5_3','FLOOR5_4',
   'FLOOR6_1','FLOOR6_2','FLOOR7_1','FLOOR7_2',
   'NUKAGE1','NUKAGE2','NUKAGE3','STEP1','STEP2','TLITE6_1','TLITE6_4','TLITE6_5','TLITE6_6','F_SKY1']);
 const walls=new Map(),flats=new Map(),TAU=Math.PI*2;
@@ -822,6 +822,18 @@ export function proceduralTexture(value) {
     for(let i=0;i<70;i++){const x=Math.floor(noise(i,3,seed)*64),y=Math.floor(noise(i,9,seed+2)*128);
       image.rect(x,y,2,2,shade([56,86,40],.5+noise(i,5,seed)*.6));}
     wallSwitch(image,21,88,[36,120,36]);
+  }else if(name==='REDWALL1'){
+    image.rect(0,0,128,128,(x,y)=>shade([172,16,12],.62+smoothNoise(x/6,y/6,seed)*.46,rough(x,y,seed)*1.1));
+    for(const top of [0,64]){
+      const cx=64,cy=top+32;
+      for(let y=top;y<top+64;y++)for(let x=0;x<128;x++){
+        const d=Math.max(Math.abs(x-cx)/64,Math.abs(y-cy)/32);
+        if(d>.85)image.pixel(x,y,shade([172,16,12],.62+smoothNoise(x/6,y/6,seed)*.46-((d-.85)/.15)*.3));}
+      for(let x=4;x<96;x+=6)image.rect(x,cy-1,3,2,shade([240,60,50],.7+noise(x,top,seed)*.5));
+      image.rect(104,cy-2,18,4,(x,yy)=>shade([250,120,110],.8+smoothNoise(x/3,yy,seed+5)*.3));
+      image.rect(104,cy-2,18,1,[255,220,214]);
+      image.rect(0,top,128,1,[92,6,6]);image.rect(0,top+63,128,1,[70,4,4]);
+    }
   }else if(/^BROWN|^SLAD/.test(name))brownWall(image,name);
   else if(/^BRNBIG/.test(name))brownGrille(image,name);
   else if(/DOOR/.test(name))doors(image,name);
@@ -1067,7 +1079,19 @@ export function proceduralFlat(value) {
   }else if(name==='FLOOR4_5'||name==='FLOOR4_1')louverFloor(image,name);
   else if(name==='FLOOR5_3')hexFloor(image,seed);
   else if(name==='FLAT5')hexFloor(image,seed);
-  else if(name==='FLAT2'){
+  else if(name==='CEIL4_2'){
+    image.rect(0,0,64,64,(x,y)=>shade([6,8,26],.6+smoothNoise(x/4,y/4,seed)*.5));
+    for(let x=0;x<64;x+=8)image.rect(x,0,1,64,[16,22,72]);
+    for(let y=0;y<64;y+=8)image.rect(0,y,64,1,[16,22,72]);
+    for(let x=0;x<64;x++)for(let y=0;y<64;y++)if(noise(x*3,y*3,seed+7)>.985)image.pixel(x,y,[26,36,104]);
+  }else if(name==='FLOOR4_6'){
+    image.rect(0,0,64,64,(x,y)=>grain([112,96,60],x,y,seed,1.1));
+    for(let row=0;row<4;row++)for(let col=0;col<4;col++){
+      const x=col*16,y=row*16,vert=(row+col)%2===0;
+      image.rect(x,y,16,16,(px,yy)=>shade([112,96,60],
+        .8+smoothNoise(vert?px/2:yy/2,vert?yy/6:px/6,seed+row+col)*.34));
+      image.rect(x,y,16,1,[74,62,36]);image.rect(x,y,1,16,[74,62,36]);}
+  }else if(name==='FLAT2'){
     image.rect(0,0,64,64,(x,y)=>{const n=noise(x*3,y*3,seed);
       return shade([148,148,146],.62+smoothNoise(x/4,y/4,seed)*.4+(n>.86?.22:0),rough(x,y,seed)*1.4);});
     image.bevel(16,18,32,28,[104,104,102],true);
