@@ -172,6 +172,24 @@ export class FerroDoomRenderer {
     this._initialize();this._updateMap();
   }
 
+  /**
+   * Swap to another surveyed level on the live GL context. Textures stay
+   * cached because every recipe is generated from the same code tables.
+   */
+  setMap(map) {
+    if (!map || !Array.isArray(map.sectors) || !map.sectors.length
+      || !Array.isArray(map.floorPolygons) || !map.floorPolygons.length) {
+      throw new Error('Le rendu exige une carte construite.');
+    }
+    this.map=map;
+    this.leaves=buildSubsectorPolygons(map);
+    this.lightingRig=buildLightingRig(map);
+    this.sectorHeights='';
+    for (const mesh of this.meshes.values()) mesh.count=0;
+    this.stats.host='procedural-'+String(map.name||'generated').toLowerCase();
+    this._updateMap();
+  }
+
   _locations(program,names) {
     return Object.fromEntries(names.map(n=>[n,this.gl.getUniformLocation(program,/^uLights$|^uLightColors$/.test(n)?n+'[0]':n)]));
   }

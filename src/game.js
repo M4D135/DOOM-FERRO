@@ -107,11 +107,12 @@ export class DoomGame {
     this.map.revision = (this.map.revision || 0) + 1;
     this._rng = 0xE1A11993;
     this.time = 0; this.completed = false; this.kills = 0; this.items = 0; this.secrets = 0;
+    this.exitSecret = false;
     this.actions = new Map(); this.visitedSecrets = new Set(); this._triggered = new Set();
     this._useHeld = false; this._acidTimer = 0; this._weaponCooldown = 0;
     this.lastShot = -10; this.shotTime = 0; this.hurtFlash = 0; this.pickupFlash = 0; this.muzzleFlash = 0;
     const spawn = this.map.things.find(t => t.type === 1);
-    if (!spawn) throw new Error('E1M1 ne contient pas de point de départ.');
+    if (!spawn) throw new Error(`${this.map.name || 'Le niveau'} ne contient pas de point de départ.`);
     const sector = this.map.sectorAt(spawn.x, spawn.y);
     this.player = {x: spawn.x, y: spawn.y, z: sector.floor, height: 56, radius: 16,
       angle: spawn.angle * Math.PI / 180, pitch: 0, health: 100, armor: 0, armorType: 0,
@@ -146,9 +147,9 @@ export class DoomGame {
   }
 
   stats() {
-    return {kills: this.kills, totalKills: this.totalKills, items: this.items, totalItems: this.totalItems,
+    return {level: this.map.name, kills: this.kills, totalKills: this.totalKills, items: this.items, totalItems: this.totalItems,
       secrets: this.secrets, totalSecrets: this.totalSecrets, time: this.time, completed: this.completed,
-      dead: this.player.health <= 0};
+      exitSecret: Boolean(this.exitSecret), dead: this.player.health <= 0};
   }
 
   _sound(name, at = this.player) { this.onSound(name, {x: at.x, y: at.y, z: at.z}); }
@@ -288,10 +289,10 @@ export class DoomGame {
     hits.sort((a, b) => a.t - b.t);
     for (const {line} of hits) {
       if (line.special === 1) return this._openDoor(line);
-      if (line.special === 11) {
-        this.completed = true;
-        const side = this.map.sides[line.right];
-        for (const name of ['upper', 'middle', 'lower']) if (side[name].startsWith('SW1')) side[name] = side[name].replace('SW1', 'SW2');
+      if (line.special === 11 || line.special === 51) {
+        this.completed = true; this.exitSecret = line.special === 51;
+        const side = this.map.sides[line.right] || this.map.sides[line.left];
+        if (side) for (const name of ['upper', 'middle', 'lower']) if (side[name].startsWith('SW1')) side[name] = side[name].replace('SW1', 'SW2');
         this.map.revision = (this.map.revision || 0) + 1;
         this._sound('DSSWTCHX'); this.onComplete(this.stats());
         return {type: 'exit', line: line.id};
@@ -683,6 +684,13 @@ export class DoomGame {
           this._acidTimer += h;
           if (this._acidTimer >= 32 / 35) { this._acidTimer -= 32 / 35; this.damagePlayer(5); }
         } else this._acidTimer = 0;
+        // Sector special 11 is the E1M8 exit hub. It hurts, but it ends the
+        // level rather than killing the player, so the episode can be finished.
+        if (sector.special === 11 && !this.completed) {
+          this.completed = true; this.exitSecret = false;
+          this.damagePlayer(Math.max(0, Math.min(500, p.health - 1)));
+          this._sound('DSSWTCHX'); this.onComplete(this.stats());
+        }
       }
       const count = this.entities.length;
       for (let j = 0; j < count; j++) {

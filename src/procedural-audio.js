@@ -139,6 +139,20 @@ export function createMusicPattern({seed = 0x4652524f, bpm = 112, bars = 16} = {
   return {events, duration, bpm, bars, seed: finite(seed, 0), original: true};
 }
 
+/**
+ * One generated episode theme, varied deterministically per level so each
+ * surveyed map has its own tempo and voicing without any imported music.
+ */
+export function musicPatternFor(name, seed = 0x4652524f) {
+  const level = /^D_E1M([1-9])$/.exec(String(name).toUpperCase())?.[1];
+  if (!level) return createMusicPattern({seed});
+  return createMusicPattern({
+    seed: (finite(seed, 0) + Number(level) * 0x9e3779b1) >>> 0,
+    bpm: 100 + Number(level) * 5,
+    bars: Number(level) >= 8 ? 12 : 16
+  });
+}
+
 /** Doom XY coordinates: positive pan is to the listener's right. */
 export function spatialParameters(source, listener = {}) {
   if (!Number.isFinite(source?.x) || !Number.isFinite(source?.y)) return {gain: 1, pan: 0, distance: 0};
@@ -232,7 +246,7 @@ export class ProceduralAudio {
 
   startMusic(name = 'FERRO_INDUSTRIAL') {
     if (this.disposed) return false;
-    this.stopMusic(); this.track = createMusicPattern({seed: this.seed}); this.musicName = String(name);
+    this.stopMusic(); this.track = musicPatternFor(name, this.seed); this.musicName = String(name);
     this.musicPaused = false; if (this.enabled && this.unlocked) this.#beginMusic(); return true;
   }
   pauseMusic() { this.musicPaused = true; this.#haltMusic(true); }

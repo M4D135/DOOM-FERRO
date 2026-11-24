@@ -3,6 +3,7 @@ import { FerroDoomRenderer } from './ferro-doom-renderer.js';
 import { DoomGame } from './game.js';
 import { ProceduralAudio } from './procedural-audio.js';
 import { GamepadControls } from './input.js';
+import { episodeNext, episodeTitle } from './episode.js';
 
 const $ = id => document.getElementById(id);
 const world = $('world'), overlay = $('overlay'), hud = $('hud');
@@ -10,6 +11,7 @@ const ctx = overlay.getContext('2d'), hctx = hud.getContext('2d');
 const keys = new Set(), images = new Map(), visited = new Set();
 const touch = { forward: 0, strafe: 0, fire: false, use: false, turn: 0, look: 0 };
 let resources, map, game, renderer, audio;
+let levelId = 'E1M1', pendingLevel = null;
 let mode = 'title', mapOpen = false, soundEnabled = true, fpsVisible = false;
 let previousTime = 0, previousHealth = 100, damage = 0, pickupFlash = 0;
 let mouseTurn = 0, mouseLook = 0, requestedWeapon = null, messageUntil = 0;
@@ -95,16 +97,24 @@ async function capturePointer() {
   } catch { if (mode === 'playing' && inputKind === 'mouse') message('Clique dans le jeu pour activer la souris.'); }
 }
 
-async function start(restart = false, activateAudio = true) {
+/** Hand one surveyed level to the renderer, the simulation and the music. */
+function loadLevel(id) {
+  const built = resources.map(id);
+  levelId = built.name; pendingLevel = null; map = built;
+  const title = episodeTitle(levelId);
+  $('topLevel').textContent = title; $('pauseEyebrow').textContent = title;
+  renderer.setMap(map);
+  game = new DoomGame(map, { skill: Number($('skill').value), onSound: playSound, onMessage: message, onComplete: complete });
+  visited.clear(); previousHealth = 100; damage = pickupFlash = 0;
+  audio.stopMusic();
+  audio.startMusic('D_' + levelId);
+  return map;
+}
+
+async function start(restart = false, activateAudio = true, level = null) {
   if (!game) return;
-  if (restart || mode === 'title' || mode === 'dead' || mode === 'complete') {
-    const skill = Number($('skill').value);
-    // Restore the same sector objects used by the rendering adapter.
-    game.restart();
-    game = new DoomGame(map, { skill, onSound: playSound, onMessage: message, onComplete: complete });
-    visited.clear(); previousHealth = 100; damage = pickupFlash = 0;
-    audio.stopMusic();
-    audio.startMusic('D_E1M1');
+  if (restart || level || pendingLevel || mode === 'title' || mode === 'dead' || mode === 'complete') {
+    loadLevel(level || pendingLevel || levelId);
   }
   mapOpen = false; document.body.classList.remove('automap'); $('mapButton').setAttribute('aria-pressed', 'false');
   screen('playing'); const revision = screenRevision;
@@ -120,11 +130,15 @@ function pause(activateAudio = true) { if (mode === 'playing') screen('paused');
 
 function complete() {
   const stats = game.stats();
+  const next = episodeNext(levelId, {secret: stats.exitSecret});
+  pendingLevel = next && resources.canBuild(next) ? next : null;
   showResults(stats, false); screen('complete');
 }
 
 function showResults(stats, dead) {
-  $('endingTitle').textContent = dead ? 'VOUS ÊTES MORT' : 'HANGAR TERMINÉ';
+  $('levelEyebrow').textContent = episodeTitle(levelId);
+  $('endingTitle').textContent = dead ? 'VOUS ÊTES MORT' : pendingLevel ? 'NIVEAU TERMINÉ' : 'ÉPISODE TERMINÉ';
+  $('playAgain').textContent = dead || !pendingLevel ? 'REJOUER' : 'NIVEAU SUIVANT';
   const minutes = Math.floor(stats.time / 60), seconds = Math.floor(stats.time % 60).toString().padStart(2, '0');
   $('results').replaceChildren();
   for (const [label, value] of [['Monstres', `${stats.kills} / ${stats.totalKills}`], ['Objets', `${stats.items} / ${stats.totalItems}`], ['Secrets', `${stats.secrets} / ${stats.totalSecrets}`], ['Temps', `${minutes}:${seconds}`]]) {
@@ -237,7 +251,7 @@ function drawMap() {
   }
   ctx.translate(p.x, p.y); ctx.rotate(p.angle); ctx.strokeStyle = '#f0e4bd'; ctx.lineWidth = 2 / scale;
   ctx.beginPath(); ctx.moveTo(30, 0); ctx.lineTo(-18, 15); ctx.lineTo(-8, 0); ctx.lineTo(-18, -15); ctx.closePath(); ctx.stroke(); ctx.restore();
-  ctx.fillStyle = '#c9b68a'; ctx.font = 'bold 15px monospace'; ctx.fillText('E1M1 · HANGAR', 20, height - 22);
+  ctx.fillStyle = '#c9b68a'; ctx.font = 'bold 15px monospace'; ctx.fillText(episodeTitle(levelId), 20, height - 22);
 }
 
 function tick(timestamp) {
@@ -280,11 +294,11 @@ function showError(error) {
   screen('error'); $('error').hidden = false; $('errorText').textContent = error?.message || String(error);
 }
 
-$('start').addEventListener('click', () => start(true));
+$('start').addEventListener('click', () => start(true, true, 'E1M1'));
 $('resume').addEventListener('click', () => start(false));
 $('restart').addEventListener('click', () => start(true));
 $('playAgain').addEventListener('click', () => start(true));
-$('backMenu').addEventListener('click', () => { game.restart(); screen('title'); });
+$('backMenu').addEventListener('click', () => { loadLevel('E1M1'); screen('title'); });
 $('pauseButton').addEventListener('click', () => pause());
 $('mapButton').addEventListener('click', toggleMap);
 $('audioButton').addEventListener('click', toggleSound); $('pauseSound').addEventListener('click', toggleSound);
@@ -347,6 +361,7 @@ async function boot() {
     audio = new ProceduralAudio();
     game = new DoomGame(map, { skill: 2, onSound: playSound, onMessage: message, onComplete: complete });
     renderer = new FerroDoomRenderer(world, resources, map, { maxPixels: matchMedia('(pointer: coarse)').matches ? 640 * 400 : 1280 * 800, brightness: 1.2 });
+    $('topLevel').textContent = episodeTitle(levelId); $('pauseEyebrow').textContent = episodeTitle(levelId);
     await renderer.prepareModels?.((done,total)=>{ $('loading').textContent = `Création du Hangar… ${Math.round(done/total*100)} %`; });
     const logo = image('M_DOOM'); $('doomLogo').width = logo.width; $('doomLogo').height = logo.height; $('doomLogo').getContext('2d').drawImage(logo.canvas, 0, 0);
     resize(); screen('title'); $('loading').hidden = true; $('menuActions').hidden = false;

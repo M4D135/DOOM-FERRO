@@ -5,6 +5,7 @@ import vm from 'node:vm';
 import {ProceduralResources} from '../src/procedural-resources.js';
 import {DoomGame} from '../src/game.js';
 import {GamepadControls} from '../src/input.js';
+import {episodeNext, episodeTitle} from '../src/episode.js';
 
 const appSource = readFileSync(new URL('../src/app.js', import.meta.url), 'utf8');
 const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
@@ -69,10 +70,11 @@ async function browser({coarse = false, touchPoints = 0} = {}) {
     resumeMusic() { this.musicPaused = false; }
     pauseMusic() { this.musicPaused = true; }
   }
-  class Renderer { constructor() { this.stats = {}; } resize() {} draw() {} }
+  class Renderer { constructor() { this.stats = {}; } resize() {} draw() {} setMap(map) { this.map = map; } }
   h.navigator = {maxTouchPoints: touchPoints, getGamepads: () => h.pads};
   const context = vm.createContext({
     document, window, ProceduralResources, DoomGame: ObservedGame, GamepadControls, ProceduralAudio: Audio, FerroDoomRenderer: Renderer,
+    episodeNext, episodeTitle,
     navigator: h.navigator,
     matchMedia: () => ({matches: coarse}), performance: {now: () => h.now},
     ImageData: class {}, console: {error: error => h.errors.push(error)},

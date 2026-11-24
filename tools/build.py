@@ -127,9 +127,11 @@ def main():
         digest.update(source.encode())
     digest.update(template.encode()); digest.update(css.encode())
     revision = version + '-' + digest.hexdigest()[:12]
+    surveyed = sorted(set(re.findall(r'\bE1M[1-9]\b', (ROOT / 'src/episode-plans.js').read_text())))
     metadata = {'version': version, 'revision': revision, 'generation': 'procedural',
                 'distribution': 'single self-contained HTML', 'offline': True, 'runtimeFiles': 1,
-                'level': 'E1M1 geometric reference plan', 'mapGenerator': 'sector contour sweep',
+                'levels': surveyed, 'level': ' / '.join(surveyed) or 'none surveyed',
+                'mapGenerator': 'sector contour sweep',
                 'importedMediaFiles': 0, 'worldBillboards': 0,
                 'worldRepresentation': 'instanced procedural 3D triangle meshes', 'runtimeModules': len(graph),
                 'worldDetailLevels': 3, 'proceduralSurfaceMaterials': True, 'modelGpuCacheMiB': 64,

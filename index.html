@@ -16,7 +16,7 @@
       <canvas id="overlay" aria-hidden="true"></canvas>
       <div id="damage" aria-hidden="true"></div>
       <div id="gameMessage" role="status" aria-live="polite"></div>
-      <div id="topbar"><span>FERRO <i></i> E1M1 · HANGAR</span><div><button id="mapButton" title="Carte (Tab)" aria-label="Afficher la carte">CARTE</button><button id="pauseButton" title="Pause (Échap)" aria-label="Mettre en pause">Ⅱ</button></div></div>
+      <div id="topbar"><span>FERRO <i></i> <b id="topLevel">E1M1 · HANGAR</b></span><div><button id="mapButton" title="Carte (Tab)" aria-label="Afficher la carte">CARTE</button><button id="pauseButton" title="Pause (Échap)" aria-label="Mettre en pause">Ⅱ</button></div></div>
       <div id="perf" hidden></div>
       <div id="touchControls" aria-label="Commandes tactiles">
         <div id="movePad" aria-label="Se déplacer"><span></span></div>
@@ -43,10 +43,10 @@
       <div class="cornerNote">id Software · 1993</div>
     </section>
     <section id="pause" class="screen" hidden aria-label="Pause">
-      <div class="dialog"><p class="eyebrow">E1M1 · HANGAR</p><h1>PAUSE</h1><button id="resume" class="primary">REPRENDRE</button><button id="restart">RECOMMENCER</button><button id="pauseSound" aria-pressed="true">SON ACTIVÉ</button><p>Échap pour reprendre · Tab pour la carte</p></div>
+      <div class="dialog"><p class="eyebrow" id="pauseEyebrow">E1M1 · HANGAR</p><h1>PAUSE</h1><button id="resume" class="primary">REPRENDRE</button><button id="restart">RECOMMENCER</button><button id="pauseSound" aria-pressed="true">SON ACTIVÉ</button><p>Échap pour reprendre · Tab pour la carte</p></div>
     </section>
     <section id="ending" class="screen" hidden aria-label="Fin de partie">
-      <div class="dialog"><p class="eyebrow">E1M1 · HANGAR</p><h1 id="endingTitle">HANGAR TERMINÉ</h1><div id="results"></div><button id="playAgain" class="primary">REJOUER</button><button id="backMenu">MENU PRINCIPAL</button></div>
+      <div class="dialog"><p class="eyebrow" id="levelEyebrow">E1M1 · HANGAR</p><h1 id="endingTitle">HANGAR TERMINÉ</h1><div id="results"></div><button id="playAgain" class="primary">REJOUER</button><button id="backMenu">MENU PRINCIPAL</button></div>
     </section>
     <div id="error" role="alert" hidden><h1>Le Hangar n’a pas pu démarrer.</h1><p id="errorText"></p><button onclick="location.reload()">RÉESSAYER</button></div>
     <p id="accessibleStatus" class="sr-only" aria-live="off"></p>

@@ -1,5 +1,6 @@
 /** All shipped resources are generated from code; no binary asset is loaded. */
-import { createE1M1Map } from './procedural-map.js';
+import {createEpisodeMap} from './procedural-map.js';
+import {EPISODE_PLANS} from './episode-plans.js';
 import { proceduralTexture, proceduralFlat } from './procedural-materials.js';
 import { proceduralPatch, hasProceduralPatch } from './procedural-interface.js';
 
@@ -7,6 +8,7 @@ export class ProceduralResources {
   constructor() {
     this.kind = 'procedural';
     this.used = new Map();
+    this.maps = new Map();
   }
 
   _remember(kind, name, value) {
@@ -14,10 +16,18 @@ export class ProceduralResources {
     return value;
   }
 
+  /** Build a surveyed level once and reuse it; an unsurveyed id is refused. */
   map(name = 'E1M1') {
-    if (name !== 'E1M1') throw new Error('Seul le plan E1M1 est disponible.');
-    return createE1M1Map();
+    if (!Object.hasOwn(EPISODE_PLANS, name)) throw new Error(`Seul un plan arpenté est disponible (${name}).`);
+    if (!this.maps.has(name)) this.maps.set(name, createEpisodeMap(name));
+    return this.maps.get(name);
   }
+
+  /** True only for a level whose plan was surveyed offline. */
+  canBuild(name) { return Object.hasOwn(EPISODE_PLANS, name); }
+
+  /** Drop a built level so its cells and meshes can be reclaimed. */
+  releaseMap(name) { this.maps.delete(name); }
 
   texture(name) { return this._remember('wall', name, proceduralTexture(name)); }
   flat(name) { return this._remember('flat', name, proceduralFlat(name)); }
