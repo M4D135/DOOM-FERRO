@@ -8,10 +8,16 @@ const TAU = Math.PI * 2;
 const EPS = 1e-6;
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const angleDifference = (a, b) => Math.atan2(Math.sin(a - b), Math.cos(a - b));
+/** Barons, spectres and imps share the demon voice set. */
+const isDemon = type => type === 3001 || type === 58 || type === 3003;
 const ENEMIES = {
-  3004: {base: 'POSS', hp: 20, radius: 20, height: 56, speed: 68, death: 'HIJKL', pain: 'G', attack: 'EF', damage: 5},
-  9: {base: 'SPOS', hp: 30, radius: 20, height: 56, speed: 65, death: 'HIJKL', pain: 'G', attack: 'EF', damage: 5},
+  3004: {base: 'POSS', hp: 20, radius: 20, height: 56, speed: 68, death: 'HIJKL', pain: 'G', attack: 'EF', damage: 5, shots: 1},
+  9: {base: 'SPOS', hp: 30, radius: 20, height: 56, speed: 65, death: 'HIJKL', pain: 'G', attack: 'EF', damage: 5, shots: 3},
+  3002: {base: 'POSS', hp: 30, radius: 20, height: 56, speed: 65, death: 'HIJKL', pain: 'G', attack: 'EF', damage: 5, shots: 3},
   3001: {base: 'TROO', hp: 60, radius: 20, height: 56, speed: 72, death: 'IJKLM', pain: 'H', attack: 'EFG', damage: 8},
+  // Barons and spectres share the SARG body; the spectre only shimmers (MF_SHADOW).
+  58: {base: 'SARG', hp: 150, radius: 20, height: 56, speed: 72, death: 'HIJKLM', pain: 'G', attack: 'EF', damage: 18, melee: 24, fireball: true, shadow: true},
+  3003: {base: 'SARG', hp: 1000, radius: 20, height: 56, speed: 65, death: 'HIJKLM', pain: 'G', attack: 'EF', damage: 22, melee: 28, fireball: true},
 };
 const PICKUPS = {
   2011: {sprite: 'STIMA0', kind: 'health', amount: 10, text: 'Stimulant'},
@@ -589,7 +595,7 @@ export class DoomGame {
       }
     } else {
       this.kills++;
-      this._sound(entity.type === 3001 ? 'DSBGDTH1' : 'DSPODTH1', entity);
+      this._sound(isDemon(entity.type) ? 'DSBGDTH1' : 'DSPODTH1', entity);
       if (entity.type === 3004 || entity.type === 9) {
         const pickup = entity.type === 9 ? {...PICKUPS[2001], amount: 4} : {...PICKUPS[2007], amount: 5};
         this.entities.push({id: `drop-${entity.id}`, type: entity.type === 9 ? 2001 : 2007, x: entity.x, y: entity.y,
@@ -633,23 +639,33 @@ export class DoomGame {
     } else { actor.z = sector.floor; actor.vz = 0; }
   }
 
+  _fireball(enemy, angle, damage, speed, scale) {
+    const p = this.player;
+    const dx = p.x - enemy.x, dy = p.y - enemy.y, dz = p.z + 32 - (enemy.z + 32), d = Math.hypot(dx, dy, dz) || 1;
+    this.entities.push({id: `fireball-${this.time}-${enemy.id}`, type: 'fireball', projectile: true, owner: enemy,
+      x: enemy.x + Math.cos(angle) * 24, y: enemy.y + Math.sin(angle) * 24, z: enemy.z + 26,
+      vx: dx / d * speed, vy: dy / d * speed, vz: dz / d * speed, sprite: 'BAL1A0', radius: 6 * scale, height: 12,
+      damage, scale, sector: enemy.sector, alive: true, solid: false, fullbright: true, flip: false, removed: false, age: 0});
+    this._sound('DSFIRSHT', enemy);
+  }
+
   _enemyAttack(enemy) {
     const p = this.player, distance = Math.hypot(p.x - enemy.x, p.y - enemy.y);
     if (p.health <= 0 || !this.lineOfSight(enemy.x, enemy.y, enemy.z + 32, p.x, p.y, p.z + 32)) return;
     const angle = Math.atan2(p.y - enemy.y, p.x - enemy.x);
+    const config = enemy.config;
+    if (config.fireball) {
+      if (distance < 56) {
+        this.damagePlayer((1 + Math.floor(this.random() * 8)) * 3, enemy); this._sound('DSCLAW', enemy);
+      } else this._fireball(enemy, angle, config.damage, 300, 1.7);
+      return;
+    }
     if (enemy.type === 3001) {
       if (distance < 64) { this.damagePlayer((1 + Math.floor(this.random() * 8)) * 3, enemy); this._sound('DSCLAW', enemy); }
-      else {
-        const dx = p.x - enemy.x, dy = p.y - enemy.y, dz = p.z + 32 - (enemy.z + 32), d = Math.hypot(dx, dy, dz) || 1;
-        this.entities.push({id: `fireball-${this.time}-${enemy.id}`, type: 'fireball', projectile: true, owner: enemy,
-          x: enemy.x + Math.cos(angle) * 24, y: enemy.y + Math.sin(angle) * 24, z: enemy.z + 26,
-          vx: dx / d * 350, vy: dy / d * 350, vz: dz / d * 350, sprite: 'BAL1A0', radius: 6, height: 12,
-          sector: enemy.sector, alive: true, solid: false, fullbright: true, flip: false, scale: 1, removed: false, age: 0});
-        this._sound('DSFIRSHT', enemy);
-      }
+      else this._fireball(enemy, angle, (1 + Math.floor(this.random() * 8)) * 3, 350, 1);
     } else {
       this._sound(enemy.type === 9 ? 'DSSHOTGN' : 'DSPISTOL', enemy);
-      for (let i = 0; i < (enemy.type === 9 ? 3 : 1); i++) {
+      for (let i = 0; i < (enemy.config.shots || (enemy.type === 9 ? 3 : 1)); i++) {
         const shot = angle + (this.random() - this.random()) * 0.17;
         const hit = this._hitscan(enemy.x, enemy.y, enemy.z + 32, shot, 2048, (p.z - enemy.z) / Math.max(1, distance), enemy);
         const damage = (1 + Math.floor(this.random() * 5)) * 3;
@@ -674,7 +690,7 @@ export class DoomGame {
       enemy.seesPlayer = p.health > 0 && distance < 1500
         && this.lineOfSight(enemy.x, enemy.y, enemy.z + 32, p.x, p.y, p.z + 32);
       if (!enemy.awake && enemy.seesPlayer && (distance < 64 || Math.abs(angleDifference(aim, enemy.angle)) < Math.PI / 2)) {
-        enemy.awake = true; this._sound(enemy.type === 3001 ? 'DSBGSIT1' : 'DSPOSIT1', enemy);
+        enemy.awake = true; this._sound(isDemon(enemy.type) ? 'DSBGSIT1' : 'DSPOSIT1', enemy);
       }
     }
     if (!enemy.awake || p.health <= 0) { enemy.sprite = `${enemy.base}A1`; return; }
@@ -740,7 +756,7 @@ export class DoomGame {
           // Doom's PIT_CheckThing stops missiles on solid decorations even
           // when they are not shootable. Such impacts deal no damage.
           if (target.alive && (target === this.player || target.enemy || target.barrel)) {
-            const damage = (1 + Math.floor(this.random() * 8)) * 3;
+            const damage = projectile.damage ?? (1 + Math.floor(this.random() * 8)) * 3;
             if (target === this.player) this.damagePlayer(damage, projectile.owner); else this.damageEntity(target, damage, projectile.owner);
           }
           collided = true; break;

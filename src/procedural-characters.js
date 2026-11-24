@@ -7,7 +7,14 @@
 import {MeshBuilder, rotateEuler, MESH_VERTEX_STRIDE} from './procedural-mesh.js';
 import {sculptedHead, anatomicalLoft, anatomicalFront, anatomicalSweep, tailoredPanel, dermalColour} from './procedural-anatomy.js';
 
-const FAMILY = {3004:'POSS',9:'SPOS',3001:'TROO'};
+const FAMILY = {3004:'POSS',9:'SPOS',3001:'TROO',3002:'POSS',3003:'SARG',58:'SARG'};
+/** Doom keeps one frame alphabet per species. */
+const FRAMES = {
+  POSS:{death:'HIJKL',pain:'G',attack:'EF'},
+  SPOS:{death:'HIJKL',pain:'G',attack:'EF'},
+  TROO:{death:'IJKLM',pain:'H',attack:'EFG'},
+  SARG:{death:'HIJKLM',pain:'G',attack:'EF'}
+};
 const LIMIT_BYTES = 64 * 1024 * 1024, PART_BYTES = 32 * 1024 * 1024, LIMIT_ENTRIES = 768;
 const cache = new Map(),parts = new Map(); let cacheBytes = 0,partBytes = 0,poseBuilds=0,partBuilds=0,partEvictions=0;
 const TAU = Math.PI * 2;
@@ -122,17 +129,17 @@ function limb(b,a,z,radii,color,d,material='skin') {
   return b.add(mesh,along(a,z));
 }
 function frameFor(entity,time,family) {
-  const frames=family==='TROO'?'IJKLM':'HIJKL';
+  const spec=FRAMES[family]||FRAMES.POSS,frames=spec.death;
   let frame=typeof entity.sprite==='string'?entity.sprite[4]:null;
   if(entity.alive===false||entity.state==='dead'||entity.state==='dying') {
     if(!frames.includes(frame||'?'))frame=frames[Math.min(4,Math.floor(Math.max(0,entity.stateTime??.75)/.15))];
   }else if(!frame||!/^[A-Z]$/.test(frame)) {
-    if(entity.state==='pain')frame=family==='TROO'?'H':'G';
+    if(entity.state==='pain')frame=spec.pain;
     else if(entity.state==='attack')frame='F';
     else frame=entity.state==='chase'||entity.state==='walk'?'ABCD'[Math.floor(Math.max(0,time)*7)%4]:'A';
   }
-  const dead=frames.includes(frame),pain=frame===(family==='TROO'?'H':'G');
-  const attack=(family==='TROO'?'EFG':'EF').includes(frame),idle=!dead&&!pain&&!attack&&entity.state==='idle';
+  const dead=frames.includes(frame),pain=frame===spec.pain;
+  const attack=spec.attack.includes(frame),idle=!dead&&!pain&&!attack&&entity.state==='idle';
   const walk=Math.max(0,'ABCD'.indexOf(frame));
   return {frame,dead,pain,attack,idle,deathIndex:frames.indexOf(frame),
     step:dead?2.2:attack||pain?.7:idle?1:[.65,1,-.65,-1][walk]*4.1,
@@ -493,6 +500,61 @@ function imp(pose,d) {
   return b.finish('sculpted-imp');
 }
 
+/** Barons and spectres share one sculpt; the shimmer is a render-time cue. */
+const BARON_SKIN=[122,116,62],BARON_HIDE=[92,74,44],BARON_HORN=[198,180,132],BARON_EYE=[228,196,96];
+function baronHead(d,dead,open){
+  const b=new MeshBuilder();
+  ell(b,[0,0,0],[6.2,6.6,6.0],BARON_SKIN,d,'skin');
+  ell(b,[0,2.6,-2.8],[4.6,4.2,3.4],BARON_SKIN,d,'skin');
+  if(open&&!dead)ell(b,[0,3.4,-4.4],[3.2,2.6,2.2],DARK_BLOOD,d,'blood');
+  for(const side of[-1,1]){
+    ell(b,[side*3.2,1.4,3.2],[2.1,1.5,1.2],BARON_SKIN,d,'skin');
+    b.add(anatomicalSweep([[side*3.4,1.2,3.6],[side*5.8,3.2,7.0],[side*6.6,1.8,10.8],[side*5.0,-2.0,13.0]],
+      [1.5,1.12,.62,.16],{detail:d,color:BARON_HORN,material:'bone',rows:[3,6,10][d],columns:[4,6,9][d]}));
+    b.add(anatomicalSweep([[side*2.2,3.6,-4.8],[side*2.9,4.8,-2.4],[side*2.4,4.2,.4]],
+      [.7,.42,.05],{detail:d,color:BARON_HORN,material:'bone',rows:[2,5,8][d],columns:[3,5,7][d]}));
+    if(!dead)ell(b,[side*2.4,4.5,1.1],[1.15,1.15,1.0],BARON_EYE,d,'paint');
+  }
+  return b.finish('sculpted-baron-head');
+}
+function baron(pose,d){
+  const b=new PoseAssembler();
+  for(const side of[-1,1]){
+    const stride=pose.step*side,lift=Math.max(0,pose.lift*side);
+    const hip=[side*4.4,-.6,31.5],knee=[side*6.4,3.0+stride*.5,17+lift*.3],ankle=[side*6.8,-1+stride,5+lift];
+    jointedLimb(b,[hip,knee,ankle],BARON_SKIN,d,'baron-leg');
+    ell(b,[ankle[0]+side*.5,1.6+stride*.4,lift+2.3],[3.4,5.0,2.4],BARON_HIDE,d,'cloth');
+    for(const toe of[-1,0,1])b.add(anatomicalSweep([[ankle[0]+toe*1.5,4.8,lift+1.3],[ankle[0]+toe*1.8,6.6,lift+.7]],
+      [.5,.28,.03],{detail:d,color:BARON_HORN,material:'bone',rows:[2,4,7][d],columns:[3,4,6][d]}));
+    limb(b,[knee[0]+side*.6,knee[1]+2.4,knee[2]],[knee[0]+side*1.7,knee[1]+5.6,knee[2]+.7],
+      [[0,.8,.8],[.5,.42,.42],[1,.02,.02]],BARON_HORN,d,'bone');
+  }
+  const body=remember(`part:baron-body:${d}`,()=>{
+    const t=new MeshBuilder();torso(t,true,BARON_SKIN,d);
+    for(const side of[-1,1])t.add(anatomicalSweep([[side*2,-2.4,35],[side*6.6,-4.8,40],[side*7.8,-2.4,44.5]],
+      [2.4,1.8,.4],{detail:d,color:BARON_HIDE,material:'cloth',rows:[3,6,10][d],columns:[4,7,11][d]}));
+    for(const side of[-1,1])t.add(anatomicalSweep([[side*4.4,-3.4,30],[side*7.0,-5.2,26],[side*6.2,-3.0,22]],
+      [1.6,1.1,.3],{detail:d,color:BARON_HIDE,material:'cloth',rows:[2,5,9][d],columns:[4,6,10][d]}));
+    return t.finish('continuous-baron-torso');
+  });
+  b.add(body);
+  let elbows=[[13.6,3.2,38.4],[-13.6,3.2,38.4]],wrists=[[15.2,7,30],[-15.2,7,30]];
+  if(pose.attack){
+    if(pose.frame==='E'){elbows=[[19.4,2,38.6],[-12,6,40.2]];wrists=[[25.4,7,34.4],[-6,10,41.2]];}
+    else{elbows=[[12,11,40.4],[-11.6,5,37.2]];wrists=[[7,21.4,42.4],[-6,9,35.2]];}
+  }else if(pose.pain){elbows=[[15.2,3,38.4],[-15,1.5,37.4]];wrists=[[7,10,37.4],[-19,4,31.2]];}
+  else if(pose.dead){elbows=[[15,0,35.2],[-15,2,34.2]];wrists=[[18,1,25],[-18,3,27.2]];}
+  for(let i=0;i<2;i++){
+    const side=i===0?1:-1,shoulder=[side*7.6,.15,46.8],elbow=elbows[i],wrist=wrists[i];
+    jointedLimb(b,[shoulder,elbow,wrist],BARON_SKIN,d,'baron-arm');
+    impHand(b,wrist,side,d,BARON_SKIN,pose.attack);
+  }
+  b.add(baronHead(d,pose.dead,pose.attack||pose.dead),
+    {translation:[0,3.4,47.6],rotation:[pose.pain?.22:-.08,0,pose.pain?.1:0]});
+  if(pose.dead)wound(b,[0,4.2,36],5.0,5.2,d,14,.18);
+  return b.finish('sculpted-baron');
+}
+
 /** Rigid posing touches only position/normal channels, never resamples material coordinates. */
 function groundPose(source,key,pose,d) {
   let vertices=source.vertices;
@@ -526,9 +588,9 @@ function groundPose(source,key,pose,d) {
 export function characterMesh(entity,time=0,detail=2) {
   if(!entity||entity.removed)return null;
   const family=FAMILY[entity.type]||entity.base||String(entity.sprite||'').slice(0,4);
-  if(!['POSS','SPOS','TROO'].includes(family))return null;
+  if(!['POSS','SPOS','TROO','SARG'].includes(family))return null;
   const d=level(detail),pose=frameFor(entity,time,family),key=`character:${family}:${pose.frame}:${pose.idle?'idle':'pose'}:lod${d}`;
-  return remember(key,()=>groundPose(family==='TROO'?imp(pose,d):human(family,pose,d),key,pose,d));
+  return remember(key,()=>groundPose(family==='TROO'?imp(pose,d):family==='SARG'?baron(pose,d):human(family,pose,d),key,pose,d));
 }
 export function proceduralCharacterCacheStats(){return {entries:cache.size+parts.size,limit:LIMIT_ENTRIES,bytes:cacheBytes+partBytes,byteLimit:LIMIT_BYTES,parts:{entries:parts.size,bytes:partBytes,byteLimit:PART_BYTES,builds:partBuilds,evictions:partEvictions},poses:{entries:cache.size,bytes:cacheBytes,byteLimit:PART_BYTES,builds:poseBuilds}};}
 export default characterMesh;

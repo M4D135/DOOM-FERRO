@@ -9,7 +9,7 @@ export const MODEL_INSTANCE_STRIDE = 8;
  * They never select an image or an orientation relative to the camera. */
 export function modelForEntity(entity, time = 0, detail = 2) {
   if (!entity || entity.removed) return null;
-  return entity.enemy || /^(POSS|SPOS|TROO)/.test(entity.sprite || '')
+  return entity.enemy || /^(POSS|SPOS|TROO|SARG)/.test(entity.sprite || '')
     ? characterMesh(entity, time, detail) : objectMesh(entity, time, detail);
 }
 
@@ -53,10 +53,14 @@ export function collectModelBatches(map, entities, time = 0, view = null, lodSta
     summary.visible++;summary.lods[visibility.detail]++;
     const sector = map.sectorAt(entity.x, entity.y);
     const z = Number.isFinite(entity.z) ? entity.z : sector?.floor || 0;
+    // The spectre's Doom flag is MF_SHADOW; the reconstruction shimmers its
+    // light instead of blending, so depth and shadows stay exact.
+    let light = entity.fullbright ? 2 : (sector?.light ?? 192) / 255;
+    if (entity.shadow) light *= 0.34 + 0.30 * (0.5 + 0.5 * Math.sin(time * 5 + entity.x * 0.013));
     let batch = batches.get(mesh.key);
     if (!batch) { batch = {mesh, values: [], entityIds: []}; batches.set(mesh.key, batch); }
     batch.values.push(entity.x / 32, z / 32, -entity.y / 32, entity.angle || 0,
-      entity.scale ?? 1, entity.fullbright ? 2 : (sector?.light ?? 192) / 255,
+      entity.scale ?? 1, light,
       sector?.special || 0, 0);
     batch.entityIds.push(entity.id);
   }
