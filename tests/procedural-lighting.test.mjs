@@ -42,6 +42,30 @@ test('closed Door 151 blocks a light ray and its real opening action releases it
   assert.equal(lightPathOpen(rig,a,b),true,'lighting follows mutable door heights, without rebuilding the rig');
 });
 
+test('gloom lighting is anchored to the original wall lamps, screens and toxic sectors',()=>{
+  const map=new ProceduralResources().map(),rig=buildLightingRig(map);
+  for(const source of ['wall-lamp','computer-screen','toxic-floor']){
+    const lights=rig.lights.filter(l=>l.source===source);assert.ok(lights.length>0,source);
+    for(const light of lights){
+      const sector=map.sectors[light.sector];
+      assert.equal(map.sectorAt(light.x,light.y)?.id,sector.id);
+      if(source==='toxic-floor'){
+        assert.match(sector.floorTexture,/^NUKAGE/);assert.equal(light.z,sector.floor+6);
+        assert.ok(light.color[1]>light.color[0]&&light.color[1]>light.color[2]);
+      }else{
+        const line=map.lines[Number(light.id.split('-')[1])];
+        const side=map.sides[light.id.split('-')[2]==='1'?line.left:line.right];
+        assert.equal(side.sector,sector.id);
+        assert.match(side[light.band],source==='wall-lamp'?/^LITE/:/^COMP/);
+      }
+    }
+  }
+  const game=sceneLighting(rig,view),studio=studioLighting(view);
+  assert.ok(game.fogDensity>0&&game.fogDensity<.02);
+  assert.equal(studio.fogDensity,0,'anatomy inspection must not be hidden by atmospheric haze');
+  assert.ok(rig.lights.filter(l=>l.source==='sector-bounce').every(l=>l.power<=3.2),'plain ceilings do not become bright artificial lamps');
+});
+
 test('local lights are bounded, finite and fixed in the room when the camera turns',()=>{
   const map=new ProceduralResources().map(),rig=buildLightingRig(map),a=sceneLighting(rig,view);
   const b=sceneLighting(rig,{...view,avant:[1,0,0],droite:[0,0,1]});

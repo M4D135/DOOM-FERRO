@@ -31,6 +31,9 @@ function inspect(mesh) {
     const points = vertices.map(vertex => vertex.slice(0,3));
     const face = cross(subtract(points[1],points[0]),subtract(points[2],points[0]));
     assert.ok(Math.hypot(...face)>1e-7,`${mesh.key}: degenerate triangle`);
+    // These anatomical recipes assign one base material to each surface patch;
+    // pigmentation varies smoothly. Keep their base channels stable at seams.
+    for(const vertex of vertices)for(const channel of[10,11,12,13])assert.equal(vertex[channel],vertices[0][channel],`${mesh.key}: one material per triangle`);
     signedVolume += dot(points[0],cross(points[1],points[2]))/6;
     for (const vertex of vertices) {
       assert.ok(vertex.every(Number.isFinite),`${mesh.key}: nonfinite vertex`);

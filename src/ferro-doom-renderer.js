@@ -184,7 +184,7 @@ export class FerroDoomRenderer {
     this.modelProgram=this.engine.pdr.programme(MODEL_VERTEX,MODEL_FRAGMENT);
     this.shadowProgram=this.engine.pdr.programme(SHADOW_VERTEX,SHADOW_FRAGMENT);
     this.postProgram=this.engine.pdr.programme(POST_VERTEX,POST_FRAGMENT);
-    const common=['uVP','uEye','uTime','uBrightness','uDamage','uFlash','uAmbient','uOutdoor','uLights','uLightColors','uLightCount',
+    const common=['uVP','uEye','uTime','uBrightness','uDamage','uFlash','uAmbient','uOutdoor','uFogColor','uFogDensity','uLights','uLightColors','uLightCount',
       'uShadow','uShadowVP','uShadowTexel','uShadowEnabled','uSelfShadow','uSelfShadowVP','uSelfShadowTexel','uSelfShadowEnabled','uAOOutput'];
     this.uniforms=this._locations(this.worldProgram,[...common,'uTexture','uNormalRoughness','uSurface','uHeightUV','uRelief']);
     this.modelUniforms=this._locations(this.modelProgram,[...common,'uRight','uForward','uUp','uViewModel']);
@@ -348,6 +348,7 @@ export class FerroDoomRenderer {
     gl.uniform1f(u.uTime,this.frame.time||0);gl.uniform1f(u.uBrightness,this.brightness);
     gl.uniform1f(u.uDamage,this.frame.damage||0);gl.uniform1f(u.uFlash,this.frame.flash||0);
     gl.uniform1f(u.uAmbient,lighting.ambient);gl.uniform1f(u.uOutdoor,lighting.outdoor);
+    gl.uniform3fv(u.uFogColor,lighting.fogColor);gl.uniform1f(u.uFogDensity,lighting.fogDensity);
     gl.uniform4fv(u.uLights,lighting.positions);gl.uniform4fv(u.uLightColors,lighting.colors);gl.uniform1i(u.uLightCount,lighting.count);
     gl.uniformMatrix4fv(u.uShadowVP,false,lighting.shadowVP);gl.uniform2f(u.uShadowTexel,1/this.shadowSize,1/this.shadowSize);
     gl.uniform1i(u.uShadowEnabled,1);gl.uniform1i(u.uAOOutput,aoOutput?1:0);gl.uniform1i(u.uShadow,3);

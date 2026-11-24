@@ -41,7 +41,8 @@ import {buildLightingRig,sceneLighting,studioLighting,weaponShadowProjection} fr
 const requestedViews=(process.env.DOOM_QA_VIEWS||'').split(',').filter(Boolean);
 const needsWorld=!requestedViews.length||requestedViews.some(n=>n.startsWith('door')||!/(?:-front|-side|-back|-portrait|-detail)$/.test(n));
 const resources=new ProceduralResources(),map=resources.map(),game=new DoomGame(map,{skill:2});
-const rig=buildLightingRig(map);
+const snapshotHeights=()=>map.sectors.map(s=>({floor:s.floor,ceiling:s.ceiling}));
+const applyHeights=heights=>map.sectors.forEach((sector,i)=>Object.assign(sector,heights[i]));
 const groups=buildMapGeometry(resources,map),textures=new Map(),catalog=new Map();
 const bytes=x=>Buffer.from(x.buffer,x.byteOffset,x.byteLength).toString('base64');
 function tex(kind,name){if(!needsWorld)return;const key=kind+':'+name,t=kind==='flat'?resources.flat(name):resources.texture(name);
@@ -50,7 +51,7 @@ function pack(batch){if(!batch)return null;const m=batch.mesh;
  if(!catalog.has(m.key))catalog.set(m.key,{key:m.key,vertices:bytes(m.vertices),stride:m.stride,count:m.vertices.length/m.stride,bounds:m.bounds});
  return {key:m.key,instances:bytes(batch.instances),count:batch.count};}
 for(const g of groups)tex(g.kind,g.name);
-const scenes=[{name:'base',groups}];
+const scenes=[{name:'base',groups,heights:snapshotHeights()}];
 const cases=[{name:'spawn-north',x:1056,y:-3616,z:41,angle:Math.PI/2,weapon:'pistol'},
  {name:'spawn-west',x:1056,y:-3616,z:41,angle:Math.PI,weapon:'shotgun'},
  {name:'courtyard',x:2488,y:-3504,z:-15,angle:Math.PI,weapon:'pistol'},
@@ -71,18 +72,19 @@ for(const family of ['POSS','SPOS','TROO']){
   fixture:{scope:'Close study of actual generated head geometry and procedural surface materials.',
    entity:{id:family,base:family,enemy:true,sprite:family+'A1',alive:true,state:'idle',fullbright:true,x:1056,y:-3616,z:0,angle:Math.PI/2}}});
 }
-for(const [family,type] of [['BAR1',2035],['COLU',2028],['ELEC',48],['MEDI',2012],['BON1',2014],['BON2',2015],['ARM1',2018],['SBOX',2049]]){
+for(const [family,type] of [['BAR1',2035],['COLU',2028],['ELEC',48],['MEDI',2012],['BON1',2014],['BON2',2015],['ARM1',2018],['SBOX',2049],['PLAYW',10],['PLAYN',15],['POL5',24]]){
  const entity={id:family,type,sprite:family+'A0',fullbright:true,x:1056,y:-3616,z:0,angle:Math.PI/2};
  const mesh=modelForEntity(entity),h=mesh.bounds.max[2],w=Math.max(mesh.bounds.max[0]-mesh.bounds.min[0],mesh.bounds.max[1]-mesh.bounds.min[1]);
- const distance=Math.max(h*.82,w*.82)+w*.35,dx=distance*.6,dy=distance*.8,z=h*.72;
+ const remains=/^PLAY|^POL5/.test(family);
+ const distance=remains?50:Math.max(h*.82,w*.82)+w*.35,dx=distance*.6,dy=distance*.8,z=remains?24:h*.72;
  cases.push({name:family.toLowerCase()+'-detail',x:entity.x+dx,y:entity.y+dy,z,angle:Math.atan2(-dy,-dx),pitch:Math.atan2(h*.5-z,distance),studio:true,
   fixture:{scope:'Close three-quarter view of an actual generated prop; uniform studio sector light.',entity}});
 }
-const door=game.lines[151],sector=map.sectors[door.back],closedCeiling=sector.ceiling;game._openDoor(door);let ticks=0;
+const door=game.lines[151],sector=map.sectors[door.back];game._openDoor(door);let ticks=0;
 while(game.actions.get(door.back)?.phase==='up'&&ticks<140){game._updateActions(1/70);ticks++;}
 if(sector.ceiling-sector.floor<56)throw Error('Door did not open');
 const openGroups=buildMapGeometry(resources,map);for(const g of openGroups)tex(g.kind,g.name);
-scenes.push({name:'door-open',groups:openGroups});
+scenes.push({name:'door-open',groups:openGroups,heights:snapshotHeights()});
 const points=map.floorPolygons.filter(p=>p.sector===door.back).flatMap(p=>p.points);
 const center={x:(Math.min(...points.map(p=>p.x))+Math.max(...points.map(p=>p.x)))/2,y:(Math.min(...points.map(p=>p.y))+Math.max(...points.map(p=>p.y)))/2};
 const doorway={line:door.id,sector:door.back,floor:sector.floor,ceiling:sector.ceiling,endpoints:[{x:door.ax,y:door.ay},{x:door.bx,y:door.by}],center,ticks};
@@ -91,12 +93,44 @@ cases.push({...camera,name:'door151-open',fixture:{scope:'Door opened by product
 for(const [pose,angle] of [['front',Math.PI],['side',Math.PI/2]])cases.push({...camera,name:'door151-model-'+pose,
  fixture:{scope:'3D imp deliberately centred in doorway for an occlusion/anchor check; not a reproduced player encounter.',door:doorway,
  entity:{id:'door-model',base:'TROO',enemy:true,sprite:'TROOA1',alive:true,state:'idle',...center,z:sector.floor,angle}}});
+// State fixtures use real player actions to move secret-sector geometry. The
+// camera is placed for inspection, not presented as a continuous played run.
+function secretSnapshots(){
+ const qaMap=resources.map(),qa=new DoomGame(qaMap,{skill:2}),snapshots={};
+ const place=(x,y,angle)=>{const s=qaMap.sectorAt(x,y);Object.assign(qa.player,{x,y,z:s.floor,sector:s.id,vz:0,angle});};
+ const advance=(seconds,input={})=>{for(let n=0;n<Math.ceil(seconds*70);n++)qa.update(1/70,input);};
+ const save=name=>snapshots[name]={heights:qaMap.sectors.map(s=>({floor:s.floor,ceiling:s.ceiling})),
+  actions:[...qa.actions].map(([id,a])=>({sector:id,...a})),
+  player:{x:qa.player.x,y:qa.player.y,z:qa.player.z,sector:qa.player.sector},time:qa.time};
+ place(2988,-3840,Math.PI);save('secret68-closed');qa.update(1/70,{use:true});advance(1);save('secret68-open');
+ qa.restart();place(3008,-4120,-Math.PI/2);advance(.6,{forward:1});advance(1.2);save('secret69-open');
+ place(2896,-2940,-Math.PI/2);advance(.3,{forward:1});advance(1.2);save('secret70-low');
+ place(3488,-3872,0);advance(.32,{forward:1});advance(4);save('secret70-high');
+ if(snapshots['secret68-open'].heights[68].ceiling!==44||snapshots['secret69-open'].heights[59].floor!==-40||
+  snapshots['secret70-low'].heights[70].floor!==-48||snapshots['secret70-high'].heights[70].floor!==104||
+  snapshots['secret70-high'].player.z!==104)throw Error('Invalid secret QA state');
+ return snapshots;
+}
+const secretCameras={
+ 'secret68-closed':{x:2988,y:-3840,z:17,angle:Math.PI},
+ 'secret68-open':{x:2988,y:-3840,z:17,angle:Math.PI},
+ 'secret69-open':{x:3424,y:-3856,z:-7,angle:Math.PI},
+ 'secret70-low':{x:3488,y:-3872,z:-7,angle:0},
+ 'secret70-high':{x:3648,y:-3808,z:145,angle:Math.PI/2}
+};
+for(const [name,state]of Object.entries(secretSnapshots())){
+ applyHeights(state.heights);const secretGroups=buildMapGeometry(resources,map);for(const g of secretGroups)tex(g.kind,g.name);
+ scenes.push({name,groups:secretGroups,heights:state.heights});
+ cases.push({name,scene:name,...secretCameras[name],weapon:'pistol',mapEntities:true,
+  fixture:{scope:'Inspection camera; secret mechanism operated by real use/crossing/update. Continuous gameplay is verified separately.',state}});
+}
 const requested=(process.env.DOOM_QA_VIEWS||'').split(',').filter(Boolean),wanted=new Set(requested);
 for(const name of requested)if(!cases.some(camera=>camera.name===name))throw Error('Unknown QA view: '+name);
 if(requested.some(name=>name.startsWith('door151-model-')))wanted.add('door151-open');
-const width=1280,height=800,views=[],openCeiling=sector.ceiling;
+const width=1280,height=800,views=[];
 for(const camera of cases.filter(camera=>!wanted.size||wanted.has(camera.name))){
- sector.ceiling=camera.scene==='door-open'?openCeiling:closedCeiling;
+ applyHeights(scenes.find(s=>s.name===(camera.scene||'base')).heights);
+ const rig=buildLightingRig(map);
  const position=[camera.x/32,camera.z/32,-camera.y/32],axes=FRender.shared.cameraAxes({yaw:Math.PI/2-camera.angle,pitch:camera.pitch||0});
  const r=axes.right,u=axes.up,f=axes.forward;
  const v=new Float32Array([r[0],u[0],-f[0],0,r[1],u[1],-f[1],0,r[2],u[2],-f[2],0,
@@ -104,7 +138,7 @@ for(const camera of cases.filter(camera=>!wanted.size||wanted.has(camera.name)))
  const focal=1/Math.tan(70*Math.PI/360),near=.025,far=400,p=new Float32Array(16),vp=new Float32Array(16);
  p[0]=focal/(width/height);p[5]=focal;p[10]=(far+near)/(near-far);p[11]=-1;p[14]=2*far*near/(near-far);FRender.shared.multiply(p,v,vp);
  const project=(x,y,z)=>{const point=[x/32,z/32,-y/32,1],c=Array.from({length:4},(_,row)=>point.reduce((sum,value,col)=>sum+value*vp[col*4+row],0));return{x:(c[0]/c[3]+1)*width/2,y:(1-c[1]/c[3])*height/2};};
- const entities=camera.fixture?(camera.fixture.entity?[camera.fixture.entity]:[]):game.entities;
+ const entities=camera.fixture&&!camera.mapEntities?(camera.fixture.entity?[camera.fixture.entity]:[]):game.entities;
  const renderView={oeil:position,avant:f,droite:r,haut:u,tangente:1/focal,largeur:width,hauteur:height};
  const batches=collectModelBatches(map,entities,0,renderView),models=batches.map(pack);
  if(camera.fixture?.entity){const e=camera.fixture.entity;camera.fixture.anchorScreen=project(e.x,e.y,e.z);camera.fixture.meshKeys=models.map(m=>m.key);}
@@ -269,7 +303,8 @@ class Context:
             g.glUniformMatrix4fv(loc('uShadowVP'),1,0,(C.c_float*16)(*lighting['shadowVP']))
             g.glUniform4fv(loc('uLights[0]'),6,(C.c_float*24)(*lighting['positions']))
             g.glUniform4fv(loc('uLightColors[0]'),6,(C.c_float*24)(*lighting['colors']))
-            for name,value in [('uTime',0),('uBrightness',1.2),('uDamage',0),('uFlash',0),('uAmbient',lighting['ambient']),('uOutdoor',lighting['outdoor'])]:g.glUniform1f(loc(name),value)
+            for name,value in [('uTime',0),('uBrightness',1.2),('uDamage',0),('uFlash',0),('uAmbient',lighting['ambient']),('uOutdoor',lighting['outdoor']),('uFogDensity',lighting['fogDensity'])]:g.glUniform1f(loc(name),value)
+            g.glUniform3f(loc('uFogColor'),*lighting['fogColor'])
             for name,value in [('uShadow',3),('uShadowEnabled',0 if os.environ.get('DOOM_QA_NO_SHADOWS') else 1),('uAOOutput',int(ao)),('uLightCount',lighting['count'])]:g.glUniform1i(loc(name),value)
             g.glUniform1i(loc('uSelfShadow'),4);g.glUniform1i(loc('uSelfShadowEnabled'),int(not ao and 'weaponShadowVP' in lighting));
             g.glUniformMatrix4fv(loc('uSelfShadowVP'),1,0,(C.c_float*16)(*lighting.get('weaponShadowVP',lighting['shadowVP'])));g.glUniform2f(loc('uSelfShadowTexel'),1/512,1/512)
@@ -370,7 +405,7 @@ def main():
         'mapGenerator':data['mapGenerator'],'resources':data['resources'],'modelMeshes':len(models),'worldBillboards':0,
         'modelVertexStride':data['modelVertexStride'],'materialCoordinates':'primitive-local surface coordinates preserved through pose transforms',
         'shaderCompilation':'10 unmodified GLSL ES 3.00 production shaders compiled; 5 programs linked',
-        'passes':['1024px primary-light depth shadow with 3x3 PCF','linear-light GGX/Smith/Schlick world and model materials','procedural HD albedo, tangent normal, roughness, metallic, AO, emission and height','scene color/smooth-normal/depth targets','12-sample screen contact AO and edge filtering','512px fitted view-weapon self-shadow combined with room shadow'],
+        'passes':['1024px primary-light depth shadow with 3x3 PCF','linear-light GGX/Smith/Schlick world and model materials','procedural HD albedo, tangent normal, roughness, metallic, AO, emission and height','scene color/smooth-normal/depth targets','12-sample screen contact AO and edge filtering','512px fitted view-weapon self-shadow combined with room shadow','analytic distance haze; disabled in model studios'],
         'textureMipBytes':sum(t['width']*t['height']*12*4//3 for t in data['textures']),'mapTriangles':sum(m['count']//3 for m in data['scenes'][0]['groups']),
         'sceneTriangles':{scene['name']:sum(m['count']//3 for m in scene['groups']) for scene in data['scenes']},
         'adapterSha256':initial_hashes['src/ferro-doom-renderer.js'],'sourceSha256':initial_hashes,

@@ -52,6 +52,16 @@ Les trois niveaux de géométrie reprennent les mêmes proportions, la même pos
 
 Les mêmes assets hors runtime servent de référence aux proportions, palettes et motifs. Les volumes entre les vues sont reconstruits : surfaces anatomiques continues, mains fusionnées, parois internes d’objets et assemblages d’armes. Les cartes PBR sont évaluées à partir de fonctions continues ; elles ne sont pas un agrandissement de pixels extraits. Les petits profils de tôle, joints et chanfreins STAR ont été réduits après examen des vues natives pour éviter un aspect de grille plastique.
 
-Le contrôle final comporte 31 vues EGL à 1280 × 800, dont trois portraits, neuf angles de personnages et huit gros plans d’objets. Les ombres ont été examinées activées et désactivées pendant le développement pour distinguer les défauts géométriques des défauts de filtrage. Les captures livrées activent le chemin complet. Leur rapport et les empreintes de toutes les sources sont dans `docs/qa/egl-report.json`.
+La qualification de la version 0.5.0 comportait 31 vues EGL à 1280 × 800, dont trois portraits, neuf angles de personnages et huit gros plans d’objets. Les ombres ont été examinées activées et désactivées pendant le développement pour distinguer les défauts géométriques des défauts de filtrage. Les captures livrées activent le chemin complet. Leur rapport et les empreintes de toutes les sources sont dans `docs/qa/egl-report.json`.
 
 Les personnages demeurent des reconstructions stylisées ; ni les comptes de triangles, ni les modèles physiques des matériaux ne constituent une preuve de photoréalisme. Les limites du rendu sont décrites dans [procedural-rendering.md](procedural-rendering.md).
+
+## Modèles, secrets et atmosphère en 0.6.0
+
+Les portraits et profils ont été repris à partir des mêmes références hors runtime. Les différences POSS/SPOS et la posture de l’Imp restent conservées ; orbites, lèvres, pommettes, mâchoires, cheveux, plis et raccords anatomiques ont été retravaillés à budget de géométrie comparable. Une surface implicite continue remplace la jonction séparée du poing et du poignet.
+
+Les patches de référence PLAYN, PLAYW et POL5 ont été inspectés séparément : le marine vert avec casque gris, les restes déchiquetés et la masse basse ne doivent pas être trois variantes de couleur d’un même corps. Les nouvelles recettes ont chacune leurs volumes et leurs trois niveaux de détail. L’usure des objets est évaluée à leur position et sur leurs reliefs, en conservant les couleurs et silhouettes identifiables.
+
+Le plan a été comparé directement à l’archive shareware 1.9 : 475 lignes, 648 côtés, 85 secteurs et 138 placements concordent. Les mécanismes et retours des trois secrets sont documentés dans [e1m1-secrets.md](e1m1-secrets.md) et parcourus jusqu’à la sortie avec tous les ennemis actifs. L’accès extérieur supplémentaire d’Ultimate Doom n’est pas ajouté à cette référence.
+
+La qualification visuelle est étendue à 39 vues natives en 1280 × 800 : trois corps en gros plan et cinq états des secrets s’ajoutent aux vues précédentes. Les plafonds, lampes murales, écrans et bassins présents dans le plan motivent les lumières locales ; le ciel couvert, les ombres plus froides et la brume de distance modifient l’atmosphère sans ajouter de pièces ni modifier les niveaux lumineux du plan. La brume est coupée dans les studios pour permettre de juger les formes. Les visages restent stylisés : cette itération ne prétend pas avoir atteint le photoréalisme.

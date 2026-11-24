@@ -31,7 +31,9 @@ def main():
     tests = sorted(str(path.relative_to(ROOT)) for path in (ROOT / 'tests').glob('*.test.mjs'))
     if not tests:
         raise SystemExit('No test files found.')
-    result = subprocess.run(['node', '--test', '--test-reporter=tap', *tests], cwd=ROOT,
+    # Model generators have intentionally large bounded caches. Limit concurrent
+    # workers instead of multiplying those caches by the host's reported cores.
+    result = subprocess.run(['node', '--test', '--test-concurrency=2', '--test-reporter=tap', *tests], cwd=ROOT,
                             text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     counts = {}
     for name in ('tests', 'pass', 'fail', 'cancelled', 'skipped', 'todo'):
@@ -51,7 +53,8 @@ def main():
                                 cwd=ROOT, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         if status.returncode or status.stdout.strip():
             raise SystemExit('Committed dist does not match the fresh build:\n' + status.stdout)
-    info = json.loads((ROOT / 'dist/build-info.json').read_text())
+    html = (ROOT / 'dist/index.html').read_text()
+    info = json.loads(re.search(r'<script id="build-info" type="application/json">(.*?)</script>', html, re.S)[1])
     measured = {
         'version': json.loads((ROOT / 'package.json').read_text())['version'],
         'nodeTests': counts['tests'],
@@ -59,6 +62,8 @@ def main():
         'nodeSkipped': counts['skipped'],
         'reproducibleBuild': True,
         'buildFiles': len(second),
+        'distribution': info['distribution'],
+        'offlineRuntimeFiles': info['runtimeFiles'],
         'generation': info['generation'],
         'worldRepresentation': info['worldRepresentation'],
         'worldBillboards': info['worldBillboards'],

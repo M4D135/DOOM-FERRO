@@ -1,6 +1,7 @@
 /** Mechanical weapons and articulated hands; generated from shared solid parts. */
 import {MeshBuilder,rotateEuler} from './procedural-mesh.js';
-import {implicitMesh,smoothUnion,ellipsoidDistance,capsuleDistance,roundedBoxDistance,loft} from './procedural-object-sculpt.js';
+import {implicitMesh,smoothUnion,ellipsoidDistance,capsuleDistance,roundedBoxDistance,bendSculpt,loft} from './procedural-object-sculpt.js';
+import {ageSurface} from './procedural-object-finish.js';
 
 const cache=new Map(),parts=new Map(),LIMIT=64,BYTE_LIMIT=20*1024*1024;
 let bytes=0;
@@ -9,7 +10,7 @@ const TAU=Math.PI*2;
 function remember(key,make){
  if(parts.has(key))return parts.get(key);
  if(cache.has(key)){const v=cache.get(key);cache.delete(key);cache.set(key,v);return v;}
- const m=make();while(cache.size&&(cache.size+parts.size>=LIMIT||bytes+m.vertices.byteLength>BYTE_LIMIT)){const k=cache.keys().next().value;bytes-=cache.get(k).vertices.byteLength;cache.delete(k);}if(bytes+m.vertices.byteLength>BYTE_LIMIT)throw new Error('Weapon parts exceed memory budget');
+ const m=make();if(key.startsWith('part:'))ageSurface(m,'weapon');while(cache.size&&(cache.size+parts.size>=LIMIT||bytes+m.vertices.byteLength>BYTE_LIMIT)){const k=cache.keys().next().value;bytes-=cache.get(k).vertices.byteLength;cache.delete(k);}if(bytes+m.vertices.byteLength>BYTE_LIMIT)throw new Error('Weapon parts exceed memory budget');
  (key.startsWith('part:')?parts:cache).set(key,m);bytes+=m.vertices.byteLength;return m;
 }
 /** Compose immutable parts in linear typed-array passes: no primitive rebuild per pose. */
@@ -116,23 +117,48 @@ function fistHand(){return remember('part:fist-hand',()=>{
  }
  const thumb=[[2.08,-.25,-.15],[2.9,1.03,-.43],[2.35,2.26,-1.02],[.82,2.2,-1.22]];
  for(let i=1;i<thumb.length;i++)bones.push([thumb[i-1],thumb[i],.78-i*.055,.73-i*.055]);
- bones.push([[0,-1.55,-.25],[3.3,-6.2,-3.0],1.42,1.75]);
  const distance=(x,y,z)=>{
-  let d=ellipsoidDistance(x,y,z,[0,-.05,-.20],[2.65,2.0,1.35]);
+  let d=ellipsoidDistance(x,y,z,[0,-.05,-.20],[2.52,1.93,1.24]);
   d=smoothUnion(d,ellipsoidDistance(x,y,z,[1.5,.1,-.45],[1.05,1.65,1.0]),.42);
-  for(const[a,b,ra,rb]of bones)d=smoothUnion(d,capsuleDistance(x,y,z,a,b,ra,rb),.40);
+  // Curled fingers press into the palmar pad. This continuous flesh closes the
+  // sub-cell pinch below the middle fingers instead of joining four sheets at
+  // the same dual-grid edge; the visible knuckle silhouette stays unchanged.
+  d=smoothUnion(d,ellipsoidDistance(x,y,z,[.2,.87,-.82],[2.0,1.17,.75]),.34);
+  // Adjacent closed fingers touch through compressed soft tissue. A narrow
+  // mathematical air pocket between their capsule bones is not a skin fold.
+  for(const[a,b,ra,rb]of bones)d=smoothUnion(d,capsuleDistance(x,y,z,a,b,ra,rb),.70);
+  // The wrist and forearm belong to this same watertight field. The narrower
+  // wrist opens into asymmetric extensor/flexor masses, without a round cap
+  // protruding over a second arm surface at the most visible junction.
+  const t=Math.max(0,Math.min(1,(-y-1.8)/53)),rx=1.43+3.12*(1-Math.exp(-t*3.0)),rz=1.10+2.03*(1-Math.exp(-t*3.4));
+  const radial=(Math.hypot((x-.12*Math.sin(t*3))/rx,(z+.22)/rz)-1)*rz;
+  const arm=Math.max(radial,y+1.35,-55.3-y);
+  d=smoothUnion(d,arm,.57);
   const back=Math.exp(-1*((z-1.1)/.5)**2)*Math.exp(-1*((y-.25)/2.1)**4);
-  d+=.006*Math.sin(y*13+x*3)*back;
-  for(const k of[-1.98,-.66,.66,1.98])d-=.018*Math.exp(-1*((x-k)/.18)**2)*Math.exp(-1*((y+.25)/1.6)**2)*back;
+  d+=.014*Math.sin(y*11+x*2.1)*back;
+  for(const k of[-1.98,-.66,.66,1.98])d-=.033*Math.exp(-1*((x-k)/.23)**2)*Math.exp(-1*((y+.25)/1.8)**2)*back;
+  // Tendons flatten into the wrist, while the two skin creases are shallow
+  // depressions in the volume rather than separate rings around it.
+  const wrist=Math.exp(-1*((y+3.4)/3.0)**2)*Math.exp(-1*((z-1.05)/.55)**2);
+  d-=.038*Math.cos(x*3.1)*wrist;
+  d+=.020*(Math.exp(-1*((y+2.3)/.11)**2)+.65*Math.exp(-1*((y+2.65)/.14)**2))*Math.exp(-1*((z+.95)/.4)**2);
   return d;
  };
- const b=new MeshBuilder().add(implicitMesh('sculpted-fist',{bounds:[[-3.4,-8.4,-5.15],[5.5,3.75,1.9]],resolution:[34,44,28],distance,
-  color:(x,y,z)=>SKIN.map((v,k)=>v*(.975+.018*Math.sin(x*.9+y*.4))+(k===0?2:0)),material:{kind:'skin',roughness:.62,scale:1}}));
+ const samples=[...Array.from({length:14},(_,i)=>-58+i*50/14),...Array.from({length:45},(_,i)=>-8+i*11.75/44)];
+ const sculpt=implicitMesh('sculpted-fist',{bounds:[[-5.7,-58,-3.9],[5.7,3.75,3.8]],resolution:[40,58,30],axisPositions:[null,samples,null],distance,
+  color:(x,y,z)=>{
+   const knuckle=Math.exp(-1*((y-1.8)/1.0)**2)*Math.max(0,z+.1)*.028,
+    variation=.974+.016*Math.sin(x*.9+y*.4)+.009*Math.sin(y*1.7-x*.6);
+   return SKIN.map((v,k)=>v*variation+(k===0?3+knuckle*70:-knuckle*35));
+  },material:{kind:'skin',roughness:.71,scale:1}});
+ // Smooth centreline begins inside the wrist. Dense longitudinal samples stay
+ // on the fingers; the hidden upper forearm does not waste an equally fine grid.
+ bendSculpt(sculpt,y=>{const q=Math.max(0,-y-1.5),s=q-1.25*(1-Math.exp(-q/1.25)),ds=q?-(1-Math.exp(-q/1.25)):0;return[s*.97,-s*.88,ds*.97,-ds*.88];});
+ const b=new MeshBuilder().add(sculpt);
  // Thin curved nail plates remain under the curled fingertips and only become
  // visible from the palm side. They are coloured skin, not luminous white dots.
  for(let i=0;i<4;i++)ell(b,[-2.02+i*1.32,1.31+(i===3?-.22:0),-1.72],
   [i===3?.28:.34,.37,.055],[178,143,123],{kind:'skin',roughness:.46},12,4);
- forearm(b,[3.2,-6.0,-2.9],[16,-19,-15],false,.91);
  return b.finish('part:fist-hand');
 });}
 

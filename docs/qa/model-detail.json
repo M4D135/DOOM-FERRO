@@ -1,30 +1,32 @@
 {
-  "version": "0.5.0",
+  "version": "0.6.0",
   "scope": "Actual generated vertex buffers. Character counts use the idle A pose; props use the first frame. Animation counts vary. No FPS or hardware performance claim.",
   "vertexStride": 17,
   "detailOrder": "0 distant, 1 intermediate, 2 close",
   "sourceSha256": {
     "src/app.js": "f1b75fcd6f33a34dc352bc687b2b8cae5c92e5d4624e1258fdb522134ff21651",
     "src/e1m1-plan.js": "41c8ed8ce81db64bb5117cb6011b6c693c3745d5708f46a05681900393cce521",
-    "src/ferro-doom-renderer.js": "142bed1aa2dc3c479b4a6c49f2d13bd14b715c3cc1117fd4d7aa63eb36df9df4",
-    "src/game.js": "c7eab7a0c76b0dbd468209f76561b1cb17e250e88b0eb636a8c41838be4cd88f",
+    "src/ferro-doom-renderer.js": "8b0bcc1fb87c8276b79fd3a16acdf91aa1961b6fc445ab2878e8120008dbc081",
+    "src/game.js": "aaa3b48f14ad672f07d7fde76f8c002467d602e33bcd4a24ec14c93ecc9bfcfb",
     "src/input.js": "64c99b9f6f35adab712553c6572890107d83dd7770464581f635b7c3a6a0c1b8",
-    "src/procedural-anatomy.js": "d8a89395c7749361c5533192a6fe6a20712846f92183c6b9257e427df5c14226",
+    "src/procedural-anatomy.js": "c6795c121e15ee098a76e1529be8816772aa9e962e122658d9d28ea61c0188e9",
     "src/procedural-audio.js": "876369149bf422cf94cd00200fae4925f26bd2d88b311f7e819aa42546f70106",
-    "src/procedural-characters.js": "dbf73828383c73bb6d16aa8f128250efacb4558847f37e06e426e208d64fed41",
+    "src/procedural-characters.js": "6d08d3dd9a6faaec5c126e78023e9d836b5396a90fc0c76d0e1c3b1bde5ed928",
     "src/procedural-interface.js": "af287b0e0573e6432d1d41a7a3076c6335a84b2d807ca710e4c72e0c1a19de8a",
-    "src/procedural-lighting.js": "285bcee5b7220de5a776ffcd67007d01196b8130962223ac3790f86dd40693cb",
+    "src/procedural-lighting.js": "386ec4afda6fd66def7ce7c110d58a62e1e6eac1b8b09f653b70ccf1c91b75e8",
     "src/procedural-map.js": "1437769cd25117db4c9e9a7b067c193381dc3d85147e661f72ba4fbf58c3a06b",
     "src/procedural-materials.js": "64ed3877c4006d2e53652c9670831be6c3d208844ecdebf4374b26b94e458dee",
     "src/procedural-mesh.js": "f7c1c90ff94caa95c15e03e29878e8777c0b3a1b2ce39f7a1215b1f5e79b5890",
     "src/procedural-models.js": "1a7c06d40d4e4949f125f0ef54afb184c30c81eb29d23d1ea3d35af27b01f016",
-    "src/procedural-object-sculpt.js": "755387194c9049d1224be1fcee7923294c9b0d63d19e99ca1121b53398a2890c",
-    "src/procedural-objects.js": "bd88ff1fc6cf53d6e2920bc752ed66a35fd22215a3fceda57136e1a2be0f76ef",
+    "src/procedural-object-finish.js": "dc19036074d2da300a011697b042399fea8e0e7340218af021aad9f58d647c72",
+    "src/procedural-object-sculpt.js": "55aed8fd2343d630d7b21a0de54ed5212b4f9212a7e2cf855082186857a3a516",
+    "src/procedural-objects.js": "49dc29051ffcb389d0dd4fc798b44ff5ccc9ec5155360fcfbbd0bfc9e131018d",
     "src/procedural-raster.js": "3b372674f3004fbe0de245ae359f5895ce72a4bc48a515e4e3a55acbebe7bdb5",
+    "src/procedural-remains.js": "12c4f518a7971cb509eb39b9998adaecd7088b936d77d5e67bc3e124996b7366",
     "src/procedural-resources.js": "ab7d2a61b083b024e7c288202d4d289a5edcbecc7e5ca009c6c35bfe8537d558",
-    "src/procedural-shaders.js": "08fc706899d3de2d4515382bc256d0122f963cbbde876e6dedc4b8f0e3f87dc5",
+    "src/procedural-shaders.js": "dd26cd0d26941ce333d48b7d4c4191e3d5058bf4c4fb2605b5c52ceaa05250f3",
     "src/procedural-surface-detail.js": "67c3253e6391090cead7c0dcc9ef605abfad6c484a1ef5f555e1df1c8be6d8bf",
-    "src/procedural-weapons.js": "4738c651cfdbb4c675f453c4f8c92637a263e6f0e87e5bd0417d65d7268e17de"
+    "src/procedural-weapons.js": "a7c83e9550687cb47eaa606358e445da22e7f1db66cd4c60969a6df23bb9fd7b"
   },
   "limits": {
     "characterBytes": 67108864,
@@ -38,8 +40,8 @@
     "POSS": [
       {
         "detail": 0,
-        "triangles": 1708,
-        "bytes": 348432,
+        "triangles": 1676,
+        "bytes": 341904,
         "bounds": {
           "min": [
             -16.86460304260254,
@@ -47,9 +49,9 @@
             0
           ],
           "max": [
-            13.071138381958008,
+            13.117822647094727,
             16.046964645385742,
-            55.744998931884766
+            55.73500061035156
           ]
         },
         "materials": [
@@ -64,8 +66,8 @@
       },
       {
         "detail": 1,
-        "triangles": 7216,
-        "bytes": 1472064,
+        "triangles": 7208,
+        "bytes": 1470432,
         "bounds": {
           "min": [
             -16.891677856445312,
@@ -73,9 +75,9 @@
             0
           ],
           "max": [
-            13.094681739807129,
+            13.121377944946289,
             16.05031394958496,
-            55.744998931884766
+            55.73500061035156
           ]
         },
         "materials": [
@@ -90,8 +92,8 @@
       },
       {
         "detail": 2,
-        "triangles": 34332,
-        "bytes": 7003728,
+        "triangles": 33596,
+        "bytes": 6853584,
         "bounds": {
           "min": [
             -16.883970260620117,
@@ -99,9 +101,9 @@
             0
           ],
           "max": [
-            13.094681739807129,
+            13.121377944946289,
             16.05031394958496,
-            55.749000549316406
+            55.74699783325195
           ]
         },
         "materials": [
@@ -118,8 +120,8 @@
     "SPOS": [
       {
         "detail": 0,
-        "triangles": 1656,
-        "bytes": 337824,
+        "triangles": 1624,
+        "bytes": 331296,
         "bounds": {
           "min": [
             -14.955096244812012,
@@ -127,7 +129,7 @@
             0
           ],
           "max": [
-            13.071138381958008,
+            13.117822647094727,
             15.458586692810059,
             55.70000076293945
           ]
@@ -144,8 +146,8 @@
       },
       {
         "detail": 1,
-        "triangles": 6952,
-        "bytes": 1418208,
+        "triangles": 6944,
+        "bytes": 1416576,
         "bounds": {
           "min": [
             -14.991031646728516,
@@ -153,7 +155,7 @@
             0
           ],
           "max": [
-            13.094681739807129,
+            13.121377944946289,
             15.462751388549805,
             55.70000076293945
           ]
@@ -170,8 +172,8 @@
       },
       {
         "detail": 2,
-        "triangles": 30400,
-        "bytes": 6201600,
+        "triangles": 30240,
+        "bytes": 6168960,
         "bounds": {
           "min": [
             -14.980801582336426,
@@ -179,7 +181,7 @@
             0
           ],
           "max": [
-            13.094681739807129,
+            13.121377944946289,
             15.462751388549805,
             55.70000076293945
           ]
@@ -198,18 +200,18 @@
     "TROO": [
       {
         "detail": 0,
-        "triangles": 1848,
-        "bytes": 376992,
+        "triangles": 1816,
+        "bytes": 370464,
         "bounds": {
           "min": [
-            -16.503162384033203,
-            -7.710628986358643,
+            -15.23166561126709,
+            -6.211184978485107,
             0
           ],
           "max": [
-            16.503162384033203,
+            15.247124671936035,
             10.355616569519043,
-            55.10000228881836
+            54.699302673339844
           ]
         },
         "materials": [
@@ -220,18 +222,18 @@
       },
       {
         "detail": 1,
-        "triangles": 6096,
-        "bytes": 1243584,
+        "triangles": 6088,
+        "bytes": 1241952,
         "bounds": {
           "min": [
-            -16.503372192382812,
-            -7.711349010467529,
+            -16.48313331604004,
+            -6.211910724639893,
             0
           ],
           "max": [
-            16.503372192382812,
+            16.458236694335938,
             10.358031272888184,
-            55.10000228881836
+            54.69947814941406
           ]
         },
         "materials": [
@@ -242,18 +244,18 @@
       },
       {
         "detail": 2,
-        "triangles": 25408,
-        "bytes": 5183232,
+        "triangles": 25288,
+        "bytes": 5158752,
         "bounds": {
           "min": [
-            -16.503398895263672,
-            -7.7126946449279785,
+            -16.483383178710938,
+            -6.276181221008301,
             0
           ],
           "max": [
-            16.503398895263672,
+            16.483383178710938,
             10.360320091247559,
-            55.10000228881836
+            54.69947814941406
           ]
         },
         "materials": [
@@ -312,8 +314,8 @@
       },
       {
         "detail": 2,
-        "triangles": 4488,
-        "bytes": 915552,
+        "triangles": 6440,
+        "bytes": 1313760,
         "bounds": {
           "min": [
             -10.65999984741211,
@@ -535,76 +537,65 @@
     "PLAYW": [
       {
         "detail": 0,
-        "triangles": 488,
-        "bytes": 99552,
+        "triangles": 282,
+        "bytes": 57528,
         "bounds": {
           "min": [
-            -26.5,
-            -10.341917991638184,
+            -21.049999237060547,
+            -6.778435707092285,
             0
           ],
           "max": [
-            22.516660690307617,
-            10.341917991638184,
-            9.853009223937988
+            23.42522430419922,
+            6.209549903869629,
+            10.478655815124512
           ]
         },
         "materials": [
-          "skin",
-          "cloth",
-          "leather",
-          "paint",
-          "bone",
           "blood"
         ]
       },
       {
         "detail": 1,
-        "triangles": 1504,
-        "bytes": 306816,
+        "triangles": 2276,
+        "bytes": 464304,
         "bounds": {
           "min": [
-            -26.5,
-            -10.642333984375,
+            -22.42940330505371,
+            -6.804507255554199,
             0
           ],
           "max": [
-            22.516660690307617,
-            10.642333984375,
-            9.80571460723877
+            23.42522430419922,
+            7.049171447753906,
+            10.492836952209473
           ]
         },
         "materials": [
-          "skin",
-          "cloth",
-          "leather",
+          "metal",
           "paint",
-          "bone",
           "blood"
         ]
       },
       {
         "detail": 2,
-        "triangles": 5508,
-        "bytes": 1123632,
+        "triangles": 10684,
+        "bytes": 2179536,
         "bounds": {
           "min": [
-            -26.5,
-            -10.699999809265137,
+            -22.453289031982422,
+            -7.039438247680664,
             0
           ],
           "max": [
-            22.516660690307617,
-            10.699999809265137,
-            9.835731506347656
+            23.613414764404297,
+            7.025091171264648,
+            10.492836952209473
           ]
         },
         "materials": [
-          "skin",
-          "cloth",
-          "leather",
+          "metal",
           "paint",
-          "bone",
           "blood"
         ]
       }
@@ -612,18 +603,18 @@
     "PLAYN": [
       {
         "detail": 0,
-        "triangles": 392,
-        "bytes": 79968,
+        "triangles": 476,
+        "bytes": 97104,
         "bounds": {
           "min": [
-            -26.5,
-            -10.341917991638184,
+            -26.899999618530273,
+            -12.020000457763672,
             0
           ],
           "max": [
-            22.516660690307617,
-            10.341917991638184,
-            9.5
+            21.96114730834961,
+            9.600000381469727,
+            8.04826545715332
           ]
         },
         "materials": [
@@ -631,54 +622,59 @@
           "cloth",
           "leather",
           "paint",
+          "glass",
           "blood"
         ]
       },
       {
         "detail": 1,
-        "triangles": 1360,
-        "bytes": 277440,
+        "triangles": 2440,
+        "bytes": 497760,
         "bounds": {
           "min": [
-            -26.5,
-            -10.642333984375,
+            -26.899999618530273,
+            -12.283926010131836,
             0
           ],
           "max": [
-            22.516660690307617,
-            10.642333984375,
-            9.5
+            21.96114730834961,
+            9.600000381469727,
+            7.889199733734131
           ]
         },
         "materials": [
           "skin",
           "cloth",
           "leather",
+          "metal",
           "paint",
+          "glass",
           "blood"
         ]
       },
       {
         "detail": 2,
-        "triangles": 5268,
-        "bytes": 1074672,
+        "triangles": 9684,
+        "bytes": 1975536,
         "bounds": {
           "min": [
-            -26.5,
-            -10.699999809265137,
+            -26.899999618530273,
+            -13.010000228881836,
             0
           ],
           "max": [
-            22.516660690307617,
-            10.699999809265137,
-            9.5
+            22.137575149536133,
+            9.600000381469727,
+            7.894069671630859
           ]
         },
         "materials": [
           "skin",
           "cloth",
           "leather",
+          "metal",
           "paint",
+          "glass",
           "blood"
         ]
       }
@@ -686,18 +682,18 @@
     "POL5": [
       {
         "detail": 0,
-        "triangles": 158,
-        "bytes": 32232,
+        "triangles": 144,
+        "bytes": 29376,
         "bounds": {
           "min": [
-            -22.516660690307617,
-            -8.66025447845459,
+            -17.350000381469727,
+            -5.537313461303711,
             0
           ],
           "max": [
-            22.516660690307617,
-            8.66025447845459,
-            4.199645042419434
+            18.54496955871582,
+            4.897114276885986,
+            3.450000047683716
           ]
         },
         "materials": [
@@ -706,18 +702,18 @@
       },
       {
         "detail": 1,
-        "triangles": 920,
-        "bytes": 187680,
+        "triangles": 1272,
+        "bytes": 259488,
         "bounds": {
           "min": [
-            -22.516660690307617,
-            -8.66025447845459,
+            -18.379474639892578,
+            -5.558611869812012,
             0
           ],
           "max": [
-            22.516660690307617,
-            8.66025447845459,
-            4.199645042419434
+            18.54496955871582,
+            5.403653621673584,
+            3.5595178604125977
           ]
         },
         "materials": [
@@ -726,18 +722,18 @@
       },
       {
         "detail": 2,
-        "triangles": 3920,
-        "bytes": 799680,
+        "triangles": 6400,
+        "bytes": 1305600,
         "bounds": {
           "min": [
-            -22.516660690307617,
-            -8.66025447845459,
+            -18.779216766357422,
+            -5.7505269050598145,
             0
           ],
           "max": [
-            22.516660690307617,
-            8.66025447845459,
-            4.249783992767334
+            18.693952560424805,
+            5.553697109222412,
+            3.5774526596069336
           ]
         },
         "materials": [
@@ -1595,18 +1591,18 @@
     },
     "fist": {
       "rest": {
-        "triangles": 8404,
-        "bytes": 1714416,
+        "triangles": 10628,
+        "bytes": 2168112,
         "bounds": {
           "min": [
-            0.3681445030390824,
-            -46.42937258229729,
-            -65.28918469643932
+            0.4403443653502235,
+            -45.501197398566575,
+            -61.5997811397508
           ],
           "max": [
-            36.64441120407114,
-            28.471065415835696,
-            -11.643970377092186
+            35.390453510993225,
+            28.545630387951373,
+            -11.609310505189065
           ]
         },
         "materials": [
@@ -1614,18 +1610,18 @@
         ]
       },
       "action": {
-        "triangles": 8404,
-        "bytes": 1714416,
+        "triangles": 10628,
+        "bytes": 2168112,
         "bounds": {
           "min": [
-            -4.556648496765045,
-            -29.726885840219968,
-            -60.417452316377336
+            -4.626826731877905,
+            -29.69224661873726,
+            -56.72347782630402
           ],
           "max": [
-            56.63628599591974,
-            24.51667361162879,
-            -3.48513237411854
+            54.53513932960526,
+            24.58364842791147,
+            -3.388076325612416
           ]
         },
         "materials": [

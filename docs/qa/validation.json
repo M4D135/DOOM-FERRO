@@ -1,13 +1,13 @@
 {
-  "version": "0.5.0",
-  "nodeTests": 115,
+  "version": "0.6.0",
+  "nodeTests": 126,
   "nodeTestsPassed": true,
   "reproducibleBuild": true,
-  "buildFiles": 29,
-  "browserWebGL2": "interactive QA for 0.5.0 not executed; the prior managed browser lacked WebGL2 and subsequent preview access was rejected by browser URL policy",
-  "nativeEGL": "passed; 31 production-data views at 1280x800; 10 GLSL stages, 5 programs; hardware-PCF world and fitted weapon shadows, HD material maps, smooth-normal contact AO; see egl-report.json",
+  "buildFiles": 1,
+  "browserWebGL2": "interactive browser QA for 0.6.0 not executed; the prior managed browser lacked WebGL2 and subsequent preview access was rejected by browser URL policy",
+  "nativeEGL": "passed; 39 production-data views at 1280x800; 10 GLSL stages, 5 programs; hardware-PCF world and fitted weapon shadows, HD material maps, smooth-normal contact AO and analytic distance haze; see egl-report.json",
   "hardwareFPS": "not measured",
-  "mainRoute": "generated E1M1 spawn to exit using real movement/use with all six enemies active; no teleportation or entity removal",
+  "mainRoute": "continuous generated E1M1 spawn to all three secrets, rewards, return paths and exit using real movement/aim/fire/use with all six enemies active; no teleportation, entity removal, granted health, ammunition or player height",
   "inputTestScope": "production DOM handlers with simulated DOM/audio/renderer, real generated map and game; asset fetch forbidden; no physical-device or audible-audio claim",
   "githubActions": "previous job did not start; account billing or spending-limit block observed; local qualification is independent",
   "githubActionsUrl": "https://github.com/M4D135/DOOM-FERRO/actions/runs/45272736066",
@@ -15,6 +15,7 @@
   "testFiles": [
     "tests/app-input.test.mjs",
     "tests/build.test.mjs",
+    "tests/e1m1-secrets.test.mjs",
     "tests/game.test.mjs",
     "tests/input.test.mjs",
     "tests/interface.test.mjs",
@@ -30,11 +31,11 @@
     "tests/renderer-passes.test.mjs",
     "tests/renderer.test.mjs"
   ],
-  "testLogSha256": "a9274a7a567d5828ea864058ecd8aa6cec3dbd69b4caca0698c42223a7944f9d",
+  "testLogSha256": "5334d55ee5d83182e335154978c67561044d3be633bcbd3477b1dd0b90b59fc6",
   "generation": "procedural",
-  "buildRevision": "0.5.0-c0b972f9f86b",
+  "buildRevision": "0.6.0-6b09b429245a",
   "importedMediaFiles": 0,
-  "buildBytes": 824280,
+  "buildBytes": 855848,
   "doorTraversal": "eight faces of four doors passed while advancing during opening with the complete scene; reported previous-version blockage not reproduced",
   "proceduralLayout": "fixed E1M1 reference plan; runtime sector contour sweep generates 295 convex cells; no original BSP or triangles",
   "proceduralVisuals": "reference-guided continuous HD PBR maps and UI; continuous anatomical and implicit hand meshes, three geometry levels; no world or held-weapon billboard",
@@ -72,7 +73,12 @@
     "allE1M1GpuMipMiBCoarse": 42.109
   },
   "glPassTests": "production host pass under a stateful simulated WebGL2: MRT completeness, sampler feedback prevention, FERRO target/viewport restoration, resize/disposal and no retained CPU map arrays; native GLSL/pixels checked separately",
-  "visualInspection": "all 31 views reviewed; skin/fabric facets, hard shadow blocks, shoulder/spike anchors, overlapping shotgun wood and mirrored SHELLS lettering corrected before final qualification",
-  "visualLimitations": "anatomical models and especially faces remain stylized; physical material equations and geometry counts are not evidence that photorealism has been reached",
-  "releaseDate": "2026-11-24"
+  "visualInspection": "all 39 final views reviewed across level, secret states, actors, props, corpses and held-weapon poses; no newly observed blocking regression; fist skin continuity also checked by mesh topology test",
+  "visualLimitations": "anatomical models and especially faces remain stylized; pre-existing SPOS sleeve/upper-arm intersections and tiny dark barrel-rib speckles remain visible in close views; physical material equations and geometry counts are not evidence that photorealism has been reached",
+  "releaseDate": "2026-11-24",
+  "distribution": "single self-contained HTML",
+  "offlineRuntimeFiles": 1,
+  "singleFileVerification": "one HTML with inline CSS, four byte-identical canonical FERRO scripts and a scope-isolated linked game bundle; no external assets or runtime network loaders; deterministic build without reference archive; inline scripts parse and boot through the intentional missing-WebGL fallback under a simulated DOM, not a real file-URL browser session",
+  "secretMechanisms": "original E1M1 sectors 68, 69 and 62; hidden courtyard door, permanent floor lowering on line 308 and repeatable timed lift on line 195; floor-contact discovery, monster activation restrictions and return window verified",
+  "lighting": "reference sector light levels retained; localized wall fixtures, screens and toxic-floor spill; cool low ambient bounce; analytic distance haze disabled in studio views"
 }

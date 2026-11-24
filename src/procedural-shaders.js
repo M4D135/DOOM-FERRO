@@ -3,7 +3,8 @@
  * indirect light and skin transmission remain bounded real-time approximations.
  * Reference: https://google.github.io/filament/main/filament.html */
 const LIGHTING = `
-uniform vec3 uEye;
+uniform vec3 uEye,uFogColor;
+uniform float uFogDensity;
 uniform float uTime,uBrightness,uDamage,uFlash,uAmbient,uOutdoor;
 uniform vec4 uLights[6],uLightColors[6];
 uniform int uLightCount;
@@ -55,8 +56,8 @@ vec4 shadeSurface(vec3 srgb,vec3 p,vec3 normal,float rough,float metal,float ao,
  rough=clamp(rough,.07,.97);metal=clamp(metal,0.0,1.0);
  float nv=max(dot(n,v),.001),f0=kind==7?.025:kind==1?.028:.04;
  vec3 F=fresnel(nv,mix(vec3(f0),base,metal)),r=reflect(-v,n);
- vec3 diffuseSky=mix(vec3(.055,.047,.038),vec3(.19,.215,.25),n.y*.5+.5);
- vec3 reflectedSky=mix(vec3(.025,.022,.018),vec3(.24,.29,.35),r.y*.5+.5);
+ vec3 diffuseSky=mix(vec3(.036,.039,.038),vec3(.15,.18,.20),n.y*.5+.5);
+ vec3 reflectedSky=mix(vec3(.018,.022,.022),vec3(.20,.25,.29),r.y*.5+.5);
  vec3 indirect=(base*(1.0-metal)*diffuseSky+(reflectedSky*F)*mix(.8,.22,rough))*ao;
  indirect*=uAmbient*(.23+sector*.77)*(1.0+uOutdoor*.4);
  vec3 direct=vec3(0);float shadow=shadowAt(p,n);
@@ -76,7 +77,10 @@ vec4 shadeSurface(vec3 srgb,vec3 p,vec3 normal,float rough,float metal,float ao,
  vec3 luminous=base*max(0.0,emission)*3.5;
  vec3 lit=(indirect+direct+luminous)*uBrightness;
  float ambientPart=dot(indirect,vec3(.2126,.7152,.0722))/max(.001,dot(indirect+direct+luminous,vec3(.2126,.7152,.0722)));
- vec3 color=displayColor(film(lit));
+ // Analytic distance haze gives the long corridors depth; no particle cards,
+ // texture, extra geometry or claim of volumetric light scattering is involved.
+ float haze=1.0-exp(-uFogDensity*max(0.0,length(uEye-p)-3.0));
+ vec3 color=displayColor(film(mix(lit,uFogColor,haze)));
  color=mix(color,vec3(.65,.015,.005),clamp(uDamage,0.0,.55));
  return vec4(color,uAOOutput?clamp(ambientPart,.05,.95):1.0);
 }
@@ -154,7 +158,7 @@ uniform vec3 uEye,uRight,uForward,uUp;
 uniform bool uViewModel;
 out vec3 vPosition,vNormal,vColor,vSurface;
 out float vEmission,vLight;
-flat out vec4 vMaterial;flat out int vSpecial;
+out vec4 vMaterial;flat out int vSpecial;
 void main(){
  vec3 local=aPosition*aScaleLight.x;
  if(uViewModel){
@@ -175,7 +179,7 @@ precision highp float;
 precision highp int;
 in vec3 vPosition,vNormal,vColor,vSurface;
 in float vEmission,vLight;
-flat in vec4 vMaterial;flat in int vSpecial;
+in vec4 vMaterial;flat in int vSpecial;
 layout(location=0) out vec4 fragColor;
 layout(location=1) out vec4 fragNormal;
 ${LIGHTING}
@@ -208,7 +212,7 @@ void main(){
   float grain=filteredLine(p.x*11.0+noise3(vec3(p.x*.8,p.y*.8,p.z*.035))*6.0);
   float fibre=filteredLine(p.x*90.0+noise3(p*.3)*12.0);
   albedo*=.94+broad*.08+grain*.055+fibre*.012;rough=clamp(rough,.34,.76);metal=0.0;height=grain*.00009+fibre*.000025;
- }else if(kind==9){albedo*=.96+broad*.06;rough=.23;metal=0.0;
+ }else if(kind==9){albedo*=.96+broad*.06;rough=clamp(rough+(broad-.5)*.06,.22,.86);metal=0.0;
  }else if(kind==10){rough=.25;metal=0.0;}
  vec3 n=normalize(vNormal),dx=dFdx(vPosition),dy=dFdy(vPosition);
  fragNormal=vec4(n*.5+.5,1);
@@ -233,9 +237,9 @@ float cloud(vec3 p){float a=.55,total=0.0;for(int i=0;i<5;i++){total+=noise3(p)*
 void main(){
  vec3 d=normalize(uForward+uRight*vNDC.x*uFov.x+uUp*vNDC.y*uFov.y);
  float angle=atan(d.z,d.x),horizon=d.y/max(.01,length(d.xz));
- vec3 overcast=mix(vec3(.43,.46,.47),vec3(.23,.28,.32),smoothstep(-.1,.9,d.y));
+ vec3 overcast=mix(vec3(.31,.35,.36),vec3(.13,.18,.21),smoothstep(-.1,.9,d.y));
  float vapour=cloud(d*5.0+vec3(uTime*.004,1.0,0));
- overcast+=vec3(.20,.19,.17)*(vapour-.42);
+ overcast+=vec3(.24,.25,.24)*(vapour-.42);
  float ridge=.035+.052*sin(angle*9.0+.5)+.043*sin(angle*17.0+1.8)+.019*sin(angle*39.0);
  float back=.07+.027*sin(angle*7.0)+.023*sin(angle*23.0);
  float detail=cloud(vec3(angle*42.0,horizon*28.0,3.0));

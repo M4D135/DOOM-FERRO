@@ -77,14 +77,58 @@ export function buildLightingRig(map){
     for(const c of chosen){
       const range=clamp((sector.ceiling-sector.floor)/32*2.6,6,15);
       lights.push({id:`sector-${sector.id}-${lights.length}`,sector:sector.id,x:c.x,y:c.y,
-        z:sector.ceiling-(outdoor?2:7),range,power:(emitter?40:outdoor?58:23)*(sector.light/255)**1.4,
-        color:emitter?[1,.89,.70]:outdoor?[.79,.88,1]:[.92,.91,.85],
+        z:emitter||outdoor?sector.ceiling-(outdoor?2:7):sector.floor+(sector.ceiling-sector.floor)*.62,
+        range,power:(emitter?18:outdoor?22:3.2)*(sector.light/255)**1.7,
+        color:emitter?[.83,.91,.78]:outdoor?[.57,.71,.81]:[.60,.69,.71],
         source:emitter?'emissive-ceiling':outdoor?'open-sky':'sector-bounce'});
+    }
+    // The original toxic floors provide a restrained green upward spill. These
+    // anchors follow the liquid's real sector; they do not add scenery/emitters.
+    if(/^NUKAGE/.test(sector.floorTexture))for(const c of cells.filter(c=>c.area>512).slice(0,3)){
+      lights.push({id:`liquid-${sector.id}-${lights.length}`,sector:sector.id,x:c.x,y:c.y,z:sector.floor+6,
+        range:4.3,power:3.7,color:[.23,.66,.075],source:'toxic-floor'});
+    }
+  }
+  // Wall lamps and computer screens already exist in the fixed plan. Use their
+  // visible wall spans, instead of putting an unmotivated bright point beneath
+  // every plain ceiling. Offset each source into its own sector, never a wall.
+  for(const line of map.lines)for(const left of [false,true]){
+    const side=map.sides[left?line.left:line.right];if(!side)continue;
+    const sector=map.sectors[side.sector],other=map.sides[left?line.right:line.left];
+    const back=other?map.sectors[other.sector]:null;
+    const a=map.vertices[left?line.v2:line.v1],b=map.vertices[left?line.v1:line.v2];
+    const dx=b.x-a.x,dy=b.y-a.y,length=Math.hypot(dx,dy);if(length<4)continue;
+    for(const band of ['middle','upper','lower']){
+      const name=side[band],lamp=/^LITE/.test(name),screen=/^COMP/.test(name);
+      if(!lamp&&!screen)continue;
+      const bottom=band==='upper'?Math.max(sector.floor,back?.ceiling??sector.ceiling):sector.floor;
+      const top=band==='lower'?Math.min(sector.ceiling,back?.floor??sector.floor):sector.ceiling;
+      if(top-bottom<8)continue;
+      const count=screen?Math.min(2,Math.max(1,Math.floor(length/128))):1;
+      for(let i=0;i<count;i++){
+        const t=(i+.5)/count,x=a.x+dx*t+dy/length*4,y=a.y+dy*t-dx/length*4;
+        if(map.sectorAt(x,y)?.id!==sector.id)continue;
+        lights.push({id:`wall-${line.id}-${left?1:0}-${band}-${i}`,sector:sector.id,x,y,z:(bottom+top)*.5,
+          band,back:back?.id,range:lamp?6:4,power:lamp?12:3.1,color:lamp?[.91,1,.78]:[.27,.48,.70],
+          source:lamp?'wall-lamp':'computer-screen'});
+      }
     }
   }
   const walls=map.lines.map(line=>({a:map.vertices[line.v1],b:map.vertices[line.v2],
     front:map.sides[line.right]?.sector,back:map.sides[line.left]?.sector}));
   return {lights,walls,map};
+}
+
+function lightHeight(rig,light,sector){
+  if(light.source==='toxic-floor')return sector.floor+6;
+  if(light.source==='sector-bounce')return sector.floor+(sector.ceiling-sector.floor)*.62;
+  if(light.band){
+    const back=rig.map.sectors[light.back];
+    const bottom=light.band==='upper'?Math.max(sector.floor,back?.ceiling??sector.ceiling):sector.floor;
+    const top=light.band==='lower'?Math.min(sector.ceiling,back?.floor??sector.floor):sector.ceiling;
+    return (bottom+top)*.5;
+  }
+  return sector.ceiling-(light.source==='open-sky'?2:7);
 }
 
 /** Reject lights hidden by solid walls or the current height of a closed door. */
@@ -102,7 +146,7 @@ export function lightPathOpen(rig,from,to){
   return true;
 }
 
-function pack(lights,eye,target,ambient,outdoor){
+function pack(lights,eye,target,ambient,outdoor,fogDensity=0){
   const positions=new Float32Array(MAX_SCENE_LIGHTS*4),colors=new Float32Array(MAX_SCENE_LIGHTS*4);
   lights.slice(0,MAX_SCENE_LIGHTS).forEach((light,i)=>{
     positions.set([...light.position,light.range],i*4);colors.set([...light.color,light.power],i*4);
@@ -111,7 +155,7 @@ function pack(lights,eye,target,ambient,outdoor){
   const forward=unit(sub(target,key.position)),reference=Math.abs(forward[1])>.98?[0,0,1]:[0,1,0];
   const right=unit(cross(forward,reference)),up=cross(right,forward);
   return {positions,colors,count:Math.min(lights.length,MAX_SCENE_LIGHTS),
-    shadowVP:shadowProjection(key.position,target),ambient,outdoor,
+    shadowVP:shadowProjection(key.position,target),ambient,outdoor,fogDensity,fogColor:[.027,.036,.037],
     shadowView:{oeil:key.position,avant:forward,droite:right,haut:up,tangente:Math.tan(56*Math.PI/180),largeur:1,hauteur:1},
     shadowRange:key.range||14,
     sources:lights.slice(0,MAX_SCENE_LIGHTS).map(l=>({id:l.id,source:l.source,position:l.position}))};
@@ -122,7 +166,7 @@ export function sceneLighting(rig,view,entities=[],time=0,weapon=null){
   const sector=rig.map.sectorAt(origin.x,origin.y),candidates=[];
   for(const light of rig.lights){
     const s=rig.map.sectors[light.sector];if(s.ceiling-s.floor<40)continue;
-    const z=s.ceiling-(light.source==='open-sky'?2:7),position=[light.x/32,z/32,-light.y/32];
+    const z=lightHeight(rig,light,s),position=[light.x/32,z/32,-light.y/32];
     const distance=Math.hypot(...sub(position,eye));if(distance>light.range*1.4)continue;
     // Choose the primary shadow light by its steady power; a flicker must not
     // make the shadow camera jump between fixtures every game tick.
@@ -140,7 +184,7 @@ export function sceneLighting(rig,view,entities=[],time=0,weapon=null){
   if(!accepted.length){
     const height=(sector?.ceiling??origin.z+88)/32;
     accepted.push({id:'room-fill',source:'sector-bounce',position:[eye[0]-.8,Math.max(height-.2,eye[1]+.5),eye[2]-.3],range:9,
-      color:[.91,.93,1],power:20,score:1});
+      color:[.60,.69,.73],power:2.5,score:1});
   }
   accepted.sort((a,b)=>b.score-a.score);
   if(weapon&&weapon.kind!=='fist'&&weapon.phase>=0&&weapon.phase<.08){
@@ -149,7 +193,7 @@ export function sceneLighting(rig,view,entities=[],time=0,weapon=null){
   }
   const target=eye.map((v,i)=>v+view.avant[i]*3.5+(i===1?-.5:0));
   const outside=sector?.ceilingTexture==='F_SKY1';
-  return pack(accepted,eye,target,.7+Math.max(0,(sector?.light??160)/255)*.3,outside?1:0);
+  return pack(accepted,eye,target,.64+Math.max(0,(sector?.light??160)/255)*.22,outside?1:0,outside?.009:.014);
 }
 
 /** Controlled portrait lighting used by the model inspection fixtures. */

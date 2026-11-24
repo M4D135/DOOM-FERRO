@@ -202,6 +202,60 @@ test('analytic hand sculpting produces one closed joined surface with shared smo
   assert.equal(seen.size,vertices.size,'palm and finger are joined, with no disconnected beads');
 });
 
+test('the visible fist, wrist and forearm are one watertight connected surface',()=>{
+  // Exercise the actual held fist, not a toy primitive: the former wrist was a
+  // closed capsule overlapping a separate forearm, producing a visible bulb.
+  const mesh=weaponMesh('fist'),v=mesh.vertices,points=[],ids=new Map(),neighbors=[],edges=new Map();
+  const vertex=(offset)=>{
+    const p=Array.from(v.slice(offset,offset+3)),key=p.map(x=>x.toFixed(6)).join(',');
+    if(!ids.has(key)){ids.set(key,points.length);points.push(p);neighbors.push(new Set());}
+    return ids.get(key);
+  };
+  for(let i=0;i<v.length;i+=STRIDE*3){
+    if(v[i+12]!==MATERIALS.skin.kind)continue;
+    const tri=[vertex(i),vertex(i+STRIDE),vertex(i+STRIDE*2)];
+    for(let k=0;k<3;k++){
+      const a=tri[k],b=tri[(k+1)%3],key=a<b?a+':'+b:b+':'+a;
+      neighbors[a].add(b);neighbors[b].add(a);edges.set(key,(edges.get(key)||0)+1);
+    }
+  }
+  const seen=new Set(),components=[];
+  for(let i=0;i<points.length;i++)if(!seen.has(i)){
+    const queue=[i],component=[];
+    while(queue.length){const p=queue.pop();if(seen.has(p))continue;seen.add(p);component.push(p);for(const n of neighbors[p])if(!seen.has(n))queue.push(n);}
+    components.push(component);
+  }
+  components.sort((a,b)=>b.length-a.length);
+  const main=new Set(components[0]),ys=components[0].map(i=>points[i][1]);
+  assert(main.size>points.length*.95,'only the four small nail plates may be independent skin pieces');
+  assert(Math.min(...ys)<-20&&Math.max(...ys)>24,'one surface reaches from the fist into the forearm behind the camera');
+  for(const [key,count]of edges)if(main.has(Number(key.split(':')[0])))assert.equal(count,2,'the wrist has no open join or capped overlap: '+key.split(':').map(id=>points[Number(id)].join(',')).join(' / '));
+});
+
+test('PLAYN, PLAYW and POL5 preserve their different original silhouettes and materials',()=>{
+  for(const detail of[1,2]){
+    const marine=objectMesh({type:15},0,detail),gibbed=objectMesh({type:10},0,detail),remains=objectMesh({type:24},0,detail);
+    assert(hasMaterial(marine,'skin')&&hasMaterial(marine,'cloth')&&hasMaterial(marine,'glass'),'fallen marine has exposed arms, fabric and helmet visor');
+    assert(someVertex(marine,(v,i)=>v[i+12]===MATERIALS.paint.kind&&v[i+7]>v[i+6]*1.5&&v[i+7]>v[i+8]*1.5),'PLAYN keeps its green armour');
+    assert(!hasMaterial(gibbed,'skin')&&!hasMaterial(gibbed,'glass'),'PLAYW is not an intact red-painted marine with a second head');
+    assert(gibbed.bounds.max[2]>8&&gibbed.bounds.max[2]<12,'PLAYW has the raised torn ends visible in the original');
+    assert(remains.bounds.max[2]<4.2&&!hasMaterial(remains,'paint'),'POL5 remains a separate lower pile, without marine equipment');
+    let blood=0;for(let i=0;i<gibbed.vertices.length;i+=STRIDE)if(gibbed.vertices[i+12]===MATERIALS.blood.kind)blood++;
+    assert(blood/(gibbed.vertices.length/STRIDE)>.85,'small green/grey fragments do not replace the torn mass');
+    assert(someVertex(gibbed,(v,i)=>v[i+12]===MATERIALS.blood.kind&&v[i+10]>.62),'coagulated surfaces have their own roughness');
+  }
+});
+
+test('aged paint preserves reference pigments and varies roughness without painted-on flat decals',()=>{
+  for(const type of[2035,2018,2019,2012]){
+    const mesh=objectMesh({type}),rough=[];
+    for(let i=0;i<mesh.vertices.length;i+=STRIDE)if(mesh.vertices[i+12]===MATERIALS.paint.kind)rough.push(mesh.vertices[i+10]);
+    assert(Math.min(...rough)>.48,'paint does not acquire a plastic mirror finish');
+    assert(Math.max(...rough)-Math.min(...rough)>.025,'roughness varies over the actual generated shell');
+    assert.equal(objectMesh({type},1000),mesh,'wear is deterministic and does not crawl across static objects');
+  }
+});
+
 test('muzzles have annular metal rims and visible bore depth rather than flat black disks',()=>{
   const forwardSurface=(mesh,x,z)=>{
     let hit=-Infinity;const a=mesh.vertices;

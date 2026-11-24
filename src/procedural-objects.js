@@ -1,6 +1,8 @@
 /** Detailed Doom-reference props. Every surface is generated geometry/material. */
 import {MeshBuilder} from './procedural-mesh.js';
 import {loft} from './procedural-object-sculpt.js';
+import {buildRemains} from './procedural-remains.js';
+import {ageSurface} from './procedural-object-finish.js';
 import {weaponMesh,worldShotgunMesh,weaponCacheStats} from './procedural-weapons.js';
 export {weaponMesh};
 const TAU=Math.PI*2,cache=new Map(),LIMIT=96,BYTE_LIMIT=12*1024*1024;
@@ -33,7 +35,27 @@ function barrel(b,d,frame){
   [2.2,9.72],[7.85,9.68],[8.15,9.82],[8.55,10.30],[9.05,10.58],[9.65,10.58],[10.13,10.29],
   [10.65,9.75],[20.03,9.72],[20.48,10.20],[20.98,10.56],[21.67,10.58],[22.16,10.24],
   [22.70,9.68],[29.52,9.64],[30.0,9.93],[30.25,10.19]]:[[0,10.5],[2,9.8],[29.7,9.8],[30.2,10.3]];
- b.lathe([0,0,0],profile,[96,108,67],{segments:d.s,material:{kind:'paint',roughness:.54},smoothProfile:d.q>0,cap:false});
+ if(d.q===2){
+  const sheet=new MeshBuilder(),rows=[];
+  for(let i=0;i<profile.length-1;i++){
+   const a=profile[i],c=profile[i+1],n=Math.max(1,Math.ceil((c[0]-a[0])/1.5));
+   for(let k=0;k<n;k++)rows.push([a[0]+(c[0]-a[0])*k/n,a[1]+(c[1]-a[1])*k/n]);
+  }rows.push(profile.at(-1));
+  sheet.lathe([0,0,0],rows,[96,108,67],{segments:48,material:{kind:'paint',roughness:.65},smoothProfile:true,cap:false});
+  const shell=sheet.finish('barrel-sheet'),v=shell.vertices;
+  // Two shallow knocks distort the rolled sheet, with the normals derived from
+  // those same dents. The original diameter, height and pressed ribs stay intact.
+  const dent=(a,z)=>-.18*Math.exp(-1*((a-.85)/.20)**2-((z-16.1)/2.7)**2)
+   -.11*Math.exp(-1*((a+1.8)/.26)**2-((z-5.2)/1.4)**2)
+   +.013*Math.sin(a*17+z*.9)*Math.exp(-1*((z-16)/8)**2);
+  for(let i=0;i<v.length;i+=17){
+   const r=Math.hypot(v[i],v[i+1]),a=Math.atan2(v[i+1],v[i]),z=v[i+2],c=Math.cos(a),s=Math.sin(a),delta=dent(a,z),
+    da=(dent(a+.001,z)-dent(a-.001,z))/.002,dz=(dent(a,z+.001)-dent(a,z-.001))/.002,
+    radial=v[i+3]*c+v[i+4]*s,nt=-radial*da/(r+delta),nz=v[i+5]-radial*dz,
+    nx=radial*c-nt*s,ny=radial*s+nt*c,length=Math.hypot(nx,ny,nz)||1;
+   v[i]=(r+delta)*c;v[i+1]=(r+delta)*s;v[i+3]=nx/length;v[i+4]=ny/length;v[i+5]=nz/length;
+  }b.add(shell);
+ }else b.lathe([0,0,0],profile,[96,108,67],{segments:d.s,material:{kind:'paint',roughness:.65},smoothProfile:d.q>0,cap:false});
  cyl(b,[0,0,0],[0,0,.18],9.65,[62,72,44],d,'metal');
  for(const z of[1.03,9.34,21.35])ring(b,[0,0,z],10.40,d.q?.20:.16,[67,75,48],d,'metal');
  // The rim and visible inside wall have actual thickness above the recessed fluid.
@@ -204,7 +226,9 @@ function armor(b,d,blue,frame){
   const r=value(t,0),depth=value(t,1),z=value(t,2),drop=value(t,3),sn=Math.sin(angle),front=Math.max(0,sn),
    chest=t<9?Math.exp(-(((z-10.8)/3.4)**2))*(sn>0?2.35:.8)*(.14+.86*Math.sin(2*angle)**2):0,
    sternum=t<9?.26*Math.exp(-((Math.cos(angle)/.20)**2))*front*Math.exp(-(((z-10)/5)**2)):0;
-  return[r*Math.cos(angle),sn*(depth+chest+sternum),z-drop*front];
+  const dent=t<9?-.10*Math.exp(-1*((angle-1.04)/.16)**2-((z-10.0)/1.4)**2)
+   -.07*Math.exp(-1*((angle-2.08)/.13)**2-((z-7.9)/.8)**2):0;
+  return[r*Math.cos(angle),sn*(depth+chest+sternum+dent),z-drop*front];
  };
  const sample=(t,a)=>{
   const p=point(t,a),a0=point(t,a-.001),a1=point(t,a+.001),p0=point(Math.max(0,t-.001),a),p1=point(Math.min(15,t+.001),a),
@@ -235,11 +259,7 @@ function ammo(b,d){box(b,[0,0,6.3],[28,12,12.6],[51,69,28],d,'paint',.75);box(b,
 function shell(b,p,d,scale=1){const q=new MeshBuilder();q.lathe([0,0,0],[[0,1.1],[.3,1.25],[4.8,1.25],[5,1.28]],[160,23,11],{segments:d.q?12:6,material:'paint'});q.lathe([0,0,0],[[4.8,1.28],[5.1,1.4],[5.4,1.3],[6.8,1.3],[7,1.38],[7.2,1.38]],BRASS,{segments:d.q?12:6,material:'metal'});if(d.q){q.cylinder([0,0,7.21],[0,0,7.26],.43,[100,73,31],{segments:8,material:'metal'});q.torus([0,0,7.24],.58,.05,[230,184,72],{segments:12,sections:4,material:'metal'});}b.add(q.finish('shell'),{translation:p,scale});}
 function shellBox(b,d){box(b,[0,0,4.8],[32,11,9.6],[123,127,114],d,'paint',.45);box(b,[-5,0,10.1],[21.7,11.7,1.3],[173,177,160],d,'paint',.35);box(b,[10.6,0,8],[10.2,11.3,5.4],[120,82,40],d,'wood',.3);if(d.q){const label=new MeshBuilder();lettering(label,'SHELLS',[0,0,0],.97,[47,51,43]);b.add(label.finish('shell-box-label'),{translation:[-5.6,5.65,2.4],rotation:[0,0,Math.PI]});box(b,[10.6,0,10.8],[9.1,9.8,.2],[61,41,21],d,'wood',.05);}for(let i=0;i<3;i++)shell(b,[7.7+i*2.9,0,9.1],d,.7);}
 function body(b,d,family){
- ell(b,[0,0,.35],[26,10,.35],[91,9,5],{...d,s:d.q?20:8,r:3},'blood');
- if(family==='POL5'){b.tube([-18,0,2],[16,0,2.5],[[0,2,1],[.25,4,1.5],[.5,5,2],[.8,3,1.6],[1,1.7,1]],[123,18,8],{segments:d.s,material:'blood',smoothProfile:true});for(let i=0;i<(d.q?5:2);i++)ell(b,[-12+i*6,Math.sin(i*2)*3,2.5],[3,2.1,1.6],[143-i*7,21,9],d,'blood');return;}
- const shirt=family==='PLAYN'?[48,113,27]:[114,27,12];b.tube([-10,0,4],[10,0,5.5],[[0,3.8,3.1],[.25,4.8,3.6],[.65,5.6,4.2],[1,4.2,3.6]],shirt,{segments:d.s,material:family==='PLAYN'?'cloth':'blood',smoothProfile:true});
- for(const side of [-1,1]){b.tube([-8,side*3,4],[-21,side*5,3],[[0,2.5,2.3],[.45,2.2,2.1],[1,1.8,1.7]],[43,99,24],{segments:d.s,material:'cloth',smoothProfile:true});box(b,[-23,side*5.2,2.5],[7,4.5,5],DARK,d,'leather',1.6);b.tube([7,side*4,5],[13,side*8,2.8],[[0,2.1,2.1],[.5,1.8,1.7],[1,1.4,1.3]],[151,99,58],{segments:d.s,material:'skin',smoothProfile:true});ell(b,[13.5,side*8.4,2],[2,2.3,1.3],[155,102,61],d,'skin');if(d.q===2)for(let f=0;f<4;f++)line(b,[13+f*.7,side*8.4,2],[14+f*.7,side*10.1,1.8],.24,[142,89,52],d,'skin');}
- ell(b,[15,0,5],[4,3.7,4],[164,117,73],d,'skin');ell(b,[15,-.5,7],[4.3,3.9,2.5],[48,92,24],d,'paint');if(d.q){box(b,[15,3.6,5.2],[3.8,.3,1.1],[46,25,15],d,'skin',.2);ell(b,[6,2,5],[4,2.6,1],[139,18,7],d,'blood');}if(family==='PLAYW')for(const side of [-1,1])for(const x of [-3,0,3])line(b,[x,side*1.5,7],[x+1,side*4.5,9.5],.45,[174,147,102],d,'bone');
+ buildRemains(b,d.q,family);
 }
 function flame(b,d,center,radius,frame,blast){
  const bright=frame<2?[255,208,70]:frame<4?[238,86,8]:[157,27,4];ell(b,center,[radius*.72,radius*.72,radius*.9],bright,d,'glow',{emissive:1});
@@ -247,7 +267,7 @@ function flame(b,d,center,radius,frame,blast){
  if(blast&&d.q)for(let i=0;i<5;i++){const a=i*2.4+frame*.3;box(b,[Math.cos(a)*radius*.9,Math.sin(a)*radius*.9,center[2]+Math.sin(a)*radius*.4],[2.3,.7,5.5],i%2?STEEL:[89,101,55],d,'metal',.2,{rotation:[a,a*.7,frame]});}
 }
 function build(family,frame,key,q){
- const b=new MeshBuilder(),d=cfg(q);if(family==='BAR1')barrel(b,d,frame);else if(family==='COLU')lamp(b,d);else if(family==='ELEC')tech(b,d);else if(family==='CBRA')candles(b,d,frame);else if(family==='STIM'||family==='MEDI')medical(b,d,family==='MEDI');else if(family==='BON1')bottle(b,d,frame);else if(family==='BON2')helmet(b,d);else if(family==='ARM1'||family==='ARM2')armor(b,d,family==='ARM2',frame);else if(family==='CLIP')clip(b,d);else if(family==='AMMO')ammo(b,d);else if(family==='SHEL')for(const x of [-4.5,-1.5,1.5,4.5])shell(b,[x,0,0],d);else if(family==='SBOX')shellBox(b,d);else if(family==='SHOT')b.add(worldShotgunMesh(q),{rotation:[0,0,-Math.PI/2]});else if(['PLAYW','PLAYN','POL5'].includes(family))body(b,d,family);else if(family==='BAL1')flame(b,d,[0,0,0],frame<2?7.3:13+(frame-2)*4,frame,false);else if(family==='BEXP'){if(frame===0){barrel(b,d,0);ell(b,[0,0,31],[5,5,5],[255,163,24],d,'glow',{emissive:1});}else flame(b,d,[0,0,17+frame*2],10+frame*4,frame,true);}const m=b.finish(key);m.detail=q;return family==='BAL1'?m:ground(m);
+ const b=new MeshBuilder(),d=cfg(q);if(family==='BAR1')barrel(b,d,frame);else if(family==='COLU')lamp(b,d);else if(family==='ELEC')tech(b,d);else if(family==='CBRA')candles(b,d,frame);else if(family==='STIM'||family==='MEDI')medical(b,d,family==='MEDI');else if(family==='BON1')bottle(b,d,frame);else if(family==='BON2')helmet(b,d);else if(family==='ARM1'||family==='ARM2')armor(b,d,family==='ARM2',frame);else if(family==='CLIP')clip(b,d);else if(family==='AMMO')ammo(b,d);else if(family==='SHEL')for(const x of [-4.5,-1.5,1.5,4.5])shell(b,[x,0,0],d);else if(family==='SBOX')shellBox(b,d);else if(family==='SHOT')b.add(worldShotgunMesh(q),{rotation:[0,0,-Math.PI/2]});else if(['PLAYW','PLAYN','POL5'].includes(family))body(b,d,family);else if(family==='BAL1')flame(b,d,[0,0,0],frame<2?7.3:13+(frame-2)*4,frame,false);else if(family==='BEXP'){if(frame===0){barrel(b,d,0);ell(b,[0,0,31],[5,5,5],[255,163,24],d,'glow',{emissive:1});}else flame(b,d,[0,0,17+frame*2],10+frame*4,frame,true);}const m=ageSurface(b.finish(key),family);m.detail=q;return family==='BAL1'?m:ground(m);
 }
 export function objectMesh(entity,time=0,detail=2){
  if(!entity||entity.removed||entity.enemy)return null;const sprite=String(entity.sprite||'').toUpperCase();let family=sprite.startsWith('PLAY')?sprite.slice(0,5):sprite.slice(0,4);if(!family)family=entity.projectile?'BAL1':TYPES[entity.type];if(entity.barrel&&entity.state==='exploding')family='BEXP';if(!FAMILIES.has(family))return null;let frame=0;

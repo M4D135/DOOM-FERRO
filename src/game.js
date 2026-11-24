@@ -70,7 +70,14 @@ export class DoomGame {
     });
     this._grid = new Map();
     this.neighbors = map.sectors.map(() => new Set());
+    const soundBounds = map.sectors.map(() => ({minX: Infinity, maxX: -Infinity, minY: Infinity, maxY: -Infinity}));
     for (const line of this.lines) {
+      for (const id of new Set([line.front, line.back])) {
+        if (id < 0) continue;
+        const bounds = soundBounds[id];
+        bounds.minX = Math.min(bounds.minX, line.ax, line.bx); bounds.maxX = Math.max(bounds.maxX, line.ax, line.bx);
+        bounds.minY = Math.min(bounds.minY, line.ay, line.by); bounds.maxY = Math.max(bounds.maxY, line.ay, line.by);
+      }
       for (let gx = Math.floor(Math.min(line.ax, line.bx) / 128); gx <= Math.floor(Math.max(line.ax, line.bx) / 128); gx++) {
         for (let gy = Math.floor(Math.min(line.ay, line.by) / 128); gy <= Math.floor(Math.max(line.ay, line.by) / 128); gy++) {
           const key = `${gx},${gy}`;
@@ -83,6 +90,9 @@ export class DoomGame {
         this.neighbors[line.back].add(line.front);
       }
     }
+    // Doom places a sector's sound origin at the midpoint of its boundary bounds.
+    // In particular, the timed lift must be heard at the lift, not its remote trigger.
+    this._sectorSoundOrigins = soundBounds.map(b => ({x: (b.minX + b.maxX) / 2, y: (b.minY + b.maxY) / 2}));
     this.restart();
   }
 
@@ -143,6 +153,10 @@ export class DoomGame {
 
   _sound(name, at = this.player) { this.onSound(name, {x: at.x, y: at.y, z: at.z}); }
 
+  _sectorSound(name, sector) {
+    this._sound(name, {...this._sectorSoundOrigins[sector.id], z: sector.floor});
+  }
+
   _orientSprites() {
     for (const entity of this.entities) {
       if (!entity.enemy || !entity.alive || entity.removed) continue;
@@ -182,7 +196,7 @@ export class DoomGame {
   }
 
   /** Circle movement is substepped, then resolved against segments and corners. */
-  moveActor(actor, dx, dy, {collideEntities = true, triggers = actor === this.player} = {}) {
+  moveActor(actor, dx, dy, {collideEntities = true, triggers = actor === this.player || Boolean(actor.enemy)} = {}) {
     if (!Number.isFinite(dx) || !Number.isFinite(dy)) return 0;
     const startX = actor.x, startY = actor.y;
     const distance = Math.hypot(dx, dy), steps = Math.max(1, Math.ceil(distance / 4));
@@ -235,7 +249,7 @@ export class DoomGame {
       if (triggers) {
         for (const line of candidates) {
           if ((line.special === 36 || line.special === 88)
-            && segmentIntersection(oldX, oldY, x, y, line.ax, line.ay, line.bx, line.by)) this._crossLine(line);
+            && segmentIntersection(oldX, oldY, x, y, line.ax, line.ay, line.bx, line.by)) this._crossLine(line, actor);
         }
       }
     }
@@ -289,22 +303,27 @@ export class DoomGame {
     return false;
   }
 
-  _openDoor(line) {
-    if (line.back < 0) return false;
+  _openDoor(line, actor = this.player) {
+    // ML_SECRET protects the concealed face of the courtyard door from monsters.
+    // Its ordinary reverse face remains usable on the return journey.
+    if (line.back < 0 || (actor.enemy && line.flags & 32)) return false;
     const sector = this.map.sectors[line.back], old = this.actions.get(sector.id);
     if (old?.kind === 'door') {
+      if (actor.enemy && old.phase !== 'down') return false;
       old.phase = old.phase === 'down' ? 'up' : 'down';
-      this._sound(old.phase === 'up' ? 'DSDOROPN' : 'DSDORCLS');
+      this._sectorSound(old.phase === 'up' ? 'DSDOROPN' : 'DSDORCLS', sector);
       return {type: 'door', sector: sector.id};
     }
     const ceilings = [...this.neighbors[sector.id]].map(i => this.map.sectors[i].ceiling);
     const target = (ceilings.length ? Math.min(...ceilings) : sector.floor + 128) - 4;
     this.actions.set(sector.id, {kind: 'door', phase: 'up', target, base: sector.floor, wait: 0});
-    this._sound('DSDOROPN');
+    this._sectorSound('DSDOROPN', sector);
     return {type: 'door', sector: sector.id};
   }
 
-  _crossLine(line) {
+  _crossLine(line, actor = this.player) {
+    // p_spec.c allows monsters to retrigger type 88, but type 36 is player-only.
+    if (actor !== this.player && (!actor.enemy || line.special !== 88)) return;
     if (line.special === 36 && this._triggered.has(line.id)) return;
     const targets = this.map.sectors.filter(s => s.tag && s.tag === line.tag);
     for (const sector of targets) {
@@ -318,7 +337,7 @@ export class DoomGame {
       } else if (line.special === 88) {
         this.actions.set(sector.id, {kind: 'lift', phase: 'down', target: Math.min(sector.floor, ...floors), base: sector.floor, wait: 0});
       }
-      this._sound('DSPSTART', {x: (line.ax + line.bx) / 2, y: (line.ay + line.by) / 2, z: sector.floor});
+      this._sectorSound('DSPSTART', sector);
     }
   }
 
@@ -342,26 +361,26 @@ export class DoomGame {
           if (sector.ceiling >= action.target) { action.phase = 'wait'; action.wait = 150 / 35; }
         } else if (action.phase === 'wait') {
           action.wait -= dt;
-          if (action.wait <= 0) { action.phase = 'down'; this._sound('DSDORCLS'); }
+          if (action.wait <= 0) { action.phase = 'down'; this._sectorSound('DSDORCLS', sector); }
         } else {
           const next = Math.max(action.base, sector.ceiling - 70 * dt);
-          if (occupants.some(e => e.z + e.height > next)) { action.phase = 'up'; this._sound('DSDOROPN'); }
+          if (occupants.some(e => e.z + e.height > next)) { action.phase = 'up'; this._sectorSound('DSDOROPN', sector); }
           else { sector.ceiling = next; if (next <= action.base) this.actions.delete(id); }
         }
       } else if (action.kind === 'floor') {
         sector.floor = Math.max(action.target, sector.floor - action.speed * dt);
-        if (sector.floor <= action.target) { this.actions.delete(id); this._sound('DSPSTOP'); }
+        if (sector.floor <= action.target) { this.actions.delete(id); this._sectorSound('DSPSTOP', sector); }
       } else if (action.kind === 'lift') {
         if (action.phase === 'down') {
           sector.floor = Math.max(action.target, sector.floor - 140 * dt);
-          if (sector.floor <= action.target) { action.phase = 'wait'; action.wait = 3; this._sound('DSPSTOP'); }
+          if (sector.floor <= action.target) { action.phase = 'wait'; action.wait = 3; this._sectorSound('DSPSTOP', sector); }
         } else if (action.phase === 'wait') {
           action.wait -= dt;
-          if (action.wait <= 0) { action.phase = 'up'; this._sound('DSPSTART'); }
+          if (action.wait <= 0) { action.phase = 'up'; this._sectorSound('DSPSTART', sector); }
         } else {
           const next = Math.min(action.base, sector.floor + 140 * dt);
           if (occupants.some(e => sector.ceiling - next < e.height)) { action.phase = 'down'; }
-          else { sector.floor = next; if (next >= action.base) { this.actions.delete(id); this._sound('DSPSTOP'); } }
+          else { sector.floor = next; if (next >= action.base) { this.actions.delete(id); this._sectorSound('DSPSTOP', sector); } }
         }
       }
       if (sector.floor !== oldFloor) {
@@ -590,7 +609,7 @@ export class DoomGame {
         for (const line of this.nearbyLines(enemy.x, enemy.y, 32)) {
           if (line.special !== 1 || this.actions.has(line.back)) continue;
           const q = closestPointOnSegment(enemy.x, enemy.y, line.ax, line.ay, line.bx, line.by);
-          if (Math.hypot(q.x - enemy.x, q.y - enemy.y) < 28 && this.map.sectors[line.back].ceiling - this.map.sectors[line.back].floor < 56) this._openDoor(line);
+          if (Math.hypot(q.x - enemy.x, q.y - enemy.y) < 28 && this.map.sectors[line.back].ceiling - this.map.sectors[line.back].floor < 56) this._openDoor(line, enemy);
         }
       }
     }
@@ -657,7 +676,7 @@ export class DoomGame {
         this._gravity(p, h);
         if (input.fire) this.fire();
         const sector = this.map.sectors[p.sector];
-        if (sector.special === 9 && !this.visitedSecrets.has(sector.id)) {
+        if (sector.special === 9 && Math.abs(p.z - sector.floor) <= 0.1 && !this.visitedSecrets.has(sector.id)) {
           this.visitedSecrets.add(sector.id); this.secrets++; this.onMessage('Un secret a été découvert !'); this._sound('DSITEMUP');
         }
         if (sector.special === 7 && p.z <= sector.floor + 0.1) {

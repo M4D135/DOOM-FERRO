@@ -24,7 +24,7 @@
     "rgbaBytes": 1723392,
     "importedAssets": 0
   },
-  "modelMeshes": 41,
+  "modelMeshes": 55,
   "worldBillboards": 0,
   "modelVertexStride": 17,
   "materialCoordinates": "primitive-local surface coordinates preserved through pose transforms",
@@ -35,45 +35,53 @@
     "procedural HD albedo, tangent normal, roughness, metallic, AO, emission and height",
     "scene color/smooth-normal/depth targets",
     "12-sample screen contact AO and edge filtering",
-    "512px fitted view-weapon self-shadow combined with room shadow"
+    "512px fitted view-weapon self-shadow combined with room shadow",
+    "analytic distance haze; disabled in model studios"
   ],
   "textureMipBytes": 176357376,
   "mapTriangles": 2025,
   "sceneTriangles": {
     "base": 2025,
-    "door-open": 2029
+    "door-open": 2029,
+    "secret68-closed": 2025,
+    "secret68-open": 2029,
+    "secret69-open": 2025,
+    "secret70-low": 2025,
+    "secret70-high": 2025
   },
-  "adapterSha256": "142bed1aa2dc3c479b4a6c49f2d13bd14b715c3cc1117fd4d7aa63eb36df9df4",
+  "adapterSha256": "8b0bcc1fb87c8276b79fd3a16acdf91aa1961b6fc445ab2878e8120008dbc081",
   "sourceSha256": {
     "src/app.js": "f1b75fcd6f33a34dc352bc687b2b8cae5c92e5d4624e1258fdb522134ff21651",
     "src/e1m1-plan.js": "41c8ed8ce81db64bb5117cb6011b6c693c3745d5708f46a05681900393cce521",
-    "src/ferro-doom-renderer.js": "142bed1aa2dc3c479b4a6c49f2d13bd14b715c3cc1117fd4d7aa63eb36df9df4",
-    "src/game.js": "c7eab7a0c76b0dbd468209f76561b1cb17e250e88b0eb636a8c41838be4cd88f",
+    "src/ferro-doom-renderer.js": "8b0bcc1fb87c8276b79fd3a16acdf91aa1961b6fc445ab2878e8120008dbc081",
+    "src/game.js": "aaa3b48f14ad672f07d7fde76f8c002467d602e33bcd4a24ec14c93ecc9bfcfb",
     "src/input.js": "64c99b9f6f35adab712553c6572890107d83dd7770464581f635b7c3a6a0c1b8",
-    "src/procedural-anatomy.js": "d8a89395c7749361c5533192a6fe6a20712846f92183c6b9257e427df5c14226",
+    "src/procedural-anatomy.js": "c6795c121e15ee098a76e1529be8816772aa9e962e122658d9d28ea61c0188e9",
     "src/procedural-audio.js": "876369149bf422cf94cd00200fae4925f26bd2d88b311f7e819aa42546f70106",
-    "src/procedural-characters.js": "dbf73828383c73bb6d16aa8f128250efacb4558847f37e06e426e208d64fed41",
+    "src/procedural-characters.js": "6d08d3dd9a6faaec5c126e78023e9d836b5396a90fc0c76d0e1c3b1bde5ed928",
     "src/procedural-interface.js": "af287b0e0573e6432d1d41a7a3076c6335a84b2d807ca710e4c72e0c1a19de8a",
-    "src/procedural-lighting.js": "285bcee5b7220de5a776ffcd67007d01196b8130962223ac3790f86dd40693cb",
+    "src/procedural-lighting.js": "386ec4afda6fd66def7ce7c110d58a62e1e6eac1b8b09f653b70ccf1c91b75e8",
     "src/procedural-map.js": "1437769cd25117db4c9e9a7b067c193381dc3d85147e661f72ba4fbf58c3a06b",
     "src/procedural-materials.js": "64ed3877c4006d2e53652c9670831be6c3d208844ecdebf4374b26b94e458dee",
     "src/procedural-mesh.js": "f7c1c90ff94caa95c15e03e29878e8777c0b3a1b2ce39f7a1215b1f5e79b5890",
     "src/procedural-models.js": "1a7c06d40d4e4949f125f0ef54afb184c30c81eb29d23d1ea3d35af27b01f016",
-    "src/procedural-object-sculpt.js": "755387194c9049d1224be1fcee7923294c9b0d63d19e99ca1121b53398a2890c",
-    "src/procedural-objects.js": "bd88ff1fc6cf53d6e2920bc752ed66a35fd22215a3fceda57136e1a2be0f76ef",
+    "src/procedural-object-finish.js": "dc19036074d2da300a011697b042399fea8e0e7340218af021aad9f58d647c72",
+    "src/procedural-object-sculpt.js": "55aed8fd2343d630d7b21a0de54ed5212b4f9212a7e2cf855082186857a3a516",
+    "src/procedural-objects.js": "49dc29051ffcb389d0dd4fc798b44ff5ccc9ec5155360fcfbbd0bfc9e131018d",
     "src/procedural-raster.js": "3b372674f3004fbe0de245ae359f5895ce72a4bc48a515e4e3a55acbebe7bdb5",
+    "src/procedural-remains.js": "12c4f518a7971cb509eb39b9998adaecd7088b936d77d5e67bc3e124996b7366",
     "src/procedural-resources.js": "ab7d2a61b083b024e7c288202d4d289a5edcbecc7e5ca009c6c35bfe8537d558",
-    "src/procedural-shaders.js": "08fc706899d3de2d4515382bc256d0122f963cbbde876e6dedc4b8f0e3f87dc5",
+    "src/procedural-shaders.js": "dd26cd0d26941ce333d48b7d4c4191e3d5058bf4c4fb2605b5c52ceaa05250f3",
     "src/procedural-surface-detail.js": "67c3253e6391090cead7c0dcc9ef605abfad6c484a1ef5f555e1df1c8be6d8bf",
-    "src/procedural-weapons.js": "4738c651cfdbb4c675f453c4f8c92637a263e6f0e87e5bd0417d65d7268e17de"
+    "src/procedural-weapons.js": "a7c83e9550687cb47eaa606358e445da22e7f1db66cd4c60969a6df23bb9fd7b"
   },
   "shaderSha256": {
     "WORLD_VERTEX": "51cfbcbd50cdfac3e2d4bab23e70c61ab340bec8e6994a6750291d1ff3ed92d7",
-    "WORLD_FRAGMENT": "fccdca77f48a88bdac87b7baddd534e6251b070bd9d9f24800f1bb44dc6819d8",
-    "MODEL_VERTEX": "16e54084e9080ee4e60eb916008e7d78748c430403773b26a57bbcf1cd6172fd",
-    "MODEL_FRAGMENT": "02796e7494ae3d501991a335b5a7a8830faa66ae419e1bc2a34f213e52fc22f5",
+    "WORLD_FRAGMENT": "e1ca7bc4a405f86a79140939ddf28c48cfe3fc7494977f1b87173faecf277b6d",
+    "MODEL_VERTEX": "5335e1649f25800e5c4f4e670dc5d45ed2720d4d4d344e0988650c5940fecee4",
+    "MODEL_FRAGMENT": "4ee862b6e9b3f5a7656268f6f0f929c3ced0b45fb798ff21d5c82caec2c9273d",
     "SKY_VERTEX": "0619a596c2fddc0c3dc31b472ae2b4fd3cfa9bdca612db0c01d9f2a1d0cce430",
-    "SKY_FRAGMENT": "133eb30e4ea5734217455fbb64e56974ef2f57de3a26252fc7ca0cceb2462cd9",
+    "SKY_FRAGMENT": "a0a3c1f8154614e9ac3eb83e82fce6852752876780265924a47b6f620f1c9c7a",
     "SHADOW_VERTEX": "c66a7f0ef1c77eedd8efcbbabb62a5eb11c89d34279b509787c4b4559e84b782",
     "SHADOW_FRAGMENT": "11689ba39478c20d7bd15aa81c6c9adffc749a2662c67e2db4dbc13c9e63daa6",
     "POST_VERTEX": "7189975e906800c91a459c1ba958a4356d550ac59788940db271c81b5b44eddb",
@@ -90,11 +98,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 14996,
+      "uniqueColors": 5213,
       "meanRGB": [
-        32.9226845703125,
-        34.470955078125,
-        33.5570615234375
+        18.4370537109375,
+        21.939583984375,
+        21.365634765625
       ],
       "visibility": {
         "total": 91,
@@ -106,7 +114,7 @@
           0
         ]
       },
-      "submittedModelTriangles": 16276
+      "submittedModelTriangles": 18190
     },
     {
       "name": "spawn-west",
@@ -118,11 +126,11 @@
         "angle": 3.141592653589793,
         "pitch": 0
       },
-      "uniqueColors": 12871,
+      "uniqueColors": 11946,
       "meanRGB": [
-        26.422619140625,
-        26.3085966796875,
-        23.9798291015625
+        19.410421875,
+        21.260435546875,
+        18.65527734375
       ],
       "visibility": {
         "total": 91,
@@ -134,7 +142,7 @@
           0
         ]
       },
-      "submittedModelTriangles": 7726
+      "submittedModelTriangles": 7872
     },
     {
       "name": "courtyard",
@@ -146,11 +154,11 @@
         "angle": 3.141592653589793,
         "pitch": 0
       },
-      "uniqueColors": 22890,
+      "uniqueColors": 13319,
       "meanRGB": [
-        68.21301171875,
-        67.4687822265625,
-        63.40258203125
+        46.0826640625,
+        49.018212890625,
+        46.1342529296875
       ],
       "visibility": {
         "total": 91,
@@ -162,7 +170,7 @@
           0
         ]
       },
-      "submittedModelTriangles": 8884
+      "submittedModelTriangles": 8626
     },
     {
       "name": "start-hall",
@@ -174,11 +182,11 @@
         "angle": -1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 16943,
+      "uniqueColors": 6879,
       "meanRGB": [
-        19.349447265625,
-        20.325626953125,
-        22.4258037109375
+        13.7076142578125,
+        16.0575517578125,
+        17.613927734375
       ],
       "visibility": {
         "total": 91,
@@ -190,7 +198,7 @@
           1
         ]
       },
-      "submittedModelTriangles": 14182
+      "submittedModelTriangles": 19356
     },
     {
       "name": "shotgun-reload",
@@ -202,11 +210,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 15961,
+      "uniqueColors": 5984,
       "meanRGB": [
-        30.902890625,
-        32.60084375,
-        31.967525390625
+        17.189603515625,
+        20.6883203125,
+        20.3685185546875
       ],
       "visibility": {
         "total": 91,
@@ -218,7 +226,7 @@
           0
         ]
       },
-      "submittedModelTriangles": 16276
+      "submittedModelTriangles": 18190
     },
     {
       "name": "pistol-fire",
@@ -230,11 +238,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 40436,
+      "uniqueColors": 19187,
       "meanRGB": [
-        57.0314736328125,
-        51.0955478515625,
-        39.533935546875
+        44.8377861328125,
+        39.956751953125,
+        27.876251953125
       ],
       "visibility": {
         "total": 91,
@@ -246,7 +254,7 @@
           0
         ]
       },
-      "submittedModelTriangles": 16276
+      "submittedModelTriangles": 18190
     },
     {
       "name": "shotgun-fire",
@@ -258,11 +266,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 43907,
+      "uniqueColors": 23182,
       "meanRGB": [
-        58.204552734375,
-        52.2249638671875,
-        40.5927080078125
+        45.7887802734375,
+        40.890400390625,
+        28.8941875
       ],
       "visibility": {
         "total": 91,
@@ -274,7 +282,7 @@
           0
         ]
       },
-      "submittedModelTriangles": 16276
+      "submittedModelTriangles": 18190
     },
     {
       "name": "fist-punch",
@@ -286,11 +294,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 15609,
+      "uniqueColors": 5091,
       "meanRGB": [
-        36.8999501953125,
-        36.936935546875,
-        35.2313740234375
+        23.1550322265625,
+        24.9786962890625,
+        23.21255078125
       ],
       "visibility": {
         "total": 91,
@@ -302,7 +310,7 @@
           0
         ]
       },
-      "submittedModelTriangles": 16276
+      "submittedModelTriangles": 18190
     },
     {
       "name": "poss-front",
@@ -314,11 +322,11 @@
         "angle": -1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 18258,
+      "uniqueColors": 18803,
       "meanRGB": [
-        21.3088017578125,
-        22.9652685546875,
-        25.133828125
+        21.0859716796875,
+        22.7773212890625,
+        24.9007392578125
       ],
       "visibility": {
         "total": 1,
@@ -330,7 +338,7 @@
           1
         ]
       },
-      "submittedModelTriangles": 34332,
+      "submittedModelTriangles": 33596,
       "fixture": {
         "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
         "entity": {
@@ -365,11 +373,11 @@
         "angle": 3.141592653589793,
         "pitch": 0
       },
-      "uniqueColors": 10783,
+      "uniqueColors": 10898,
       "meanRGB": [
-        20.1717353515625,
-        21.92222265625,
-        24.39585546875
+        19.99956640625,
+        21.7765537109375,
+        24.2255302734375
       ],
       "visibility": {
         "total": 1,
@@ -381,7 +389,7 @@
           1
         ]
       },
-      "submittedModelTriangles": 34332,
+      "submittedModelTriangles": 33596,
       "fixture": {
         "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
         "entity": {
@@ -416,11 +424,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 12341,
+      "uniqueColors": 12853,
       "meanRGB": [
-        21.4309091796875,
-        23.1283662109375,
-        25.156
+        21.142408203125,
+        22.8750908203125,
+        24.8734892578125
       ],
       "visibility": {
         "total": 1,
@@ -432,7 +440,7 @@
           1
         ]
       },
-      "submittedModelTriangles": 34332,
+      "submittedModelTriangles": 33596,
       "fixture": {
         "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
         "entity": {
@@ -467,11 +475,11 @@
         "angle": -1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 14084,
+      "uniqueColors": 14374,
       "meanRGB": [
-        20.1367392578125,
-        21.6274169921875,
-        24.279509765625
+        20.0393486328125,
+        21.5396064453125,
+        24.1448896484375
       ],
       "visibility": {
         "total": 1,
@@ -483,7 +491,7 @@
           1
         ]
       },
-      "submittedModelTriangles": 30400,
+      "submittedModelTriangles": 30240,
       "fixture": {
         "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
         "entity": {
@@ -518,11 +526,11 @@
         "angle": 3.141592653589793,
         "pitch": 0
       },
-      "uniqueColors": 8142,
+      "uniqueColors": 8154,
       "meanRGB": [
-        19.53872265625,
-        21.1696806640625,
-        23.937333984375
+        19.4514921875,
+        21.0876796875,
+        23.8208154296875
       ],
       "visibility": {
         "total": 1,
@@ -534,7 +542,7 @@
           1
         ]
       },
-      "submittedModelTriangles": 30400,
+      "submittedModelTriangles": 30240,
       "fixture": {
         "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
         "entity": {
@@ -569,11 +577,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 8416,
+      "uniqueColors": 8443,
       "meanRGB": [
-        19.6566025390625,
-        21.2940283203125,
-        23.987203125
+        19.5847958984375,
+        21.225435546875,
+        23.8802529296875
       ],
       "visibility": {
         "total": 1,
@@ -585,7 +593,7 @@
           1
         ]
       },
-      "submittedModelTriangles": 30400,
+      "submittedModelTriangles": 30240,
       "fixture": {
         "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
         "entity": {
@@ -620,11 +628,11 @@
         "angle": -1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 14798,
+      "uniqueColors": 12838,
       "meanRGB": [
-        22.8701591796875,
-        22.99952734375,
-        24.3449189453125
+        21.8923671875,
+        22.43025,
+        24.0674169921875
       ],
       "visibility": {
         "total": 1,
@@ -636,7 +644,7 @@
           1
         ]
       },
-      "submittedModelTriangles": 25408,
+      "submittedModelTriangles": 25288,
       "fixture": {
         "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
         "entity": {
@@ -671,11 +679,11 @@
         "angle": 3.141592653589793,
         "pitch": 0
       },
-      "uniqueColors": 11434,
+      "uniqueColors": 9820,
       "meanRGB": [
-        20.7822353515625,
-        21.65869921875,
-        23.7066064453125
+        20.297458984375,
+        21.410939453125,
+        23.600123046875
       ],
       "visibility": {
         "total": 1,
@@ -687,7 +695,7 @@
           1
         ]
       },
-      "submittedModelTriangles": 25408,
+      "submittedModelTriangles": 25288,
       "fixture": {
         "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
         "entity": {
@@ -722,11 +730,11 @@
         "angle": 1.5707963267948966,
         "pitch": 0
       },
-      "uniqueColors": 12564,
+      "uniqueColors": 10944,
       "meanRGB": [
-        22.086546875,
-        22.3491650390625,
-        23.8891923828125
+        21.222091796875,
+        21.9012080078125,
+        23.700658203125
       ],
       "visibility": {
         "total": 1,
@@ -738,7 +746,7 @@
           1
         ]
       },
-      "submittedModelTriangles": 25408,
+      "submittedModelTriangles": 25288,
       "fixture": {
         "scope": "One fixed 3D actor, viewed from independent camera positions; no view-dependent bitmap or mesh substitution.",
         "entity": {
@@ -773,11 +781,11 @@
         "angle": -1.7894652726688387,
         "pitch": 0
       },
-      "uniqueColors": 30776,
+      "uniqueColors": 33730,
       "meanRGB": [
-        43.189267578125,
-        43.02948828125,
-        41.6982265625
+        40.931193359375,
+        40.9847412109375,
+        39.2907607421875
       ],
       "visibility": {
         "total": 1,
@@ -789,7 +797,7 @@
           1
         ]
       },
-      "submittedModelTriangles": 34332,
+      "submittedModelTriangles": 33596,
       "fixture": {
         "scope": "Close study of actual generated head geometry and procedural surface materials.",
         "entity": {
@@ -824,11 +832,11 @@
         "angle": -1.7894652726688387,
         "pitch": 0
       },
-      "uniqueColors": 25915,
+      "uniqueColors": 29423,
       "meanRGB": [
-        33.17684765625,
-        32.958041015625,
-        33.656095703125
+        32.5087666015625,
+        32.3194306640625,
+        32.6888486328125
       ],
       "visibility": {
         "total": 1,
@@ -840,7 +848,7 @@
           1
         ]
       },
-      "submittedModelTriangles": 30400,
+      "submittedModelTriangles": 30240,
       "fixture": {
         "scope": "Close study of actual generated head geometry and procedural surface materials.",
         "entity": {
@@ -875,11 +883,11 @@
         "angle": -1.7894652726688387,
         "pitch": 0
       },
-      "uniqueColors": 29081,
+      "uniqueColors": 26459,
       "meanRGB": [
-        43.8471728515625,
-        35.7472705078125,
-        29.9190849609375
+        38.154427734375,
+        32.2709228515625,
+        28.011244140625
       ],
       "visibility": {
         "total": 1,
@@ -891,7 +899,7 @@
           1
         ]
       },
-      "submittedModelTriangles": 25408,
+      "submittedModelTriangles": 25288,
       "fixture": {
         "scope": "Close study of actual generated head geometry and procedural surface materials.",
         "entity": {
@@ -926,11 +934,11 @@
         "angle": -2.214297435588181,
         "pitch": -0.20558016594179337
       },
-      "uniqueColors": 25251,
+      "uniqueColors": 21499,
       "meanRGB": [
-        33.5692265625,
-        38.154546875,
-        31.215357421875
+        31.495306640625,
+        35.917865234375,
+        29.9031181640625
       ],
       "visibility": {
         "total": 1,
@@ -942,7 +950,7 @@
           1
         ]
       },
-      "submittedModelTriangles": 4488,
+      "submittedModelTriangles": 6440,
       "fixture": {
         "scope": "Close three-quarter view of an actual generated prop; uniform studio sector light.",
         "entity": {
@@ -974,11 +982,11 @@
         "angle": -2.214297435588181,
         "pitch": -0.21760455032061152
       },
-      "uniqueColors": 5607,
+      "uniqueColors": 5354,
       "meanRGB": [
-        20.4980380859375,
-        22.5335263671875,
-        25.133705078125
+        20.5467783203125,
+        22.6213525390625,
+        25.212443359375
       ],
       "visibility": {
         "total": 1,
@@ -1022,11 +1030,11 @@
         "angle": -2.214297435588181,
         "pitch": -0.23922362462341276
       },
-      "uniqueColors": 12337,
+      "uniqueColors": 11831,
       "meanRGB": [
-        20.077587890625,
-        22.275486328125,
-        25.058373046875
+        20.360001953125,
+        22.575119140625,
+        25.3426552734375
       ],
       "visibility": {
         "total": 1,
@@ -1070,11 +1078,11 @@
         "angle": -2.214297435588181,
         "pitch": -0.12265557768657426
       },
-      "uniqueColors": 10037,
+      "uniqueColors": 10035,
       "meanRGB": [
-        39.8332578125,
-        41.920884765625,
-        43.7654736328125
+        37.18133984375,
+        39.3981142578125,
+        41.069400390625
       ],
       "visibility": {
         "total": 1,
@@ -1118,11 +1126,11 @@
         "angle": -2.214297435588181,
         "pitch": -0.20632900258513145
       },
-      "uniqueColors": 14951,
+      "uniqueColors": 13501,
       "meanRGB": [
-        17.904271484375,
-        20.1559140625,
-        39.412947265625
+        17.6773935546875,
+        19.961154296875,
+        39.0238330078125
       ],
       "visibility": {
         "total": 1,
@@ -1166,11 +1174,11 @@
         "angle": -2.214297435588181,
         "pitch": -0.1631925908121305
       },
-      "uniqueColors": 16822,
+      "uniqueColors": 16633,
       "meanRGB": [
-        31.6784501953125,
-        33.7736220703125,
-        34.462341796875
+        31.00707421875,
+        33.11296484375,
+        33.61128515625
       ],
       "visibility": {
         "total": 1,
@@ -1214,11 +1222,11 @@
         "angle": -2.214297435588181,
         "pitch": -0.10973523422859065
       },
-      "uniqueColors": 20720,
+      "uniqueColors": 18225,
       "meanRGB": [
-        20.675986328125,
-        30.3036953125,
-        24.50622265625
+        20.4356552734375,
+        29.2889423828125,
+        24.4557900390625
       ],
       "visibility": {
         "total": 1,
@@ -1262,11 +1270,11 @@
         "angle": -2.214297435588181,
         "pitch": -0.08326483844233427
       },
-      "uniqueColors": 8338,
+      "uniqueColors": 8235,
       "meanRGB": [
-        27.2273408203125,
-        28.3617890625,
-        29.688658203125
+        25.8867158203125,
+        27.124455078125,
+        28.55384765625
       ],
       "visibility": {
         "total": 1,
@@ -1301,6 +1309,150 @@
       }
     },
     {
+      "name": "playw-detail",
+      "image": "playw-detail-egl.png",
+      "camera": {
+        "x": 1086,
+        "y": -3576,
+        "z": 24,
+        "angle": -2.214297435588181,
+        "pitch": -0.3588334681147114
+      },
+      "uniqueColors": 17630,
+      "meanRGB": [
+        21.5033349609375,
+        22.08253515625,
+        25.03606640625
+      ],
+      "visibility": {
+        "total": 1,
+        "visible": 1,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          1
+        ]
+      },
+      "submittedModelTriangles": 10684,
+      "fixture": {
+        "scope": "Close three-quarter view of an actual generated prop; uniform studio sector light.",
+        "entity": {
+          "id": "PLAYW",
+          "type": 10,
+          "sprite": "PLAYWA0",
+          "fullbright": true,
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 639.99555858003,
+          "y": 450.7967936428034
+        },
+        "meshKeys": [
+          "object:PLAYW:0:d2"
+        ]
+      }
+    },
+    {
+      "name": "playn-detail",
+      "image": "playn-detail-egl.png",
+      "camera": {
+        "x": 1086,
+        "y": -3576,
+        "z": 24,
+        "angle": -2.214297435588181,
+        "pitch": -0.38141923589833426
+      },
+      "uniqueColors": 14333,
+      "meanRGB": [
+        20.607724609375,
+        22.850611328125,
+        24.9719521484375
+      ],
+      "visibility": {
+        "total": 1,
+        "visible": 1,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          1
+        ]
+      },
+      "submittedModelTriangles": 9684,
+      "fixture": {
+        "scope": "Close three-quarter view of an actual generated prop; uniform studio sector light.",
+        "entity": {
+          "id": "PLAYN",
+          "type": 15,
+          "sprite": "PLAYNA0",
+          "fullbright": true,
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 639.9955663406953,
+          "y": 437.81560526756226
+        },
+        "meshKeys": [
+          "object:PLAYN:0:d2"
+        ]
+      }
+    },
+    {
+      "name": "pol5-detail",
+      "image": "pol5-detail-egl.png",
+      "camera": {
+        "x": 1086,
+        "y": -3576,
+        "z": 24,
+        "angle": -2.214297435588181,
+        "pitch": -0.4180414626141114
+      },
+      "uniqueColors": 10139,
+      "meanRGB": [
+        20.1904248046875,
+        21.42923828125,
+        24.47584765625
+      ],
+      "visibility": {
+        "total": 1,
+        "visible": 1,
+        "culled": 0,
+        "lods": [
+          0,
+          0,
+          1
+        ]
+      },
+      "submittedModelTriangles": 6400,
+      "fixture": {
+        "scope": "Close three-quarter view of an actual generated prop; uniform studio sector light.",
+        "entity": {
+          "id": "POL5",
+          "type": 24,
+          "sprite": "POL5A0",
+          "fullbright": true,
+          "x": 1056,
+          "y": -3616,
+          "z": 0,
+          "angle": 1.5707963267948966
+        },
+        "anchorScreen": {
+          "x": 639.9955741001737,
+          "y": 416.844023776
+        },
+        "meshKeys": [
+          "object:POL5:0:d2"
+        ]
+      }
+    },
+    {
       "name": "door151-open",
       "image": "door151-open-egl.png",
       "camera": {
@@ -1310,11 +1462,11 @@
         "angle": 0,
         "pitch": 0
       },
-      "uniqueColors": 60928,
+      "uniqueColors": 39964,
       "meanRGB": [
-        141.8797451171875,
-        132.7045146484375,
-        111.0628818359375
+        91.224390625,
+        92.443705078125,
+        77.349228515625
       ],
       "visibility": {
         "total": 0,
@@ -1380,11 +1532,11 @@
         "angle": 0,
         "pitch": 0
       },
-      "uniqueColors": 68719,
+      "uniqueColors": 45975,
       "meanRGB": [
-        143.4226650390625,
-        133.458314453125,
-        110.970193359375
+        92.054458984375,
+        92.7384482421875,
+        77.149595703125
       ],
       "visibility": {
         "total": 1,
@@ -1396,7 +1548,7 @@
           1
         ]
       },
-      "submittedModelTriangles": 25408,
+      "submittedModelTriangles": 25288,
       "fixture": {
         "scope": "3D imp deliberately centred in doorway for an occlusion/anchor check; not a reproduced player encounter.",
         "door": {
@@ -1458,18 +1610,18 @@
           }
         ],
         "visibleActor": {
-          "pixels": 27037,
+          "pixels": 25678,
           "boundsXY": [
-            526,
-            338,
-            753,
-            596
+            541,
+            340,
+            738,
+            597
           ],
           "centroidXY": [
-            640.0949439656766,
-            480.71764618855644
+            640.1946413272061,
+            481.41482981540616
           ],
-          "pixelsInsideOpening": 27037,
+          "pixelsInsideOpening": 25678,
           "check": "Actor and shadow differences from the identical open-door baseline. Actor anchor and visible changes inside the opening checked; shadows can extend beyond jambs. Not a combat or AI test."
         }
       }
@@ -1484,11 +1636,11 @@
         "angle": 0,
         "pitch": 0
       },
-      "uniqueColors": 66733,
+      "uniqueColors": 44385,
       "meanRGB": [
-        142.3810419921875,
-        132.8123916015625,
-        110.8060849609375
+        91.4996650390625,
+        92.4517373046875,
+        77.1333291015625
       ],
       "visibility": {
         "total": 1,
@@ -1500,7 +1652,7 @@
           1
         ]
       },
-      "submittedModelTriangles": 25408,
+      "submittedModelTriangles": 25288,
       "fixture": {
         "scope": "3D imp deliberately centred in doorway for an occlusion/anchor check; not a reproduced player encounter.",
         "door": {
@@ -1562,19 +1714,1952 @@
           }
         ],
         "visibleActor": {
-          "pixels": 14249,
+          "pixels": 13824,
           "boundsXY": [
             575,
-            340,
-            700,
-            597
+            342,
+            688,
+            587
           ],
           "centroidXY": [
-            634.5562495613727,
-            482.45182118043374
+            633.7643229166666,
+            483.9089265046296
           ],
-          "pixelsInsideOpening": 14249,
+          "pixelsInsideOpening": 13824,
           "check": "Actor and shadow differences from the identical open-door baseline. Actor anchor and visible changes inside the opening checked; shadows can extend beyond jambs. Not a combat or AI test."
+        }
+      }
+    },
+    {
+      "name": "secret68-closed",
+      "image": "secret68-closed-egl.png",
+      "camera": {
+        "x": 2988,
+        "y": -3840,
+        "z": 17,
+        "angle": 3.141592653589793,
+        "pitch": 0
+      },
+      "uniqueColors": 1184,
+      "meanRGB": [
+        3.8414521484375,
+        3.6635087890625,
+        2.1837900390625
+      ],
+      "visibility": {
+        "total": 91,
+        "visible": 33,
+        "culled": 58,
+        "lods": [
+          27,
+          5,
+          1
+        ]
+      },
+      "submittedModelTriangles": 17718,
+      "fixture": {
+        "scope": "Inspection camera; secret mechanism operated by real use/crossing/update. Continuous gameplay is verified separately.",
+        "state": {
+          "heights": [
+            {
+              "floor": 0,
+              "ceiling": 72
+            },
+            {
+              "floor": 32,
+              "ceiling": 88
+            },
+            {
+              "floor": 0,
+              "ceiling": 144
+            },
+            {
+              "floor": 0,
+              "ceiling": 88
+            },
+            {
+              "floor": 0,
+              "ceiling": 0
+            },
+            {
+              "floor": -56,
+              "ceiling": 216
+            },
+            {
+              "floor": 32,
+              "ceiling": 88
+            },
+            {
+              "floor": 0,
+              "ceiling": 224
+            },
+            {
+              "floor": 8,
+              "ceiling": 152
+            },
+            {
+              "floor": 0,
+              "ceiling": 224
+            },
+            {
+              "floor": 0,
+              "ceiling": 96
+            },
+            {
+              "floor": 0,
+              "ceiling": 224
+            },
+            {
+              "floor": 0,
+              "ceiling": 96
+            },
+            {
+              "floor": -80,
+              "ceiling": 216
+            },
+            {
+              "floor": 8,
+              "ceiling": 192
+            },
+            {
+              "floor": 8,
+              "ceiling": 192
+            },
+            {
+              "floor": -136,
+              "ceiling": -40
+            },
+            {
+              "floor": -120,
+              "ceiling": 16
+            },
+            {
+              "floor": -104,
+              "ceiling": 16
+            },
+            {
+              "floor": -88,
+              "ceiling": 16
+            },
+            {
+              "floor": -56,
+              "ceiling": 24
+            },
+            {
+              "floor": -72,
+              "ceiling": 16
+            },
+            {
+              "floor": -56,
+              "ceiling": 64
+            },
+            {
+              "floor": -56,
+              "ceiling": 16
+            },
+            {
+              "floor": -8,
+              "ceiling": 224
+            },
+            {
+              "floor": 40,
+              "ceiling": 224
+            },
+            {
+              "floor": 56,
+              "ceiling": 224
+            },
+            {
+              "floor": 72,
+              "ceiling": 224
+            },
+            {
+              "floor": 0,
+              "ceiling": 128
+            },
+            {
+              "floor": 104,
+              "ceiling": 264
+            },
+            {
+              "floor": 0,
+              "ceiling": 264
+            },
+            {
+              "floor": 136,
+              "ceiling": 240
+            },
+            {
+              "floor": 128,
+              "ceiling": 264
+            },
+            {
+              "floor": 136,
+              "ceiling": 240
+            },
+            {
+              "floor": 136,
+              "ceiling": 240
+            },
+            {
+              "floor": 104,
+              "ceiling": 192
+            },
+            {
+              "floor": 88,
+              "ceiling": 224
+            },
+            {
+              "floor": -8,
+              "ceiling": 120
+            },
+            {
+              "floor": 0,
+              "ceiling": 72
+            },
+            {
+              "floor": -16,
+              "ceiling": 200
+            },
+            {
+              "floor": 0,
+              "ceiling": 72
+            },
+            {
+              "floor": -8,
+              "ceiling": 120
+            },
+            {
+              "floor": 8,
+              "ceiling": 224
+            },
+            {
+              "floor": 24,
+              "ceiling": 224
+            },
+            {
+              "floor": 40,
+              "ceiling": 184
+            },
+            {
+              "floor": 40,
+              "ceiling": 184
+            },
+            {
+              "floor": 0,
+              "ceiling": 136
+            },
+            {
+              "floor": -56,
+              "ceiling": 24
+            },
+            {
+              "floor": -136,
+              "ceiling": -40
+            },
+            {
+              "floor": -120,
+              "ceiling": 48
+            },
+            {
+              "floor": -104,
+              "ceiling": 48
+            },
+            {
+              "floor": 16,
+              "ceiling": 152
+            },
+            {
+              "floor": 24,
+              "ceiling": 152
+            },
+            {
+              "floor": -16,
+              "ceiling": 72
+            },
+            {
+              "floor": -8,
+              "ceiling": 72
+            },
+            {
+              "floor": -48,
+              "ceiling": 176
+            },
+            {
+              "floor": -24,
+              "ceiling": 176
+            },
+            {
+              "floor": -48,
+              "ceiling": 176
+            },
+            {
+              "floor": -48,
+              "ceiling": 104
+            },
+            {
+              "floor": 96,
+              "ceiling": 176
+            },
+            {
+              "floor": -24,
+              "ceiling": 176
+            },
+            {
+              "floor": -48,
+              "ceiling": 176
+            },
+            {
+              "floor": 104,
+              "ceiling": 184
+            },
+            {
+              "floor": -88,
+              "ceiling": 48
+            },
+            {
+              "floor": -72,
+              "ceiling": 48
+            },
+            {
+              "floor": -56,
+              "ceiling": 48
+            },
+            {
+              "floor": -40,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": -24
+            },
+            {
+              "floor": -48,
+              "ceiling": 32
+            },
+            {
+              "floor": 104,
+              "ceiling": 184
+            },
+            {
+              "floor": -24,
+              "ceiling": 176
+            },
+            {
+              "floor": -24,
+              "ceiling": 104
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": -24
+            },
+            {
+              "floor": -136,
+              "ceiling": -24
+            },
+            {
+              "floor": -24,
+              "ceiling": 72
+            },
+            {
+              "floor": -24,
+              "ceiling": 56
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": -24
+            },
+            {
+              "floor": -24,
+              "ceiling": 88
+            },
+            {
+              "floor": -24,
+              "ceiling": 72
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            }
+          ],
+          "actions": [],
+          "player": {
+            "x": 2988,
+            "y": -3840,
+            "z": -24,
+            "sector": 56
+          },
+          "time": 0
+        }
+      }
+    },
+    {
+      "name": "secret68-open",
+      "image": "secret68-open-egl.png",
+      "camera": {
+        "x": 2988,
+        "y": -3840,
+        "z": 17,
+        "angle": 3.141592653589793,
+        "pitch": 0
+      },
+      "uniqueColors": 6004,
+      "meanRGB": [
+        26.285955078125,
+        23.120185546875,
+        15.4024892578125
+      ],
+      "visibility": {
+        "total": 91,
+        "visible": 33,
+        "culled": 58,
+        "lods": [
+          27,
+          5,
+          1
+        ]
+      },
+      "submittedModelTriangles": 17718,
+      "fixture": {
+        "scope": "Inspection camera; secret mechanism operated by real use/crossing/update. Continuous gameplay is verified separately.",
+        "state": {
+          "heights": [
+            {
+              "floor": 0,
+              "ceiling": 72
+            },
+            {
+              "floor": 32,
+              "ceiling": 88
+            },
+            {
+              "floor": 0,
+              "ceiling": 144
+            },
+            {
+              "floor": 0,
+              "ceiling": 88
+            },
+            {
+              "floor": 0,
+              "ceiling": 0
+            },
+            {
+              "floor": -56,
+              "ceiling": 216
+            },
+            {
+              "floor": 32,
+              "ceiling": 88
+            },
+            {
+              "floor": 0,
+              "ceiling": 224
+            },
+            {
+              "floor": 8,
+              "ceiling": 152
+            },
+            {
+              "floor": 0,
+              "ceiling": 224
+            },
+            {
+              "floor": 0,
+              "ceiling": 96
+            },
+            {
+              "floor": 0,
+              "ceiling": 224
+            },
+            {
+              "floor": 0,
+              "ceiling": 96
+            },
+            {
+              "floor": -80,
+              "ceiling": 216
+            },
+            {
+              "floor": 8,
+              "ceiling": 192
+            },
+            {
+              "floor": 8,
+              "ceiling": 192
+            },
+            {
+              "floor": -136,
+              "ceiling": -40
+            },
+            {
+              "floor": -120,
+              "ceiling": 16
+            },
+            {
+              "floor": -104,
+              "ceiling": 16
+            },
+            {
+              "floor": -88,
+              "ceiling": 16
+            },
+            {
+              "floor": -56,
+              "ceiling": 24
+            },
+            {
+              "floor": -72,
+              "ceiling": 16
+            },
+            {
+              "floor": -56,
+              "ceiling": 64
+            },
+            {
+              "floor": -56,
+              "ceiling": 16
+            },
+            {
+              "floor": -8,
+              "ceiling": 224
+            },
+            {
+              "floor": 40,
+              "ceiling": 224
+            },
+            {
+              "floor": 56,
+              "ceiling": 224
+            },
+            {
+              "floor": 72,
+              "ceiling": 224
+            },
+            {
+              "floor": 0,
+              "ceiling": 128
+            },
+            {
+              "floor": 104,
+              "ceiling": 264
+            },
+            {
+              "floor": 0,
+              "ceiling": 264
+            },
+            {
+              "floor": 136,
+              "ceiling": 240
+            },
+            {
+              "floor": 128,
+              "ceiling": 264
+            },
+            {
+              "floor": 136,
+              "ceiling": 240
+            },
+            {
+              "floor": 136,
+              "ceiling": 240
+            },
+            {
+              "floor": 104,
+              "ceiling": 192
+            },
+            {
+              "floor": 88,
+              "ceiling": 224
+            },
+            {
+              "floor": -8,
+              "ceiling": 120
+            },
+            {
+              "floor": 0,
+              "ceiling": 72
+            },
+            {
+              "floor": -16,
+              "ceiling": 200
+            },
+            {
+              "floor": 0,
+              "ceiling": 72
+            },
+            {
+              "floor": -8,
+              "ceiling": 120
+            },
+            {
+              "floor": 8,
+              "ceiling": 224
+            },
+            {
+              "floor": 24,
+              "ceiling": 224
+            },
+            {
+              "floor": 40,
+              "ceiling": 184
+            },
+            {
+              "floor": 40,
+              "ceiling": 184
+            },
+            {
+              "floor": 0,
+              "ceiling": 136
+            },
+            {
+              "floor": -56,
+              "ceiling": 24
+            },
+            {
+              "floor": -136,
+              "ceiling": -40
+            },
+            {
+              "floor": -120,
+              "ceiling": 48
+            },
+            {
+              "floor": -104,
+              "ceiling": 48
+            },
+            {
+              "floor": 16,
+              "ceiling": 152
+            },
+            {
+              "floor": 24,
+              "ceiling": 152
+            },
+            {
+              "floor": -16,
+              "ceiling": 72
+            },
+            {
+              "floor": -8,
+              "ceiling": 72
+            },
+            {
+              "floor": -48,
+              "ceiling": 176
+            },
+            {
+              "floor": -24,
+              "ceiling": 176
+            },
+            {
+              "floor": -48,
+              "ceiling": 176
+            },
+            {
+              "floor": -48,
+              "ceiling": 104
+            },
+            {
+              "floor": 96,
+              "ceiling": 176
+            },
+            {
+              "floor": -24,
+              "ceiling": 176
+            },
+            {
+              "floor": -48,
+              "ceiling": 176
+            },
+            {
+              "floor": 104,
+              "ceiling": 184
+            },
+            {
+              "floor": -88,
+              "ceiling": 48
+            },
+            {
+              "floor": -72,
+              "ceiling": 48
+            },
+            {
+              "floor": -56,
+              "ceiling": 48
+            },
+            {
+              "floor": -40,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": 44
+            },
+            {
+              "floor": -48,
+              "ceiling": 32
+            },
+            {
+              "floor": 104,
+              "ceiling": 184
+            },
+            {
+              "floor": -24,
+              "ceiling": 176
+            },
+            {
+              "floor": -24,
+              "ceiling": 104
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": -24
+            },
+            {
+              "floor": -136,
+              "ceiling": -24
+            },
+            {
+              "floor": -24,
+              "ceiling": 72
+            },
+            {
+              "floor": -24,
+              "ceiling": 56
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": -24
+            },
+            {
+              "floor": -24,
+              "ceiling": 88
+            },
+            {
+              "floor": -24,
+              "ceiling": 72
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            }
+          ],
+          "actions": [
+            {
+              "sector": 68,
+              "kind": "door",
+              "phase": "wait",
+              "target": 44,
+              "base": -24,
+              "wait": 4.242857142857143
+            }
+          ],
+          "player": {
+            "x": 2988,
+            "y": -3840,
+            "z": -24,
+            "sector": 56
+          },
+          "time": 1.0142857142857127
+        }
+      }
+    },
+    {
+      "name": "secret69-open",
+      "image": "secret69-open-egl.png",
+      "camera": {
+        "x": 3424,
+        "y": -3856,
+        "z": -7,
+        "angle": 3.141592653589793,
+        "pitch": 0
+      },
+      "uniqueColors": 21682,
+      "meanRGB": [
+        34.0870234375,
+        39.5648662109375,
+        31.69826171875
+      ],
+      "visibility": {
+        "total": 91,
+        "visible": 56,
+        "culled": 35,
+        "lods": [
+          41,
+          12,
+          3
+        ]
+      },
+      "submittedModelTriangles": 46788,
+      "fixture": {
+        "scope": "Inspection camera; secret mechanism operated by real use/crossing/update. Continuous gameplay is verified separately.",
+        "state": {
+          "heights": [
+            {
+              "floor": 0,
+              "ceiling": 72
+            },
+            {
+              "floor": 32,
+              "ceiling": 88
+            },
+            {
+              "floor": 0,
+              "ceiling": 144
+            },
+            {
+              "floor": 0,
+              "ceiling": 88
+            },
+            {
+              "floor": 0,
+              "ceiling": 0
+            },
+            {
+              "floor": -56,
+              "ceiling": 216
+            },
+            {
+              "floor": 32,
+              "ceiling": 88
+            },
+            {
+              "floor": 0,
+              "ceiling": 224
+            },
+            {
+              "floor": 8,
+              "ceiling": 152
+            },
+            {
+              "floor": 0,
+              "ceiling": 224
+            },
+            {
+              "floor": 0,
+              "ceiling": 96
+            },
+            {
+              "floor": 0,
+              "ceiling": 224
+            },
+            {
+              "floor": 0,
+              "ceiling": 96
+            },
+            {
+              "floor": -80,
+              "ceiling": 216
+            },
+            {
+              "floor": 8,
+              "ceiling": 192
+            },
+            {
+              "floor": 8,
+              "ceiling": 192
+            },
+            {
+              "floor": -136,
+              "ceiling": -40
+            },
+            {
+              "floor": -120,
+              "ceiling": 16
+            },
+            {
+              "floor": -104,
+              "ceiling": 16
+            },
+            {
+              "floor": -88,
+              "ceiling": 16
+            },
+            {
+              "floor": -56,
+              "ceiling": 24
+            },
+            {
+              "floor": -72,
+              "ceiling": 16
+            },
+            {
+              "floor": -56,
+              "ceiling": 64
+            },
+            {
+              "floor": -56,
+              "ceiling": 16
+            },
+            {
+              "floor": -8,
+              "ceiling": 224
+            },
+            {
+              "floor": 40,
+              "ceiling": 224
+            },
+            {
+              "floor": 56,
+              "ceiling": 224
+            },
+            {
+              "floor": 72,
+              "ceiling": 224
+            },
+            {
+              "floor": 0,
+              "ceiling": 128
+            },
+            {
+              "floor": 104,
+              "ceiling": 264
+            },
+            {
+              "floor": 0,
+              "ceiling": 264
+            },
+            {
+              "floor": 136,
+              "ceiling": 240
+            },
+            {
+              "floor": 128,
+              "ceiling": 264
+            },
+            {
+              "floor": 136,
+              "ceiling": 240
+            },
+            {
+              "floor": 136,
+              "ceiling": 240
+            },
+            {
+              "floor": 104,
+              "ceiling": 192
+            },
+            {
+              "floor": 88,
+              "ceiling": 224
+            },
+            {
+              "floor": -8,
+              "ceiling": 120
+            },
+            {
+              "floor": 0,
+              "ceiling": 72
+            },
+            {
+              "floor": -16,
+              "ceiling": 200
+            },
+            {
+              "floor": 0,
+              "ceiling": 72
+            },
+            {
+              "floor": -8,
+              "ceiling": 120
+            },
+            {
+              "floor": 8,
+              "ceiling": 224
+            },
+            {
+              "floor": 24,
+              "ceiling": 224
+            },
+            {
+              "floor": 40,
+              "ceiling": 184
+            },
+            {
+              "floor": 40,
+              "ceiling": 184
+            },
+            {
+              "floor": 0,
+              "ceiling": 136
+            },
+            {
+              "floor": -56,
+              "ceiling": 24
+            },
+            {
+              "floor": -136,
+              "ceiling": -40
+            },
+            {
+              "floor": -120,
+              "ceiling": 48
+            },
+            {
+              "floor": -104,
+              "ceiling": 48
+            },
+            {
+              "floor": 16,
+              "ceiling": 152
+            },
+            {
+              "floor": 24,
+              "ceiling": 152
+            },
+            {
+              "floor": -16,
+              "ceiling": 72
+            },
+            {
+              "floor": -8,
+              "ceiling": 72
+            },
+            {
+              "floor": -48,
+              "ceiling": 176
+            },
+            {
+              "floor": -24,
+              "ceiling": 176
+            },
+            {
+              "floor": -48,
+              "ceiling": 176
+            },
+            {
+              "floor": -48,
+              "ceiling": 104
+            },
+            {
+              "floor": -40,
+              "ceiling": 176
+            },
+            {
+              "floor": -24,
+              "ceiling": 176
+            },
+            {
+              "floor": -48,
+              "ceiling": 176
+            },
+            {
+              "floor": 104,
+              "ceiling": 184
+            },
+            {
+              "floor": -88,
+              "ceiling": 48
+            },
+            {
+              "floor": -72,
+              "ceiling": 48
+            },
+            {
+              "floor": -56,
+              "ceiling": 48
+            },
+            {
+              "floor": -40,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": -24
+            },
+            {
+              "floor": -48,
+              "ceiling": 32
+            },
+            {
+              "floor": 104,
+              "ceiling": 184
+            },
+            {
+              "floor": -24,
+              "ceiling": 176
+            },
+            {
+              "floor": -24,
+              "ceiling": 104
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": -24
+            },
+            {
+              "floor": -136,
+              "ceiling": -24
+            },
+            {
+              "floor": -24,
+              "ceiling": 72
+            },
+            {
+              "floor": -24,
+              "ceiling": 56
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": -24
+            },
+            {
+              "floor": -24,
+              "ceiling": 88
+            },
+            {
+              "floor": -24,
+              "ceiling": 72
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            }
+          ],
+          "actions": [],
+          "player": {
+            "x": 3008,
+            "y": -4240.000000000011,
+            "z": -24,
+            "sector": 72
+          },
+          "time": 1.7999999999999956
+        }
+      }
+    },
+    {
+      "name": "secret70-low",
+      "image": "secret70-low-egl.png",
+      "camera": {
+        "x": 3488,
+        "y": -3872,
+        "z": -7,
+        "angle": 0,
+        "pitch": 0
+      },
+      "uniqueColors": 1583,
+      "meanRGB": [
+        5.5730029296875,
+        7.6654658203125,
+        6.1593291015625
+      ],
+      "visibility": {
+        "total": 91,
+        "visible": 2,
+        "culled": 89,
+        "lods": [
+          0,
+          1,
+          1
+        ]
+      },
+      "submittedModelTriangles": 3876,
+      "fixture": {
+        "scope": "Inspection camera; secret mechanism operated by real use/crossing/update. Continuous gameplay is verified separately.",
+        "state": {
+          "heights": [
+            {
+              "floor": 0,
+              "ceiling": 72
+            },
+            {
+              "floor": 32,
+              "ceiling": 88
+            },
+            {
+              "floor": 0,
+              "ceiling": 144
+            },
+            {
+              "floor": 0,
+              "ceiling": 88
+            },
+            {
+              "floor": 0,
+              "ceiling": 0
+            },
+            {
+              "floor": -56,
+              "ceiling": 216
+            },
+            {
+              "floor": 32,
+              "ceiling": 88
+            },
+            {
+              "floor": 0,
+              "ceiling": 224
+            },
+            {
+              "floor": 8,
+              "ceiling": 152
+            },
+            {
+              "floor": 0,
+              "ceiling": 224
+            },
+            {
+              "floor": 0,
+              "ceiling": 96
+            },
+            {
+              "floor": 0,
+              "ceiling": 224
+            },
+            {
+              "floor": 0,
+              "ceiling": 96
+            },
+            {
+              "floor": -80,
+              "ceiling": 216
+            },
+            {
+              "floor": 8,
+              "ceiling": 192
+            },
+            {
+              "floor": 8,
+              "ceiling": 192
+            },
+            {
+              "floor": -136,
+              "ceiling": -40
+            },
+            {
+              "floor": -120,
+              "ceiling": 16
+            },
+            {
+              "floor": -104,
+              "ceiling": 16
+            },
+            {
+              "floor": -88,
+              "ceiling": 16
+            },
+            {
+              "floor": -56,
+              "ceiling": 24
+            },
+            {
+              "floor": -72,
+              "ceiling": 16
+            },
+            {
+              "floor": -56,
+              "ceiling": 64
+            },
+            {
+              "floor": -56,
+              "ceiling": 16
+            },
+            {
+              "floor": -8,
+              "ceiling": 224
+            },
+            {
+              "floor": 40,
+              "ceiling": 224
+            },
+            {
+              "floor": 56,
+              "ceiling": 224
+            },
+            {
+              "floor": 72,
+              "ceiling": 224
+            },
+            {
+              "floor": 0,
+              "ceiling": 128
+            },
+            {
+              "floor": 104,
+              "ceiling": 264
+            },
+            {
+              "floor": 0,
+              "ceiling": 264
+            },
+            {
+              "floor": 136,
+              "ceiling": 240
+            },
+            {
+              "floor": 128,
+              "ceiling": 264
+            },
+            {
+              "floor": 136,
+              "ceiling": 240
+            },
+            {
+              "floor": 136,
+              "ceiling": 240
+            },
+            {
+              "floor": 104,
+              "ceiling": 192
+            },
+            {
+              "floor": 88,
+              "ceiling": 224
+            },
+            {
+              "floor": -8,
+              "ceiling": 120
+            },
+            {
+              "floor": 0,
+              "ceiling": 72
+            },
+            {
+              "floor": -16,
+              "ceiling": 200
+            },
+            {
+              "floor": 0,
+              "ceiling": 72
+            },
+            {
+              "floor": -8,
+              "ceiling": 120
+            },
+            {
+              "floor": 8,
+              "ceiling": 224
+            },
+            {
+              "floor": 24,
+              "ceiling": 224
+            },
+            {
+              "floor": 40,
+              "ceiling": 184
+            },
+            {
+              "floor": 40,
+              "ceiling": 184
+            },
+            {
+              "floor": 0,
+              "ceiling": 136
+            },
+            {
+              "floor": -56,
+              "ceiling": 24
+            },
+            {
+              "floor": -136,
+              "ceiling": -40
+            },
+            {
+              "floor": -120,
+              "ceiling": 48
+            },
+            {
+              "floor": -104,
+              "ceiling": 48
+            },
+            {
+              "floor": 16,
+              "ceiling": 152
+            },
+            {
+              "floor": 24,
+              "ceiling": 152
+            },
+            {
+              "floor": -16,
+              "ceiling": 72
+            },
+            {
+              "floor": -8,
+              "ceiling": 72
+            },
+            {
+              "floor": -48,
+              "ceiling": 176
+            },
+            {
+              "floor": -24,
+              "ceiling": 176
+            },
+            {
+              "floor": -48,
+              "ceiling": 176
+            },
+            {
+              "floor": -48,
+              "ceiling": 104
+            },
+            {
+              "floor": -40,
+              "ceiling": 176
+            },
+            {
+              "floor": -24,
+              "ceiling": 176
+            },
+            {
+              "floor": -48,
+              "ceiling": 176
+            },
+            {
+              "floor": 104,
+              "ceiling": 184
+            },
+            {
+              "floor": -88,
+              "ceiling": 48
+            },
+            {
+              "floor": -72,
+              "ceiling": 48
+            },
+            {
+              "floor": -56,
+              "ceiling": 48
+            },
+            {
+              "floor": -40,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": -24
+            },
+            {
+              "floor": -48,
+              "ceiling": 32
+            },
+            {
+              "floor": -48,
+              "ceiling": 184
+            },
+            {
+              "floor": -24,
+              "ceiling": 176
+            },
+            {
+              "floor": -24,
+              "ceiling": 104
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": -24
+            },
+            {
+              "floor": -136,
+              "ceiling": -24
+            },
+            {
+              "floor": -24,
+              "ceiling": 72
+            },
+            {
+              "floor": -24,
+              "ceiling": 56
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": -24
+            },
+            {
+              "floor": -24,
+              "ceiling": 88
+            },
+            {
+              "floor": -24,
+              "ceiling": 72
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            }
+          ],
+          "actions": [
+            {
+              "sector": 70,
+              "kind": "lift",
+              "phase": "wait",
+              "target": -48,
+              "base": 104,
+              "wait": 2.7285714285714295
+            }
+          ],
+          "player": {
+            "x": 2896,
+            "y": -2999.999999999996,
+            "z": -24,
+            "sector": 60
+          },
+          "time": 3.2999999999999905
+        }
+      }
+    },
+    {
+      "name": "secret70-high",
+      "image": "secret70-high-egl.png",
+      "camera": {
+        "x": 3648,
+        "y": -3808,
+        "z": 145,
+        "angle": 1.5707963267948966,
+        "pitch": 0
+      },
+      "uniqueColors": 1204,
+      "meanRGB": [
+        6.411857421875,
+        8.4745009765625,
+        8.1387451171875
+      ],
+      "visibility": {
+        "total": 91,
+        "visible": 27,
+        "culled": 64,
+        "lods": [
+          20,
+          5,
+          2
+        ]
+      },
+      "submittedModelTriangles": 22190,
+      "fixture": {
+        "scope": "Inspection camera; secret mechanism operated by real use/crossing/update. Continuous gameplay is verified separately.",
+        "state": {
+          "heights": [
+            {
+              "floor": 0,
+              "ceiling": 72
+            },
+            {
+              "floor": 32,
+              "ceiling": 88
+            },
+            {
+              "floor": 0,
+              "ceiling": 144
+            },
+            {
+              "floor": 0,
+              "ceiling": 88
+            },
+            {
+              "floor": 0,
+              "ceiling": 0
+            },
+            {
+              "floor": -56,
+              "ceiling": 216
+            },
+            {
+              "floor": 32,
+              "ceiling": 88
+            },
+            {
+              "floor": 0,
+              "ceiling": 224
+            },
+            {
+              "floor": 8,
+              "ceiling": 152
+            },
+            {
+              "floor": 0,
+              "ceiling": 224
+            },
+            {
+              "floor": 0,
+              "ceiling": 96
+            },
+            {
+              "floor": 0,
+              "ceiling": 224
+            },
+            {
+              "floor": 0,
+              "ceiling": 96
+            },
+            {
+              "floor": -80,
+              "ceiling": 216
+            },
+            {
+              "floor": 8,
+              "ceiling": 192
+            },
+            {
+              "floor": 8,
+              "ceiling": 192
+            },
+            {
+              "floor": -136,
+              "ceiling": -40
+            },
+            {
+              "floor": -120,
+              "ceiling": 16
+            },
+            {
+              "floor": -104,
+              "ceiling": 16
+            },
+            {
+              "floor": -88,
+              "ceiling": 16
+            },
+            {
+              "floor": -56,
+              "ceiling": 24
+            },
+            {
+              "floor": -72,
+              "ceiling": 16
+            },
+            {
+              "floor": -56,
+              "ceiling": 64
+            },
+            {
+              "floor": -56,
+              "ceiling": 16
+            },
+            {
+              "floor": -8,
+              "ceiling": 224
+            },
+            {
+              "floor": 40,
+              "ceiling": 224
+            },
+            {
+              "floor": 56,
+              "ceiling": 224
+            },
+            {
+              "floor": 72,
+              "ceiling": 224
+            },
+            {
+              "floor": 0,
+              "ceiling": 128
+            },
+            {
+              "floor": 104,
+              "ceiling": 264
+            },
+            {
+              "floor": 0,
+              "ceiling": 264
+            },
+            {
+              "floor": 136,
+              "ceiling": 240
+            },
+            {
+              "floor": 128,
+              "ceiling": 264
+            },
+            {
+              "floor": 136,
+              "ceiling": 240
+            },
+            {
+              "floor": 136,
+              "ceiling": 240
+            },
+            {
+              "floor": 104,
+              "ceiling": 192
+            },
+            {
+              "floor": 88,
+              "ceiling": 224
+            },
+            {
+              "floor": -8,
+              "ceiling": 120
+            },
+            {
+              "floor": 0,
+              "ceiling": 72
+            },
+            {
+              "floor": -16,
+              "ceiling": 200
+            },
+            {
+              "floor": 0,
+              "ceiling": 72
+            },
+            {
+              "floor": -8,
+              "ceiling": 120
+            },
+            {
+              "floor": 8,
+              "ceiling": 224
+            },
+            {
+              "floor": 24,
+              "ceiling": 224
+            },
+            {
+              "floor": 40,
+              "ceiling": 184
+            },
+            {
+              "floor": 40,
+              "ceiling": 184
+            },
+            {
+              "floor": 0,
+              "ceiling": 136
+            },
+            {
+              "floor": -56,
+              "ceiling": 24
+            },
+            {
+              "floor": -136,
+              "ceiling": -40
+            },
+            {
+              "floor": -120,
+              "ceiling": 48
+            },
+            {
+              "floor": -104,
+              "ceiling": 48
+            },
+            {
+              "floor": 16,
+              "ceiling": 152
+            },
+            {
+              "floor": 24,
+              "ceiling": 152
+            },
+            {
+              "floor": -16,
+              "ceiling": 72
+            },
+            {
+              "floor": -8,
+              "ceiling": 72
+            },
+            {
+              "floor": -48,
+              "ceiling": 176
+            },
+            {
+              "floor": -24,
+              "ceiling": 176
+            },
+            {
+              "floor": -48,
+              "ceiling": 176
+            },
+            {
+              "floor": -48,
+              "ceiling": 104
+            },
+            {
+              "floor": -40,
+              "ceiling": 176
+            },
+            {
+              "floor": -24,
+              "ceiling": 176
+            },
+            {
+              "floor": -48,
+              "ceiling": 176
+            },
+            {
+              "floor": 104,
+              "ceiling": 184
+            },
+            {
+              "floor": -88,
+              "ceiling": 48
+            },
+            {
+              "floor": -72,
+              "ceiling": 48
+            },
+            {
+              "floor": -56,
+              "ceiling": 48
+            },
+            {
+              "floor": -40,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": -24
+            },
+            {
+              "floor": -48,
+              "ceiling": 32
+            },
+            {
+              "floor": 104,
+              "ceiling": 184
+            },
+            {
+              "floor": -24,
+              "ceiling": 176
+            },
+            {
+              "floor": -24,
+              "ceiling": 104
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": -24
+            },
+            {
+              "floor": -136,
+              "ceiling": -24
+            },
+            {
+              "floor": -24,
+              "ceiling": 72
+            },
+            {
+              "floor": -24,
+              "ceiling": 56
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            },
+            {
+              "floor": -24,
+              "ceiling": -24
+            },
+            {
+              "floor": -24,
+              "ceiling": 88
+            },
+            {
+              "floor": -24,
+              "ceiling": 72
+            },
+            {
+              "floor": -24,
+              "ceiling": 48
+            }
+          ],
+          "actions": [],
+          "player": {
+            "x": 3553.7142857142812,
+            "y": -3872,
+            "z": 104,
+            "sector": 70
+          },
+          "time": 7.628571428571404
         }
       }
     }

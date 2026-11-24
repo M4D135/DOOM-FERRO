@@ -27,18 +27,20 @@ export function roundedBoxDistance(x,y,z,c,r,bevel=.15){
 /** A continuous dual-grid surface of a deterministic analytic scalar field.
  * One averaged surface vertex per active cell makes adjacent cells share their
  * positions and gradient normals without a six-tetrahedra triangle explosion. */
-export function implicitMesh(key,{bounds,resolution=[34,46,38],distance,color,material='skin',emissive=0}){
-  const [nx,ny,nz]=resolution,[lo,hi]=bounds,dx=(hi[0]-lo[0])/nx,dy=(hi[1]-lo[1])/ny,dz=(hi[2]-lo[2])/nz;
+export function implicitMesh(key,{bounds,resolution=[34,46,38],axisPositions=null,distance,color,material='skin',emissive=0}){
+  const [lo,hi]=bounds,axes=resolution.map((n,k)=>axisPositions?.[k]||Array.from({length:n+1},(_,i)=>mix(lo[k],hi[k],i/n)));
+  for(const a of axes)if(a.length<3||a.some((v,i)=>!Number.isFinite(v)||i&&v<=a[i-1]))throw Error('Invalid sculpt sampling axis');
+  const [nx,ny,nz]=axes.map(a=>a.length-1),spacing=axes.map(a=>Math.min(...a.slice(1).map((v,i)=>v-a[i])));
   const sx=nx+1,sy=ny+1,plane=sx*sy,total=plane*(nz+1),field=new Float32Array(total);
   const index=(x,y,z)=>x+sx*y+plane*z;
   for(let z=0;z<=nz;z++)for(let y=0;y<=ny;y++)for(let x=0;x<=nx;x++){
-    const value=distance(lo[0]+x*dx,lo[1]+y*dy,lo[2]+z*dz);
+    const value=distance(axes[0][x],axes[1][y],axes[2][z]);
     if(!Number.isFinite(value))throw Error('Non-finite procedural sculpt field');
     field[index(x,y,z)]=value;
   }
   const mat=typeof material==='string'?MATERIALS[material]:{...MATERIALS[material.kind],...material};
   if(!mat)throw Error('Unknown sculpt material');
-  const data=[],epsilon=Math.min(dx,dy,dz)*.16,cells=new Array(nx*ny*nz);
+  const data=[],epsilon=Math.min(...spacing)*.16,cells=new Array(nx*ny*nz);
   const cellIndex=(x,y,z)=>x+nx*y+nx*ny*z;
   const gradient=(x,y,z)=>[distance(x+epsilon,y,z)-distance(x-epsilon,y,z),
     distance(x,y+epsilon,z)-distance(x,y-epsilon,z),distance(x,y,z+epsilon)-distance(x,y,z-epsilon)];
@@ -63,13 +65,14 @@ export function implicitMesh(key,{bounds,resolution=[34,46,38],distance,color,ma
     const ids=offsets.map(o=>index(x+o[0],y+o[1],z+o[2])),p=[0,0,0];let count=0;
     for(const [a,b]of edges){
       const va=field[ids[a]],vb=field[ids[b]];if((va<0)===(vb<0))continue;
-      const t=va/(va-vb);for(let k=0;k<3;k++)p[k]+=mix(offsets[a][k],offsets[b][k],t);count++;
+      const t=va/(va-vb),cell=[x,y,z];for(let k=0;k<3;k++)p[k]+=mix(axes[k][cell[k]+offsets[a][k]],axes[k][cell[k]+offsets[b][k]],t);count++;
     }
     if(!count)continue;
-    p[0]=lo[0]+(x+p[0]/count)*dx;p[1]=lo[1]+(y+p[1]/count)*dy;p[2]=lo[2]+(z+p[2]/count)*dz;
+    for(let k=0;k<3;k++)p[k]/=count;
     const n=gradient(...p),length=Math.hypot(...n)||1,d=distance(...p);
     // A restrained projection preserves rounded fingertips at modest sampling.
-    for(let k=0;k<3;k++)p[k]-=n[k]/length*clamp(d,-Math.min(dx,dy,dz)*.2,Math.min(dx,dy,dz)*.2);
+    const cellStep=Math.min(axes[0][x+1]-axes[0][x],axes[1][y+1]-axes[1][y],axes[2][z+1]-axes[2][z]);
+    for(let k=0;k<3;k++)p[k]-=n[k]/length*clamp(d,-cellStep*.2,cellStep*.2);
     cells[cellIndex(x,y,z)]=makeVertex(p);
   }
   const quad=(positions)=>{const [a,b,c,d]=positions.map(p=>cells[cellIndex(...p)]);triangle(a,b,c);triangle(a,c,d);};
@@ -83,6 +86,19 @@ export function implicitMesh(key,{bounds,resolution=[34,46,38],distance,color,ma
   for(let i=0;i<vertices.length;i+=MESH_VERTEX_STRIDE)for(let k=0;k<3;k++){min[k]=Math.min(min[k],vertices[i+k]);max[k]=Math.max(max[k],vertices[i+k]);}
   if(!vertices.length)throw Error('Empty procedural sculpt');
   return{key,vertices,stride:MESH_VERTEX_STRIDE,triangles:vertices.length/(MESH_VERTEX_STRIDE*3),bounds:{min,max}};
+}
+
+/** Bend one joined sculpt along Y. Its inverse-transpose Jacobian preserves the
+ * actual surface normals; there is no separately capped wrist or arm to overlap.
+ * The curve returns [offsetX, offsetZ, derivativeX, derivativeZ]. */
+export function bendSculpt(mesh,curve){
+  const v=mesh.vertices,min=[Infinity,Infinity,Infinity],max=[-Infinity,-Infinity,-Infinity];
+  for(let i=0;i<v.length;i+=MESH_VERTEX_STRIDE){
+    const [x,z,dx,dz]=curve(v[i+1]),nx=v[i+3],ny=v[i+4]-dx*nx-dz*v[i+5],nz=v[i+5],length=Math.hypot(nx,ny,nz)||1;
+    v[i]+=x;v[i+2]+=z;v[i+3]=nx/length;v[i+4]=ny/length;v[i+5]=nz/length;
+    for(let k=0;k<3;k++){min[k]=Math.min(min[k],v[i+k]);max[k]=Math.max(max[k],v[i+k]);}
+  }
+  mesh.bounds={min,max};return mesh;
 }
 
 /** A continuous rounded section swept along a Catmull-Rom centreline.

@@ -7,6 +7,26 @@ const sub=(a,b)=>a.map((v,i)=>v-b[i]),cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0
 const norm=v=>{const l=Math.hypot(...v)||1;return v.map(x=>x/l);};
 const mix=(a,b,t)=>a.map((v,i)=>v+(b[i]-v)*t),gauss=(x,s)=>Math.exp(-((x/s)**2));
 const tone=(c,f)=>c.map(x=>x*f);
+
+/** Rest-space skin pigmentation. The same field follows a bent limb instead
+ * of swimming with the camera or becoming an attached decal. Broad mottling
+ * does the useful work at game distance; fine grain only breaks uniformity. */
+export function dermalColour(p,color,demonic=false){
+  const[x,y,z]=p;
+  const broad=Math.sin(x*.73+Math.sin(z*.39+y*.31))*Math.sin(z*.62-y*.83);
+  const grain=Math.sin(x*5.3+Math.sin(z*4.1))*Math.sin(z*6.9+y*2.7);
+  let c=tone(color,1+broad*(demonic?.075:.033)+grain*.011);
+  if(demonic){
+    const crease=gauss(Math.sin(z*.86+x*.37+Math.sin(y*.6)),.18);
+    c=mix(c,[64,45,30],crease*.11);
+  }else{
+    const bruise=gauss(x-1.55*Math.sin(z*.42+y*.19),.75)*gauss(Math.sin(z*.36+.9),.29);
+    c=mix(c,[105,111,96],bruise*.16);
+    const vessel=gauss(x-(.62*Math.sin(z*.68)+.24*Math.sin(z*1.8)),.055)*gauss(z-12,8);
+    c=mix(c,[92,107,96],vessel*.16);
+  }
+  return c;
+}
 function sampleProfile(points,z){
   if(z<=points[0][0])return points[0].slice(1);
   if(z>=points.at(-1)[0])return points.at(-1).slice(1);
@@ -73,8 +93,14 @@ export function anatomicalLoft(profile,{detail=2,color=[170,138,110],material='s
   return revolution(point,(p,a,t)=>colours?colours(p,a,t):color,rows??[7,14,34][detail],columns??[8,16,32][detail],key,material);
 }
 
+/** Evaluate the actual front envelope so attached cloth can follow it. */
+export function anatomicalFront(profile,x,z,deform=null){
+  const [rx,front,,cy=0]=sampleProfile(profile,z),a=Math.acos(clamp(x/Math.max(.02,rx),-.99999,.99999));
+  const p=[x,cy+Math.sin(a)*front,z];return(deform?deform(p,a,0):p)[1];
+}
+
 /** Smooth closed finger/arm along a Bézier-like centre curve, not a bead chain. */
-export function anatomicalSweep(path,radii,{detail=2,color=[170,138,110],material='skin',fold=0,rows=null,columns=null,key='anatomical-sweep'}={}){
+export function anatomicalSweep(path,radii,{detail=2,color=[170,138,110],material='skin',fold=0,colours=null,rows=null,columns=null,key='anatomical-sweep'}={}){
   const sample=t=>{
     const u=t*(path.length-1),i=Math.min(path.length-2,Math.floor(u)),v=u-i,a=path[i],b=path[i+1],p=path[Math.max(0,i-1)],n=path[Math.min(path.length-1,i+2)];
     const point=a.map((x,k)=>.5*(2*x+(-p[k]+b[k])*v+(2*p[k]-5*x+4*b[k]-n[k])*v*v+(-p[k]+3*x-3*b[k]+n[k])*v*v*v));
@@ -87,7 +113,7 @@ export function anatomicalSweep(path,radii,{detail=2,color=[170,138,110],materia
     const ripple=1+fold*Math.sin(t*TAU*6+Math.sin(angle*3)*.5)*Math.sin(Math.PI*t)**2;
     return p.map((x,k)=>x+(u[k]*Math.cos(angle)+v[k]*Math.sin(angle)*.9)*r*ripple);
   };
-  return revolution(point,()=>color,rows??[4,8,16][detail],columns??[5,8,12][detail],key,material);
+  return revolution(point,(p,a,t)=>colours?colours(p,a,t):color,rows??[4,8,16][detail],columns??[5,8,12][detail],key,material);
 }
 
 /** Thin sewn or folded cloth with a curved front and a closed reverse. */
@@ -141,23 +167,25 @@ function ear(side,d,skin){
 }
 
 function eyeMesh(x,z,faceAt,skin,d,demonic=false){
-  const b=new MeshBuilder(),e=new Surface('skin'),white=new Surface('glass'),size=demonic?.78:.65,height=demonic?.19:.185;
-  const y=faceAt(x,z)+.27,cols=[8,12,26][d],rings=[1,2,5][d],sclera=demonic?[159,73,25]:[187,184,165];
+  const b=new MeshBuilder(),e=new Surface('skin'),white=new Surface('glass'),size=demonic?.70:.61,height=demonic?.16:.125;
+  const side=Math.sign(x),y=faceAt(x,z)+.22,cols=[8,12,26][d],rings=[1,2,5][d],sclera=demonic?[128,45,15]:[145,148,126];
+  const lidTilt=demonic?.10:.07;
   // A convex almond patch exposes only the part of the globe between the lids.
   // There is no complete white bead protruding through the orbit in profile.
-  const visible=(a,r)=>[x+Math.cos(a)*size*r,y+.10-.18*r*r,z+Math.sin(a)*height*r*(1-.20*Math.abs(Math.cos(a)))];
+  const visible=(a,r)=>[x+Math.cos(a)*size*r,y+.085-.16*r*r,z+Math.sin(a)*height*r*(1-.20*Math.abs(Math.cos(a)))+side*Math.cos(a)*size*r*lidTilt];
   const gridWhite=[];
   for(let r=0;r<=rings;r++){
     const row=[];for(let i=0;i<=cols;i++){
       const a=i*TAU/cols,t=Math.max(.001,r/rings),p=visible(a,t);
-      row.push({p,n:norm([(p[0]-x)*.45,1,(p[2]-z)*1.2]),c:sclera});
+      const edge=gauss(Math.abs(Math.cos(a)*t)-.90,.2);
+      row.push({p,n:norm([(p[0]-x)*.45,1,(p[2]-z)*1.2]),c:mix(sclera,demonic?[110,29,12]:[125,67,57],edge*.34)});
     }gridWhite.push(row);
   }
   for(let r=0;r<rings;r++)for(let i=0;i<cols;i++){white.triangle(gridWhite[r][i],gridWhite[r+1][i],gridWhite[r+1][i+1]);white.triangle(gridWhite[r][i],gridWhite[r+1][i+1],gridWhite[r][i+1]);}
   b.add(white.finish('visible-sclera'));
   const point=(a,t)=>{
-    const width=size+t*.32,h=height+t*(Math.sin(a)>0?.34:.29),xx=x+Math.cos(a)*width,zz=z+Math.sin(a)*h*(1-.20*Math.abs(Math.cos(a)));
-    const outer=faceAt(xx,zz)+.012,inner=y-.08,bulge=.035*Math.sin(t*Math.PI);
+    const width=size+t*.34,h=height+t*(Math.sin(a)>0?.36:.29),xx=x+Math.cos(a)*width,zz=z+Math.sin(a)*h*(1-.20*Math.abs(Math.cos(a)))+side*(xx-x)*lidTilt;
+    const outer=faceAt(xx,zz)+.012,inner=y-.075,bulge=(Math.sin(a)>0?.065:.035)*Math.sin(t*Math.PI);
     return [xx,inner+(outer-inner)*t+bulge,zz];
   };
   const grid=[];
@@ -165,108 +193,142 @@ function eyeMesh(x,z,faceAt,skin,d,demonic=false){
     const line=[];for(let i=0;i<=cols;i++){
       const a=i*TAU/cols,t=row/rings,p=point(a,t),da=sub(point(a+.0001,t),point(a-.0001,t)),dt=sub(point(a,Math.min(1,t+.0001)),point(a,Math.max(0,t-.0001)));
       let n=norm(cross(da,dt));if(n[1]<0)n=n.map(v=>-v);
-      line.push({p,n,c:mix([skin[0]*.91,skin[1]*.79,skin[2]*.78],skin,Math.min(1,t*3.2))});
+      const rim=demonic?[70,37,22]:[107,80,70];
+      line.push({p,n,c:mix(rim,dermalColour(p,skin,demonic),Math.min(1,t*1.8))});
     }grid.push(line);
   }
   for(let r=0;r<rings;r++)for(let c=0;c<cols;c++){e.triangle(grid[r][c],grid[r][c+1],grid[r+1][c+1]);e.triangle(grid[r][c],grid[r+1][c+1],grid[r+1][c]);}
   b.add(e.finish('eyelids'));
-  const iris=demonic?.15:.155,pupil=demonic?.055:.065;
-  b.cylinder([x,y+.092,z],[x,y+.109,z],iris,demonic?[230,57,4]:[65,61,43],{segments:[6,12,24][d],material:'glass',emissive:demonic?.14:0});
-  b.cylinder([x,y+.11,z],[x,y+.114,z],pupil,[9,10,8],{segments:[6,10,20][d],material:'glass'});
-  if(d===2)for(let i=0;i<12;i++){
-    const a=i*TAU/12,pa=[x+Math.cos(a)*iris*.57,y+.112,z+Math.sin(a)*iris*.57],pb=[x+Math.cos(a)*iris*.94,y+.112,z+Math.sin(a)*iris*.94];
-    b.cylinder(pa,pb,.008,demonic?[241,130,28]:[104+i%3*8,88,48],{segments:3,material:'glass'});
+  // Iris fibres are a continuous corneal patch, not dozens of tiny rods.
+  // Its vertical radius fits behind the narrow lids, so it cannot protrude.
+  const iris=new Surface('glass'),ir=demonic?.17:.18,iz=height*.92,segments=[8,14,26][d],bands=[2,3,5][d],eyeGrid=[];
+  for(let ring=0;ring<=bands;ring++){
+    const line=[],r=Math.max(.001,ring/bands);
+    for(let i=0;i<=segments;i++){
+      const a=i*TAU/segments,xx=x+Math.cos(a)*ir*r,zz=z+Math.sin(a)*iz*r+side*(xx-x)*lidTilt;
+      const pupil=r<(demonic?.34:.29),fibre=.86+.14*Math.sin(a*13+r*5)**2;
+      let c=pupil?[12,14,11]:tone(demonic?[231,76,9]:[112,118,91],fibre);
+      if(r>.82)c=mix(c,demonic?[120,31,8]:[65,73,53],(r-.82)*3);
+      line.push({p:[xx,y+.09+.012*(1-r*r),zz],n:[0,1,0],c,emissive:demonic&&!pupil?.105:0});
+    }eyeGrid.push(line);
   }
+  for(let r=0;r<bands;r++)for(let i=0;i<segments;i++){
+    iris.triangle(eyeGrid[r][i],eyeGrid[r+1][i],eyeGrid[r+1][i+1]);
+    iris.triangle(eyeGrid[r][i],eyeGrid[r+1][i+1],eyeGrid[r][i+1]);
+  }
+  b.add(iris.finish('recessed-iris'));
   return b.finish('orbital-eye');
 }
 
 export function sculptedHead(guard,d,dead=false,imp=false,open=false){
-  const b=new MeshBuilder(),skin=imp?[125,82,46]:guard?[184,139,115]:[180,157,136];
-  const profile=imp?[[-2.3,1.55,1.6,2.2,-2.5],[0,1.80,1.70,2.10,-.30],[1.2,2.55,2.75,2.45,0],[2.4,3.05,2.80,2.6,.1],[4.4,3.30,2.55,2.8,0],[6.4,3.8,2.55,2.9,-.1],[7.7,3.9,2.7,2.95,-.2],[8.8,3.3,2.2,2.5,-.3],[9.6,1.60,1.50,1.60,-.3],[9.9,.04,.04,.04,-.3]]:
-    [[-1.9,1.63,1.4,1.55,-.7],[-.1,1.65,1.45,1.6,-.6],[1.1,2.0,2.25,1.7,-.35],[2.2,2.7,2.4,2.05,-.15],[4.2,3.18,2.28,2.75,0],[5.8,3.18,2.06,3.0,0],[7.4,3.18,2.65,3.0,-.1],[8.7,2.85,2.65,2.65,-.14],[9.55,1.75,1.8,1.8,-.14],[9.9,.05,.05,.05,-.14]];
-  const z0=profile[0][0],zHeight=profile.at(-1)[0]-z0,mouthZ=imp?(open?3.6:3.7):3.0,mouthH=imp?(open?1.50:.62):(dead?.36:.16),mouthW=imp?1.90:1.28;
+  const b=new MeshBuilder(),skin=imp?[108,76,44]:guard?[170,129,102]:[163,146,121];
+  // The cranium, cheek, masseter, jaw and neck are one envelope. Distinct
+  // profiles keep the bald shotgun guard from being the rifleman with no hair.
+  const profile=imp?[[-2.3,1.55,1.55,2.2,-2.6],[-.3,1.62,1.72,2.20,-.55],[.75,2.15,2.25,2.35,-.05],[1.8,2.82,2.55,2.55,.12],[3.9,3.30,2.45,2.65,.04],[5.7,3.38,2.26,2.85,-.20],[7.1,3.78,2.65,2.96,-.38],[8.5,3.33,2.58,2.90,-.40],[9.5,1.70,1.72,1.86,-.40],[9.9,.04,.04,.04,-.40]]:
+    [[-1.9,1.54,1.35,1.55,-.74],[-.1,1.49,1.30,1.62,-.64],[1.0,1.85,2.22,1.72,-.32],[2.0,guard?2.75:2.48,2.37,2.12,-.17],[3.8,3.05,2.08,2.66,-.02],[5.1,3.23,2.16,2.86,0],[6.4,3.07,2.18,2.98,-.10],[7.7,3.18,2.62,2.98,-.17],[8.9,2.64,2.54,2.56,-.20],[9.62,1.40,1.53,1.57,-.20],[9.9,.05,.05,.05,-.20]];
+  const z0=profile[0][0],zHeight=profile.at(-1)[0]-z0,mouthZ=imp?(open?3.50:3.68):2.98,mouthH=imp?(open?1.55:1.08):(dead?.51:.38),mouthW=imp?1.83:guard?1.37:1.28;
+  const mouthCurve=x=>-.10*(x/mouthW)**2+(imp?.018:guard?-.062:.075)*x;
   const deformation=(x,z)=>{
     let y=0;
-    const ax=Math.abs(x),eyes=imp?1.40:1.24,eyeZ=imp?6.75:5.95;
-    y-=.46*gauss(ax-eyes,.80)*gauss(z-eyeZ,.55);
-    y+=(imp?.76:.29)*gauss(ax-eyes,1.00)*gauss(z-(eyeZ+.60),.40);
-    y+=.20*gauss(x,.35)*gauss(z-(eyeZ+.4),.8);
-    y+=(imp?.70:.42)*gauss(ax-1.9,.75)*gauss(z-4.9,.72);
-    y-=(imp?.44:.20)*gauss(ax-2.15,.55)*gauss(z-3.65,.72);
-    y+=(imp?.48:.58)*gauss(x,.39)*gauss(z-5.25,1.05);
-    y+=(imp?.78:.92)*gauss(x,imp?.79:.50)*gauss(z-4.36,.43);
-    y+=.35*gauss(ax-.5,.23)*gauss(z-4.16,.22);
-    y-=.23*gauss(ax-.4,.12)*gauss(z-4.06,.095);
-    y+=.15*gauss(x,1.2)*gauss(z-3.45,.62);
-    const curve=-.07*(x/mouthW)**2,dz=z-mouthZ-curve,localH=mouthH*Math.sqrt(Math.max(.02,1-(x/mouthW)**2));
-    y-=(imp?1.20:.58)*Math.exp(-((x/mouthW)**4)-((dz/Math.max(.04,localH))**4));
-    y+=(imp?.19:.13)*gauss(x,mouthW)*gauss(dz-localH,imp?.19:.12);
-    y+=(imp?.23:.18)*gauss(x,mouthW)*gauss(dz+localH,imp?.22:.14);
-    y+=(imp?.35:.38)*gauss(x,1.25)*gauss(z-(imp?1.4:1.8),.52);
-    const naso=.55+.32*(4.1-z);y-=.075*gauss(ax-naso,.09)*gauss(z-3.7,.55);
+    const ax=Math.abs(x),eyes=imp?1.40:1.24,eyeZ=imp?6.62:5.96;
+    y-=(imp?.61:.53)*gauss(ax-eyes,.77)*gauss(z-eyeZ,.53);
+    y+=(imp?.87:.40)*gauss(ax-eyes,.93)*gauss(z-(eyeZ+.48+.11*ax),.32);
+    y+=(imp?.30:.21)*gauss(x,.34)*gauss(z-(eyeZ+.53),.73);
+    y-=(imp?.18:.22)*gauss(ax-2.66,.42)*gauss(z-6.85,.74); // temples
+    y+=(imp?.68:.55)*gauss(ax-1.98,.66)*gauss(z-4.96,.56); // cheekbone
+    y-=(imp?.57:.42)*gauss(ax-2.08,.51)*gauss(z-3.78,.72);
+    y+=(imp?.19:.31)*gauss(ax-2.10,.55)*gauss(z-2.31,.52); // masseter
+    y+=(imp?.40:.64)*gauss(x,.36)*gauss(z-5.27,.88);
+    y+=(imp?.54:.83)*gauss(x,imp?.74:.48)*gauss(z-4.48,.35);
+    y+=(imp?.24:.31)*gauss(ax-.47,.24)*gauss(z-4.25,.22);
+    y-=.23*gauss(ax-.40,.13)*gauss(z-4.13,.11);
+    y+=.15*gauss(x,1.2)*gauss(z-3.58,.55);
+    const dz=z-mouthZ-mouthCurve(x),localH=mouthH*Math.sqrt(Math.max(.02,1-(x/mouthW)**2));
+    y-=(imp?1.50:.84)*Math.exp(-((x/mouthW)**4)-((dz/Math.max(.04,localH))**4));
+    y+=(imp?.17:.12)*gauss(x,mouthW)*gauss(dz-localH,imp?.19:.12);
+    y+=(imp?.25:.16)*gauss(x,mouthW)*gauss(dz+localH,imp?.22:.14);
+    y+=(imp?.36:.44)*gauss(x,1.17)*gauss(z-(imp?1.25:1.72),.44);
+    const naso=.62+.41*(4.22-z);y-=.12*gauss(ax-naso,.13)*gauss(z-3.73,.63);
+    y-=.08*gauss(x,.16)*gauss(z-3.76,.23); // philtrum
+    if(!imp){
+      y-=.07*gauss(x-(guard?-2.37:2.37),.22)*gauss(z-4.52,.78);
+      y+=.11*gauss(ax-(.85+.18*(1-z)),.18)*gauss(z+.55,1.35); // neck tendons
+    }
     if(d===2){
-      y-=.015*Math.pow(.5+.5*Math.cos(z*10+x*.2),4)*gauss(z-7.55,.58)*gauss(x,2.2);
-      y-=.045*gauss(ax-2.20,.20)*gauss(z-eyeZ,.32);
-      if(imp)y-=.07*gauss(ax-(1.9+.18*(z-4)),.12)*gauss(z-5.2,1.5);
+      y-=.024*Math.pow(.5+.5*Math.cos(z*9+x*.35),4)*gauss(z-7.63,.56)*gauss(x,2.3);
+      y-=.06*gauss(ax-2.18,.16)*gauss(z-eyeZ,.32);
+      y-=.045*gauss(ax-.33,.095)*gauss(z-6.98,.5);
+      if(imp)y-=.10*gauss(ax-(1.85+.16*(z-4)),.16)*gauss(z-5.13,1.45);
     }
     return y;
   };
   const point=(a,t)=>{
     const z=z0+t*zHeight,[rx,front,back,cy]=sampleProfile(profile,z),x=Math.cos(a)*Math.max(.02,rx),s=Math.sin(a);
     const frontal=Math.pow(Math.max(0,s),5);let y=cy+s*(s>=0?front:back)+deformation(x,z)*frontal;
-    if(imp)y+=.055*Math.sin(z*2.8+x*.9)*frontal*gauss(z-7.7,1.3);
+    if(imp)y+=.075*Math.sin(z*2.8+x*.9)*frontal*gauss(z-7.7,1.3);
     return [x,y,z];
   };
   const faceAt=(x,z)=>{const [rx]=sampleProfile(profile,z);return point(Math.acos(clamp(x/Math.max(.02,rx),-.99999,.99999)),clamp((z-z0)/zHeight,0,1))[1];};
   const colours=(p,a)=>{
-    const[x,y,z]=p,front=Math.max(0,Math.sin(a)),ax=Math.abs(x),dz=z-mouthZ+.07*(x/mouthW)**2,localH=mouthH*Math.sqrt(Math.max(.02,1-(x/mouthW)**2));
-    let color=skin.slice();const mottled=.5+.5*Math.sin(x*5.8+Math.sin(z*6.1))*Math.sin(z*8.7-x*3.1);
+    const[x,y,z]=p,front=Math.max(0,Math.sin(a)),ax=Math.abs(x),dz=z-mouthZ-mouthCurve(x),localH=mouthH*Math.sqrt(Math.max(.02,1-(x/mouthW)**2));
+    let color=dermalColour(p,skin,imp);const mottled=.5+.5*Math.sin(x*5.8+Math.sin(z*6.1))*Math.sin(z*8.7-x*3.1);
     const blush=gauss(ax-2.0,.8)*gauss(z-4.9,.75)+.55*gauss(x,.7)*gauss(z-4.2,.5);
     color=color.map((c,k)=>c*(.982+.022*mottled)*(1+(k===0?.035:-.035)*blush*front));
     const cavity=clamp((1-(x/mouthW)**4-(dz/localH)**4)*6,0,1)*front**8;
-    color=mix(color,imp?[31,14,10]:[63,31,27],cavity);
-    const nostril=gauss(ax-.4,.13)*gauss(z-4.05,.11)*front**8;color=mix(color,imp?[32,20,13]:[67,38,30],nostril*.85);
+    color=mix(color,imp?[20,12,8]:[43,22,19],cavity);
+    const nostril=gauss(ax-.4,.14)*gauss(z-4.13,.12)*front**8;color=mix(color,imp?[28,19,12]:[56,33,26],nostril*.9);
     const lip=gauss(x,mouthW)*Math.max(gauss(dz-localH,.13),gauss(dz+localH,.16))*front**8;
-    color=mix(color,imp?[100,49,31]:[139,84,72],lip*.65);
+    color=mix(color,imp?[76,36,24]:[115,61,52],lip*.72);
     if(!imp){
-      const socket=gauss(ax-1.24,.9)*gauss(z-5.95,.65)*front**5;color=mix(color,[133,111,99],socket*.33);
-      const stubble=gauss(z-2.4,1.2)*front*(.35+.65*gauss(ax-1.5,1.6));color=mix(color,[101,105,91],stubble*(guard?.14:.11));
+      const socket=gauss(ax-1.24,.84)*gauss(z-5.95,.66)*front**5;color=mix(color,[86,77,65],socket*.53);
+      const hollow=gauss(ax-2.10,.56)*gauss(z-3.8,.73)*front**4;color=mix(color,[103,100,80],hollow*.29);
+      const stubble=gauss(z-2.4,1.2)*front*(.35+.65*gauss(ax-1.5,1.6));color=mix(color,[87,95,78],stubble*(guard?.19:.16));
       const gash=gauss(x-(guard?-2.55:2.55),.30)*gauss(z-4.65,.88)*front;
-      color=mix(color,[94,31,24],gash*(.7+.3*mottled));
+      color=mix(color,[88,32,25],gash*(.65+.35*mottled));
+      const blood=gauss(x-(guard?-.68:.75)-.16*Math.sin(z*3),.28)*gauss(z-2.37,.95)*front**8;
+      color=mix(color,[87,31,22],blood*.68);
       if(dead)color=mix(color,[97,48,36],gauss(x-.5,1)*gauss(z-3.6,1.3)*front*.6);
+    }else{
+      const orbit=gauss(ax-1.40,.92)*gauss(z-6.62,.73)*front**5;
+      color=mix(color,[48,32,21],orbit*.43);
+      const muzzle=gauss(x,1.95)*gauss(z-3.53,1.63)*front**7;
+      color=mix(color,[80,47,27],muzzle*.24);
     }
     return color;
   };
-  b.add(revolution(point,colours,[imp?8:10,22,66][d],[imp?10:12,24,64][d],'continuous-sculpted-head',{kind:'skin',roughness:imp?.79:.71}));
+  // Spend the existing angular samples on the face, where a nose, orbit and
+  // lip need them. The back of the cranium stays smooth with fewer samples.
+  const faceAngle=a=>a+(d===2?.32:0)*Math.cos(a);
+  b.add(revolution((a,t)=>point(faceAngle(a),t),(p,a,t)=>colours(p,faceAngle(a),t),[imp?8:10,22,66][d],[imp?10:12,24,64][d],'continuous-sculpted-head',{kind:'skin',roughness:imp?.86:.79}));
   if(!imp)for(const side of[-1,1])b.add(ear(side,d,skin));
   for(const side of[-1,1]){
-    const x=side*(imp?1.40:1.24),z=imp?6.75:5.95;b.add(eyeMesh(x,z,faceAt,skin,d,imp));
+    const x=side*(imp?1.40:1.24),z=imp?6.62:5.96;b.add(eyeMesh(x,z,faceAt,skin,d,imp));
     if(d&&!imp){
       const brow=new MeshBuilder(),colour=imp?[76,46,27]:guard?[75,57,42]:[56,66,35];
-      const points=Array.from({length:d===2?9:4},(_,i)=>{const u=i/(d===2?8:3),xx=side*(.52+1.73*u),zz=(imp?7.27:6.54)-.09*Math.sin(u*Math.PI)+.11*u;return[xx,faceAt(xx,zz)+.035,zz];});
-      brow.add(anatomicalSweep(points,points.map((_,i)=>.032+.07*Math.sin(Math.PI*(i+.4)/(points.length))),{detail:d,color:colour,material:'cloth',rows:d===2?16:5,columns:5}));b.add(brow.finish('brows'));
+      const points=Array.from({length:d===2?9:4},(_,i)=>{const u=i/(d===2?8:3),xx=side*(.52+1.73*u),zz=6.31+.39*u-.055*Math.sin(u*Math.PI);return[xx,faceAt(xx,zz)+.018,zz];});
+      brow.add(anatomicalSweep(points,points.map((_,i)=>.025+.073*Math.sin(Math.PI*(i+.7)/(points.length+.5))),{detail:d,color:colour,material:'cloth',rows:d===2?16:5,columns:5}));b.add(brow.finish('brows'));
     }
   }
   const count=d===0?4:d===1?6:10;
   for(let i=0;i<count;i++){
-    const x=(i-(count-1)/2)*(imp?3.1:1.78)/count,curve=-.07*(x/mouthW)**2,y=faceAt(x,mouthZ+mouthH)-(imp?.44:.17);
+    const x=(i-(count-1)/2)*(imp?3.1:1.78)/count,curve=mouthCurve(x),y=faceAt(x,mouthZ+mouthH+curve)-(imp?.48:.14);
     if(imp){
       const arc=Math.sqrt(1-.55*(x/mouthW)**2),top=[x,y,mouthZ+mouthH*.83*arc+curve],bottom=[x,y-.10,mouthZ-mouthH*.82*arc+curve];
-      const length=(i===0||i===count-1)?.77:.43+.055*Math.sin(i*2.9);
-      b.cone(top,[x*.97,y+.08,top[2]-length],.20,[191,172,130],{segments:[4,6,10][d],material:'bone'});
-      b.cone(bottom,[x*.97,y+.05,bottom[2]+length*.75],.17,[169,149,111],{segments:[4,6,10][d],material:'bone'});
+      const length=(i===1||i===count-2)?.83:.47+.12*Math.sin(i*2.9);
+      b.cone(top,[x*.97,y+.08,top[2]-length],.19,[173-i%3*7,154-i%2*9,112],{segments:[4,6,10][d],material:'bone'});
+      b.cone(bottom,[x*.97,y+.05,bottom[2]+length*.76],.16,[153,132-i%3*5,93],{segments:[4,6,10][d],material:'bone'});
     }else{
-      const width=1.78/count*.91,height=dead?.25:.16;
-      if(d)b.roundedBox([x,y-.05,mouthZ+mouthH*.42+curve],[width,.17,height],.029,[177-i%3*5,166-i%2*6,143],{material:'bone',rotation:[0,0,-x*.12]});
+      const width=1.78/count*.86,height=(dead?.26:.23)*(i%4===1?.72:1);
+      if(d)b.roundedBox([x,y-.05,mouthZ+mouthH*.52+curve],[width,.17,height],.029,[155-i%3*9,143-i%2*8,112],{material:'bone',rotation:[.03*Math.sin(i*2),0,-x*.12]});
       else b.box([x,y-.05,mouthZ+mouthH*.42+curve],[width,.15,height],[177,166,143],{material:'bone'});
       if(d===2&&dead)b.roundedBox([x,y-.13,mouthZ-mouthH*.70+curve],[width*.93,.15,.12],.026,[158,141,119],{material:'bone'});
     }
   }
   if(!guard&&!imp){
-    const hairline=a=>7.75-1.35*(1-Math.max(0,Math.sin(a)))+.055*Math.sin(a*7);
-    const hairPoint=(a,t)=>{const z=hairline(a)+(9.94-hairline(a))*t,p=point(a,clamp((z-z0)/zHeight,0,1)),grain=d===2?.004*Math.sin(a*51+t*27):0;return[p[0]*(1.014+grain*.08),p[1]*(1.014+grain*.08),p[2]+.045+grain];};
-    b.add(revolution(hairPoint,(p,a,t)=>tone([43,55,29],.82+.18*Math.sin(a*79+t*17)**2),[3,7,16][d],[12,24,64][d],'cropped-hair',{kind:'cloth',roughness:.99,scale:.14}));
-    if(d===2)for(let i=0;i<144;i++){
+    const hairline=a=>7.74-1.35*(1-Math.max(0,Math.sin(a)))+.11*Math.sin(a*7)+.05*Math.sin(a*17);
+    const hairPoint=(a,t)=>{const z=hairline(a)+(9.94-hairline(a))*t,p=point(a,clamp((z-z0)/zHeight,0,1)),grain=d===2?.012*Math.sin(a*51+t*27):0,root=1.004+.012*Math.min(1,t*7);return[p[0]*(root+grain*.10),p[1]*(root+grain*.10),p[2]+.035+grain];};
+    b.add(revolution(hairPoint,(p,a,t)=>mix(tone([39,49,27],.76+.24*Math.sin(a*79+t*17)**2),tone(skin,.64),(1-Math.min(1,t*18))*.38),[3,7,16][d],[12,24,64][d],'cropped-hair',{kind:'cloth',roughness:.99,scale:.14}));
+    if(d===2)for(let i=0;i<96;i++){
       const a=i*2.399,t=.02+.96*((i*.6180339)%1),p=hairPoint(a,t),q=hairPoint(a+.015,.025+t*.975);
       q[0]*=1.009;q[1]*=1.009;q[2]+=.035;
       b.cylinder(p,q,.012,[45+i%5*4,55+i%7*3,28+i%4*3],{segments:3,topRadius:.002,material:{kind:'cloth',roughness:.99,scale:.14}});

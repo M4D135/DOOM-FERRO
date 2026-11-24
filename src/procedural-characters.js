@@ -5,7 +5,7 @@
  * mesh towards the camera. Three geometric detail levels share the same rig.
  */
 import {MeshBuilder, rotateEuler, MESH_VERTEX_STRIDE} from './procedural-mesh.js';
-import {sculptedHead, anatomicalLoft, anatomicalSweep, tailoredPanel} from './procedural-anatomy.js';
+import {sculptedHead, anatomicalLoft, anatomicalFront, anatomicalSweep, tailoredPanel, dermalColour} from './procedural-anatomy.js';
 
 const FAMILY = {3004:'POSS',9:'SPOS',3001:'TROO'};
 const LIMIT_BYTES = 64 * 1024 * 1024, PART_BYTES = 32 * 1024 * 1024, LIMIT_ENTRIES = 768;
@@ -142,39 +142,59 @@ function frameFor(entity,time,family) {
 /** The torso is one shaped surface, including pelvis, chest and trapezius. */
 function torso(b,imp,color,d) {
   const profile=imp?
-    [[23.4,5.8,3.0,3.2,-.7],[25.5,7.05,3.6,3.8,-.7],[27.3,7.55,3.9,4.0,-.7],[30.5,6.0,3.3,3.8,-.7],[34.5,6.8,3.9,4.7,-.6],[38.5,8.3,4.7,5.3,-.8],[41.7,9.8,4.6,5.3,-1.0],[43.8,9.2,4.1,5.2,-1.1],[46,5.7,3.1,4.8,-.8],[47.5,2.6,2.1,2.8,.2]]:
-    [[23.8,5.5,3.0,3.1,-.4],[25.6,6.75,3.6,3.7,-.4],[27.0,7.10,3.75,3.8,-.35],[29.1,6.7,3.85,3.7,-.1],[32.5,7.2,4.0,3.9,0],[37.0,8.25,4.55,4.3,0],[40.9,8.7,4.45,4.25,-.1],[43.0,9.0,3.9,3.7,-.2],[44.0,8.0,2.85,3.1,-.25],[45.1,3.1,1.8,1.95,-.35],[45.6,1.85,1.45,1.55,-.35]];
+    [[23.4,5.55,2.95,3.2,-.7],[25.5,6.60,3.4,3.8,-.8],[27.3,7.20,3.65,4.0,-.7],[30.5,5.75,3.10,3.8,-.5],[34.5,6.65,3.8,4.8,-.35],[38.5,8.40,4.5,5.67,-.45],[41.7,9.55,4.25,5.86,-.4],[43.8,9.10,3.90,5.77,-.25],[46,5.6,3.0,4.43,.10],[46.9,3.2,2.25,2.4,1.8],[47.5,2.05,1.35,1.45,2.8]]:
+    [[23.8,5.5,3.0,3.1,-.4],[25.6,6.75,3.6,3.7,-.4],[27.0,7.10,3.75,3.8,-.35],[29.1,6.7,3.85,3.7,-.1],[32.5,7.2,4.0,3.9,0],[37.0,8.25,4.55,4.3,0],[40.9,8.7,4.45,4.25,-.1],[43.0,9.0,3.9,3.7,-.2],[44.0,8.0,2.85,3.1,-.25],[45.1,3.1,1.8,1.95,-.35],[45.6,1.25,1.0,1.2,-.62]];
   const deform=(p,a)=>{
     let[x,y,z]=p;const front=Math.max(0,Math.sin(a)),back=Math.max(0,-Math.sin(a)),ax=Math.abs(x);
     if(imp){
       // Pectorals, sternum, serratus, lower ribs, abdomen and scapulae remain
       // connected: only the single skin envelope is displaced.
-      y+=front**4*(.73*bell(ax-3.8,2.6)*bell(z-39.4,2.3)-.34*bell(x,.72)*bell(z-38.1,5.4));
-      y+=front**5*.33*bell(ax-2.0,1.2)*(bell(z-35.2,.9)+bell(z-33.0,.9)+bell(z-30.9,.9));
-      y-=front**4*.20*bell(ax-4.65,.60)*bell(z-33.3,4.1);
-      y+=front**3*.12*Math.cos((z+ax*.34)*3.3)*bell(ax-5.3,1.2)*bell(z-35,3.1);
-      y-=back**3*(.34*bell(ax-4.3,2.1)*bell(z-41.4,2.7)-.18*bell(x,.65)*bell(z-38,6));
-      x*=1+.025*bell(z-27.0,1.4)*Math.cos(a*4);
+      y+=front**4*(.91*bell(ax-3.9,2.55)*bell(z-39.5,2.05)-.42*bell(x,.60)*bell(z-38.1,5.4));
+      y-=front**5*.22*bell(z-(37.55-.12*ax),.35)*bell(ax-3.8,2.1);
+      y+=front**5*.35*bell(ax-1.9,1.08)*(bell(z-35.2,.78)+bell(z-33.0,.78)+bell(z-30.9,.78));
+      y-=front**4*.30*bell(ax-(4.55+.12*(z-33)),.54)*bell(z-33.3,3.8);
+      y+=front**3*.17*Math.cos((z+ax*.40)*2.9)*bell(ax-5.3,1.2)*bell(z-35.4,2.7);
+      y-=back**3*(.52*bell(ax-4.3,2.1)*bell(z-41.4,2.7)-.24*bell(x,.56)*bell(z-38,6));
+      y+=front**3*.21*bell(z-(43.0-.25*ax),.40)*bell(ax-3.6,2.4);
+      // The shoulder girdle overlaps the deltoid's embedded root instead of
+      // ending at a straight cut behind the articulated upper arm.
+      x*=1+.025*bell(z-27.0,1.4)*Math.cos(a*4)+.085*bell(z-41.55,2.05)*Math.abs(Math.cos(a))**6;
     }else{
       const waist=bell(z-30.0,2.4),armpit=bell(ax-6.7,1.4)*bell(z-38,3.1);
-      const folds=.18*Math.sin(z*3.0+ax*.55)*waist+.10*Math.sin(z*2.1-ax*.8)*armpit;
+      const foldLine=(centre,width,amplitude)=>amplitude*(bell(z-centre,width)-.52*bell(z-centre-width*.72,width*.56));
+      const folds=.14*Math.sin(z*2.1+ax*.55)*waist+.13*Math.sin(z*1.7-ax*.8)*armpit
+        +foldLine(37.6-.60*ax,.38,.24)*bell(ax-5.5,2.7)
+        +foldLine(32.8+.29*ax,.42,.20)*bell(ax-4.4,3.2)
+        +foldLine(40.8-.13*ax,.31,.13)*bell(ax-4.5,2.5);
       const frontSeam=-.045*bell(x,.16)*bell(z-36,6.9);
       y+=front**3*(folds+frontSeam)+back**3*.11*Math.sin(z*2.0+ax*.6)*waist;
+      y-=front**6*.15*bell(x,.85)*bell(z-44.1,1.1);
       x*=1+.011*Math.sin(z*2.7+a*.8)*waist;
     }
     return[x,y,z];
   };
   const colours=(p,a)=>{
-    const[x,y,z]=p,front=Math.max(0,Math.sin(a));let c=tone(color,.98+.018*Math.sin(z*.71+x*.45));
+    const[x,y,z]=p,front=Math.max(0,Math.sin(a));let c=imp?dermalColour(p,color,true):tone(color,.98+.028*Math.sin(z*.71+x*.45));
     if(!imp){
       if(z<28.5)c=familyPants(color);
-      const edge=Math.sin(x*7.7+z*6.1)*.12+Math.sin(z*11.3)*.08;
-      const wound=bell((x+.3)/(2.1+edge),1)*bell((z-39.7)/(2.7+edge),1)*front**12;
-      c=mix(c,[83,26,20],clamp((wound-.19)*1.9,0,.92));
+      const grime=bell(Math.abs(x)-6.5,1.5)*bell(z-37.8,2.5)+bell(z-29.7,1.1)*.46;
+      c=mix(c,[66,62,46],grime*.24);
+      const edge=Math.sin(x*5.7+z*4.1)*.16+Math.sin(z*7.3)*.12;
+      const wound=bell((x+.3)/(1.8+edge),1)*bell((z-39.9)/(2.8+edge),1)*front**12;
+      c=mix(c,[77,24,17],clamp((wound-.25)*2.5,0,.94));
+      const collar=bell(x,1.45)*bell(z-44.0,1.35)*front**8;
+      c=mix(c,[69,32,24],collar*.83);
+      const drips=(bell(x+.65+.12*Math.sin(z*3),.19)*bell(z-35.1,2.15)+bell(x-.46,.13)*bell(z-36.0,1.7))*front**12;
+      c=mix(c,[72,28,17],drips*.69);
+    }else{
+      const sternum=bell(x,.64)*bell(z-37.6,5.9)*front**5;
+      const rib=bell(Math.abs(x)-5.0,1.1)*bell(z-35.5,3.2)*front**3;
+      c=mix(c,[61,45,28],sternum*.19+rib*.18);
     }
     return c;
   };
-  b.add(anatomicalLoft(profile,{detail:d,color,material:imp?'skin':'cloth',deform,colours,rows:[8,14,36][d],columns:[8,16,36][d],key:imp?'continuous-musculature':'draped-shirt'}));
+  b.add(anatomicalLoft(profile,{detail:d,color,material:imp?{kind:'skin',roughness:.87}:'cloth',deform,colours,rows:[8,14,36][d],columns:[8,16,36][d],key:imp?'continuous-musculature':'draped-shirt'}));
+  return(x,z)=>anatomicalFront(profile,x,z,deform);
 }
 function familyPants(shirt){return shirt[0]<80?[35,39,35]:[91,102,67];}
 
@@ -185,10 +205,18 @@ function jointedLimb(b,points,color,d,kind='arm',material='skin'){
     [[0,.42,.45,.45,0],[1.5,2.55,2.5,2.55,0],[3.5,3.40,3.3,3.4,0],[7,3.25,3.0,3.25,0],[11.3,2.65,2.75,2.8,0],[13,2.75,2.8,2.8,0],[16.5,3.05,2.65,3.05,0],[20.5,2.25,2.0,2.2,0],[24,2.1,1.95,2.05,0]]:
     [[0,2.75,2.65,2.75,0],[2,2.95,2.7,2.8,0],[5,2.75,2.55,2.7,0],[9,2.0,1.85,2.0,0],[11.0,2.05,1.85,2.0,0],[13.3,2.5,2.0,2.3,0],[16.2,2.1,1.8,2.0,0],[20,1.3,1.25,1.25,0]];
   if(imp)for(const p of profile){p[1]*=1.1;p[2]*=1.05;p[3]*=1.06;}
-  if(kind==='imp-arm'){profile[0]=[0,.65,.65,.65,0];profile[1]=[2.8,3.15,2.85,2.95,0];}
+  if(kind==='imp-arm'){
+    profile[0]=[0,.45,.45,.45,0];profile[1]=[2.8,2.90,2.70,2.96,0];
+    profile[3]=[9,1.88,1.70,2.05,0];profile.at(-1)[1]=1.17;profile.at(-1)[2]=1.11;
+  }
+  if(kind==='imp-leg'){
+    profile[3]=[7,3.42,3.12,3.50,0];profile[4]=[11.3,2.48,2.75,2.73,0];
+    profile[5]=[13,2.55,2.72,2.90,0];profile[6]=[16.5,2.97,2.47,3.34,-.20];
+    profile[7]=[20.5,2.12,1.90,2.12,0];profile[8]=[24,1.97,1.82,1.98,0];
+  }
   const key=partKey('continuous-limb',color,d,kind,material),length=isLeg?24:20;
   const mesh=remember(key,()=>anatomicalLoft(profile,{
-    detail:d,color,material,rows:[8,12,24][d],columns:[6,10,18][d],key,
+    detail:d,color,material:material==='skin'?{kind:'skin',roughness:imp?.87:.80}:material,rows:[8,12,24][d],columns:[6,10,18][d],key,
     deform:(p,a)=>{
       let[x,y,z]=p;
       if(material==='cloth'){
@@ -196,17 +224,26 @@ function jointedLimb(b,points,color,d,kind='arm',material='skin'){
         const fold=.052*Math.sin(z*3.1+Math.sin(a)*2+Math.cos(a*2))*knee*compression+.032*Math.sin(z*5.4-a)*hem+.014*Math.cos(a*2)*bell(z-6,3.7);
         x*=1+fold;y*=1+fold;
       }else{
-        const front=Math.max(0,Math.sin(a));
-        y+=front**3*(.15*bell(z-(isLeg?4.7:4.4),2.5)-.14*bell(z-(isLeg?12:10),.48));
-        y-=front**4*.055*bell(x,.21)*bell(z-(isLeg?17.4:15.0),3.0);
+        const front=Math.max(0,Math.sin(a)),back=Math.max(0,-Math.sin(a));
+        y+=front**3*((imp?.27:.17)*bell(z-(isLeg?4.7:4.4),2.5)-.17*bell(z-(isLeg?12:10),.58));
+        y-=front**4*(imp?.10:.065)*bell(x,.24)*bell(z-(isLeg?17.4:15.0),3.0);
+        y+=back**3*(isLeg?.23:.27)*bell(z-(isLeg?16:6.3),isLeg?2.5:2.3);
+        x*=1+.045*Math.cos(a*2+.4)*bell(z-(isLeg?6:5),3.1);
+        if(imp){
+          y+=front**4*.18*bell(x,.47)*bell(z-(isLeg?18:16),3.1);
+          x*=1-.032*bell(z-(isLeg?22.5:18.4),.72);
+        }
       }
       return[x,y,z];
     },colours:(p,a)=>{
-      const[x,y,z]=p,front=Math.max(0,Math.sin(a));let c=tone(color,.97+.03*bell(z-5,3));
+      const[x,y,z]=p,front=Math.max(0,Math.sin(a));let c=material==='skin'?dermalColour(p,color,imp):tone(color,.97+.03*bell(z-5,3));
       if(material==='cloth'){
         c=tone(c,1-.10*bell(Math.abs(Math.cos(a))-.98,.06));
         const stain=bell(x-.5,1.1)*bell(z-4.5,2.1)*front**10;
         c=mix(c,[87,29,20],stain*.72);
+      }else{
+        const joint=bell(z-(isLeg?12:10),.8)*front**2;
+        c=mix(c,imp?[65,45,28]:[118,91,70],joint*.23);
       }return c;
     }
   }));
@@ -269,29 +306,32 @@ function firearm(guard,firing,d) {
     return b.finish('detailed-infantry-weapon');
   });
 }
-function gripHands(b,d,skin,dead) {
+function gripHands(b,d,skin,guard) {
   if(!d){
     ell(b,[1.6,-2.0,-2.0],[1.1,1.45,1.7],skin,0);
     ell(b,[0,7,-2.1],[1.95,1.75,1.0],skin,0);return;
   }
   // Palm and thenar volume taper into the wrist; the fingers are single swept
   // skins, with joint creases in their profile rather than beads at knuckles.
-  b.add(anatomicalLoft([[-3.7,.56,.85,.80,-2.15],[-3.0,.80,1.1,.92,-2.05],[-1.7,1.0,1.30,1.12,-1.95],[-.55,.78,1.08,1.0,-1.90],[-.3,.30,.55,.55,-1.95]],{detail:d,color:skin,rows:[5,7,14][d],columns:[6,8,14][d]}),{translation:[1.65,0,0]});
+  const pigmentation=p=>dermalColour(p,skin);
+  b.add(anatomicalLoft([[-3.7,.56,.85,.80,-2.15],[-3.0,.75,1.1,.92,-2.05],[-1.7,.94,1.24,1.12,-1.95],[-.55,.73,1.04,1.0,-1.90],[-.3,.30,.55,.55,-1.95]],{detail:d,color:skin,colours:pigmentation,material:{kind:'skin',roughness:.80},rows:[5,7,14][d],columns:[6,8,14][d]}),{translation:[1.65,0,0]});
   const fingers=d===2?4:3;
   for(let i=0;i<fingers;i++){
-    const z=-.72-i*(fingers===4?.64:.94);
-    const path=[[1.70,-1.05,z],[1.02,-.33,z-.08],[.05,-.28,z-.17],[-.67,-.7,z-.24],[-.76,-1.14,z-.27]];
-    b.add(anatomicalSweep(path,[.31,.31,.285,.235,.12],{detail:d,color:skin,rows:d===2?14:6,columns:d===2?8:5,fold:d===2?.025:0}));
-    if(d===2)stroke(b,[[.86,-.048,z+.14],[.71,-.025,z+.12],[.56,-.05,z+.08]],.018,tone(skin,.72),0);
+    const z=-1.08-i*(fingers===4?.64:.94);
+    const path=i===0?[[1.70,-1.05,-1.18],[1.86,-.05,-1.42],[1.80,.53,-1.98],[1.46,.34,-2.28],[1.21,.10,-2.27]]:
+      [[1.70,-1.05,z],[1.02,-.33,z-.08],[.05,-.28,z-.17],[-.67,-.7,z-.24],[-.76,-1.14,z-.27]];
+    b.add(anatomicalSweep(path,[.29,.30,.27,.22,.12],{detail:d,color:skin,colours:pigmentation,rows:d===2?14:6,columns:d===2?8:5,fold:d===2?.04:0}));
+    if(d===2&&i>0)stroke(b,[[.86,-.048,z+.14],[.71,-.025,z+.12],[.56,-.05,z+.08]],.018,tone(skin,.72),0);
   }
-  b.add(anatomicalSweep([[2.0,-2.82,-1.18],[2.20,-2.24,-.36],[1.68,-1.55,.08],[.82,-1.20,-.02]],[.49,.43,.34,.15],{detail:d,color:skin,rows:d===2?14:6,columns:d===2?8:5}));
+  b.add(anatomicalSweep([[2.0,-2.82,-1.18],[2.20,-2.24,-.36],[1.68,-1.55,.08],[.82,-1.20,-.02]],[.46,.42,.33,.15],{detail:d,color:skin,colours:pigmentation,rows:d===2?14:6,columns:d===2?8:5}));
   ell(b,[0,7.05,-2.35],[1.80,1.86,.86],skin,d===2?1:0);
   for(let i=0;i<fingers;i++){
     const y=5.70+i*(fingers===4?.86:1.29),length=i===0?.90:i===3?.89:1;
-    b.add(anatomicalSweep([[-1.38,y,-2.24],[-1.91,y,-1.17],[-1.94,y,.04],[-1.42,y,.63*length],[-.95,y,.60*length]],[.32,.33,.29,.245,.12],{detail:d,color:skin,rows:d===2?14:6,columns:d===2?8:5,fold:d===2?.025:0}));
+    const reach=guard?1:.87;
+    b.add(anatomicalSweep([[-1.38,y,-2.24],[-1.91*reach,y,-1.17],[-1.94*reach,y,.04],[-1.42*reach,y,.63*length],[-.95*reach,y,.60*length]],[.30,.32,.28,.23,.12],{detail:d,color:skin,colours:pigmentation,rows:d===2?14:6,columns:d===2?8:5,fold:d===2?.04:0}));
     if(d===2)rounded(b,[-1.11,y,.675*length],[.30,.36,.045],.025,[158,129,107],1,'bone');
   }
-  b.add(anatomicalSweep([[1.30,5.8,-2.25],[1.95,5.97,-1.25],[1.83,6.51,-.12],[1.38,7.07,.22]],[.48,.45,.35,.16],{detail:d,color:skin,rows:d===2?14:6,columns:d===2?8:5}));
+  b.add(anatomicalSweep([[1.30,5.8,-2.25],[1.95,5.97,-1.25],[1.83,6.51,-.12],[1.38,7.07,.22]],[.46,.43,.33,.16],{detail:d,color:skin,colours:pigmentation,rows:d===2?14:6,columns:d===2?8:5}));
 }
 function buildBoots(b,ankle,lift,d) {
   const leather=[91,36,25],shade=[48,27,22];
@@ -316,26 +356,30 @@ function boots(b,ankle,lift,d){
 }
 
 function human(family,pose,d) {
-  const b=new PoseAssembler(),guard=family==='SPOS',shirt=guard?[44,49,46]:[145,135,108],shirtLight=tone(shirt,1.08);
-  const pants=guard?[35,39,35]:[91,102,67],skin=guard?[184,139,115]:[180,157,136];
+  const b=new PoseAssembler(),guard=family==='SPOS',shirt=guard?[44,49,46]:[133,124,98],shirtLight=tone(shirt,1.07);
+  const pants=guard?[35,39,35]:[91,102,67],skin=guard?[170,129,102]:[163,146,121];
   for(const side of[-1,1]){
     const stride=pose.step*side,lift=Math.max(0,pose.lift*side),hip=[side*4.15,-.45,27.0],knee=[side*4.8,stride*.45+1.0,15.4+lift*.25],ankle=[side*5.2,stride,4.8+lift];
     jointedLimb(b,[hip,knee,ankle],pants,d,'leg','cloth');
     boots(b,ankle,lift,d);
   }
   const body=remember(`part:human-body:${family}:${d}`,()=>{
-    const b=new MeshBuilder();torso(b,false,shirt,d);
+    const b=new MeshBuilder(),shirtFront=torso(b,false,shirt,d);
     b.tube([0,-.12,27.7],[0,-.10,28.9],[[0,6.82,3.9],[1,6.88,4.0]],[60,58,39],{segments:[8,16,32][d],material:'leather'});
     rounded(b,[0,3.98,28.3],[2.1,.38,1.42],.15,[129,120,84],d,'metal');
     if(d)rounded(b,[0,4.2,28.3],[1.36,.10,.78],.10,[61,57,39],1,'metal');
     if(d){
-      const surfaceY=(x,z)=>4.45*Math.sqrt(Math.max(.06,1-(x/8.70)**2))+.10;
+      const surfaceY=(x,z)=>shirtFront(x,z)+.07;
       for(const side of[-1,1]){
         const pocket=(u,v)=>{const x=side*(2.8+u*3.00),z=36.8+v*3.6;return[x,surfaceY(x,z)+.08+.10*Math.sin(u*Math.PI)*Math.sin(v*Math.PI),z];};
         b.add(tailoredPanel(pocket,{color:tone(shirt,.94),detail:d,key:'sewn-breast-pocket'}));
         const flap=(u,v)=>{const x=side*(2.68+u*3.2),z=39.65+v*.88-.24*Math.sin(u*Math.PI);return[x,surfaceY(x,z)+.18+.06*Math.sin(v*Math.PI),z];};
         b.add(tailoredPanel(flap,{color:shirtLight,detail:d,key:'folded-pocket-flap'}));
-        const collar=(u,v)=>{const upper=mix([1.55,1.85,45.18],[3.4,2.95,43.8],u),lower=mix([.64,4.39,42.6],[2.65,4.07,41.9],u),p=mix(upper,lower,v);return[side*p[0],p[1]+.13*Math.sin(v*Math.PI),p[2]];};
+        const collar=(u,v)=>{
+          const upper=mix([1.31,.72,45.17],[3.45,2.95,43.72],u),lower=mix([.77,4.29,42.82],[2.68,4.07,42.02],u),p=mix(upper,lower,v);
+          const x=side*p[0],z=p[2]+.10*Math.sin(u*Math.PI)*v,y=p[1]+.20*Math.sin(v*Math.PI)-.11*Math.sin(u*Math.PI);
+          return[x,Math.max(y,shirtFront(x,z)+.095),z];
+        };
         b.add(tailoredPanel(collar,{color:shirtLight,detail:d,key:'folded-collar',thickness:.09}));
         if(d===2){
           for(const u of[.05,.95])stroke(b,Array.from({length:8},(_,i)=>{const p=pocket(u,.03+i*.94/7);return[p[0],p[1]+.016,p[2]];}),.022,tone(shirt,.68),0,'cloth');
@@ -355,13 +399,13 @@ function human(family,pose,d) {
     const side=i===0?1:-1,shoulder=[side*8.15,0,42.1],wrist=wrists[i];
     const elbow=pose.dead?[side*11.9,1.8,31.0]:[side*10.95,3.7+(pose.attack?1.1:0),34.4],cuff=mix(shoulder,elbow,.50),sleeveRoot=[side*7.45,-.12,43.2];
     jointedLimb(b,[shoulder,elbow,wrist],skin,d,'arm');
-    const sleeve=remember(partKey('tailored-sleeve',shirt,d),()=>anatomicalLoft([[0,.35,.35,.35,0],[.8,2.60,2.5,2.5,0],[2.0,3.25,3.13,3.10,0],[3.2,3.18,3.08,3.0,0],[4.8,2.90,2.85,2.8,0],[5.0,2.92,2.87,2.82,0]],{
+    const sleeve=remember(partKey('tailored-sleeve',shirt,d),()=>anatomicalLoft([[0,.35,.35,.35,0],[.8,2.58,2.48,2.5,0],[2.0,3.12,3.06,3.08,0],[3.2,3.08,2.94,2.93,0],[4.8,2.83,2.77,2.76,0],[5.0,2.88,2.82,2.80,0]],{
       detail:d,color:shirt,material:'cloth',rows:[4,6,12][d],columns:[6,10,20][d],
-      deform:(p,a)=>{const r=.035*Math.sin(p[2]*4+a*.7)*bell(p[2]-3.8,1.0);return[p[0]*(1+r),p[1]*(1+r),p[2]];},
-      colours:p=>tone(shirt,p[2]>4.75?.83:1),key:'fitted-shirt-sleeve'}));
+      deform:(p,a)=>{const r=.022*Math.sin(p[2]*3.2+a*1.8)*bell(p[2]-3.8,1.0)+.026*Math.cos(a*3+.5)*bell(p[2]-2.9,1.8);return[p[0]*(1+r),p[1]*(1+r),p[2]];},
+      colours:(p,a)=>tone(shirt,(p[2]>4.75?.80:1)-.08*bell(a-4.7,.6)*bell(p[2]-3.5,1.4)),key:'fitted-shirt-sleeve'}));
     b.add(sleeve,{...along(sleeveRoot,cuff),scale:[1,1,Math.hypot(...sub(cuff,sleeveRoot))/5]});
   }
-  const hands=remember(`part:hands:${guard}:${d}`,()=>{const part=new MeshBuilder();gripHands(part,d,skin,false);return part.finish('hands-on-weapon');});
+  const hands=remember(`part:hands:${guard}:${d}`,()=>{const part=new MeshBuilder();gripHands(part,d,skin,guard);return part.finish('hands-on-weapon');});
   b.add(firearm(guard,pose.frame==='F'&&!pose.dead,d),{translation:gunOrigin,rotation:gunRotation});
   b.add(hands,{translation:gunOrigin,rotation:gunRotation});
   b.add(humanHead(guard,d,pose.dead),{translation:[0,pose.pain?-1:0,45.8],rotation:[pose.pain?.24:0,0,pose.pain?.1:0]});
@@ -377,17 +421,18 @@ function impHead(d,dead,open) {
 
 function impHand(b,wrist,side,d,skin,attack){
   const mesh=remember(partKey('anatomical-imp-hand',side,d,skin,attack),()=>{
-    const p=new MeshBuilder();
-    p.add(anatomicalLoft([[-3.15,1.6,1.0,1.0,.35],[-2.1,2.3,1.35,1.3,.2],[-.7,2.2,1.45,1.35,0],[.8,1.55,1.32,1.3,0]],{detail:d,color:skin,rows:[4,6,12][d],columns:[5,8,16][d]}));
+    const p=new MeshBuilder(),pigmentation=p=>dermalColour(p,skin,true);
+    p.add(anatomicalLoft([[-3.15,1.6,1.0,1.0,.35],[-2.1,2.16,1.24,1.28,.2],[-.7,2.0,1.35,1.28,0],[.8,1.38,1.21,1.24,0]],{detail:d,color:skin,colours:pigmentation,material:{kind:'skin',roughness:.87},rows:[4,6,12][d],columns:[5,8,16][d],
+      deform:(p,a)=>{const[x,y,z]=p,back=Math.max(0,-Math.sin(a)),tendons=.065*Math.cos(x*5.35)*bell(z+1.0,1.6);return[x,y-back**3*tendons,z];}}));
     for(let i=0;i<(d?4:3);i++){
       const offset=(i-(d?1.5:1))*1.17,reach=attack?.65:0;
       const path=[[offset,.70,-2.4],[offset*1.13,1.28,-3.6],[offset*1.18,2.15+reach,-4.2],[offset*1.12,2.8+reach,-4.35]];
-      p.add(anatomicalSweep(path,[.49,.47,.36,.23],{detail:d,color:skin,rows:[2,6,12][d],columns:[4,6,8][d]}));
+      p.add(anatomicalSweep(path,[.45,.46,.34,.22],{detail:d,color:skin,colours:pigmentation,fold:.045,rows:[2,6,12][d],columns:[4,6,8][d]}));
       p.add(anatomicalSweep([path.at(-1),[offset,3.52+reach,-4.55],[offset*.93,3.74+reach,-5.25]],[.28,.17,.018],{detail:d,color:BONE,material:'bone',rows:[2,4,8][d],columns:[3,5,8][d]}));
     }
     if(d){
       const path=[[side*1.60,-.25,-.1],[side*2.76,.30,-1.1],[side*3.0,1.25,-2.30]];
-      p.add(anatomicalSweep(path,[.65,.55,.35],{detail:d,color:skin,rows:d===2?12:6,columns:d===2?8:5}));
+      p.add(anatomicalSweep(path,[.61,.53,.34],{detail:d,color:skin,colours:pigmentation,fold:.035,rows:d===2?12:6,columns:d===2?8:5}));
       p.add(anatomicalSweep([path.at(-1),[side*2.9,2.25,-2.75],[side*2.55,2.55,-3.3]],[.36,.2,.016],{detail:d,color:BONE,material:'bone',rows:d===2?8:4,columns:6}));
     }
     return p.finish('clawed-anatomical-hand');
@@ -395,16 +440,17 @@ function impHand(b,wrist,side,d,skin,attack){
   b.add(mesh,{translation:wrist});
 }
 function imp(pose,d) {
-  const b=new PoseAssembler(),skin=[119,80,42],light=[130,86,46],shade=[89,56,29];
+  const b=new PoseAssembler(),skin=[106,75,42];
   for(const side of[-1,1]){
     const stride=pose.step*side,lift=Math.max(0,pose.lift*side),hip=[side*3.5,-.7,28.7],knee=[side*5.2,3.3+stride*.5,15.3+lift*.3],ankle=[side*5.7,-1+stride,4.4+lift];
     jointedLimb(b,[hip,knee,ankle],skin,d,'imp-leg');
     const foot=remember(partKey('anatomical-imp-foot',d),()=>{
       const p=new MeshBuilder();
-      p.add(anatomicalLoft([[.05,2.6,4.8,2.0,0],[.7,3.1,6.0,2.2,0],[1.7,3.2,6.4,2.3,0],[2.6,3.15,5.6,2.4,0],[3.7,2.5,3.9,2.3,0],[5.8,2.1,1.95,2.1,0]],{detail:d,color:skin,rows:[4,8,16][d],columns:[6,12,22][d]}));
+      p.add(anatomicalLoft([[.05,2.45,4.45,2.0,0],[.7,2.93,5.42,2.2,0],[1.7,3.00,5.73,2.3,0],[2.6,2.88,5.20,2.35,0],[3.7,2.40,3.65,2.24,0],[4.7,2.04,1.95,2.0,0],[6.5,1.42,1.35,1.45,0]],{detail:d,color:skin,colours:p=>dermalColour(p,skin,true),material:{kind:'skin',roughness:.87},rows:[4,8,16][d],columns:[6,12,22][d],
+        deform:(p,a)=>{const[x,y,z]=p,front=Math.max(0,Math.sin(a)),tendon=.065*Math.cos(x*3.5)*bell(z-2.8,1.6),toes=.52*bell(Math.abs(x)-1.65,.40)+.23*bell(x,.48)-.35*bell(Math.abs(x)-.90,.24);return[x,y+front**4*tendon+front**6*toes*bell(z-1.55,.93),z];}}));
       for(const toe of[-1,0,1]){
-        const root=[toe*1.8,5.7,1.5],tip=[toe*2.05,8.45,.88];
-        p.add(anatomicalSweep([root,[toe*1.97,7.4,1.4],tip],[.63,.40,.02],{detail:d,color:BONE,material:'bone',rows:[2,4,8][d],columns:[3,5,8][d]}));
+        const root=[toe*1.68,5.20,1.5],tip=[toe*1.92,7.55,.88];
+        p.add(anatomicalSweep([root,[toe*1.84,6.68,1.4],tip],[.57,.36,.02],{detail:d,color:BONE,material:'bone',rows:[2,4,8][d],columns:[3,5,8][d]}));
       }return p.finish('sculpted-clawed-foot');
     });
     b.add(foot,{translation:[ankle[0],ankle[1],lift]});
@@ -413,9 +459,9 @@ function imp(pose,d) {
   const body=remember(`part:imp-body:${d}`,()=>{
     const b=new MeshBuilder();torso(b,true,skin,d);
     for(const side of[-1,1])for(const[base,tip,r]of[
-      [[side*7.1,-.8,43.1],[side*15.7,-1.1,49.0],1.40],
-      [[side*8.0,-1.4,40.6],[side*16.5,-2.0,42.3],1.10],
-      [[side*5.0,-3.6,43.6],[side*8.0,-7.7,46.8],.95]]){
+      [[side*7.6,-.4,43.3],[side*12.9,-.9,47.6],1.02],
+      [[side*8.3,-1.0,40.8],[side*13.8,-1.8,42.1],.83],
+      [[side*5.1,-3.3,43.8],[side*7.4,-6.2,46.4],.73]]){
       b.add(anatomicalSweep([base,mix(base,tip,.48),tip],[r,r*.54,.018],{detail:d,color:BONE,material:'bone',rows:[2,5,10][d],columns:[4,6,10][d]}));
     }
     return b.finish('continuous-imp-torso');
@@ -429,13 +475,13 @@ function imp(pose,d) {
   }else if(pose.pain){elbows=[[13.6,3.1,35.5],[-13.4,1.5,34.7]];wrists=[[6.2,9.5,34.7],[-18,4.1,28.8]];}
   else if(pose.dead){elbows=[[14.1,0,33.1],[-14.4,2,32.3]];wrists=[[17.3,1,23.5],[-17.1,3,25]];}
   for(let i=0;i<2;i++){
-    const side=i===0?1:-1,shoulder=[side*7.2,-.2,43.2],elbow=elbows[i],wrist=wrists[i];
+    const side=i===0?1:-1,shoulder=[side*6.65,.15,44.15],elbow=elbows[i],wrist=wrists[i];
     jointedLimb(b,[shoulder,elbow,wrist],skin,d,'imp-arm');
     const quill=mix(shoulder,elbow,.76);
-    limb(b,[quill[0]+side*1.8,quill[1]-1,quill[2]],[quill[0]+side*5.1,quill[1]-2,quill[2]+1.3],[[0,.85,.85],[.45,.48,.48],[1,.025,.025]],BONE,d,'bone');
+    limb(b,[quill[0]+side*1.8,quill[1]-1,quill[2]],[quill[0]+side*4.3,quill[1]-1.8,quill[2]+1.1],[[0,.70,.70],[.45,.39,.39],[1,.025,.025]],BONE,d,'bone');
     impHand(b,wrist,side,d,skin,pose.attack);
   }
-  b.add(impHead(d,pose.dead,pose.attack||pose.dead),{translation:[0,3.3,45.25],rotation:[pose.pain?.3:0,0,pose.pain?.1:0]});
+  b.add(impHead(d,pose.dead,pose.attack||pose.dead),{translation:[0,3.45,44.85],rotation:[pose.pain?.21:-.09,0,pose.pain?.1:0]});
   if(pose.dead)wound(b,[0,4.1,35.3],4.6,4.7,d,10,.16);
   return b.finish('sculpted-imp');
 }
