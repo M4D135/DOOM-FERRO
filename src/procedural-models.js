@@ -17,7 +17,7 @@ export function modelForEntity(entity, time = 0, detail = 2) {
  * Bounds include the largest authored poses, lamps and weapon pickups. */
 function extent(entity) {
   const type = entity.type, family = String(entity.sprite || entity.base || '').slice(0,4);
-  const height = type === 48 || family === 'ELEC' ? 132 : entity.enemy ? 64 : 60;
+  const height = type === 48 || family === 'ELEC' ? 132 : type === 46 || family === 'TRED' ? 74 : entity.enemy ? 64 : 60;
   const scale = Math.max(.01, Math.abs(entity.scale ?? 1));
   return {height: height * scale, radius: (height > 100 ? 73 : 48) * scale};
 }

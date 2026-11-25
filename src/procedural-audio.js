@@ -31,7 +31,7 @@ const EFFECTS = Object.freeze({
   DSBGSIT1: ['growl', 1.02], DSBGSIT2: ['growl', .94], DSPOPAIN: ['pain', .36],
   DSPLPAIN: ['playerPain', .34], DSPODTH1: ['death', .9], DSPODTH2: ['death', .96],
   DSPODTH3: ['death', .87], DSBGDTH1: ['monsterDeath', 1.12], DSBGDTH2: ['monsterDeath', 1.06],
-  DSPLDETH: ['playerDeath', .98], DSSLOP: ['impact', .48],
+  DSPLDETH: ['playerDeath', .98], DSSLOP: ['impact', .48], DSRLAUNC: ['rocketLaunch', .62],
   PROC_KICK: ['kick', .24], PROC_SNARE: ['snare', .19], PROC_HAT: ['hat', .075]
 });
 
@@ -74,6 +74,12 @@ export function synthesizeEffect(name, {sampleRate = 22050, seed = 0x4f455252} =
     } else if (kind === 'fire') {
       phase += TAU * (105 + 450 * (1 - p) ** 3) / sampleRate;
       value = (Math.sin(phase + .8 * tone(67, t)) * .6 + band * 1.6) * Math.sin(Math.PI * Math.min(1, p * 1.3)) * (1 - p);
+    } else if (kind === 'rocketLaunch') {
+      phase += TAU * (160 - 118 * Math.min(1, t / .09)) / sampleRate;
+      const envelope = Math.min(1, t * 55) * Math.exp(-t * 4.2);
+      const turbulence = Math.sin(TAU * 7.3 * t) * .3 + Math.sin(TAU * 13.1 * t) * .15;
+      value = (band * 2.4 + high * .95 + low * 2.1) * envelope * (1 + turbulence);
+      value += Math.sin(phase) * .5 * Math.exp(-t * 11);
     } else if (kind === 'doorOpen' || kind === 'doorClose' || kind === 'liftStart') {
       phase += TAU * (kind === 'doorClose' ? 68 + 25 * p : 105 - 30 * p) / sampleRate;
       const motor = Math.sin(phase) * .24 + Math.sin(phase * 2.07) * .12 + Math.sin(phase * 5.03) * .06;

@@ -1,6 +1,6 @@
 {
   "name": "doom-ferro",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "private": true,
   "type": "module",
   "description": "Épisode 1 de DOOM (E1M1–E1M9) dans FERRO : jeu 3D intégralement procédural, spéciaux complets et distribution HTML autonome.",

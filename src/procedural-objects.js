@@ -8,7 +8,7 @@ export {weaponMesh};
 const TAU=Math.PI*2,cache=new Map(),LIMIT=96,BYTE_LIMIT=12*1024*1024;
 let cacheBytes=0;
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
-const TYPES={2035:'BAR1',2028:'COLU',48:'ELEC',35:'CBRA',34:'CAND',10:'PLAYW',12:'PLAYW',15:'PLAYN',24:'POL5',2011:'STIM',2012:'MEDI',2014:'BON1',2015:'BON2',2018:'ARM1',2019:'ARM2',2007:'CLIP',2048:'AMMO',2008:'SHEL',2049:'SBOX',2001:'SHOT',2002:'MGUN',2003:'LAUN',2005:'CSAW',5:'BKEY',6:'YKEY',13:'RKEY',8:'BPAK',2010:'ROCK',2013:'SOUL',2024:'PINS',2025:'SUIT',2026:'PMAP',2045:'PVIS',2046:'BROK'};
+const TYPES={2035:'BAR1',2028:'COLU',48:'ELEC',35:'CBRA',34:'CAND',10:'PLAYW',12:'PLAYW',15:'PLAYN',24:'POL5',2011:'STIM',2012:'MEDI',2014:'BON1',2015:'BON2',2018:'ARM1',2019:'ARM2',2007:'CLIP',2048:'AMMO',2008:'SHEL',2049:'SBOX',2001:'SHOT',2002:'MGUN',2003:'LAUN',2005:'CSAW',5:'BKEY',6:'YKEY',13:'RKEY',8:'BPAK',2010:'ROCK',2013:'SOUL',2024:'PINS',2025:'SUIT',2026:'PMAP',2045:'PVIS',2046:'BROK',46:'TRED'};
 const FAMILIES=new Set([...Object.values(TYPES),'BAL1','BEXP','MISL']);
 const DARK=[26,30,29],STEEL=[108,114,114],EDGE=[151,159,155],RED=[169,13,7],BRASS=[182,133,49];
 const cfg=q=>({q,s:[7,14,32][q],r:[3,6,12][q],thin:[4,6,10][q]});
@@ -313,6 +313,28 @@ function candlestick(b,d){
   flame(b,d,[0,0,19.4],1.5,4.6,0,false);
   if(d.q===2)ring(b,[0,0,11.9],2.5,.2,BRASS,d,'metal');
 }
+function redTorch(b,d,frame){
+ const stone=[42,38,34],bronze=[128,92,42],iron=[58,52,48];
+ b.lathe([0,0,0],d.q===2?[[0,11.2],[.5,11.5],[1.5,10],[3,8.5],[4.5,7.8],[6,7.5],[7,7.3],[8,7.5],[8.5,8],[9,9],[9.5,10],[10,10.8],[10.5,11],[11,11.2],[11.5,11],[12,10.5],[12.5,9.5],[13,8.5],[13.5,7.5],[14,6.5],[14.5,5.5],[15,4.5],[15.5,3.5],[16,2.5],[16.5,1.5],[17,.5],[17.5,0]]:d.q===1?[[0,11.2],[1.5,10],[5,7.5],[8,7.5],[10.5,11],[12.5,9.5],[15,4.5],[17.5,0]]:[[0,11.2],[5,7.5],[10,10.8],[14,6.5],[17.5,0]],stone,{segments:d.s,material:'metal'});
+ b.lathe([0,0,0],d.q===2?[[8,4.5],[9,4.8],[10,5],[11,5.1],[12,5],[13,4.8],[14,4.5],[15,4.2],[16,4],[17,3.8],[18,3.7],[19,3.6],[20,3.5],[21,3.5],[22,3.6],[23,3.7],[24,3.8],[25,4],[26,4.2],[27,4.5],[28,4.8],[29,5],[30,5.2],[31,5.3],[32,5.2],[33,5],[34,4.8],[35,4.5],[36,4.2],[37,4],[38,3.8],[39,3.5],[40,3.2],[41,3],[42,2.8]]:d.q===1?[[8,4.5],[11,5.1],[15,4.2],[20,3.5],[26,4.2],[31,5.3],[36,4.2],[42,2.8]]:[[8,4.5],[15,4.2],[25,4],[35,4.2],[42,2.8]],[62,55,48],{segments:d.s,material:'metal'});
+ if(d.q>0)for(const z of[12,20,28,36])ring(b,[0,0,z],5.2,.22,bronze,d,'metal');
+ ring(b,[0,0,58],8.5,.35,iron,d,'metal');
+ ring(b,[0,0,42],4.5,.3,iron,d,'metal');
+ const uprights=d.q===2?6:4;
+ for(let i=0;i<uprights;i++){
+  const a=i*TAU/uprights;
+  line(b,[Math.cos(a)*4,Math.sin(a)*4,42],[Math.cos(a)*8,Math.sin(a)*8,50],.4,iron,d,'metal');
+  line(b,[Math.cos(a)*8,Math.sin(a)*8,50],[Math.cos(a)*7,Math.sin(a)*7,58],.35,iron,d,'metal');
+ }
+ ell(b,[0,0,44],[3.5,3.5,1.2],[220,62,12],d,'glow',{emissive:1});
+ const ox=(frame-1.5)*.15,oy=(frame%2)*.12;
+ ell(b,[ox,oy,62],[2.2,2.2,5],[210,28,18],d,'glow',{emissive:1});
+ ell(b,[ox*.5,oy*.5,60],[1.2,1.2,3],[255,148,42],d,'glow',{emissive:1});
+ for(let i=0;i<(d.q?3:1);i++){
+  const a=i*2.399+frame*.4,r=1.5+.3*(i%3);
+  ell(b,[Math.cos(a)*r+ox,Math.sin(a)*r+oy,64+Math.sin(a*2)*1.5],[.6,.6,1.8],i%2?[230,45,12]:[255,120,30],{...d,s:d.q?8:4,r:d.q?4:2},'glow',{emissive:1});
+ }
+}
 function megasuit(b,d){
   box(b,[0,0,14],[15,11,28],[58,120,74],d,'paint',.6);
   b.lathe([0,0,28],[[0,6.4],[1.2,6.6],[3.4,6.2],[5.2,5.4],[6.6,4.2]],[74,140,88],{segments:d.s,material:'paint'});
@@ -390,11 +412,11 @@ function rocketMissile(b,d){
     b.add(f.finish('rocket-fin'),{rotation:[i*TAU/3,0,0]});}
 }
 function build(family,frame,key,q){
- const b=new MeshBuilder(),d=cfg(q);if(family==='BAR1')barrel(b,d,frame);else if(family==='COLU')lamp(b,d);else if(family==='ELEC')tech(b,d);else if(family==='CBRA')candles(b,d,frame);else if(family==='STIM'||family==='MEDI')medical(b,d,family==='MEDI');else if(family==='BON1')bottle(b,d,frame);else if(family==='BON2')helmet(b,d);else if(family==='ARM1'||family==='ARM2')armor(b,d,family==='ARM2',frame);else if(family==='CLIP')clip(b,d);else if(family==='AMMO')ammo(b,d);else if(family==='SHEL')for(const x of [-4.5,-1.5,1.5,4.5])shell(b,[x,0,0],d);else if(family==='SBOX')shellBox(b,d);else if(family==='SHOT')b.add(worldShotgunMesh(q),{rotation:[0,0,-Math.PI/2]});else if(family==='BKEY')keyCard(b,d,KEY_BLUE);else if(family==='YKEY')keyCard(b,d,KEY_YELLOW);else if(family==='RKEY')keyCard(b,d,KEY_RED);else if(family==='ROCK')rocketPack(b,d);else if(family==='SOUL')soulsphere(b,d,frame);else if(family==='BPAK')backpack(b,d);else if(family==='CAND')candlestick(b,d);else if(family==='SUIT')megasuit(b,d);else if(family==='PVIS')visor(b,d);else if(family==='PMAP')missionMap(b,d);else if(family==='BROK')bucket(b,d);else if(family==='PINS')berserkFist(b,d);else if(family==='MGUN')chaingunPickup(b,d);else if(family==='LAUN')launcherPickup(b,d);else if(family==='CSAW')chainsawPickup(b,d);else if(family==='MISL')rocketMissile(b,d);else if(['PLAYW','PLAYN','POL5'].includes(family))body(b,d,family);else if(family==='BAL1')flame(b,d,[0,0,0],frame<2?7.3:13+(frame-2)*4,frame,false);else if(family==='BEXP'){if(frame===0){barrel(b,d,0);ell(b,[0,0,31],[5,5,5],[255,163,24],d,'glow',{emissive:1});}else flame(b,d,[0,0,17+frame*2],10+frame*4,frame,true);}const m=ageSurface(b.finish(key),family);m.detail=q;return family==='BAL1'?m:ground(m);
+ const b=new MeshBuilder(),d=cfg(q);if(family==='BAR1')barrel(b,d,frame);else if(family==='COLU')lamp(b,d);else if(family==='ELEC')tech(b,d);else if(family==='CBRA')candles(b,d,frame);else if(family==='STIM'||family==='MEDI')medical(b,d,family==='MEDI');else if(family==='BON1')bottle(b,d,frame);else if(family==='BON2')helmet(b,d);else if(family==='ARM1'||family==='ARM2')armor(b,d,family==='ARM2',frame);else if(family==='CLIP')clip(b,d);else if(family==='AMMO')ammo(b,d);else if(family==='SHEL')for(const x of [-4.5,-1.5,1.5,4.5])shell(b,[x,0,0],d);else if(family==='SBOX')shellBox(b,d);else if(family==='SHOT')b.add(worldShotgunMesh(q),{rotation:[0,0,-Math.PI/2]});else if(family==='BKEY')keyCard(b,d,KEY_BLUE);else if(family==='YKEY')keyCard(b,d,KEY_YELLOW);else if(family==='RKEY')keyCard(b,d,KEY_RED);else if(family==='ROCK')rocketPack(b,d);else if(family==='SOUL')soulsphere(b,d,frame);else if(family==='BPAK')backpack(b,d);else if(family==='CAND')candlestick(b,d);else if(family==='SUIT')megasuit(b,d);else if(family==='PVIS')visor(b,d);else if(family==='PMAP')missionMap(b,d);else if(family==='BROK')bucket(b,d);else if(family==='PINS')berserkFist(b,d);else if(family==='MGUN')chaingunPickup(b,d);else if(family==='LAUN')launcherPickup(b,d);else if(family==='CSAW')chainsawPickup(b,d);else if(family==='MISL')rocketMissile(b,d);else if(['PLAYW','PLAYN','POL5'].includes(family))body(b,d,family);else if(family==='BAL1')flame(b,d,[0,0,0],frame<2?7.3:13+(frame-2)*4,frame,false);else if(family==='BEXP'){if(frame===0){barrel(b,d,0);ell(b,[0,0,31],[5,5,5],[255,163,24],d,'glow',{emissive:1});}else flame(b,d,[0,0,17+frame*2],10+frame*4,frame,true);}else if(family==='TRED')redTorch(b,d,frame);const m=ageSurface(b.finish(key),family);m.detail=q;return family==='BAL1'?m:ground(m);
 }
 export function objectMesh(entity,time=0,detail=2){
  if(!entity||entity.removed||entity.enemy)return null;const sprite=String(entity.sprite||'').toUpperCase();let family=sprite.startsWith('PLAY')?sprite.slice(0,5):sprite.slice(0,4);if(!family)family=entity.projectile?'BAL1':TYPES[entity.type];if(entity.barrel&&entity.state==='exploding')family='BEXP';if(!FAMILIES.has(family))return null;let frame=0;
- if(family==='BEXP')frame=clamp(sprite.startsWith('BEXP')?sprite.charCodeAt(4)-65:Math.floor((entity.stateTime||0)*10),0,4);else if(family==='BAL1')frame=clamp(sprite.startsWith('BAL1')?sprite.charCodeAt(4)-65:entity.alive===false?2:0,0,4);else if(['BAR1','BON1','ARM1','ARM2'].includes(family))frame=clamp((sprite.charCodeAt(4)||65)-65,0,family==='BON1'?3:1);else if(family==='SOUL')frame=clamp((sprite.charCodeAt(4)||65)-65,0,3);else if(family==='CBRA')frame=Math.floor((Number.isFinite(time)?Math.max(0,time):0)*8)%4;
+ if(family==='BEXP')frame=clamp(sprite.startsWith('BEXP')?sprite.charCodeAt(4)-65:Math.floor((entity.stateTime||0)*10),0,4);else if(family==='BAL1')frame=clamp(sprite.startsWith('BAL1')?sprite.charCodeAt(4)-65:entity.alive===false?2:0,0,4);else if(['BAR1','BON1','ARM1','ARM2'].includes(family))frame=clamp((sprite.charCodeAt(4)||65)-65,0,family==='BON1'?3:1);else if(family==='SOUL')frame=clamp((sprite.charCodeAt(4)||65)-65,0,3);else if(family==='CBRA'||family==='TRED')frame=Math.floor((Number.isFinite(time)?Math.max(0,time):0)*8)%4;
  const q=clamp(Math.round(Number.isFinite(detail)?detail:2),0,2),key=`object:${family}:${frame}:d${q}`;return remember(key,()=>build(family,frame,key,q));
 }
 export function proceduralObjectCacheStats(){const w=weaponCacheStats();return{entries:cache.size+w.entries,limit:LIMIT+w.limit,bytes:cacheBytes+w.bytes,byteLimit:BYTE_LIMIT+w.byteLimit,objects:{entries:cache.size,limit:LIMIT,bytes:cacheBytes,byteLimit:BYTE_LIMIT},weapons:w};}

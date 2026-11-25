@@ -34,13 +34,15 @@ class Element {
   setPointerCapture(id) { this.captures.add(id); }
   hasPointerCapture(id) { return this.captures.has(id); }
   releasePointerCapture(id) { if (this.captures.delete(id)) this.dispatch('lostpointercapture', {pointerId: id}); }
-  focus() {} append() {} replaceChildren() {}
+  focus() {}
+  append(...nodes) { (this.children ||= []).push(...nodes); }
+  replaceChildren(...nodes) { this.children = [...nodes]; }
 }
 
 /** Run the production app and game with only DOM, renderer and audio boundaries mocked. */
-async function browser({coarse = false, touchPoints = 0} = {}) {
+async function browser({coarse = false, touchPoints = 0, storage = null} = {}) {
   const h = {pads: [], now: 0, audio: null, game: null, frames: [], events: [], errors: []};
-  const elements = new Map([...html.matchAll(/<[a-z]+\b[^>]*\bid="([^"]+)"[^>]*>/gi)].map(match => {
+  const elements = new Map([...html.matchAll(/<[a-z0-9]+\b[^>]*\bid="([^"]+)"[^>]*>/gi)].map(match => {
     const element = new Element(); element.hidden = /\bhidden\b/.test(match[0]); return [match[1], element];
   }));
   h.get = id => elements.get(id);
@@ -89,7 +91,7 @@ async function browser({coarse = false, touchPoints = 0} = {}) {
   const context = vm.createContext({
     document, window, ProceduralResources, DoomGame: ObservedGame, GamepadControls, ProceduralAudio: Audio, FerroDoomRenderer: Renderer,
     episodeNext, episodeTitle, createFrameTimer,
-    navigator: h.navigator,
+    navigator: h.navigator, localStorage: storage,
     matchMedia: () => ({matches: coarse}), performance: {now: () => h.now},
     ImageData: class {}, console: {error: error => h.errors.push(error)},
     requestAnimationFrame: callback => h.frames.push(callback),
@@ -281,4 +283,35 @@ test('backMenu loads the selected mission and returns to title', async () => {
   h.click('backMenu');
   assert.equal(h.playing(), false);
   assert.equal(h.get('menu').hidden, false);
+});
+
+test('persistent progression stores best times, unlocks next mission and marks completed missions', async () => {
+  const data = new Map();
+  const storage = {
+    getItem: k => data.has(k) ? data.get(k) : null,
+    setItem: (k, v) => data.set(k, String(v))
+  };
+  const h = await browser({storage});
+  h.click('start'); h.frame();
+  h.game.time = 85;
+  h.game.kills = 4;
+  h.game.secrets = 2;
+  h.game.onComplete(h.game.stats());
+  const saved = JSON.parse(data.get('doom-ferro-progress-v1'));
+  assert.ok(saved.unlocked.includes('E1M2'), 'completing E1M1 unlocks E1M2');
+  assert.equal(saved.completed.E1M1.bestTime, 85);
+  assert.equal(saved.completed.E1M1.bestKills, 4);
+  assert.equal(saved.completed.E1M1.bestSecrets, 2);
+  assert.ok(h.get('mission').options[0].textContent.endsWith('✓'), 'completed mission gets checkmark');
+
+  // A slower replay preserves the faster bestTime record
+  const h2 = await browser({storage});
+  assert.ok(h2.get('mission').options[0].textContent.endsWith('✓'), 'checkmark restored on boot');
+  h2.click('start'); h2.frame();
+  h2.game.time = 140;
+  h2.game.kills = 6;
+  h2.game.onComplete(h2.game.stats());
+  const saved2 = JSON.parse(data.get('doom-ferro-progress-v1'));
+  assert.equal(saved2.completed.E1M1.bestTime, 85, 'faster bestTime must be retained');
+  assert.equal(saved2.completed.E1M1.bestKills, 6, 'higher kill count must update');
 });

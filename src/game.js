@@ -69,6 +69,7 @@ const SCENERY = {
   12: {sprite: 'PLAYW0', solid: false, height: 16},
   15: {sprite: 'PLAYN0', solid: false, height: 16},
   24: {sprite: 'POL5A0', solid: false, height: 16},
+  46: {sprite: 'TREDA0', solid: true, radius: 16, height: 68, fullbright: true},
 };
 
 export function closestPointOnSegment(x, y, ax, ay, bx, by) {
@@ -167,7 +168,7 @@ export class DoomGame {
       if (enemy) {
         this.entities.push({...base, ...enemy, config: enemy, enemy: true, solid: true,
           sprite: `${enemy.base}A1`, state: 'idle', awake: false, ambush: Boolean(thing.flags & 8),
-          stateTime: 0, attackTimer: 0.5 + this.random(), sightTimer: this.random() * 0.2, seesPlayer: false});
+          stateTime: 0, attackTimer: 0.5 + this.random(), sightTimer: this.random() * 0.2, seesPlayer: false, target: null});
       } else if (pickup) {
         this.entities.push({...base, sprite: pickup.sprite, pickup, height: 16});
       } else if (thing.type === 2035) {
@@ -206,6 +207,12 @@ export class DoomGame {
       entity.sprite = entity.base + frame + first + (first > 1 && first < 5 ? frame + (10 - first) : '');
       entity.flip = rotation > 5;
     }
+  }
+
+  _enemyTarget(enemy) {
+    if (enemy.target && enemy.target.alive && !enemy.target.removed && enemy.target !== enemy) return enemy.target;
+    enemy.target = null;
+    return this.player;
   }
 
   nearbyLines(x, y, radius = 32) {
@@ -767,7 +774,7 @@ export class DoomGame {
     this.muzzleFlash = kind === 'fist' ? 0 : 0.09;
     const report = {weapon: kind, hits: 0};
     const sound = kind === 'fist' ? null : kind === 'shotgun' ? 'DSSHOTGN'
-      : kind === 'chainsaw' ? 'DSSWING' : kind === 'launcher' ? 'DSFIRSHT' : 'DSPISTOL';
+      : kind === 'chainsaw' ? 'DSSWING' : kind === 'launcher' ? 'DSRLAUNC' : 'DSPISTOL';
     if (sound) this._sound(sound, p);
     const range = melee ? 64 : 2048, shotZ = p.z + 32;
     // Original-style vertical autoaim keeps the stairs and windows playable.
@@ -862,7 +869,11 @@ export class DoomGame {
     if (!entity.alive || entity.removed || (!entity.enemy && !entity.barrel)) return;
     entity.hp -= amount;
     if (entity.hp > 0) {
-      if (entity.enemy) { entity.awake = true; entity.state = 'pain'; entity.stateTime = 0.18; this._sound(entity.type === 3001 ? 'DSPOPAIN' : 'DSPOPAIN', entity); }
+      if (entity.enemy) {
+        entity.awake = true; entity.state = 'pain'; entity.stateTime = 0.18;
+        if (attacker && attacker.enemy && attacker !== entity && attacker.alive && !attacker.removed) entity.target = attacker;
+        this._sound(entity.type === 3001 ? 'DSPOPAIN' : 'DSPOPAIN', entity);
+      }
       return;
     }
     entity.alive = false; entity.solid = false; entity.flip = false; entity.state = 'dead'; entity.stateTime = 0;
@@ -978,9 +989,8 @@ export class DoomGame {
     } else { actor.z = sector.floor; actor.vz = 0; }
   }
 
-  _fireball(enemy, angle, damage, speed, scale) {
-    const p = this.player;
-    const dx = p.x - enemy.x, dy = p.y - enemy.y, dz = p.z + 32 - (enemy.z + 32), d = Math.hypot(dx, dy, dz) || 1;
+  _fireball(enemy, angle, damage, speed, scale, foe = this.player) {
+    const dx = foe.x - enemy.x, dy = foe.y - enemy.y, dz = (foe.z || 0) + 32 - (enemy.z + 32), d = Math.hypot(dx, dy, dz) || 1;
     this.entities.push({id: `fireball-${this.time}-${enemy.id}`, type: 'fireball', projectile: true, owner: enemy,
       x: enemy.x + Math.cos(angle) * 24, y: enemy.y + Math.sin(angle) * 24, z: enemy.z + 26,
       vx: dx / d * speed, vy: dy / d * speed, vz: dz / d * speed, sprite: 'BAL1A0', radius: 6 * scale, height: 12,
@@ -989,26 +999,33 @@ export class DoomGame {
   }
 
   _enemyAttack(enemy) {
-    const p = this.player, distance = Math.hypot(p.x - enemy.x, p.y - enemy.y);
-    if (p.health <= 0 || !this.lineOfSight(enemy.x, enemy.y, enemy.z + 32, p.x, p.y, p.z + 32)) return;
-    const angle = Math.atan2(p.y - enemy.y, p.x - enemy.x);
+    const foe = this._enemyTarget(enemy);
+    if (!foe || !foe.alive || foe.removed || (foe === this.player && foe.health <= 0)) return;
+    const distance = Math.hypot(foe.x - enemy.x, foe.y - enemy.y);
+    if (!this.lineOfSight(enemy.x, enemy.y, enemy.z + 32, foe.x, foe.y, (foe.z || 0) + 32)) return;
+    const angle = Math.atan2(foe.y - enemy.y, foe.x - enemy.x);
     const config = enemy.config;
     if (config.fireball) {
       if (distance < 56) {
-        this.damagePlayer((1 + Math.floor(this.random() * 8)) * 3, enemy); this._sound('DSCLAW', enemy);
-      } else this._fireball(enemy, angle, config.damage, 300, 1.7);
+        if (foe === this.player) this.damagePlayer((1 + Math.floor(this.random() * 8)) * 3, enemy);
+        else this.damageEntity(foe, (1 + Math.floor(this.random() * 8)) * 3, enemy);
+        this._sound('DSCLAW', enemy);
+      } else this._fireball(enemy, angle, config.damage, 300, 1.7, foe);
       return;
     }
     if (enemy.type === 3001) {
-      if (distance < 64) { this.damagePlayer((1 + Math.floor(this.random() * 8)) * 3, enemy); this._sound('DSCLAW', enemy); }
-      else this._fireball(enemy, angle, (1 + Math.floor(this.random() * 8)) * 3, 350, 1);
+      if (distance < 64) {
+        if (foe === this.player) this.damagePlayer((1 + Math.floor(this.random() * 8)) * 3, enemy);
+        else this.damageEntity(foe, (1 + Math.floor(this.random() * 8)) * 3, enemy);
+        this._sound('DSCLAW', enemy);
+      } else this._fireball(enemy, angle, (1 + Math.floor(this.random() * 8)) * 3, 350, 1, foe);
     } else {
       this._sound(enemy.type === 9 ? 'DSSHOTGN' : 'DSPISTOL', enemy);
       for (let i = 0; i < (enemy.config.shots || (enemy.type === 9 ? 3 : 1)); i++) {
         const shot = angle + (this.random() - this.random()) * 0.17;
-        const hit = this._hitscan(enemy.x, enemy.y, enemy.z + 32, shot, 2048, (p.z - enemy.z) / Math.max(1, distance), enemy);
+        const hit = this._hitscan(enemy.x, enemy.y, enemy.z + 32, shot, 2048, ((foe.z || 0) - enemy.z) / Math.max(1, distance), enemy);
         const damage = (1 + Math.floor(this.random() * 5)) * 3;
-        if (hit.entity === p) this.damagePlayer(damage, enemy);
+        if (hit.entity === this.player) this.damagePlayer(damage, enemy);
         else if (hit.entity) this.damageEntity(hit.entity, damage, enemy);
       }
     }
@@ -1021,18 +1038,22 @@ export class DoomGame {
       enemy.sprite = `${enemy.base}${frame}0`; return;
     }
     this._gravity(enemy, dt);
-    const p = this.player, distance = Math.hypot(p.x - enemy.x, p.y - enemy.y);
-    const aim = Math.atan2(p.y - enemy.y, p.x - enemy.x);
+    if (enemy.target && (!enemy.target.alive || enemy.target.removed)) enemy.target = null;
+    const foe = this._enemyTarget(enemy);
+    const p = this.player;
+    const distance = Math.hypot(foe.x - enemy.x, foe.y - enemy.y);
+    const aim = Math.atan2(foe.y - enemy.y, foe.x - enemy.x);
     enemy.sightTimer -= dt;
     if (enemy.sightTimer <= 0) {
       enemy.sightTimer = 0.2;
-      enemy.seesPlayer = p.health > 0 && distance < 1500
+      const pDist = Math.hypot(p.x - enemy.x, p.y - enemy.y);
+      enemy.seesPlayer = p.health > 0 && pDist < 1500
         && this.lineOfSight(enemy.x, enemy.y, enemy.z + 32, p.x, p.y, p.z + 32);
-      if (!enemy.awake && enemy.seesPlayer && (distance < 64 || Math.abs(angleDifference(aim, enemy.angle)) < Math.PI / 2)) {
+      if (!enemy.awake && enemy.seesPlayer && (pDist < 64 || Math.abs(angleDifference(Math.atan2(p.y - enemy.y, p.x - enemy.x), enemy.angle)) < Math.PI / 2)) {
         enemy.awake = true; this._sound(isDemon(enemy.type) ? 'DSBGSIT1' : 'DSPOSIT1', enemy);
       }
     }
-    if (!enemy.awake || p.health <= 0) { enemy.sprite = `${enemy.base}A1`; return; }
+    if (!enemy.awake || (foe === this.player && p.health <= 0)) { enemy.sprite = `${enemy.base}A1`; return; }
     enemy.angle = aim;
     enemy.attackTimer -= dt;
     if (enemy.state === 'pain') {
@@ -1049,7 +1070,8 @@ export class DoomGame {
       if (enemy.stateTime <= 0) { enemy.state = 'chase'; enemy.attackTimer = 0.8 + this.random() * 1.6; }
       return;
     }
-    if (enemy.seesPlayer && distance < 1000 && enemy.attackTimer <= 0) {
+    const seesFoe = this.lineOfSight(enemy.x, enemy.y, enemy.z + 32, foe.x, foe.y, (foe.z || 0) + 32);
+    if (seesFoe && distance < 1000 && enemy.attackTimer <= 0) {
       enemy.state = 'attack'; enemy.stateTime = 0.5; enemy.attackFired = false; return;
     }
     enemy.state = 'chase';
@@ -1100,8 +1122,10 @@ export class DoomGame {
           // Doom’s PIT_CheckThing stops missiles on solid decorations even
           // when they are not shootable. Such impacts deal no damage.
           if (target.alive && (target === this.player || target.enemy || target.barrel)) {
-            const damage = projectile.damage ?? (1 + Math.floor(this.random() * 8)) * 3;
-            if (target === this.player) this.damagePlayer(damage, projectile.owner); else this.damageEntity(target, damage, projectile.owner);
+            if (!(projectile.owner?.enemy && target.enemy && projectile.owner.type === target.type)) {
+              const damage = projectile.damage ?? (1 + Math.floor(this.random() * 8)) * 3;
+              if (target === this.player) this.damagePlayer(damage, projectile.owner); else this.damageEntity(target, damage, projectile.owner);
+            }
           }
           collided = true; break;
         }

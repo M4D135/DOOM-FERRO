@@ -1,6 +1,6 @@
 # DOOM · FERRO — Épisode 1 procédural en 3D
 
-**Les neuf missions d’Épisode 1 (*Knee-Deep in the Dead*, E1M1 à E1M9) reconstruites par le code et rendues par le moteur FERRO 0.3.33.** Version du jeu : **0.7.0**.
+**Les neuf missions d’Épisode 1 (*Knee-Deep in the Dead*, E1M1 à E1M9) reconstruites par le code et rendues par le moteur FERRO 0.3.33.** Version du jeu : **0.8.0**.
 
 Le runtime ne charge aucun WAD, fichier image, modèle ou enregistrement sonore. Les générateurs construisent la géométrie, les matériaux, le ciel, les personnages, les objets, les armes, le HUD, les effets sonores et une musique originale par niveau. Ils utilisent des calculs, des primitives et des graines déterministes ; aucun média encodé ne remplace les anciens fichiers.
 
@@ -31,11 +31,11 @@ Les sources de développement restent séparées dans `src/` pour garder les gé
 | Carte | Balayage des contours des secteurs des 9 plans d’Épisode 1 (`E1M1`–`E1M9`), création de cellules convexes ; triangulation, états initiaux et index spatial calculés |
 | Murs, sols et plafonds | Métal, rivets, panneaux, écrans, pierre, éclairages et fluides produits à partir de motifs et de bruits déterministes (100 % des surfaces des 9 missions couvertes) |
 | Ciel | Nuages gris et crêtes rocheuses calculés d’après SKY1 |
-| Ennemis | Volumes triangulés des zombiemen, shotgun guys, sergents, imps, spectres et barons ; marche, attaque, douleur et chute ; orientation propre à chaque acteur |
-| Objets et effets | Barils, lampes, colonnes, armures, bonus, caisses de soins, munitions, clés, sac à dos, combinaison, lunettes, carte, armes au sol, corps, boules de feu, missiles et explosions en 3D |
+| Ennemis | Volumes triangulés des zombiemen, shotgun guys, sergents, imps, spectres et barons ; marche, attaque, douleur, chute et combats entre espèces rivales (*infighting*, immunité projectiles de même espèce) ; orientation propre à chaque acteur |
+| Objets et effets | Barils, lampes, colonnes, torches rouges animées (`TREDA0`), armures, bonus, caisses de soins, munitions, clés, sac à dos, combinaison, lunettes, carte, armes au sol, corps, boules de feu, missiles et explosions en 3D |
 | Armes en main | Poing, pistolet, fusil à pompe, mitraillette, lance-missiles et tronçonneuse en 3D ; mains, recul, pompage et flashes en volume |
-| HUD et logo | Interface 2D calculée : barre grise, chiffres rouges/jaunes, cartes d’accès possédées (`STKEYS0–2`), visage nu et logo bleu/or ; contours vectoriels sans police bitmap extraite |
-| Sons | Oscillateurs, bruit déterministe, filtres et enveloppes ; spatialisation selon la position du joueur |
+| HUD et logo | Interface 2D calculée : barre grise, chiffres rouges/jaunes, cartes d’accès possédées (`STKEYS0–2`), visage nu, logo bleu/or et records persistants par mission (`localStorage`) ; contours vectoriels sans police bitmap extraite |
+| Sons | Oscillateurs, bruit déterministe, filtres et enveloppes (dont tir dédié `DSRLAUNC` du lance-missiles) ; spatialisation selon la position du joueur |
 | Musique | Composition originale déterministe distincte pour chacune des neuf missions ; aucune partition extraite |
 
 Les ressources visuelles sont créées à la demande puis mises en cache. Les poses identiques partagent leur géométrie et sont rendues par instanciation. Changer l’angle de la caméra ne change ni le maillage ni l’orientation d’un acteur. Les effets sonores sont calculés une fois et réutilisés. La musique conserve sa position lors des pauses. Le nombre de voix simultanées est plafonné à 24.

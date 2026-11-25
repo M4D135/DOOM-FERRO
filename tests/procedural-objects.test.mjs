@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 import {objectMesh,weaponMesh,proceduralObjectCacheStats} from '../src/procedural-objects.js';
 import {MESH_VERTEX_STRIDE as STRIDE,MATERIALS} from '../src/procedural-mesh.js';
-import {createE1M1Map} from '../src/procedural-map.js';
+import {createE1M1Map,createEpisodeMap} from '../src/procedural-map.js';
+import {sceneLighting,buildLightingRig} from '../src/procedural-lighting.js';
 import {DoomGame} from '../src/game.js';
 
 const TYPES=[2035,2028,48,35,10,12,15,24,2011,2012,2014,2015,2018,2019,2007,2048,2008,2049,2001];
@@ -272,6 +273,35 @@ test('muzzles have annular metal rims and visible bore depth rather than flat bl
     assert(Number.isFinite(bore)&&Number.isFinite(rim));
     assert(rim-bore>1.0,`${kind} bore is recessed by more than one game unit`);
   }
+});
+
+test('TREDA0 red torch has finite volumetric meshes, 4 animation frames, correct height and local torch light',()=>{
+  const lods=[0,1,2].map(d=>objectMesh({type:46,sprite:'TREDA0'},0,d));
+  assert(lods[0].triangles<lods[1].triangles&&lods[1].triangles<lods[2].triangles,'TREDA0 distant LODs are cheaper');
+  for(const detail of[0,1,2]){
+    const meshes=[0,1,2,3].map(f=>objectMesh({type:46,sprite:'TREDA0'},f/8,detail));
+    for(const m of meshes) validate(m,BUDGET[detail]);
+    const h=meshes[2].bounds.max[2]-meshes[2].bounds.min[2];
+    assert(h>=55&&h<=74,`TREDA0 height ${h} outside 55-74`);
+    assert.equal(new Set(meshes.map(digest)).size,4,'TREDA0 has 4 distinct animation frames');
+    assert(hasMaterial(meshes[2],'glow'),'TREDA0 has emissive flame');
+  }
+  const g1=new DoomGame(createE1M1Map(),{skill:2});
+  assert.equal(g1.entities.filter(e=>e.type===46).length,0,'E1M1 has no red torches');
+  const g8=new DoomGame(createEpisodeMap('E1M8'),{skill:2});
+  assert.equal(g8.entities.filter(e=>e.type===46).length,6,'E1M8 spawns 6 solid red torches');
+  const g9=new DoomGame(createEpisodeMap('E1M9'),{skill:2});
+  assert.equal(g9.entities.filter(e=>e.type===46).length,4,'E1M9 spawns 4 solid red torches');
+  for(const t of g8.entities.filter(e=>e.type===46)){
+    assert.equal(t.solid,true);assert.equal(t.fullbright,true);
+  }
+  const torch=g8.entities.find(e=>e.type===46);
+  const rig=buildLightingRig(g8.map);
+  const view={oeil:[torch.x/32,(torch.z+40)/32,-torch.y/32],avant:[0,0,-1],droite:[1,0,0],haut:[0,1,0],tangente:1,largeur:640,hauteur:400};
+  const lit=sceneLighting(rig,view,g8.entities,0,null,null);
+  const torchLight=lit.state.lights.find(s=>s.source==='torch');
+  assert(torchLight,'sceneLighting includes torch source for type 46');
+  assert(Math.abs(torchLight.color[1]-.28)<.01,'torch color is warm crimson-orange');
 });
 
 test('SHELLS reads left to right from the shell box printed face, with E and L stems on the viewer left',()=>{

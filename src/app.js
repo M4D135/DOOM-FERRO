@@ -18,6 +18,23 @@ let previousHealth = 100, damage = 0, pickupFlash = 0;
 let mouseTurn = 0, mouseLook = 0, requestedWeapon = null, messageUntil = 0;
 const frameTimer = createFrameTimer();
 let frames = 0, lastHud = '';
+let progress = { unlocked: ['E1M1'], completed: {} };
+try {
+  const raw = globalThis.localStorage?.getItem('doom-ferro-progress-v1');
+  if (raw) { const p = JSON.parse(raw); if (p && Array.isArray(p.unlocked) && p.completed) progress = p; }
+} catch { /* Sandboxed contexts may disallow localStorage. */ }
+function saveProgress() {
+  try { globalThis.localStorage?.setItem('doom-ferro-progress-v1', JSON.stringify(progress)); } catch { /* Ignore quota/sandbox errors. */ }
+}
+function refreshMissionMenu() {
+  const sel = $('mission'); if (!sel || !sel.options) return;
+  for (const opt of sel.options) {
+    if (!opt.value) continue;
+    const label = episodeTitle(opt.value) + (progress.completed[opt.value] ? ' ✓' : '');
+    if ('label' in opt && opt.label !== undefined) opt.label = label;
+    else opt.textContent = label;
+  }
+}
 let inputKind = matchMedia('(pointer: coarse)').matches ? 'touch' : 'mouse';
 let screenRevision = 0, pointerWasLocked = false, neutralInput = false;
 let audioUnlockPending = null;
@@ -136,16 +153,32 @@ function complete() {
   const stats = game.stats();
   const next = episodeNext(levelId, {secret: stats.exitSecret});
   pendingLevel = next && resources.canBuild(next) ? next : null;
-  showResults(stats, false); screen('complete');
+  const prev = progress.completed[levelId];
+  const isNewBest = !prev || stats.time < prev.bestTime;
+  progress.completed[levelId] = {
+    bestTime: prev ? Math.min(prev.bestTime, stats.time) : stats.time,
+    bestKills: Math.max(prev?.bestKills ?? 0, stats.kills),
+    totalKills: stats.totalKills,
+    bestSecrets: Math.max(prev?.bestSecrets ?? 0, stats.secrets),
+    totalSecrets: stats.totalSecrets
+  };
+  if (pendingLevel && !progress.unlocked.includes(pendingLevel)) progress.unlocked.push(pendingLevel);
+  saveProgress(); refreshMissionMenu();
+  showResults(stats, false, progress.completed[levelId], isNewBest); screen('complete');
 }
 
-function showResults(stats, dead) {
+function showResults(stats, dead, record = null, isNewBest = false) {
   $('levelEyebrow').textContent = episodeTitle(levelId);
   $('endingTitle').textContent = dead ? 'VOUS ÊTES MORT' : pendingLevel ? 'NIVEAU TERMINÉ' : 'ÉPISODE TERMINÉ';
   $('playAgain').textContent = dead || !pendingLevel ? 'REJOUER' : 'NIVEAU SUIVANT';
   const minutes = Math.floor(stats.time / 60), seconds = Math.floor(stats.time % 60).toString().padStart(2, '0');
   $('results').replaceChildren();
-  for (const [label, value] of [['Monstres', `${stats.kills} / ${stats.totalKills}`], ['Objets', `${stats.items} / ${stats.totalItems}`], ['Secrets', `${stats.secrets} / ${stats.totalSecrets}`], ['Temps', `${minutes}:${seconds}`]]) {
+  const rows = [['Monstres', `${stats.kills} / ${stats.totalKills}`], ['Objets', `${stats.items} / ${stats.totalItems}`], ['Secrets', `${stats.secrets} / ${stats.totalSecrets}`], ['Temps', `${minutes}:${seconds}`]];
+  if (!dead && record) {
+    const bm = Math.floor(record.bestTime / 60), bs = Math.floor(record.bestTime % 60).toString().padStart(2, '0');
+    rows.push(['Meilleur temps', `${bm}:${bs}${isNewBest ? ' ★' : ''}`]);
+  }
+  for (const [label, value] of rows) {
     const p = document.createElement('p'), strong = document.createElement('strong');
     p.append(label); strong.textContent = value; p.append(strong); $('results').append(p);
   }
@@ -391,6 +424,7 @@ async function boot() {
     await renderer.prepareModels?.((done,total)=>{ $('loading').textContent = `Création du Hangar… ${Math.round(done/total*100)} %`; });
     const logo = image('M_DOOM'); $('doomLogo').width = logo.width; $('doomLogo').height = logo.height; $('doomLogo').getContext('2d').drawImage(logo.canvas, 0, 0);
     resize(); screen('title'); $('loading').hidden = true; $('menuActions').hidden = false;
+    refreshMissionMenu();
     requestAnimationFrame(tick);
   } catch (error) { console.error(error); showError(error); }
 }

@@ -228,13 +228,13 @@ function chooseFixedLights(rig,origin,eye,time,previousState,max){
 function transientCandidates(rig,origin,eye,view,entities,weapon){
   const list=[];
   for(const e of entities||[]){
-    if(e.removed||!(e.type===2028||e.projectile||e.state==='exploding'))continue;
-    const position=[e.x/32,((e.z||0)+(e.type===2028?43:e.projectile?0:25))/32,-e.y/32];
+    if(e.removed||!(e.type===2028||e.type===46||e.projectile||e.state==='exploding'))continue;
+    const position=[e.x/32,((e.z||0)+(e.type===2028?43:e.type===46?56:e.projectile?0:25))/32,-e.y/32];
     const distance=Math.hypot(...sub(position,eye));
     if(distance>7)continue;
-    const power=e.type===2028?10:13;
-    const candidate={id:`object-${e.id}`,source:e.type===2028?'lamp':'flame',position,range:5,power,basePower:power,
-      color:e.type===2028?[1,.85,.45]:[1,.31,.065],score:8/(1+distance*distance),distance,visible:true,transient:true};
+    const power=e.type===2028?10:e.type===46?11:13;
+    const candidate={id:`object-${e.id}`,source:e.type===2028?'lamp':e.type===46?'torch':'flame',position,range:5,power,basePower:power,
+      color:e.type===2028?[1,.85,.45]:e.type===46?[1,.28,.08]:[1,.31,.065],score:8/(1+distance*distance),distance,visible:true,transient:true};
     if(lightPathOpen(rig,origin,{x:e.x,y:e.y,z:position[1]*32}))list.push(candidate);
   }
   if(weapon&&weapon.kind!=='fist'&&weapon.kind!=='chainsaw'&&weapon.phase>=0&&weapon.phase<.08){

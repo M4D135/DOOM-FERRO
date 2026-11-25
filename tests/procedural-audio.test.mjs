@@ -6,7 +6,7 @@ import {ProceduralAudio, DoomAudio, synthesizeEffect, createMusicPattern, spatia
 const GAME_SOUNDS = ['DSPISTOL', 'DSSHOTGN', 'DSPUNCH', 'DSSWING', 'DSCLAW', 'DSBAREXP',
   'DSFIRSHT', 'DSFIRXPL', 'DSDOROPN', 'DSDORCLS', 'DSPSTART', 'DSPSTOP', 'DSSWTCHX',
   'DSNOWAY', 'DSITEMUP', 'DSWPNUP', 'DSPOSIT1', 'DSBGSIT1', 'DSPOPAIN', 'DSPLPAIN',
-  'DSPODTH1', 'DSBGDTH1', 'DSPLDETH'];
+  'DSPODTH1', 'DSBGDTH1', 'DSPLDETH', 'DSRLAUNC'];
 const digest = samples => createHash('sha256').update(new Uint8Array(samples.buffer)).digest('hex');
 
 test('every gameplay sound is synthesized, finite, bounded and distinct without resources', () => {

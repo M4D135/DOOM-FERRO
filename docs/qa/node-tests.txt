@@ -2,1083 +2,1101 @@ TAP version 13
 # Subtest: DOM mouse start on a touch-capable PC locks before audio settles and preserves walk/run
 ok 1 - DOM mouse start on a touch-capable PC locks before audio settles and preserves walk/run
   ---
-  duration_ms: 16.420208
+  duration_ms: 16.78725
   type: 'test'
   ...
 # Subtest: DOM Escape repeats, pointer loss and focus loss pause once and release captured inputs
 ok 2 - DOM Escape repeats, pointer loss and focus loss pause once and release captured inputs
   ---
-  duration_ms: 5.232167
+  duration_ms: 5.488083
   type: 'test'
   ...
 # Subtest: DOM touch move, look and fire track separate fingers and handle cancellation
 ok 3 - DOM touch move, look and fire track separate fingers and handle cancellation
   ---
-  duration_ms: 5.017208
+  duration_ms: 4.307167
   type: 'test'
   ...
 # Subtest: DOM difficulty stays within its options and denied gamepad access preserves keyboard play
 ok 4 - DOM difficulty stays within its options and denied gamepad access preserves keyboard play
   ---
-  duration_ms: 4.20225
+  duration_ms: 3.982583
   type: 'test'
   ...
 # Subtest: DOM first keyboard or touch gesture enables audio after gamepad start without duplicate resumes
 ok 5 - DOM first keyboard or touch gesture enables audio after gamepad start without duplicate resumes
   ---
-  duration_ms: 9.860792
+  duration_ms: 10.418833
   type: 'test'
   ...
 # Subtest: Digit4/5/6 request the correct weapon index
 ok 6 - Digit4/5/6 request the correct weapon index
   ---
-  duration_ms: 2.626667
+  duration_ms: 2.29975
   type: 'test'
   ...
 # Subtest: mission selector launches the chosen level, defaults to E1M1
 ok 7 - mission selector launches the chosen level, defaults to E1M1
   ---
-  duration_ms: 4.450959
+  duration_ms: 4.51175
   type: 'test'
   ...
 # Subtest: backMenu loads the selected mission and returns to title
 ok 8 - backMenu loads the selected mission and returns to title
   ---
-  duration_ms: 5.462625
+  duration_ms: 6.212042
+  type: 'test'
+  ...
+# Subtest: persistent progression stores best times, unlocks next mission and marks completed missions
+ok 9 - persistent progression stores best times, unlocks next mission and marks completed missions
+  ---
+  duration_ms: 4.105584
   type: 'test'
   ...
 # Subtest: production is one offline HTML with all procedural code, styles and byte-identical FERRO
-ok 9 - production is one offline HTML with all procedural code, styles and byte-identical FERRO
+ok 10 - production is one offline HTML with all procedural code, styles and byte-identical FERRO
   ---
-  duration_ms: 196.760084
+  duration_ms: 201.035333
   type: 'test'
   ...
 # Subtest: single-file linker rejects missing imports, cycles and modified engine bytes
-ok 10 - single-file linker rejects missing imports, cycles and modified engine bytes
+ok 11 - single-file linker rejects missing imports, cycles and modified engine bytes
   ---
-  duration_ms: 86.879583
+  duration_ms: 101.435166
   type: 'test'
   ...
 # Subtest: all three E1M1 secrets, rewards, return routes and exit work from spawn with live combat
-ok 11 - all three E1M1 secrets, rewards, return routes and exit work from spawn with live combat
+ok 12 - all three E1M1 secrets, rewards, return routes and exit work from spawn with live combat
   ---
-  duration_ms: 119.309833
+  duration_ms: 129.574084
   type: 'test'
   ...
 # Subtest: a secret counts once after landing, never while falling through its sector
-ok 12 - a secret counts once after landing, never while falling through its sector
+ok 13 - a secret counts once after landing, never while falling through its sector
   ---
-  duration_ms: 4.876458
+  duration_ms: 7.161583
   type: 'test'
   ...
 # Subtest: monsters cross the repeatable lift trigger but cannot lower the player-only secret ledge
-ok 13 - monsters cross the repeatable lift trigger but cannot lower the player-only secret ledge
+ok 14 - monsters cross the repeatable lift trigger but cannot lower the player-only secret ledge
   ---
-  duration_ms: 2.189833
+  duration_ms: 2.274667
   type: 'test'
   ...
 # Subtest: monster door use respects the concealed face while permitting ordinary and return doors
-ok 14 - monster door use respects the concealed face while permitting ordinary and return doors
+ok 15 - monster door use respects the concealed face while permitting ordinary and return doors
   ---
-  duration_ms: 7.382667
+  duration_ms: 8.746875
   type: 'test'
   ...
 # Subtest: a missed secret lift completes its cycle and can be retriggered with cues at the platform
-ok 15 - a missed secret lift completes its cycle and can be retriggered with cues at the platform
+ok 16 - a missed secret lift completes its cycle and can be retriggered with cues at the platform
   ---
-  duration_ms: 16.496459
+  duration_ms: 19.949125
   type: 'test'
   ...
 # Subtest: the courtyard door sound originates in its moving panel on either approach
-ok 16 - the courtyard door sound originates in its moving panel on either approach
+ok 17 - the courtyard door sound originates in its moving panel on either approach
   ---
-  duration_ms: 6.897167
+  duration_ms: 7.107667
   type: 'test'
   ...
 # Subtest: episode 1 routes every level forward and the E1M3 secret into E1M9
-ok 17 - episode 1 routes every level forward and the E1M3 secret into E1M9
+ok 18 - episode 1 routes every level forward and the E1M3 secret into E1M9
   ---
-  duration_ms: 0.642083
+  duration_ms: 0.642
   type: 'test'
   ...
 # Subtest: every surveyed level can be finished, by exit switch or by the E1M8 exit hub
-ok 18 - every surveyed level can be finished, by exit switch or by the E1M8 exit hub
+ok 19 - every surveyed level can be finished, by exit switch or by the E1M8 exit hub
   ---
-  duration_ms: 35.76325
+  duration_ms: 37.959333
   type: 'test'
   ...
 # Subtest: the resource cache builds each surveyed level once and refuses the unsurveyed
-ok 19 - the resource cache builds each surveyed level once and refuses the unsurveyed
+ok 20 - the resource cache builds each surveyed level once and refuses the unsurveyed
   ---
-  duration_ms: 19.723375
+  duration_ms: 20.91725
   type: 'test'
   ...
 # Subtest: each level gets its own deterministic generated music track
-ok 20 - each level gets its own deterministic generated music track
+ok 21 - each level gets its own deterministic generated music track
   ---
-  duration_ms: 2.30525
+  duration_ms: 2.144042
   type: 'test'
   ...
 # Subtest: every new object the nine levels place spawns with a real 3D body
-ok 21 - every new object the nine levels place spawns with a real 3D body
+ok 22 - every new object the nine levels place spawns with a real 3D body
   ---
-  duration_ms: 121.221583
+  duration_ms: 129.487125
   type: 'test'
   ...
 # Subtest: cards, ammo and backpacks fill the inventory they belong to
-ok 22 - cards, ammo and backpacks fill the inventory they belong to
+ok 23 - cards, ammo and backpacks fill the inventory they belong to
   ---
-  duration_ms: 6.8325
+  duration_ms: 8.095167
   type: 'test'
   ...
 # Subtest: soulspheres and medikit buckets heal past the ordinary health cap
-ok 23 - soulspheres and medikit buckets heal past the ordinary health cap
+ok 24 - soulspheres and medikit buckets heal past the ordinary health cap
   ---
-  duration_ms: 2.987625
+  duration_ms: 3.299292
   type: 'test'
   ...
 # Subtest: berserk, the radiation suit and the survey gear change how the level plays
-ok 24 - berserk, the radiation suit and the survey gear change how the level plays
+ok 25 - berserk, the radiation suit and the survey gear change how the level plays
   ---
-  duration_ms: 8.743375
+  duration_ms: 10.275875
   type: 'test'
   ...
 # Subtest: every surveyed level is fully covered by the procedural material library
-ok 25 - every surveyed level is fully covered by the procedural material library
+ok 26 - every surveyed level is fully covered by the procedural material library
   ---
-  duration_ms: 260.440375
+  duration_ms: 283.683459
   type: 'test'
   ...
 # Subtest: every monster placed in the nine levels actually spawns and counts as a kill
-ok 26 - every monster placed in the nine levels actually spawns and counts as a kill
+ok 27 - every monster placed in the nine levels actually spawns and counts as a kill
   ---
-  duration_ms: 43.986042
+  duration_ms: 52.986709
   type: 'test'
   ...
 # Subtest: sergeants, spectres and barons are distinct fighters with real meshes
-ok 27 - sergeants, spectres and barons are distinct fighters with real meshes
+ok 28 - sergeants, spectres and barons are distinct fighters with real meshes
   ---
-  duration_ms: 416.246791
+  duration_ms: 468.934167
+  type: 'test'
+  ...
+# Subtest: infighting: cross-species hits retarget and fight to death while same-species fireballs do not hurt
+ok 29 - infighting: cross-species hits retarget and fight to death while same-species fireballs do not hurt
+  ---
+  duration_ms: 11.491792
   type: 'test'
   ...
 # Subtest: barons spit a heavy fireball and the spectre shimmers instead of blending
-ok 28 - barons spit a heavy fireball and the spectre shimmers instead of blending
+ok 30 - barons spit a heavy fireball and the spectre shimmers instead of blending
   ---
-  duration_ms: 1.240292
+  duration_ms: 1.141625
   type: 'test'
   ...
 # Subtest: the registry offers exactly the nine surveyed Episode 1 levels
-ok 29 - the registry offers exactly the nine surveyed Episode 1 levels
+ok 31 - the registry offers exactly the nine surveyed Episode 1 levels
   ---
-  duration_ms: 0.559875
+  duration_ms: 0.63025
   type: 'test'
   ...
 # Subtest: every surveyed plan matches the reference tables and stays internally consistent
-ok 30 - every surveyed plan matches the reference tables and stays internally consistent
+ok 32 - every surveyed plan matches the reference tables and stays internally consistent
   ---
-  duration_ms: 5.17275
+  duration_ms: 4.225458
   type: 'test'
   ...
 # Subtest: every surveyed plan builds playable geometry without a reference BSP
-ok 31 - every surveyed plan builds playable geometry without a reference BSP
+ok 33 - every surveyed plan builds playable geometry without a reference BSP
   ---
-  duration_ms: 20.216625
+  duration_ms: 24.035083
   type: 'test'
   ...
 # Subtest: building a level twice yields the same geometry and unknown ids fail loudly
-ok 32 - building a level twice yields the same geometry and unknown ids fail loudly
+ok 34 - building a level twice yields the same geometry and unknown ids fail loudly
   ---
-  duration_ms: 33.127958
+  duration_ms: 38.175209
   type: 'test'
   ...
 # Subtest: the nine plans build in well under a frame budget each
-ok 33 - the nine plans build in well under a frame budget each
+ok 35 - the nine plans build in well under a frame budget each
   ---
-  duration_ms: 15.405875
+  duration_ms: 15.504958
   type: 'test'
   ...
 # Subtest: every locked door colour has its key somewhere in the same level
-ok 34 - every locked door colour has its key somewhere in the same level
+ok 36 - every locked door colour has its key somewhere in the same level
   ---
-  duration_ms: 0.630208
+  duration_ms: 0.686667
   type: 'test'
   ...
 # Subtest: locked cards block the door until the card is found
-ok 35 - locked cards block the door until the card is found
+ok 37 - locked cards block the door until the card is found
   ---
-  duration_ms: 68.522792
+  duration_ms: 82.055458
   type: 'test'
   ...
 # Subtest: tagged switch doors raise every sector carrying the line tag
-ok 36 - tagged switch doors raise every sector carrying the line tag
+ok 38 - tagged switch doors raise every sector carrying the line tag
   ---
-  duration_ms: 172.839084
+  duration_ms: 199.446583
   type: 'test'
   ...
 # Subtest: walk-over specials drive their tagged sectors
-ok 37 - walk-over specials drive their tagged sectors
+ok 39 - walk-over specials drive their tagged sectors
   ---
-  duration_ms: 612.5995
+  duration_ms: 643.271708
   type: 'test'
   ...
 # Subtest: walk-over teleports land the player on the tagged destination marker
-ok 38 - walk-over teleports land the player on the tagged destination marker
+ok 40 - walk-over teleports land the player on the tagged destination marker
   ---
-  duration_ms: 6.870959
+  duration_ms: 6.922625
   type: 'test'
   ...
 # Subtest: acid and super-slime floors damage the player at their own rate
-ok 39 - acid and super-slime floors damage the player at their own rate
+ok 41 - acid and super-slime floors damage the player at their own rate
   ---
-  duration_ms: 15.458791
+  duration_ms: 15.85375
   type: 'test'
   ...
 # Subtest: E1M8 boss trigger: killing the last Baron lowers tag 666 sectors
-ok 40 - E1M8 boss trigger: killing the last Baron lowers tag 666 sectors
+ok 42 - E1M8 boss trigger: killing the last Baron lowers tag 666 sectors
   ---
-  duration_ms: 7.833792
+  duration_ms: 6.908
   type: 'test'
   ...
 # Subtest: special 7 builds stairs: chain sectors rise by +8 each
-ok 41 - special 7 builds stairs: chain sectors rise by +8 each
+ok 43 - special 7 builds stairs: chain sectors rise by +8 each
   ---
-  duration_ms: 17.489084
+  duration_ms: 15.890375
   type: 'test'
   ...
 # Subtest: special 8 W1 builds stairs on crossing
-ok 42 - special 8 W1 builds stairs on crossing
+ok 44 - special 8 W1 builds stairs on crossing
   ---
-  duration_ms: 40.712292
+  duration_ms: 40.161959
   type: 'test'
   ...
 # Subtest: special 9 donut lowers pillar and raises ring
-ok 43 - special 9 donut lowers pillar and raises ring
+ok 45 - special 9 donut lowers pillar and raises ring
   ---
-  duration_ms: 13.665916
+  duration_ms: 14.307875
   type: 'test'
   ...
 # Subtest: special 18 raises tagged floors to nearest higher neighbour
-ok 44 - special 18 raises tagged floors to nearest higher neighbour
+ok 46 - special 18 raises tagged floors to nearest higher neighbour
   ---
-  duration_ms: 8.1515
+  duration_ms: 7.912625
   type: 'test'
   ...
 # Subtest: special 22 W1 raises floors and clears special
-ok 45 - special 22 W1 raises floors and clears special
+ok 47 - special 22 W1 raises floors and clears special
   ---
-  duration_ms: 8.813333
+  duration_ms: 8.583
   type: 'test'
   ...
 # Subtest: special 23 lowers tagged floors to lowest neighbour
-ok 46 - special 23 lowers tagged floors to lowest neighbour
+ok 48 - special 23 lowers tagged floors to lowest neighbour
   ---
-  duration_ms: 13.957375
+  duration_ms: 14.392667
   type: 'test'
   ...
 # Subtest: special 70 lowers tagged floors turbo
-ok 47 - special 70 lowers tagged floors turbo
+ok 49 - special 70 lowers tagged floors turbo
   ---
-  duration_ms: 27.644167
+  duration_ms: 29.382292
   type: 'test'
   ...
 # Subtest: special 82 WR lowers raised tagged floors back to lowest neighbour
-ok 48 - special 82 WR lowers raised tagged floors back to lowest neighbour
+ok 50 - special 82 WR lowers raised tagged floors back to lowest neighbour
   ---
-  duration_ms: 5.356791
+  duration_ms: 7.07775
   type: 'test'
   ...
 # Subtest: special 35 W1 sets sector light to 35
-ok 49 - special 35 W1 sets sector light to 35
+ok 51 - special 35 W1 sets sector light to 35
   ---
-  duration_ms: 0.616125
+  duration_ms: 0.745875
   type: 'test'
   ...
 # Subtest: special 16 W1 closes door for 30 tics then reopens
-ok 50 - special 16 W1 closes door for 30 tics then reopens
+ok 52 - special 16 W1 closes door for 30 tics then reopens
   ---
-  duration_ms: 42.141584
+  duration_ms: 45.441583
   type: 'test'
   ...
 # Subtest: special 46 door opens when shot
-ok 51 - special 46 door opens when shot
+ok 53 - special 46 door opens when shot
   ---
-  duration_ms: 1.145459
+  duration_ms: 1.369542
   type: 'test'
   ...
 # Subtest: the three missing arsenal pieces spawn as generated hardware, not as holes
-ok 52 - the three missing arsenal pieces spawn as generated hardware, not as holes
+ok 54 - the three missing arsenal pieces spawn as generated hardware, not as holes
   ---
-  duration_ms: 70.849042
+  duration_ms: 75.851125
   type: 'test'
   ...
 # Subtest: the six hands-on weapons all have an articulated view model
-ok 53 - the six hands-on weapons all have an articulated view model
+ok 55 - the six hands-on weapons all have an articulated view model
   ---
-  duration_ms: 294.792042
+  duration_ms: 309.589084
   type: 'test'
   ...
 # Subtest: picking up the arsenal arms the player and tops the matching ammo pool
-ok 54 - picking up the arsenal arms the player and tops the matching ammo pool
+ok 56 - picking up the arsenal arms the player and tops the matching ammo pool
   ---
-  duration_ms: 3.884834
+  duration_ms: 4.007791
   type: 'test'
   ...
 # Subtest: the new weapons fire, eat the right ammo and hurt what they hit
-ok 55 - the new weapons fire, eat the right ammo and hurt what they hit
+ok 57 - the new weapons fire, eat the right ammo and hurt what they hit
   ---
-  duration_ms: 9.462
+  duration_ms: 9.223166
   type: 'test'
   ...
 # Subtest: weapon selection follows the original number keys and ignores unowned hardware
-ok 56 - weapon selection follows the original number keys and ignores unowned hardware
+ok 58 - weapon selection follows the original number keys and ignores unowned hardware
   ---
-  duration_ms: 0.560792
+  duration_ms: 0.548417
   type: 'test'
   ...
 # Subtest: the frame timer measures real stalls while bounding only the simulation delta
-ok 57 - the frame timer measures real stalls while bounding only the simulation delta
+ok 59 - the frame timer measures real stalls while bounding only the simulation delta
   ---
-  duration_ms: 0.510125
+  duration_ms: 0.5695
   type: 'test'
   ...
 # Subtest: E1M1 solo flags, procedural entity models, player start and three secrets
-ok 58 - E1M1 solo flags, procedural entity models, player start and three secrets
+ok 60 - E1M1 solo flags, procedural entity models, player start and three secrets
   ---
-  duration_ms: 1209.52275
+  duration_ms: 1261.979625
   type: 'test'
   ...
 # Subtest: swept player movement cannot tunnel through a wall or diagonal corner
-ok 59 - swept player movement cannot tunnel through a wall or diagonal corner
+ok 61 - swept player movement cannot tunnel through a wall or diagonal corner
   ---
-  duration_ms: 13.681042
+  duration_ms: 15.023833
   type: 'test'
   ...
 # Subtest: all four original manual doors block, open, and allow the player through
-ok 60 - all four original manual doors block, open, and allow the player through
+ok 62 - all four original manual doors block, open, and allow the player through
   ---
-  duration_ms: 12.622208
+  duration_ms: 13.327709
   type: 'test'
   ...
 # Subtest: closing door reopens when a player radius overlaps its boundary
-ok 61 - closing door reopens when a player radius overlaps its boundary
+ok 63 - closing door reopens when a player radius overlaps its boundary
   ---
-  duration_ms: 2.218917
+  duration_ms: 2.399833
   type: 'test'
   ...
 # Subtest: closed doors block line of sight and hitscan, then open their portals
-ok 62 - closed doors block line of sight and hitscan, then open their portals
+ok 64 - closed doors block line of sight and hitscan, then open their portals
   ---
-  duration_ms: 1.79725
+  duration_ms: 1.820875
   type: 'test'
   ...
 # Subtest: crossing original line308 lowers the tagged secret floor once
-ok 63 - crossing original line308 lowers the tagged secret floor once
+ok 65 - crossing original line308 lowers the tagged secret floor once
   ---
-  duration_ms: 1.951375
+  duration_ms: 3.2185
   type: 'test'
   ...
 # Subtest: crossing original line195 cycles the tagged secret lift down, waits, returns
-ok 64 - crossing original line195 cycles the tagged secret lift down, waits, returns
+ok 66 - crossing original line195 cycles the tagged secret lift down, waits, returns
   ---
-  duration_ms: 3.72925
+  duration_ms: 4.927959
   type: 'test'
   ...
 # Subtest: acid damages a grounded player; secrets count each original sector only once
-ok 65 - acid damages a grounded player; secrets count each original sector only once
+ok 67 - acid damages a grounded player; secrets count each original sector only once
   ---
-  duration_ms: 2.120792
+  duration_ms: 2.619542
   type: 'test'
   ...
 # Subtest: pistol, fists and original shotgun pickup use the correct ammunition pools
-ok 66 - pistol, fists and original shotgun pickup use the correct ammunition pools
+ok 68 - pistol, fists and original shotgun pickup use the correct ammunition pools
   ---
-  duration_ms: 3.814375
+  duration_ms: 5.830708
   type: 'test'
   ...
 # Subtest: real E1M1 enemy can be shot, dies once and drops ammunition
-ok 67 - real E1M1 enemy can be shot, dies once and drops ammunition
+ok 69 - real E1M1 enemy can be shot, dies once and drops ammunition
   ---
-  duration_ms: 2.415292
+  duration_ms: 2.526792
   type: 'test'
   ...
 # Subtest: barrel explosion damages nearby actors and resolves to valid procedural 3D effects
-ok 68 - barrel explosion damages nearby actors and resolves to valid procedural 3D effects
+ok 70 - barrel explosion damages nearby actors and resolves to valid procedural 3D effects
   ---
-  duration_ms: 15.322333
+  duration_ms: 15.564667
   type: 'test'
   ...
 # Subtest: original solid lamp blocks an imp fireball and protects the player behind it
-ok 69 - original solid lamp blocks an imp fireball and protects the player behind it
+ok 71 - original solid lamp blocks an imp fireball and protects the player behind it
   ---
-  duration_ms: 3.796458
+  duration_ms: 4.083125
   type: 'test'
   ...
 # Subtest: original nonsolid candle and corpse allow a fireball to reach the player
-ok 70 - original nonsolid candle and corpse allow a fireball to reach the player
+ok 72 - original nonsolid candle and corpse allow a fireball to reach the player
   ---
-  duration_ms: 2.809875
+  duration_ms: 3.296042
   type: 'test'
   ...
 # Subtest: fireballs still impact and damage living enemies and barrels
-ok 71 - fireballs still impact and damage living enemies and barrels
+ok 73 - fireballs still impact and damage living enemies and barrels
   ---
-  duration_ms: 4.61325
+  duration_ms: 4.041667
   type: 'test'
   ...
 # Subtest: only an aimed nearby exit switch completes E1M1 and restart restores everything
-ok 72 - only an aimed nearby exit switch completes E1M1 and restart restores everything
+ok 74 - only an aimed nearby exit switch completes E1M1 and restart restores everything
   ---
-  duration_ms: 1.429083
+  duration_ms: 1.512041
   type: 'test'
   ...
 # Subtest: armor bonuses restore basic protection after blue armor is exhausted
-ok 73 - armor bonuses restore basic protection after blue armor is exhausted
+ok 75 - armor bonuses restore basic protection after blue armor is exhausted
   ---
-  duration_ms: 1.213834
+  duration_ms: 1.259125
   type: 'test'
   ...
 # Subtest: same input sequence and random seed produce the same simulation
-ok 74 - same input sequence and random seed produce the same simulation
+ok 76 - same input sequence and random seed produce the same simulation
   ---
-  duration_ms: 31.116667
+  duration_ms: 47.4895
   type: 'test'
   ...
 # Subtest: complete main route from authentic spawn with real movement and door use, no teleport
-ok 75 - complete main route from authentic spawn with real movement and door use, no teleport
+ok 77 - complete main route from authentic spawn with real movement and door use, no teleport
   ---
-  duration_ms: 36.2685
+  duration_ms: 35.484125
   type: 'test'
   ...
 # Subtest: controller can select difficulty and start from the menu without firing
-ok 76 - controller can select difficulty and start from the menu without firing
+ok 78 - controller can select difficulty and start from the menu without firing
   ---
-  duration_ms: 0.467334
+  duration_ms: 0.507875
   type: 'test'
   ...
 # Subtest: pause and resume require a new button press and cannot leak held triggers
-ok 77 - pause and resume require a new button press and cannot leak held triggers
+ok 79 - pause and resume require a new button press and cannot leak held triggers
   ---
-  duration_ms: 0.091833
+  duration_ms: 0.133083
   type: 'test'
   ...
 # Subtest: axes implement deadzone, forward, right strafe and radian look deltas
-ok 78 - axes implement deadzone, forward, right strafe and radian look deltas
+ok 80 - axes implement deadzone, forward, right strafe and radian look deltas
   ---
-  duration_ms: 0.0875
+  duration_ms: 0.108791
   type: 'test'
   ...
 # Subtest: use, map and weapon commands are edges while firing is held
-ok 79 - use, map and weapon commands are edges while firing is held
+ok 81 - use, map and weapon commands are edges while firing is held
   ---
-  duration_ms: 0.296958
+  duration_ms: 0.341708
   type: 'test'
   ...
 # Subtest: disconnect resets motion and explicit clears require releasing pressed buttons
-ok 80 - disconnect resets motion and explicit clears require releasing pressed buttons
+ok 82 - disconnect resets motion and explicit clears require releasing pressed buttons
   ---
-  duration_ms: 0.069667
+  duration_ms: 0.070167
   type: 'test'
   ...
 # Subtest: generated HUD preserves its logical layout and contains all live status states
-ok 81 - generated HUD preserves its logical layout and contains all live status states
+ok 83 - generated HUD preserves its logical layout and contains all live status states
   ---
-  duration_ms: 12.761583
+  duration_ms: 17.042041
   type: 'test'
   ...
 # Subtest: interface generation is deterministic and cannot supply a world or weapon billboard
-ok 82 - interface generation is deterministic and cannot supply a world or weapon billboard
+ok 84 - interface generation is deterministic and cannot supply a world or weapon billboard
   ---
-  duration_ms: 6.063583
+  duration_ms: 7.248875
   type: 'test'
   ...
 # Subtest: key card icons STKEYS0/1/2 are distinct, deterministic and valid
-ok 83 - key card icons STKEYS0/1/2 are distinct, deterministic and valid
+ok 85 - key card icons STKEYS0/1/2 are distinct, deterministic and valid
   ---
-  duration_ms: 0.163
+  duration_ms: 0.223458
   type: 'test'
   ...
 # Subtest: a one-unit step keeps the shadow owner and the accepted fixture set stable
-ok 84 - a one-unit step keeps the shadow owner and the accepted fixture set stable
+ok 86 - a one-unit step keeps the shadow owner and the accepted fixture set stable
   ---
-  duration_ms: 1.868458
+  duration_ms: 2.098875
   type: 'test'
   ...
 # Subtest: a sector light entering the budget fades in instead of replacing the room lights
-ok 85 - a sector light entering the budget fades in instead of replacing the room lights
+ok 87 - a sector light entering the budget fades in instead of replacing the room lights
   ---
-  duration_ms: 0.598458
+  duration_ms: 0.404375
   type: 'test'
   ...
 # Subtest: the fallback room fill is anchored to the sector instead of following the eye
-ok 86 - the fallback room fill is anchored to the sector instead of following the eye
+ok 88 - the fallback room fill is anchored to the sector instead of following the eye
   ---
-  duration_ms: 0.319083
+  duration_ms: 0.804834
   type: 'test'
   ...
 # Subtest: turning the head does not move the world shadow projection
-ok 87 - turning the head does not move the world shadow projection
+ok 89 - turning the head does not move the world shadow projection
   ---
-  duration_ms: 0.357333
+  duration_ms: 0.551
   type: 'test'
   ...
 # Subtest: a muzzle flash uses its transient slot without removing the fixed room lights
-ok 88 - a muzzle flash uses its transient slot without removing the fixed room lights
+ok 90 - a muzzle flash uses its transient slot without removing the fixed room lights
   ---
-  duration_ms: 0.28775
+  duration_ms: 0.45825
   type: 'test'
   ...
 # Subtest: the state survives the round trip through the renderer so the fade is actually applied
-ok 89 - the state survives the round trip through the renderer so the fade is actually applied
+ok 91 - the state survives the round trip through the renderer so the fade is actually applied
   ---
-  duration_ms: 1.199667
+  duration_ms: 1.56725
   type: 'test'
   ...
 # Subtest: a full budget never evicts a light that is still fading
-ok 90 - a full budget never evicts a light that is still fading
+ok 92 - a full budget never evicts a light that is still fading
   ---
-  duration_ms: 0.980375
+  duration_ms: 1.046834
   type: 'test'
   ...
 # Subtest: frustum retains intersecting bounds and rejects distant geometry before model generation
-ok 91 - frustum retains intersecting bounds and rejects distant geometry before model generation
+ok 93 - frustum retains intersecting bounds and rejects distant geometry before model generation
   ---
-  duration_ms: 0.640084
+  duration_ms: 0.701292
   type: 'test'
   ...
 # Subtest: distance LOD hysteresis is stable on both boundaries and respects apparent scale
-ok 92 - distance LOD hysteresis is stable on both boundaries and respects apparent scale
+ok 94 - distance LOD hysteresis is stable on both boundaries and respects apparent scale
   ---
-  duration_ms: 37.57525
+  duration_ms: 46.968042
   type: 'test'
   ...
 # Subtest: camera movement does not turn actors or swap their surface geometry
-ok 93 - camera movement does not turn actors or swap their surface geometry
+ok 95 - camera movement does not turn actors or swap their surface geometry
   ---
-  duration_ms: 110.427625
+  duration_ms: 118.791417
   type: 'test'
   ...
 # Subtest: authored extreme vertices remain visible at grazing frustum edges
-ok 94 - authored extreme vertices remain visible at grazing frustum edges
+ok 96 - authored extreme vertices remain visible at grazing frustum edges
   ---
-  duration_ms: 187.395875
+  duration_ms: 199.085042
   type: 'test'
   ...
 # Subtest: GPU model cache evicts least-recent poses and frees both buffers plus the VAO
-ok 95 - GPU model cache evicts least-recent poses and frees both buffers plus the VAO
+ok 97 - GPU model cache evicts least-recent poses and frees both buffers plus the VAO
   ---
-  duration_ms: 0.411167
+  duration_ms: 0.44075
   type: 'test'
   ...
 # Subtest: growing an existing instance group respects the GPU allocation limit
-ok 96 - growing an existing instance group respects the GPU allocation limit
+ok 98 - growing an existing instance group respects the GPU allocation limit
   ---
-  duration_ms: 0.103333
+  duration_ms: 0.101791
   type: 'test'
   ...
 # Subtest: every gameplay sound is synthesized, finite, bounded and distinct without resources
-ok 97 - every gameplay sound is synthesized, finite, bounded and distinct without resources
+ok 99 - every gameplay sound is synthesized, finite, bounded and distinct without resources
   ---
-  duration_ms: 55.559292
+  duration_ms: 61.286125
   type: 'test'
   ...
 # Subtest: procedural PCM is repeatable by seed and adapts duration to the sample rate
-ok 98 - procedural PCM is repeatable by seed and adapts duration to the sample rate
+ok 100 - procedural PCM is repeatable by seed and adapts duration to the sample rate
   ---
-  duration_ms: 9.451417
+  duration_ms: 11.799875
   type: 'test'
   ...
 # Subtest: the original generated score is deterministic, changes with its seed and contains all instruments
-ok 99 - the original generated score is deterministic, changes with its seed and contains all instruments
+ok 101 - the original generated score is deterministic, changes with its seed and contains all instruments
   ---
-  duration_ms: 1.1235
+  duration_ms: 0.843667
   type: 'test'
   ...
 # Subtest: distance and listener heading determine stereo pan without nonfinite parameters
-ok 100 - distance and listener heading determine stereo pan without nonfinite parameters
+ok 102 - distance and listener heading determine stereo pan without nonfinite parameters
   ---
-  duration_ms: 0.127292
+  duration_ms: 0.130958
   type: 'test'
   ...
 # Subtest: autoplay waits for unlock and compatibility names never read external audio
-ok 101 - autoplay waits for unlock and compatibility names never read external audio
+ok 103 - autoplay waits for unlock and compatibility names never read external audio
   ---
-  duration_ms: 3.415667
+  duration_ms: 3.268166
   type: 'test'
   ...
 # Subtest: voice limits, cached generation and completion clean up all connected nodes
-ok 102 - voice limits, cached generation and completion clean up all connected nodes
+ok 104 - voice limits, cached generation and completion clean up all connected nodes
   ---
-  duration_ms: 0.783375
+  duration_ms: 0.859333
   type: 'test'
   ...
 # Subtest: turning and moving update active spatial sounds, while relative interface sounds stay centered
-ok 103 - turning and moving update active spatial sounds, while relative interface sounds stay centered
+ok 105 - turning and moving update active spatial sounds, while relative interface sounds stay centered
   ---
-  duration_ms: 0.986625
+  duration_ms: 0.974458
   type: 'test'
   ...
 # Subtest: music pause, mute and resume preserve elapsed position and dispose clears its scheduler
-ok 104 - music pause, mute and resume preserve elapsed position and dispose clears its scheduler
+ok 106 - music pause, mute and resume preserve elapsed position and dispose clears its scheduler
   ---
-  duration_ms: 1.697042
+  duration_ms: 1.182958
   type: 'test'
   ...
 # Subtest: the scheduler loops and skips expired beats after a long interruption
-ok 105 - the scheduler loops and skips expired beats after a long interruption
+ok 107 - the scheduler loops and skips expired beats after a long interruption
   ---
-  duration_ms: 1.020834
+  duration_ms: 1.312167
   type: 'test'
   ...
 # Subtest: closed primitives have outward winding, unit normals, and nonzero volume
-ok 106 - closed primitives have outward winding, unit normals, and nonzero volume
+ok 108 - closed primitives have outward winding, unit normals, and nonzero volume
   ---
-  duration_ms: 4.558792
+  duration_ms: 4.936209
   type: 'test'
   ...
 # Subtest: composition preserves volume and normals under rotation, nonuniform scale, and reflection
-ok 107 - composition preserves volume and normals under rotation, nonuniform scale, and reflection
+ok 109 - composition preserves volume and normals under rotation, nonuniform scale, and reflection
   ---
-  duration_ms: 0.467042
+  duration_ms: 0.428833
   type: 'test'
   ...
 # Subtest: all authored actor poses remain grounded detailed volumes at three geometric levels
-ok 108 - all authored actor poses remain grounded detailed volumes at three geometric levels
+ok 110 - all authored actor poses remain grounded detailed volumes at three geometric levels
   ---
-  duration_ms: 2949.526875
+  duration_ms: 3229.740958
   type: 'test'
   ...
 # Subtest: poses are cached independently of camera-facing sprite suffixes and actor orientation
-ok 109 - poses are cached independently of camera-facing sprite suffixes and actor orientation
+ok 111 - poses are cached independently of camera-facing sprite suffixes and actor orientation
   ---
-  duration_ms: 65.44225
+  duration_ms: 58.157083
   type: 'test'
   ...
 # Subtest: attack poses move actual arms and guns, with a volumetric human muzzle flash
-ok 110 - attack poses move actual arms and guns, with a volumetric human muzzle flash
+ok 112 - attack poses move actual arms and guns, with a volumetric human muzzle flash
   ---
-  duration_ms: 173.445834
+  duration_ms: 143.516584
   type: 'test'
   ...
 # Subtest: deaths collapse through distinct 3D poses to substantial lying bodies
-ok 111 - deaths collapse through distinct 3D poses to substantial lying bodies
+ok 113 - deaths collapse through distinct 3D poses to substantial lying bodies
   ---
-  duration_ms: 227.452375
+  duration_ms: 178.650833
   type: 'test'
   ...
 # Subtest: state-only callers get deterministic bounded animation and death fallbacks
-ok 112 - state-only callers get deterministic bounded animation and death fallbacks
+ok 114 - state-only callers get deterministic bounded animation and death fallbacks
   ---
-  duration_ms: 28.805708
+  duration_ms: 29.08675
   type: 'test'
   ...
 # Subtest: character generation runs with only its source modules, without reference media or readers
-ok 113 - character generation runs with only its source modules, without reference media or readers
+ok 115 - character generation runs with only its source modules, without reference media or readers
   ---
-  duration_ms: 351.641791
+  duration_ms: 350.395792
   type: 'test'
   ...
 # Subtest: close views contain materially distinct small anatomy and details removed at distance
-ok 114 - close views contain materially distinct small anatomy and details removed at distance
+ok 116 - close views contain materially distinct small anatomy and details removed at distance
   ---
-  duration_ms: 13.724084
+  duration_ms: 13.395666
   type: 'test'
   ...
 # Subtest: pose cache stays bounded and regeneration remains deterministic under all LODs
-ok 115 - pose cache stays bounded and regeneration remains deterministic under all LODs
+ok 117 - pose cache stays bounded and regeneration remains deterministic under all LODs
   ---
-  duration_ms: 258.159042
+  duration_ms: 282.365667
   type: 'test'
   ...
 # Subtest: articulated walk poses preserve rest-surface coordinates and leave earlier poses immutable
-ok 116 - articulated walk poses preserve rest-surface coordinates and leave earlier poses immutable
+ok 118 - articulated walk poses preserve rest-surface coordinates and leave earlier poses immutable
   ---
-  duration_ms: 45.1835
+  duration_ms: 48.734208
   type: 'test'
   ...
 # Subtest: every bestiary death frame produces finite grounded volumes at every LOD
-ok 117 - every bestiary death frame produces finite grounded volumes at every LOD
+ok 119 - every bestiary death frame produces finite grounded volumes at every LOD
   ---
-  duration_ms: 258.805958
+  duration_ms: 265.384334
   type: 'test'
   ...
 # Subtest: shadow camera centers the light target and handles a vertical light direction
-ok 118 - shadow camera centers the light target and handles a vertical light direction
+ok 120 - shadow camera centers the light target and handles a vertical light direction
   ---
-  duration_ms: 0.484833
+  duration_ms: 0.51725
   type: 'test'
   ...
 # Subtest: generated fixture lights remain inside their actual E1M1 sectors
-ok 119 - generated fixture lights remain inside their actual E1M1 sectors
+ok 121 - generated fixture lights remain inside their actual E1M1 sectors
   ---
-  duration_ms: 3.988291
+  duration_ms: 3.656208
   type: 'test'
   ...
 # Subtest: closed Door 151 blocks a light ray and its real opening action releases it
-ok 120 - closed Door 151 blocks a light ray and its real opening action releases it
+ok 122 - closed Door 151 blocks a light ray and its real opening action releases it
   ---
-  duration_ms: 5.747208
+  duration_ms: 6.110583
   type: 'test'
   ...
 # Subtest: gloom lighting is anchored to the original wall lamps, screens and toxic sectors
-ok 121 - gloom lighting is anchored to the original wall lamps, screens and toxic sectors
+ok 123 - gloom lighting is anchored to the original wall lamps, screens and toxic sectors
   ---
-  duration_ms: 3.326
+  duration_ms: 3.656334
   type: 'test'
   ...
 # Subtest: local lights are bounded, finite and fixed in the room when the camera turns
-ok 122 - local lights are bounded, finite and fixed in the room when the camera turns
+ok 124 - local lights are bounded, finite and fixed in the room when the camera turns
   ---
-  duration_ms: 2.804083
+  duration_ms: 2.94575
   type: 'test'
   ...
 # Subtest: muzzle illumination appears only during the shot and keeps a stable room shadow light
-ok 123 - muzzle illumination appears only during the shot and keeps a stable room shadow light
+ok 125 - muzzle illumination appears only during the shot and keeps a stable room shadow light
   ---
-  duration_ms: 1.89425
+  duration_ms: 1.580667
   type: 'test'
   ...
 # Subtest: studio inspection uses finite three-light geometry, with the same shadow projection
-ok 124 - studio inspection uses finite three-light geometry, with the same shadow projection
+ok 126 - studio inspection uses finite three-light geometry, with the same shadow projection
   ---
-  duration_ms: 0.228083
+  duration_ms: 0.085458
   type: 'test'
   ...
 # Subtest: sector strobes and pulses change direct light power while keeping a stable shadow source
-ok 125 - sector strobes and pulses change direct light power while keeping a stable shadow source
+ok 127 - sector strobes and pulses change direct light power while keeping a stable shadow source
   ---
-  duration_ms: 1.73125
+  duration_ms: 1.568083
   type: 'test'
   ...
 # Subtest: a camera-culled model inside the light cone remains a bounded shadow caster
-ok 126 - a camera-culled model inside the light cone remains a bounded shadow caster
+ok 128 - a camera-culled model inside the light cone remains a bounded shadow caster
   ---
-  duration_ms: 9.39075
+  duration_ms: 11.950834
   type: 'test'
   ...
 # Subtest: fitted weapon shadow contains visible weapon geometry for all three held weapons
-ok 127 - fitted weapon shadow contains visible weapon geometry for all three held weapons
+ok 129 - fitted weapon shadow contains visible weapon geometry for all three held weapons
   ---
-  duration_ms: 282.757292
+  duration_ms: 309.54675
   type: 'test'
   ...
 # Subtest: procedural E1M1 constructs independent deterministic geometry from layout parameters
-ok 128 - procedural E1M1 constructs independent deterministic geometry from layout parameters
+ok 130 - procedural E1M1 constructs independent deterministic geometry from layout parameters
   ---
-  duration_ms: 5.328417
+  duration_ms: 6.5455
   type: 'test'
   ...
 # Subtest: generated convex cells cover each sector contour exactly and drive sector queries
-ok 129 - generated convex cells cover each sector contour exactly and drive sector queries
+ok 131 - generated convex cells cover each sector contour exactly and drive sector queries
   ---
-  duration_ms: 3.216083
+  duration_ms: 4.358667
   type: 'test'
   ...
 # Subtest: all placements and mechanism IDs resolve against the generated footprint
-ok 130 - all placements and mechanism IDs resolve against the generated footprint
+ok 132 - all placements and mechanism IDs resolve against the generated footprint
   ---
-  duration_ms: 2.968333
+  duration_ms: 4.085
   type: 'test'
   ...
 # Subtest: the procedural sweep preserves holes and disconnected parts of a sector
-ok 131 - the procedural sweep preserves holes and disconnected parts of a sector
+ok 133 - the procedural sweep preserves holes and disconnected parts of a sector
   ---
-  duration_ms: 0.308417
+  duration_ms: 0.363792
   type: 'test'
   ...
 # Subtest: all eight door faces become passable while advancing, with every enemy and object present
-ok 132 - all eight door faces become passable while advancing, with every enemy and object present
+ok 134 - all eight door faces become passable while advancing, with every enemy and object present
   ---
-  duration_ms: 65.50025
+  duration_ms: 80.263458
   type: 'test'
   ...
 # Subtest: generated E1M1 is traversable from spawn to the exit with active opponents and no teleport
-ok 133 - generated E1M1 is traversable from spawn to the exit with active opponents and no teleport
+ok 135 - generated E1M1 is traversable from spawn to the exit with active opponents and no teleport
   ---
-  duration_ms: 138.419417
+  duration_ms: 199.480291
   type: 'test'
   ...
 # Subtest: all 36 measured wall dimensions preserve the original material scale
-ok 134 - all 36 measured wall dimensions preserve the original material scale
+ok 136 - all 36 measured wall dimensions preserve the original material scale
   ---
-  duration_ms: 104.670791
+  duration_ms: 142.812375
   type: 'test'
   ...
 # Subtest: every generated E1M1 surface is available without the research archive
-ok 135 - every generated E1M1 surface is available without the research archive
+ok 137 - every generated E1M1 surface is available without the research archive
   ---
-  duration_ms: 24.502417
+  duration_ms: 27.119917
   type: 'test'
   ...
 # Subtest: brown grilles retain openings while structural walls remain opaque
-ok 136 - brown grilles retain openings while structural walls remain opaque
+ok 138 - brown grilles retain openings while structural walls remain opaque
   ---
-  duration_ms: 0.4865
+  duration_ms: 0.4695
   type: 'test'
   ...
 # Subtest: switch lamps change locally and three acid phases have distinct frames
-ok 137 - switch lamps change locally and three acid phases have distinct frames
+ok 139 - switch lamps change locally and three acid phases have distinct frames
   ---
-  duration_ms: 3.652541
+  duration_ms: 3.943125
   type: 'test'
   ...
 # Subtest: departure paving has joined grey tile centres and sparse green corrosion
-ok 138 - departure paving has joined grey tile centres and sparse green corrosion
+ok 140 - departure paving has joined grey tile centres and sparse green corrosion
   ---
-  duration_ms: 0.586291
+  duration_ms: 0.607416
   type: 'test'
   ...
 # Subtest: fresh mathematical material generators reproduce identical buffers
-ok 139 - fresh mathematical material generators reproduce identical buffers
+ok 141 - fresh mathematical material generators reproduce identical buffers
   ---
-  duration_ms: 46.8035
+  duration_ms: 48.820292
   type: 'test'
   ...
 # Subtest: material and interface modules cannot load an image, archive or encoded bitmap
-ok 140 - material and interface modules cannot load an image, archive or encoded bitmap
+ok 142 - material and interface modules cannot load an image, archive or encoded bitmap
   ---
-  duration_ms: 0.702083
+  duration_ms: 0.640833
   type: 'test'
   ...
 # Subtest: closed primitives retain outward topology and physical bounds with the expanded material format
-ok 141 - closed primitives retain outward topology and physical bounds with the expanded material format
+ok 143 - closed primitives retain outward topology and physical bounds with the expanded material format
   ---
-  duration_ms: 15.584417
+  duration_ms: 17.285208
   type: 'test'
   ...
 # Subtest: rounded boxes join faces, bevels and corner patches without hidden overlaps or cracks
-ok 142 - rounded boxes join faces, bevels and corner patches without hidden overlaps or cracks
+ok 144 - rounded boxes join faces, bevels and corner patches without hidden overlaps or cracks
   ---
-  duration_ms: 5.44375
+  duration_ms: 5.952875
   type: 'test'
   ...
 # Subtest: elliptical tubes follow a measured profile and remain closed along an oblique axis
-ok 143 - elliptical tubes follow a measured profile and remain closed along an oblique axis
+ok 145 - elliptical tubes follow a measured profile and remain closed along an oblique axis
   ---
-  duration_ms: 4.113292
+  duration_ms: 4.16925
   type: 'test'
   ...
 # Subtest: lathed metal profiles preserve flat flanges and can be rotated onto a barrel axis
-ok 144 - lathed metal profiles preserve flat flanges and can be rotated onto a barrel axis
+ok 146 - lathed metal profiles preserve flat flanges and can be rotated onto a barrel axis
   ---
-  duration_ms: 3.684167
+  duration_ms: 3.897875
   type: 'test'
   ...
 # Subtest: material coordinates stay attached through nonuniform scaling, reflection and articulation
-ok 145 - material coordinates stay attached through nonuniform scaling, reflection and articulation
+ok 147 - material coordinates stay attached through nonuniform scaling, reflection and articulation
   ---
-  duration_ms: 1.221833
+  duration_ms: 1.100458
   type: 'test'
   ...
 # Subtest: public triangles carry authored smooth normals and local surface coordinates through rotation
-ok 146 - public triangles carry authored smooth normals and local surface coordinates through rotation
+ok 148 - public triangles carry authored smooth normals and local surface coordinates through rotation
   ---
-  duration_ms: 0.175667
+  duration_ms: 0.18725
   type: 'test'
   ...
 # Subtest: legacy meshes convert without changing color and all procedural outputs are deterministic
-ok 147 - legacy meshes convert without changing color and all procedural outputs are deterministic
+ok 149 - legacy meshes convert without changing color and all procedural outputs are deterministic
   ---
-  duration_ms: 1.475875
+  duration_ms: 1.301875
   type: 'test'
   ...
 # Subtest: all E1M1 object types have finite volumetric meshes and three bounded detail levels
-ok 148 - all E1M1 object types have finite volumetric meshes and three bounded detail levels
+ok 150 - all E1M1 object types have finite volumetric meshes and three bounded detail levels
   ---
-  duration_ms: 1313.942667
+  duration_ms: 1428.258667
   type: 'test'
   ...
 # Subtest: object geometry has a stable world pivot independent of camera, angle, location or host scale
-ok 149 - object geometry has a stable world pivot independent of camera, angle, location or host scale
+ok 151 - object geometry has a stable world pivot independent of camera, angle, location or host scale
   ---
-  duration_ms: 394.1235
+  duration_ms: 382.438375
   type: 'test'
   ...
 # Subtest: reference colours and physical materials distinguish the original pickups
-ok 150 - reference colours and physical materials distinguish the original pickups
+ok 152 - reference colours and physical materials distinguish the original pickups
   ---
-  duration_ms: 21.818875
+  duration_ms: 21.027958
   type: 'test'
   ...
 # Subtest: medikit keeps its inclined lid and front handle, armor has an open three-dimensional neckline
-ok 151 - medikit keeps its inclined lid and front handle, armor has an open three-dimensional neckline
+ok 153 - medikit keeps its inclined lid and front handle, armor has an open three-dimensional neckline
   ---
-  duration_ms: 1.920167
+  duration_ms: 1.934458
   type: 'test'
   ...
 # Subtest: projectiles and explosion stages have genuine emissive volumes at every detail level
-ok 152 - projectiles and explosion stages have genuine emissive volumes at every detail level
+ok 154 - projectiles and explosion stages have genuine emissive volumes at every detail level
   ---
-  duration_ms: 66.751125
+  duration_ms: 64.691875
   type: 'test'
   ...
 # Subtest: first-person weapons have solid mechanics, anatomical hands, volumetric flashes and recoverable poses
-ok 153 - first-person weapons have solid mechanics, anatomical hands, volumetric flashes and recoverable poses
+ok 155 - first-person weapons have solid mechanics, anatomical hands, volumetric flashes and recoverable poses
   ---
-  duration_ms: 269.420208
+  duration_ms: 269.207875
   type: 'test'
   ...
 # Subtest: hands remain visible in the actual 70-degree perspective without counting the wooden stock
-ok 154 - hands remain visible in the actual 70-degree perspective without counting the wooden stock
+ok 156 - hands remain visible in the actual 70-degree perspective without counting the wooden stock
   ---
-  duration_ms: 8.728917
+  duration_ms: 6.181875
   type: 'test'
   ...
 # Subtest: shared parts stay resident while object and animated pose caches remain under 32 MiB
-ok 155 - shared parts stay resident while object and animated pose caches remain under 32 MiB
+ok 157 - shared parts stay resident while object and animated pose caches remain under 32 MiB
   ---
-  duration_ms: 192.061333
+  duration_ms: 194.148292
   type: 'test'
   ...
 # Subtest: analytic hand sculpting produces one closed joined surface with shared smooth normals
-ok 156 - analytic hand sculpting produces one closed joined surface with shared smooth normals
+ok 158 - analytic hand sculpting produces one closed joined surface with shared smooth normals
   ---
-  duration_ms: 13.700459
+  duration_ms: 14.905583
   type: 'test'
   ...
 # Subtest: the visible fist, wrist and forearm are one watertight connected surface
-ok 157 - the visible fist, wrist and forearm are one watertight connected surface
+ok 159 - the visible fist, wrist and forearm are one watertight connected surface
   ---
-  duration_ms: 31.176375
+  duration_ms: 35.485792
   type: 'test'
   ...
 # Subtest: PLAYN, PLAYW and POL5 preserve their different original silhouettes and materials
-ok 158 - PLAYN, PLAYW and POL5 preserve their different original silhouettes and materials
+ok 160 - PLAYN, PLAYW and POL5 preserve their different original silhouettes and materials
   ---
-  duration_ms: 170.252625
+  duration_ms: 169.726375
   type: 'test'
   ...
 # Subtest: aged paint preserves reference pigments and varies roughness without painted-on flat decals
-ok 159 - aged paint preserves reference pigments and varies roughness without painted-on flat decals
+ok 161 - aged paint preserves reference pigments and varies roughness without painted-on flat decals
   ---
-  duration_ms: 73.828958
+  duration_ms: 78.01125
   type: 'test'
   ...
 # Subtest: muzzles have annular metal rims and visible bore depth rather than flat black disks
-ok 160 - muzzles have annular metal rims and visible bore depth rather than flat black disks
+ok 162 - muzzles have annular metal rims and visible bore depth rather than flat black disks
   ---
-  duration_ms: 3.024083
+  duration_ms: 2.737375
+  type: 'test'
+  ...
+# Subtest: TREDA0 red torch has finite volumetric meshes, 4 animation frames, correct height and local torch light
+ok 163 - TREDA0 red torch has finite volumetric meshes, 4 animation frames, correct height and local torch light
+  ---
+  duration_ms: 110.016166
   type: 'test'
   ...
 # Subtest: SHELLS reads left to right from the shell box printed face, with E and L stems on the viewer left
-ok 161 - SHELLS reads left to right from the shell box printed face, with E and L stems on the viewer left
+ok 164 - SHELLS reads left to right from the shell box printed face, with E and L stems on the viewer left
   ---
-  duration_ms: 7.848125
+  duration_ms: 8.113791
   type: 'test'
   ...
 # Subtest: every E1M1 material has complete continuous PBR maps with preserved UV extents
-ok 162 - every E1M1 material has complete continuous PBR maps with preserved UV extents
+ok 165 - every E1M1 material has complete continuous PBR maps with preserved UV extents
   ---
-  duration_ms: 891.562042
+  duration_ms: 917.055792
   type: 'test'
   ...
 # Subtest: HD wall and floor recipes reproduce deterministically without modifying the legacy source
-ok 163 - HD wall and floor recipes reproduce deterministically without modifying the legacy source
+ok 166 - HD wall and floor recipes reproduce deterministically without modifying the legacy source
   ---
-  duration_ms: 77.183333
+  duration_ms: 82.318916
   type: 'test'
   ...
 # Subtest: normal map follows the measured bevel height instead of painted brightness
-ok 164 - normal map follows the measured bevel height instead of painted brightness
+ok 167 - normal map follows the measured bevel height instead of painted brightness
   ---
-  duration_ms: 128.121416
+  duration_ms: 133.754625
   type: 'test'
   ...
 # Subtest: masonry, bare metal, glass and luminous inserts have distinct material responses
-ok 165 - masonry, bare metal, glass and luminous inserts have distinct material responses
+ok 168 - masonry, bare metal, glass and luminous inserts have distinct material responses
   ---
-  duration_ms: 0.128458
+  duration_ms: 0.178583
   type: 'test'
   ...
 # Subtest: switch changes stay local, slit grilles stay open and wet acid has three analytic phases
-ok 166 - switch changes stay local, slit grilles stay open and wet acid has three analytic phases
+ok 169 - switch changes stay local, slit grilles stay open and wet acid has three analytic phases
   ---
-  duration_ms: 0.787625
+  duration_ms: 0.771125
   type: 'test'
   ...
 # Subtest: resolution caps are separate cache entries and LRU storage never exceeds 48 MiB
-ok 167 - resolution caps are separate cache entries and LRU storage never exceeds 48 MiB
+ok 170 - resolution caps are separate cache entries and LRU storage never exceeds 48 MiB
   ---
-  duration_ms: 2614.332125
+  duration_ms: 2826.269708
   type: 'test'
   ...
 # Subtest: detail generator has no asset loader, random source or embedded media payload
-ok 168 - detail generator has no asset loader, random source or embedded media payload
+ok 171 - detail generator has no asset loader, random source or embedded media payload
   ---
-  duration_ms: 0.5705
+  duration_ms: 0.605708
   type: 'test'
   ...
 # Subtest: host pass keeps MRT/depth complete, avoids texture feedback and restores the FERRO target
-ok 169 - host pass keeps MRT/depth complete, avoids texture feedback and restores the FERRO target
+ok 172 - host pass keeps MRT/depth complete, avoids texture feedback and restores the FERRO target
   ---
-  duration_ms: 145.29875
+  duration_ms: 161.341708
   type: 'test'
   ...
 # Subtest: resize replaces all scene attachments, dispose frees owned GPU resources, texture cache retains handles only
-ok 170 - resize replaces all scene attachments, dispose frees owned GPU resources, texture cache retains handles only
+ok 173 - resize replaces all scene attachments, dispose frees owned GPU resources, texture cache retains handles only
   ---
-  duration_ms: 1.382416
+  duration_ms: 1.468292
   type: 'test'
   ...
 # Subtest: state probe detects a feedback regression during the actual host pass
-ok 171 - state probe detects a feedback regression during the actual host pass
+ok 174 - state probe detects a feedback regression during the actual host pass
   ---
-  duration_ms: 1.034583
+  duration_ms: 1.027125
   type: 'test'
   ...
 # Subtest: state probe detects a missing MRT attachment before geometry is submitted
-ok 172 - state probe detects a missing MRT attachment before geometry is submitted
+ok 175 - state probe detects a missing MRT attachment before geometry is submitted
   ---
-  duration_ms: 0.689959
+  duration_ms: 0.693334
   type: 'test'
   ...
 # Subtest: FERRO canonical sources retain upstream bytes and locked hashes
-ok 173 - FERRO canonical sources retain upstream bytes and locked hashes
+ok 176 - FERRO canonical sources retain upstream bytes and locked hashes
   ---
-  duration_ms: 1.252042
+  duration_ms: 1.025834
   type: 'test'
   ...
 # Subtest: generated floor triangulation covers every E1M1 cell and sector
-ok 174 - generated floor triangulation covers every E1M1 cell and sector
+ok 177 - generated floor triangulation covers every E1M1 cell and sector
   ---
-  duration_ms: 3.492125
+  duration_ms: 3.687292
   type: 'test'
   ...
 # Subtest: E1M1 render mesh uses generated materials and finite geometry
-ok 175 - E1M1 render mesh uses generated materials and finite geometry
+ok 178 - E1M1 render mesh uses generated materials and finite geometry
   ---
-  duration_ms: 103.095208
+  duration_ms: 107.949916
   type: 'test'
   ...
 # Subtest: opening closed sectors rebuilds door surfaces from mutable heights
-ok 176 - opening closed sectors rebuilds door surfaces from mutable heights
+ok 179 - opening closed sectors rebuilds door surfaces from mutable heights
   ---
-  duration_ms: 4.837083
+  duration_ms: 6.037583
   type: 'test'
   ...
 # Subtest: type48 computer walls encode GPU scrolling without changing plan offsets
-ok 177 - type48 computer walls encode GPU scrolling without changing plan offsets
+ok 180 - type48 computer walls encode GPU scrolling without changing plan offsets
   ---
-  duration_ms: 4.666333
+  duration_ms: 4.644916
   type: 'test'
   ...
 # Subtest: world entities are instanced 3D volumes at the simulation origin and heading
-ok 178 - world entities are instanced 3D volumes at the simulation origin and heading
+ok 181 - world entities are instanced 3D volumes at the simulation origin and heading
   ---
-  duration_ms: 644.60825
+  duration_ms: 739.102041
   type: 'test'
   ...
 # Subtest: first-person arms are depth-tested meshes and are omitted on title, map and death
-ok 179 - first-person arms are depth-tested meshes and are omitted on title, map and death
+ok 182 - first-person arms are depth-tested meshes and are omitted on title, map and death
   ---
-  duration_ms: 211.384583
+  duration_ms: 293.59125
   type: 'test'
   ...
-1..179
-# tests 179
+1..182
+# tests 182
 # suites 0
-# pass 179
+# pass 182
 # fail 0
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 10208.593625
+# duration_ms 11081.770584

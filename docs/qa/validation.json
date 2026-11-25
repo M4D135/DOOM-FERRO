@@ -1,6 +1,6 @@
 {
-  "version": "0.7.0",
-  "nodeTests": 179,
+  "version": "0.8.0",
+  "nodeTests": 182,
   "nodeTestsPassed": true,
   "reproducibleBuild": true,
   "buildFiles": 1,
@@ -40,11 +40,11 @@
     "tests/renderer-passes.test.mjs",
     "tests/renderer.test.mjs"
   ],
-  "testLogSha256": "ffaa0ba2e6df96c22f0be9153a25d01a36b64d876cdca794c988a217e4c110cf",
+  "testLogSha256": "6caa2ded3213be9a186805f0b0b44e062b63b94ed3b1f9476c7ac74c4daac529",
   "generation": "procedural",
-  "buildRevision": "0.7.0-a73a70f1ec55",
+  "buildRevision": "0.8.0-d702c5c6a77d",
   "importedMediaFiles": 0,
-  "buildBytes": 1856333,
+  "buildBytes": 1861979,
   "doorTraversal": "eight faces of four doors passed while advancing during opening with the complete scene; reported previous-version blockage not reproduced",
   "proceduralLayout": "nine fixed Episode 1 reference plans (E1M1-E1M9); runtime sector contour sweep generates convex cells and preserves initial sector/side snapshots across restarts; no original BSP or triangles",
   "proceduralVisuals": "reference-guided continuous HD PBR maps and UI including procedural keycard icons STKEYS0-2; continuous anatomical and implicit hand meshes, three geometry levels; no world or held-weapon billboard",
