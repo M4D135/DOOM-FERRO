@@ -4,15 +4,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
   <meta name="theme-color" content="#090b0b">
-  <meta name="description" content="Le Hangar, E1M1 reconstruit entièrement par le code avec le moteur FERRO. Clavier, souris, manette et tactile.">
-  <title>DOOM · FERRO — Hangar procédural</title>
+  <meta name="description" content="Épisode 1 de DOOM reconstruit entièrement par le code avec le moteur FERRO. Clavier, souris, manette et tactile.">
+  <title>DOOM · FERRO — Épisode 1 procédural</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230b0c0c'/%3E%3Cpath d='M14 10h24l12 12v20L38 54H14V10zm12 10v24h10l4-6V26l-4-6z' fill='%23af1a16'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main id="game" aria-label="Doom E1M1">
+  <main id="game" aria-label="Doom Épisode 1">
     <div id="viewport">
-      <canvas id="world" tabindex="0" aria-label="Vue du joueur dans le Hangar"></canvas>
+      <canvas id="world" tabindex="0" aria-label="Vue du joueur"></canvas>
       <canvas id="overlay" aria-hidden="true"></canvas>
       <div id="damage" aria-hidden="true"></div>
       <div id="gameMessage" role="status" aria-live="polite"></div>
@@ -21,23 +21,24 @@
       <div id="touchControls" aria-label="Commandes tactiles">
         <div id="movePad" aria-label="Se déplacer"><span></span></div>
         <div id="lookPad" aria-label="Regarder autour de soi"></div>
-        <div id="touchActions"><button id="touchUse" aria-label="Ouvrir une porte ou utiliser">UTILISER</button><button id="touchFire" aria-label="Tirer">TIR</button><button id="touchWeapon" aria-label="Changer d’arme">ARME</button></div>
+        <div id="touchActions"><button id="touchUse" aria-label="Ouvrir une porte ou utiliser">UTILISER</button><button id="touchFire" aria-label="Tirer">TIR</button><button id="touchWeapon" aria-label="Changer d'arme">ARME</button></div>
       </div>
     </div>
     <canvas id="hud" width="320" height="32" aria-label="Munitions, santé et armure"></canvas>
     <section id="menu" class="screen" aria-label="Menu principal">
       <div class="menuShade"></div>
       <div class="menuContent">
-        <p class="eyebrow">LE HANGAR · ÉPISODE 1, MISSION 1</p>
+        <p class="eyebrow" id="menuEyebrow">KNEE-DEEP IN THE DEAD · ÉPISODE 1</p>
         <canvas id="doomLogo" width="136" height="56" aria-label="DOOM"></canvas>
         <div class="engineLabel">PROPULSÉ PAR <strong>FERRO</strong></div>
-        <p id="loading" role="status">Génération du Hangar…</p>
+        <p id="loading" role="status">Génération…</p>
         <div id="menuActions" hidden>
+          <label class="difficulty">MISSION<select id="mission"><option value="E1M1" selected>E1M1 · Hangar</option><option value="E1M2">E1M2 · Nuclear Plant</option><option value="E1M3">E1M3 · Toxin Refinery</option><option value="E1M4">E1M4 · Command Control</option><option value="E1M5">E1M5 · Phobos Lab</option><option value="E1M6">E1M6 · Central Processing</option><option value="E1M7">E1M7 · Computer Station</option><option value="E1M8">E1M8 · Phobos Anomaly</option><option value="E1M9">E1M9 · Military Base</option></select></label>
           <label class="difficulty">DIFFICULTÉ<select id="skill"><option value="1">Pas trop dur</option><option value="2" selected>Fais-moi mal</option><option value="3">Ultra-violence</option></select></label>
-          <button id="start" class="primary">ENTRER DANS LE HANGAR</button>
+          <button id="start" class="primary">ENTRER DANS LA MISSION</button>
           <div class="minorActions"><button id="helpButton">COMMANDES</button><button id="audioButton" aria-pressed="true">SON ACTIVÉ</button><button id="fullscreenButton">PLEIN ÉCRAN</button></div>
         </div>
-        <div id="help" hidden><p><b>ZQSD / WASD</b> se déplacer · <b>Souris</b> viser · <b>Clic / Ctrl</b> tirer</p><p><b>E / Espace</b> utiliser · <b>Maj</b> courir · <b>1 2 3</b> armes · <b>Tab</b> carte · <b>Échap</b> pause</p><p><b>Manette</b> croix ou stick gauche pour choisir la difficulté · A / Start pour démarrer</p><p><b>En jeu</b> sticks pour bouger / viser · RT tirer · A ouvrir · Y arme · Start pause</p><p><b>Tactile</b> joystick gauche pour avancer, glisser à droite pour regarder.</p></div>
+        <div id="help" hidden><p><b>ZQSD / WASD</b> se déplacer · <b>Souris</b> viser · <b>Clic / Ctrl</b> tirer</p><p><b>E / Espace</b> utiliser · <b>Maj</b> courir · <b>1–6</b> armes · <b>Tab</b> carte · <b>Échap</b> pause</p><p><b>Manette</b> croix ou stick gauche pour choisir la difficulté · A / Start pour démarrer</p><p><b>En jeu</b> sticks pour bouger / viser · RT tirer · A ouvrir · Y arme · Start pause</p><p><b>Tactile</b> joystick gauche pour avancer, glisser à droite pour regarder.</p></div>
         <p class="menuFoot">3D PROCÉDURALE <span>·</span> VERSION 0.6.0 <span>·</span> FERRO 0.3.33</p>
       </div>
       <div class="cornerNote">id Software · 1993</div>
@@ -48,7 +49,7 @@
     <section id="ending" class="screen" hidden aria-label="Fin de partie">
       <div class="dialog"><p class="eyebrow" id="levelEyebrow">E1M1 · HANGAR</p><h1 id="endingTitle">HANGAR TERMINÉ</h1><div id="results"></div><button id="playAgain" class="primary">REJOUER</button><button id="backMenu">MENU PRINCIPAL</button></div>
     </section>
-    <div id="error" role="alert" hidden><h1>Le Hangar n’a pas pu démarrer.</h1><p id="errorText"></p><button onclick="location.reload()">RÉESSAYER</button></div>
+    <div id="error" role="alert" hidden><h1>Le Hangar n'a pas pu démarrer.</h1><p id="errorText"></p><button onclick="location.reload()">RÉESSAYER</button></div>
     <p id="accessibleStatus" class="sr-only" aria-live="off"></p>
   </main>
   <script type="module" src="src/app.js"></script>

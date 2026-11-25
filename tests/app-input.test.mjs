@@ -52,6 +52,19 @@ async function browser({coarse = false, touchPoints = 0} = {}) {
   h.get('world').requestPointerLock = () => { h.events.push('pointer-lock'); h.lock(h.get('world')); return Promise.resolve(); };
   const skill = h.get('skill'); skill.options = [{value: '1'}, {value: '2'}, {value: '3'}]; skill.selectedIndex = 1;
   Object.defineProperty(skill, 'value', {get: () => skill.options[skill.selectedIndex].value});
+  // Mission selector: provide value property (defaults to E1M1)
+  const mission = h.get('mission');
+  if (mission) {
+    mission.options = [
+      {value: 'E1M1'}, {value: 'E1M2'}, {value: 'E1M3'}, {value: 'E1M4'},
+      {value: 'E1M5'}, {value: 'E1M6'}, {value: 'E1M7'}, {value: 'E1M8'}, {value: 'E1M9'}
+    ];
+    mission.selectedIndex = 0;
+    Object.defineProperty(mission, 'value', {
+      get() { return this.options[this.selectedIndex]?.value || 'E1M1'; },
+      set(v) { const idx = this.options.findIndex(o => o.value === v); if (idx >= 0) this.selectedIndex = idx; }
+    });
+  }
   class ObservedGame extends DoomGame {
     constructor(...args) { super(...args); this.inputs = []; h.game = this; }
     update(dt, input) { this.inputs.push({...input}); super.update(dt, input); }
@@ -222,4 +235,50 @@ test('DOM first keyboard or touch gesture enables audio after gamepad start with
     h.key('KeyD'); h.pointer('touchUse', 'pointerdown', {pointerId: 3}); h.pointer('touchUse', 'pointerup', {pointerId: 3});
     assert.equal(h.audio.calls, 2, 'running audio does not need another resume');
   }
+});
+
+// ─── Weapon keys 4, 5, 6 ────────────────────────────────────────────────────
+test('Digit4/5/6 request the correct weapon index', async () => {
+  const h = await browser();
+  h.click('start'); h.frame();
+  // Give player all weapons
+  h.game.player.weapons.add('shotgun');
+  h.game.player.weapons.add('chaingun');
+  h.game.player.weapons.add('launcher');
+  h.game.player.weapons.add('chainsaw');
+  h.key('Digit4');
+  let input = h.frame();
+  assert.equal(input.weapon, 4, 'Digit4 must request weapon 4 (chaingun)');
+  h.key('Digit5');
+  input = h.frame();
+  assert.equal(input.weapon, 5, 'Digit5 must request weapon 5 (launcher)');
+  h.key('Digit6');
+  input = h.frame();
+  assert.equal(input.weapon, 6, 'Digit6 must request weapon 6 (chainsaw)');
+});
+
+// ─── Mission selector ───────────────────────────────────────────────────────
+test('mission selector launches the chosen level, defaults to E1M1', async () => {
+  const h = await browser();
+  // Default: E1M1
+  h.click('start');
+  assert.equal(h.playing(), true);
+  assert.equal(h.game.map.name, 'E1M1');
+  // Change to E1M2
+  h.key('Escape'); // pause
+  const mission = h.get('mission');
+  if (mission) mission.selectedIndex = 1; // E1M2
+  h.click('start');
+  assert.equal(h.game.map.name, 'E1M2');
+});
+
+test('backMenu loads the selected mission and returns to title', async () => {
+  const h = await browser();
+  const mission = h.get('mission');
+  if (mission) mission.selectedIndex = 3; // E1M4
+  h.click('start');
+  assert.equal(h.game.map.name, 'E1M4');
+  h.click('backMenu');
+  assert.equal(h.playing(), false);
+  assert.equal(h.get('menu').hidden, false);
 });

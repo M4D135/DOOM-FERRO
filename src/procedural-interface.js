@@ -207,14 +207,55 @@ function logo(name) {
   return image.result(name);
 }
 
+/**
+ * Procedural key card icon (7×5). Deterministic raster representing a Doom
+ * access card seen from the front: dark outline, bevelled coloured body,
+ * magnetic stripe and a bright notch.
+ */
+function keyIcon(name) {
+  const colourMap = {
+    STKEYS0: [48, 108, 235],   // blue
+    STKEYS1: [238, 200, 42],   // yellow
+    STKEYS2: [220, 44, 36],    // red
+  };
+  const body = colourMap[name] || [128, 128, 128];
+  const image = new Raster(7, 5);
+  const dark = [Math.round(body[0] * 0.3), Math.round(body[1] * 0.3), Math.round(body[2] * 0.3)];
+  const light = [Math.min(255, Math.round(body[0] * 1.3)), Math.min(255, Math.round(body[1] * 1.3)), Math.min(255, Math.round(body[2] * 1.3))];
+  // Dark outline (full perimeter)
+  image.rect(0, 0, 7, 1, dark);
+  image.rect(0, 4, 7, 1, dark);
+  image.rect(0, 0, 1, 5, dark);
+  image.rect(6, 0, 1, 5, dark);
+  // Body fill with bevel highlight on top-left, shadow on bottom-right
+  for (let y = 1; y < 4; y++) {
+    for (let x = 1; x < 6; x++) {
+      if (y === 1 || x === 1) image.pixel(x, y, light);
+      else if (y === 3 || x === 5) image.pixel(x, y, dark);
+      else image.pixel(x, y, body);
+    }
+  }
+  // Magnetic stripe (row 2, columns 1-4)
+  image.rect(1, 2, 4, 1, [20, 20, 30]);
+  // Bright notch (top-right corner area)
+  image.pixel(5, 1, [255, 255, 255]);
+  return image.result(name);
+}
+
 export function hasProceduralPatch(value) {
-  return /^(?:STBAR|STTPRCNT|M_DOOM|ST(?:TNUM|YSNUM|GNUM)[0-9]|STFST[0-4][0-2]|STFOUCH[0-4]|STFDEAD0)$/.test(String(value||'').toUpperCase());
+  return /^(?:STBAR|STTPRCNT|M_DOOM|ST(?:TNUM|YSNUM|GNUM)[0-9]|STFST[0-4][0-2]|STFOUCH[0-4]|STFDEAD0|STKEYS[0-2])$/.test(String(value||'').toUpperCase());
 }
 
 export function proceduralPatch(value) {
   const name=String(value||'').toUpperCase();
   if(!hasProceduralPatch(name))return null;
   if(cache.has(name))return cache.get(name);
-  const result=name==='STBAR'?statusBar(name):name==='M_DOOM'?logo(name):name.startsWith('STF')?face(name):name.startsWith('STT')?largeDigit(name):smallDigit(name);
+  let result;
+  if(name==='STBAR') result=statusBar(name);
+  else if(name==='M_DOOM') result=logo(name);
+  else if(name.startsWith('STF')) result=face(name);
+  else if(name.startsWith('STT')) result=largeDigit(name);
+  else if(name.startsWith('STKEYS')) result=keyIcon(name);
+  else result=smallDigit(name);
   cache.set(name,result);return result;
 }

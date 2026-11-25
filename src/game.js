@@ -1,7 +1,7 @@
 /**
  * E1M1 gameplay on generated sector geometry, rendered separately by FERRO.
  * Coordinates and heights remain Doom units. This is a new simulation rather
- * than the original Doom executable; sector specials follow id's published
+ * than the original Doom executable; sector specials follow id’s published
  * p_spec.c / p_switch.c / p_doors.c data definitions.
  */
 const TAU = Math.PI * 2;
@@ -56,10 +56,10 @@ const DOOR_SPECIALS = new Map([[2, {closeAfter: true, once: true}], [5, {closeAf
   [10, {closeAfter: true, once: true}], [21, {closeAfter: true, once: true}],
   [20, {closeAfter: false, once: true}], [46, {closeAfter: false, once: true}], [103, {closeAfter: false, once: true}],
   [86, {closeAfter: false, once: false}], [90, {closeAfter: true, once: false}]]);
-const LOWER_FLOOR_SPECIALS = new Set([22, 48, 62, 63]);
+const LOWER_FLOOR_SPECIALS = new Set([62, 63, 82]);
 /** Line specials fired by crossing the line rather than by using it. */
-const CROSS_SPECIALS = new Set([2, 5, 10, 21, 36, 62, 63, 86, 88, 90, 91, 97, 98]);
-const W1_ONCE = new Set([2, 5, 10, 21]);
+const CROSS_SPECIALS = new Set([2, 5, 8, 10, 16, 21, 22, 35, 36, 62, 63, 76, 82, 86, 88, 90, 91, 97, 98]);
+const W1_ONCE = new Set([2, 5, 8, 10, 16, 21, 22, 35]);
 const SCENERY = {
   48: {sprite: 'ELECA0', solid: true, radius: 16, height: 128},
   2028: {sprite: 'COLUA0', solid: true, radius: 16, height: 48, fullbright: true},
@@ -95,8 +95,8 @@ export class DoomGame {
     this.onSound = onSound;
     this.onMessage = onMessage;
     this.onComplete = onComplete;
-    this._originalSectors = map.sectors.map(s => ({...s}));
-    this._originalSides = map.sides.map(s => ({...s}));
+    this._originalSectors = (map.initialSectors || map.sectors).map(s => ({...s}));
+    this._originalSides = (map.initialSides || map.sides).map(s => ({...s}));
     this.lines = map.lines.map(line => {
       const a = map.vertices[line.v1], b = map.vertices[line.v2];
       return {...line, ax: a.x, ay: a.y, bx: b.x, by: b.y,
@@ -125,7 +125,7 @@ export class DoomGame {
         this.neighbors[line.back].add(line.front);
       }
     }
-    // Doom places a sector's sound origin at the midpoint of its boundary bounds.
+    // Doom places a sector’s sound origin at the midpoint of its boundary bounds.
     // In particular, the timed lift must be heard at the lift, not its remote trigger.
     this._sectorSoundOrigins = soundBounds.map(b => ({x: (b.minX + b.maxX) / 2, y: (b.minY + b.maxY) / 2}));
     this.restart();
@@ -153,7 +153,7 @@ export class DoomGame {
       angle: spawn.angle * Math.PI / 180, pitch: 0, health: 100, armor: 0, armorType: 0,
       ammo: 50, shells: 0, weapon: 'pistol', weapons: new Set(['fist', 'pistol']),
       keys: {blue: 0, yellow: 0, red: 0},
-      rockets: 0, suit: false, visor: false, mapShown: false, berserk: false,
+      rockets: 0, suit: false, visor: false, mapShown: false, berserk: false, backpack: false,
       sector: sector.id, vz: 0, alive: true, solid: true, moving: false, bob: 0};
     const flag = this.skill === 1 ? 1 : this.skill === 2 ? 2 : 4;
     this.entities = [];
@@ -294,7 +294,7 @@ export class DoomGame {
     return Math.hypot(actor.x - startX, actor.y - startY);
   }
 
-  /** Trace geometry only, through all open sector portals at the ray's height. */
+  /** Trace geometry only, through all open sector portals at the ray’s height. */
   raycast(x, y, z, angle, maxDistance = 2048, slope = 0) {
     const ex = x + Math.cos(angle) * maxDistance, ey = y + Math.sin(angle) * maxDistance;
     let best = maxDistance, hitLine = null;
@@ -313,6 +313,18 @@ export class DoomGame {
     const distance = Math.hypot(bx - ax, by - ay);
     if (distance < EPS) return true;
     return this.raycast(ax, ay, az, Math.atan2(by - ay, bx - ax), distance, (bz - az) / distance).distance >= distance - 0.05;
+  }
+
+  _flipSwitch(line) {
+    const side = line.right >= 0 ? this.map.sides[line.right] : (line.left >= 0 ? this.map.sides[line.left] : null);
+    if (!side) return;
+    let changed = false;
+    for (const name of ['upper', 'middle', 'lower']) {
+      if (typeof side[name] !== 'string') continue;
+      if (side[name].startsWith('SW1')) { side[name] = side[name].replace('SW1', 'SW2'); changed = true; }
+      else if (side[name].startsWith('SW2')) { side[name] = side[name].replace('SW2', 'SW1'); changed = true; }
+    }
+    if (changed) this.map.revision = (this.map.revision || 0) + 1;
   }
 
   use() {
@@ -336,8 +348,10 @@ export class DoomGame {
         return this._openDoor(line);
       }
       if (DOOR_SPECIALS.has(line.special)) {
-        const opened = this._taggedDoor(line, DOOR_SPECIALS.get(line.special));
-        if (opened) return opened;
+        const cfg = DOOR_SPECIALS.get(line.special);
+        if (cfg.once && this._triggered.has(line.id)) continue;
+        const opened = this._taggedDoor(line, cfg);
+        if (opened) { this._flipSwitch(line); return opened; }
       }
       if (line.special === 11 || line.special === 51) {
         this.completed = true; this.exitSecret = line.special === 51;
@@ -347,6 +361,74 @@ export class DoomGame {
         this._sound('DSSWTCHX'); this.onComplete(this.stats());
         return {type: 'exit', line: line.id};
       }
+      // S1 Build Stairs Up 8
+      if (line.special === 7) {
+        if (this._triggered.has(line.id)) continue;
+        const sectors = this._buildStairs(line);
+        if (sectors) { this._triggered.add(line.id); this._flipSwitch(line); this._sound('DSSWTCHN', p); return {type: 'stairs', sectors}; }
+      }
+      // S1 Donut
+      if (line.special === 9) {
+        if (this._triggered.has(line.id)) continue;
+        const sectors = this._donut(line);
+        if (sectors) { this._triggered.add(line.id); this._flipSwitch(line); this._sound('DSSWTCHN', p); return {type: 'donut', sectors}; }
+      }
+      // S1 Raise Floor to Nearest Higher Neighbour
+      if (line.special === 18) {
+        if (this._triggered.has(line.id)) continue;
+        const targets = this.map.sectors.filter(s => s.tag && s.tag === line.tag && !this.actions.has(s.id));
+        if (targets.length) {
+          for (const sector of targets) {
+            const floors = [...this.neighbors[sector.id]].map(i => this.map.sectors[i].floor).filter(f => f > sector.floor);
+            if (!floors.length) continue;
+            const target = Math.min(...floors);
+            this.actions.set(sector.id, {kind: 'floor', target, speed: 70});
+          }
+          this._triggered.add(line.id); this._flipSwitch(line);
+          this._sectorSound('DSPSTART', targets[0]);
+          return {type: 'floor', sectors: targets.map(s => s.id)};
+        }
+      }
+      // S1 Lower Floor to Lowest Neighbour
+      if (line.special === 23) {
+        if (this._triggered.has(line.id)) continue;
+        const result = this._taggedFloor(line, 'lower');
+        if (result) { this._triggered.add(line.id); this._flipSwitch(line); return result; }
+      }
+      // SR Lower Floor Turbo to Highest Neighbour < floor + 8
+      if (line.special === 70) {
+        const targets = this.map.sectors.filter(s => s.tag && s.tag === line.tag && !this.actions.has(s.id));
+        if (targets.length) {
+          for (const sector of targets) {
+            const floors = [...this.neighbors[sector.id]].map(i => this.map.sectors[i].floor);
+            const below = floors.filter(f => f < sector.floor);
+            const target = below.length ? Math.max(...below) + 8 : sector.floor;
+            this.actions.set(sector.id, {kind: 'floor', target, speed: 280});
+          }
+          this._flipSwitch(line);
+          this._sectorSound('DSPSTART', targets[0]);
+          return {type: 'floor', sectors: targets.map(s => s.id)};
+        }
+      }
+      // SR Lift Lower Wait Raise
+      if (line.special === 62) {
+        const targets = this.map.sectors.filter(s => s.tag && s.tag === line.tag && !this.actions.has(s.id));
+        if (targets.length) {
+          for (const sector of targets) {
+            const floors = [...this.neighbors[sector.id]].map(i => this.map.sectors[i].floor);
+            const target = floors.length ? Math.min(sector.floor, ...floors) : sector.floor;
+            this.actions.set(sector.id, {kind: 'lift', phase: 'down', target, base: sector.floor, wait: 0});
+          }
+          this._flipSwitch(line);
+          this._sectorSound('DSPSTART', targets[0]);
+          return {type: 'lift', sector: targets[0].id};
+        }
+      }
+      // SR Door Open Wait Close
+      if (line.special === 63) {
+        const opened = this._taggedDoor(line, {closeAfter: true, once: false});
+        if (opened) { this._flipSwitch(line); return opened; }
+      }
       const gap = this.opening(line);
       if (!gap || gap.top - gap.bottom < 56) break;
     }
@@ -355,8 +437,6 @@ export class DoomGame {
   }
 
   _openDoor(line, actor = this.player) {
-    // ML_SECRET protects the concealed face of the courtyard door from monsters.
-    // Its ordinary reverse face remains usable on the return journey.
     if (line.back < 0 || (actor.enemy && line.flags & 32)) return false;
     const sector = this.map.sectors[line.back], old = this.actions.get(sector.id);
     if (old?.kind === 'door') {
@@ -389,8 +469,6 @@ export class DoomGame {
       this.actions.set(sector.id, {kind: 'door', phase: 'up', target, base: sector.floor,
         wait: closeAfter ? 150 / 35 : Infinity});
     }
-    // A tagged sector already resting at its open height has nothing to raise,
-    // but the switch itself is still a valid, audible activation.
     if (once) this._triggered.add(line.id);
     this._sectorSound('DSDOROPN', targets[0]);
     return {type: 'door', sector: targets[0].id};
@@ -428,6 +506,102 @@ export class DoomGame {
     return {type: 'teleport', sector: sector.id};
   }
 
+  /** Build stairs: chain sectors sharing floorTexture, each +8 above the previous. */
+  _buildStairs(line) {
+    const roots = this.map.sectors.filter(s => s.tag && s.tag === line.tag && !this.actions.has(s.id));
+    if (!roots.length) return false;
+    const moved = [];
+    for (const root of roots) {
+      const visited = new Set([root.id]);
+      let height = root.floor + 8;
+      const texture = root.floorTexture;
+      this.actions.set(root.id, {kind: 'floor', target: height, speed: 35});
+      moved.push(root.id);
+      let current = root;
+      for (;;) {
+        let found = false;
+        for (const l of this.lines) {
+          if (l.front !== current.id || l.back < 0) continue;
+          const next = this.map.sectors[l.back];
+          if (!next || visited.has(next.id) || this.actions.has(next.id)) continue;
+          if (next.floorTexture !== texture) continue;
+          visited.add(next.id);
+          height += 8;
+          this.actions.set(next.id, {kind: 'floor', target: height, speed: 35});
+          moved.push(next.id);
+          current = next;
+          found = true;
+          break;
+        }
+        if (!found) break;
+      }
+    }
+    if (!moved.length) return false;
+    this._sectorSound('DSPSTART', roots[0]);
+    return moved;
+  }
+
+  /** Donut: lower the inner pillar and raise the outer ring to the ring’s floor. */
+  _donut(line) {
+    const pillars = this.map.sectors.filter(s => s.tag && s.tag === line.tag && !this.actions.has(s.id));
+    if (!pillars.length) return false;
+    const moved = [];
+    for (const s1 of pillars) {
+      let s2 = null, s3 = null;
+      for (const l of this.lines) {
+        if (l.front !== s1.id && l.back !== s1.id) continue;
+        const neighborId = l.front === s1.id ? l.back : l.front;
+        if (neighborId < 0 || neighborId === s1.id) continue;
+        const candidate = this.map.sectors[neighborId];
+        if (!candidate) continue;
+        s2 = candidate;
+        break;
+      }
+      if (!s2) continue;
+      for (const l of this.lines) {
+        if (l.front !== s2.id && l.back !== s2.id) continue;
+        const neighborId = l.front === s2.id ? l.back : l.front;
+        if (neighborId < 0 || neighborId === s1.id || neighborId === s2.id) continue;
+        const candidate = this.map.sectors[neighborId];
+        if (!candidate) continue;
+        s3 = candidate;
+        break;
+      }
+      if (!s3) continue;
+      s2.floorTexture = s3.floorTexture;
+      s2.special = 0;
+      this.map.revision = (this.map.revision || 0) + 1;
+      this.actions.set(s1.id, {kind: 'floor', target: s3.floor, speed: 35});
+      moved.push(s1.id);
+      if (!this.actions.has(s2.id)) {
+        this.actions.set(s2.id, {kind: 'floor', target: s3.floor, speed: 35});
+        moved.push(s2.id);
+      }
+    }
+    if (!moved.length) return false;
+    this._sectorSound('DSPSTART', pillars[0]);
+    return moved;
+  }
+
+  /** Close a tagged door for 30 tics then reopen it (W1/WR close30ThenOpen). */
+  _closeDoor30(line, once) {
+    const targets = this.map.sectors.filter(s => s.tag && s.tag === line.tag && !this.actions.has(s.id));
+    if (!targets.length) return false;
+    for (const sector of targets) {
+      const neighborCeilingsAboveFloor = [...this.neighbors[sector.id]]
+        .map(i => this.map.sectors[i].ceiling)
+        .filter(c => c > sector.floor);
+      const openTarget = neighborCeilingsAboveFloor.length
+        ? Math.min(...neighborCeilingsAboveFloor) - 4
+        : sector.floor + 72;
+      this.actions.set(sector.id, {kind: 'closeDoor30', phase: 'down', base: sector.floor,
+        openTarget, wait: 30});
+      this._sectorSound('DSDORCLS', sector);
+    }
+    if (once) this._triggered.add(line.id);
+    return true;
+  }
+
   _crossLine(line, actor = this.player) {
     const special = line.special;
     // p_spec.c allows monsters to retrigger type 88, but type 36 is player-only.
@@ -438,6 +612,50 @@ export class DoomGame {
     if (LOWER_FLOOR_SPECIALS.has(special)) { this._taggedFloor(line, 'lower'); return; }
     if (special === 91) { this._taggedFloor(line, 'raise'); return; }
     if (special === 98) { this._taggedFloor(line, 'lower', 280); return; }
+    // W1 Build Stairs Up 8
+    if (special === 8) {
+      if (this._buildStairs(line)) this._triggered.add(line.id);
+      return;
+    }
+    // W1 Raise to Next Higher Floor + Change Texture/Special
+    if (special === 22) {
+      const targets = this.map.sectors.filter(s => s.tag && s.tag === line.tag && !this.actions.has(s.id));
+      if (targets.length) {
+        for (const sector of targets) {
+          const floors = [...this.neighbors[sector.id]].map(i => this.map.sectors[i].floor);
+          const higher = floors.filter(f => f > sector.floor);
+          if (!higher.length) continue;
+          const target = Math.min(...higher);
+          this.actions.set(sector.id, {kind: 'floor', target, speed: 70});
+          if (line.front >= 0) {
+            const frontSector = this.map.sectors[line.front];
+            if (frontSector) sector.floorTexture = frontSector.floorTexture;
+          }
+          sector.special = 0;
+          this.map.revision = (this.map.revision || 0) + 1;
+          this._sectorSound('DSPSTART', sector);
+        }
+        this._triggered.add(line.id);
+      }
+      return;
+    }
+    // W1 Lights to 35
+    if (special === 35) {
+      const targets = this.map.sectors.filter(s => s.tag && s.tag === line.tag);
+      if (targets.length) {
+        for (const sector of targets) {
+          sector.light = 35;
+        }
+        this.map.revision = (this.map.revision || 0) + 1;
+        this._triggered.add(line.id);
+      }
+      return;
+    }
+    // W1/WR Close 30 Then Open
+    if (special === 16 || special === 76) {
+      this._closeDoor30(line, special === 16);
+      return;
+    }
     const targets = this.map.sectors.filter(s => s.tag && s.tag === line.tag);
     for (const sector of targets) {
       if (this.actions.has(sector.id)) continue;
@@ -460,7 +678,7 @@ export class DoomGame {
       const occupants = [this.player, ...this.entities].filter(e => {
         if (!e.solid || e.removed) return false;
         if (e.sector === id) return true;
-        if (action.kind !== 'door') return false;
+        if (action.kind !== 'door' && action.kind !== 'closeDoor30') return false;
         for (const line of this.nearbyLines(e.x, e.y, e.radius + 1)) {
           if (line.front !== id && line.back !== id) continue;
           const point = closestPointOnSegment(e.x, e.y, line.ax, line.ay, line.bx, line.by);
@@ -479,6 +697,21 @@ export class DoomGame {
           const next = Math.max(action.base, sector.ceiling - 70 * dt);
           if (occupants.some(e => e.z + e.height > next)) { action.phase = 'up'; this._sectorSound('DSDOROPN', sector); }
           else { sector.ceiling = next; if (next <= action.base) this.actions.delete(id); }
+        }
+      } else if (action.kind === 'closeDoor30') {
+        if (action.phase === 'down') {
+          const next = Math.max(action.base, sector.ceiling - 70 * dt);
+          if (occupants.some(e => e.z + e.height > next)) { /* wait for occupant to leave */ }
+          else {
+            sector.ceiling = next;
+            if (next <= action.base) { action.phase = 'wait'; action.wait = 30; }
+          }
+        } else if (action.phase === 'wait') {
+          action.wait -= dt;
+          if (action.wait <= 0) { action.phase = 'up'; this._sectorSound('DSDOROPN', sector); }
+        } else {
+          sector.ceiling = Math.min(action.openTarget, sector.ceiling + 70 * dt);
+          if (sector.ceiling >= action.openTarget) { this.actions.delete(id); }
         }
       } else if (action.kind === 'floor') {
         if (action.target < oldFloor) {
@@ -551,7 +784,7 @@ export class DoomGame {
       this.entities.push({id: `rocket-${this.time.toFixed(4)}-${this.entities.length}`, type: 'rocket',
         projectile: true, owner: p, x: p.x + Math.cos(p.angle) * 24, y: p.y + Math.sin(p.angle) * 24,
         z: p.z + 28, vx: Math.cos(p.angle) * 700, vy: Math.sin(p.angle) * 700, vz: aimSlope * 700,
-        sprite: 'MISLA0', radius: 8, height: 14, damage: 20, splash: 128, scale: 1,
+        sprite: 'MISLA0', radius: 8, height: 14, damage: 20, splash: 128, splashDamage: 128, scale: 1,
         sector: p.sector, alive: true, solid: false, fullbright: true, flip: false, removed: false, age: 0});
     }
     let hitCount = 0;
@@ -565,6 +798,9 @@ export class DoomGame {
           : (1 + Math.floor(this.random() * 3)) * 5;
         const hit = this._hitscan(p.x, p.y, shotZ, angle, range, aimSlope, p);
         if (hit.entity) { this.damageEntity(hit.entity, damage, p); hitCount++; }
+        else if (hit.line && hit.line.special === 46) {
+          this._taggedDoor(hit.line, DOOR_SPECIALS.get(46));
+        }
       }
     }
     if (kind === 'fist' && hitCount) this._sound('DSPUNCH', p);
@@ -580,11 +816,12 @@ export class DoomGame {
   /** Rocket splash damage falls off linearly, as in the original. */
   _splash(projectile) {
     const radius = projectile.splash;
+    const peak = projectile.splashDamage ?? projectile.damage ?? 20;
     for (const target of [this.player, ...this.entities]) {
       if (target === projectile || target.projectile || target.removed || !target.solid) continue;
       const distance = Math.hypot(target.x - projectile.x, target.y - projectile.y);
       if (distance > radius + target.radius) continue;
-      const damage = Math.max(1, Math.round((projectile.damage ?? 20) * (1 - distance / (radius + target.radius))));
+      const damage = Math.max(1, Math.round(peak * (1 - distance / (radius + target.radius))));
       if (target === this.player) {
         if (projectile.owner !== this.player) this.damagePlayer(damage, projectile.owner);
       } else if (target.alive && (target.enemy || target.barrel)) this.damageEntity(target, damage, projectile.owner);
@@ -649,33 +886,56 @@ export class DoomGame {
           z: entity.z, sector: entity.sector, angle: 0, sprite: pickup.sprite, pickup, removed: false,
           fullbright: false, flip: false, scale: 1, alive: true, solid: false, radius: 12, height: 16, vz: 0});
       }
+      // Boss trigger E1M8: when the last Baron dies, lower tag 666 sectors.
+      if (entity.type === 3003) {
+        const remainingBarons = this.entities.some(e => e.enemy && e.type === 3003 && e.alive && !e.removed);
+        if (!remainingBarons) {
+          for (const s of this.map.sectors) {
+            if (s.tag !== 666 || this.actions.has(s.id)) continue;
+            const floors = [...this.neighbors[s.id]].map(i => this.map.sectors[i].floor);
+            if (!floors.length) continue;
+            const target = Math.min(...floors);
+            if (target < s.floor) {
+              this.actions.set(s.id, {kind: 'floor', target, speed: 140});
+              this._sectorSound('DSPSTART', s);
+            }
+          }
+        }
+      }
     }
   }
 
   _pickup(entity) {
     const item = entity.pickup, p = this.player;
     let taken = false;
+    const cap = pool => pool === 'ammo' ? (p.backpack ? 400 : 200) : (p.backpack ? 100 : 50);
     switch (item.kind) {
       case 'weapon': {
         const owned = p.weapons.has(item.weapon);
-        const room = !item.ammo || p[item.ammo] < (item.ammo === 'rockets' ? 50 : 200);
+        const maxAmmo = item.ammo === 'rockets' ? (p.backpack ? 100 : 50) : (p.backpack ? 400 : 200);
+        const room = !item.ammo || p[item.ammo] < maxAmmo;
         if (!owned && !room) break;
         p.weapons.add(item.weapon);
-        if (item.ammo) p[item.ammo] = Math.min(item.ammo === 'rockets' ? 50 : 200, p[item.ammo] + item.amount);
+        if (item.ammo) p[item.ammo] = Math.min(maxAmmo, p[item.ammo] + item.amount);
         if (!owned) p.weapon = item.weapon;
         taken = true; break;
       }
       case 'key': if (!p.keys[item.colour]) { p.keys[item.colour] = 1; taken = true; } break;
       case 'health': {
-        const cap = item.cap || 100;
-        if (p.health < cap) { p.health = Math.min(cap, p.health + item.amount); taken = true; }
+        const healthCap = item.cap || 100;
+        if (p.health < healthCap) { p.health = Math.min(healthCap, p.health + item.amount); taken = true; }
         break;
       }
       case 'bucket': if (p.health < 200) { p.health = Math.min(200, p.health + item.amount); taken = true; } break;
-      case 'rockets': if (p.rockets < 50) { p.rockets = Math.min(50, p.rockets + item.amount); taken = true; } break;
+      case 'rockets': {
+        const maxRockets = p.backpack ? 100 : 50;
+        if (p.rockets < maxRockets) { p.rockets = Math.min(maxRockets, p.rockets + item.amount); taken = true; }
+        break;
+      }
       case 'backpack':
-        p.ammo = Math.min(200, p.ammo + 10); p.shells = Math.min(50, p.shells + 4);
-        p.rockets = Math.min(50, p.rockets + 5); taken = true; break;
+        p.backpack = true;
+        p.ammo = Math.min(400, p.ammo + 10); p.shells = Math.min(100, p.shells + 4);
+        p.rockets = Math.min(100, p.rockets + 5); taken = true; break;
       case 'berserk':
         p.berserk = true; p.health = Math.max(p.health, 100); p.weapon = 'fist'; taken = true; break;
       case 'suit': p.suit = true; taken = true; break;
@@ -684,12 +944,21 @@ export class DoomGame {
       case 'healthBonus': p.health = Math.min(200, p.health + item.amount); taken = true; break;
       case 'armorBonus': p.armor = Math.min(200, p.armor + item.amount); p.armorType ||= 1; taken = true; break;
       case 'armor': if (p.armor < item.amount) { p.armor = item.amount; p.armorType = item.armorType; taken = true; } break;
-      case 'ammo': if (p.ammo < 200) { p.ammo = Math.min(200, p.ammo + item.amount); taken = true; } break;
-      case 'shells': if (p.shells < 50) { p.shells = Math.min(50, p.shells + item.amount); taken = true; } break;
+      case 'ammo': {
+        const maxAmmo = p.backpack ? 400 : 200;
+        if (p.ammo < maxAmmo) { p.ammo = Math.min(maxAmmo, p.ammo + item.amount); taken = true; }
+        break;
+      }
+      case 'shells': {
+        const maxShells = p.backpack ? 100 : 50;
+        if (p.shells < maxShells) { p.shells = Math.min(maxShells, p.shells + item.amount); taken = true; }
+        break;
+      }
       case 'shotgun': {
         const isNew = !p.weapons.has('shotgun');
-        if (isNew || p.shells < 50) {
-          p.weapons.add('shotgun'); p.shells = Math.min(50, p.shells + item.amount); taken = true;
+        const maxShells = p.backpack ? 100 : 50;
+        if (isNew || p.shells < maxShells) {
+          p.weapons.add('shotgun'); p.shells = Math.min(maxShells, p.shells + item.amount); taken = true;
           if (isNew) p.weapon = 'shotgun';
         }
         break;
@@ -807,8 +1076,13 @@ export class DoomGame {
   _updateProjectile(projectile, dt) {
     projectile.age += dt;
     if (!projectile.alive) {
-      projectile.sprite = `BAL1${'CDE'[Math.min(2, Math.floor(projectile.age * 12))]}0`;
-      if (projectile.age > 0.25) projectile.removed = true;
+      if (projectile.type === 'rocket') {
+        projectile.sprite = `BEXP${'ABCDE'[Math.min(4, Math.floor(projectile.age * 16))]}0`;
+        if (projectile.age > 0.32) projectile.removed = true;
+      } else {
+        projectile.sprite = `BAL1${'CDE'[Math.min(2, Math.floor(projectile.age * 12))]}0`;
+        if (projectile.age > 0.25) projectile.removed = true;
+      }
       return;
     }
     const dx = projectile.vx * dt, dy = projectile.vy * dt, dz = projectile.vz * dt;
@@ -823,7 +1097,7 @@ export class DoomGame {
         if (target === projectile.owner || target === projectile || target.projectile || target.removed || !target.solid) continue;
         if (Math.hypot(target.x - projectile.x, target.y - projectile.y) < target.radius + 6
           && projectile.z + 12 >= target.z && projectile.z <= target.z + target.height) {
-          // Doom's PIT_CheckThing stops missiles on solid decorations even
+          // Doom’s PIT_CheckThing stops missiles on solid decorations even
           // when they are not shootable. Such impacts deal no damage.
           if (target.alive && (target === this.player || target.enemy || target.barrel)) {
             const damage = projectile.damage ?? (1 + Math.floor(this.random() * 8)) * 3;
@@ -836,8 +1110,9 @@ export class DoomGame {
     if (collided || projectile.age > 8) {
       projectile.alive = false; projectile.age = 0; this._sound('DSFIRXPL', projectile);
       if (projectile.splash) this._splash(projectile);
+    } else if (projectile.type !== 'rocket') {
+      projectile.sprite = `BAL1${Math.floor(this.time * 8) % 2 ? 'B' : 'A'}0`;
     }
-    projectile.sprite = `BAL1${Math.floor(this.time * 8) % 2 ? 'B' : 'A'}0`;
   }
 
   update(dt, input = {}) {

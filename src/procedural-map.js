@@ -160,9 +160,12 @@ export function buildProceduralMap(plan) {
     if (![thing.x, thing.y, thing.angle, thing.type, thing.flags].every(finite)) fail(`object ${thing.id} has invalid placement`);
     if (!sectorAt(thing.x, thing.y)) fail(`object ${thing.id} lies outside the generated plan`);
   }
+  const initialSectors = sectors.map(s => ({...s}));
+  const initialSides = sides.map(s => ({...s}));
   return {
     name: plan.name || 'GENERATED', procedural: true, generator: 'sector-trapezoid-sweep-v1',
     planVersion: plan.version || 1, planVertexCount, vertices, lines, sides, sectors, things,
+    initialSectors, initialSides,
     floorPolygons, subsectors, segs, nodes: [], bounds, subsectorAt, subsectorSector, sectorAt,
     reject: null, blockmap: null, revision: 0
   };

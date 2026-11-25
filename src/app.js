@@ -110,6 +110,8 @@ function loadLevel(id) {
   visited.clear(); previousHealth = 100; damage = pickupFlash = 0;
   audio.stopMusic();
   audio.startMusic('D_' + levelId);
+  // Synchronise the mission selector to the loaded level.
+  if ($('mission') && 'value' in $('mission')) { try { $('mission').value = levelId; } catch {} }
   return map;
 }
 
@@ -122,7 +124,7 @@ async function start(restart = false, activateAudio = true, level = null) {
   screen('playing'); const revision = screenRevision;
   audio.setEnabled(soundEnabled);
   const unlocked = activateAudio ? unlockAudio() : Promise.resolve(false);
-  // Request capture during the user gesture, before audio's asynchronous resume.
+  // Request capture during the user gesture, before audio’s asynchronous resume.
   capturePointer(); world.focus({ preventScroll: true });
   await unlocked;
   if (mode === 'playing' && revision === screenRevision) audio.resumeMusic();
@@ -226,7 +228,7 @@ function drawHud(time) {
   const p = game.player;
   const faceLevel = Math.max(0, Math.min(4, Math.floor((100 - p.health) / 20)));
   const face = p.health <= 0 ? 'STFDEAD0' : damage > 0.2 ? `STFOUCH${faceLevel}` : `STFST${faceLevel}${Math.floor(time / 1.7) % 3}`;
-  const signature = [p.ammo, p.shells, p.health, p.armor, p.weapon, face, p.weapons.size].join('|');
+  const signature = [p.ammo, p.shells, p.rockets, p.health, p.armor, p.weapon, face, p.weapons.size, p.backpack ? 1 : 0, p.keys.blue, p.keys.yellow, p.keys.red].join('|');
   if (signature === lastHud) return; lastHud = signature;
   hctx.clearRect(0, 0, 320, 32); patch(hctx, 'STBAR', 0, 0);
   if (p.weapon !== 'fist' && p.weapon !== 'chainsaw')
@@ -238,8 +240,12 @@ function drawHud(time) {
     const slot = {2: 'pistol', 3: 'shotgun', 4: 'chaingun', 5: 'launcher', 6: 'chainsaw'}[n];
     patch(hctx, `${n === 2 || (slot && p.weapons.has(slot)) ? 'STYSNUM' : 'STGNUM'}${n}`, 111 + ((n - 2) % 3) * 12, 4 + Math.floor((n - 2) / 3) * 10);
   }
-  [p.ammo, p.shells, 0, 0].forEach((count, i) => number(count, 288, 5 + i * 6, 'STYSNUM'));
-  [200, 50, 50, 300].forEach((count, i) => number(count, 314, 5 + i * 6, 'STYSNUM'));
+  [p.ammo, p.shells, p.rockets, 0].forEach((count, i) => number(count, 288, 5 + i * 6, 'STYSNUM'));
+  [p.backpack ? 400 : 200, p.backpack ? 100 : 50, p.backpack ? 100 : 50, 300].forEach((count, i) => number(count, 314, 5 + i * 6, 'STYSNUM'));
+  // Key card icons in STBAR key slots
+  if (p.keys.blue) patch(hctx, 'STKEYS0', 239, 2);
+  if (p.keys.yellow) patch(hctx, 'STKEYS1', 239, 10);
+  if (p.keys.red) patch(hctx, 'STKEYS2', 239, 18);
   hud.setAttribute('aria-label', `Santé ${Math.round(p.health)} %, armure ${Math.round(p.armor)} %, `
     + `${p.ammo} balles, ${p.shells} cartouches, ${p.rockets} missiles, ${p.weapon}.`);
 }
@@ -252,10 +258,15 @@ function drawMap() {
   ctx.save(); ctx.translate(cx - p.x * scale, cy + p.y * scale); ctx.scale(scale, -scale); ctx.lineWidth = 1.25 / scale;
   for (const line of map.lines) {
     const front = map.sides[line.right]?.sector, back = map.sides[line.left]?.sector;
-    if (!visited.has(front) && !visited.has(back)) continue;
+    const seen = visited.has(front) || visited.has(back);
+    if (!seen && !p.mapShown) continue;
     if (line.flags & 128) continue;
     const a = map.vertices[line.v1], b = map.vertices[line.v2];
-    ctx.strokeStyle = line.special === 1 ? '#d6a44c' : back === undefined ? '#c64432' : map.sectors[front]?.floor !== map.sectors[back]?.floor ? '#7f572d' : '#46432e';
+    if (!seen && p.mapShown) {
+      ctx.strokeStyle = '#4c6672';
+    } else {
+      ctx.strokeStyle = line.special === 1 ? '#d6a44c' : back === undefined ? '#c64432' : map.sectors[front]?.floor !== map.sectors[back]?.floor ? '#7f572d' : '#46432e';
+    }
     ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
   }
   ctx.translate(p.x, p.y); ctx.rotate(p.angle); ctx.strokeStyle = '#f0e4bd'; ctx.lineWidth = 2 / scale;
@@ -282,7 +293,7 @@ function tick(timestamp) {
     }
     if (game && renderer) {
       const p = game.player;
-      renderer.draw({ x: p.x, y: p.y, z: p.z + (p.health <= 0 ? 12 : 41), angle: p.angle, pitch: p.pitch, fov: 70 }, { entities: game.entities, time: game.stats().time, flash: 0, damage: 0, weapon: mode === 'title' || mapOpen ? null : { kind: p.weapon, phase: game.time - game.lastShot, moving: p.moving, dead: p.health <= 0, light: (map.sectorAt(p.x, p.y)?.light ?? 192) / 255 } });
+      renderer.draw({ x: p.x, y: p.y, z: p.z + (p.health <= 0 ? 12 : 41), angle: p.angle, pitch: p.pitch, fov: 70 }, { entities: game.entities, time: game.stats().time, flash: 0, damage: 0, weapon: mode === 'title' || mapOpen ? null : { kind: p.weapon, phase: game.time - game.lastShot, moving: p.moving, dead: p.health <= 0, light: p.visor ? 1 : (map.sectorAt(p.x, p.y)?.light ?? 192) / 255 } });
       ctx.clearRect(0, 0, overlay.width, overlay.height);
       if (mode !== 'title') { if (mapOpen) drawMap(); drawHud(time); }
       $('damage').style.opacity = String(damage * 0.7);
@@ -303,11 +314,17 @@ function showError(error) {
   screen('error'); $('error').hidden = false; $('errorText').textContent = error?.message || String(error);
 }
 
-$('start').addEventListener('click', () => start(true, true, 'E1M1'));
+$('start').addEventListener('click', () => {
+  const chosen = $('mission')?.value || 'E1M1';
+  start(true, true, chosen);
+});
+$('mission')?.addEventListener('change', () => {
+  if (mode === 'title') loadLevel($('mission')?.value || 'E1M1');
+});
 $('resume').addEventListener('click', () => start(false));
 $('restart').addEventListener('click', () => start(true));
 $('playAgain').addEventListener('click', () => start(true));
-$('backMenu').addEventListener('click', () => { loadLevel('E1M1'); screen('title'); });
+$('backMenu').addEventListener('click', () => { loadLevel($('mission')?.value || 'E1M1'); screen('title'); });
 $('pauseButton').addEventListener('click', () => pause());
 $('mapButton').addEventListener('click', toggleMap);
 $('audioButton').addEventListener('click', toggleSound); $('pauseSound').addEventListener('click', toggleSound);
@@ -322,7 +339,7 @@ document.addEventListener('keydown', e => {
   controlMode('mouse');
   if (['Space', 'Tab', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ControlLeft', 'ControlRight'].includes(e.code)) e.preventDefault();
   if (!e.repeat && e.code === 'Tab') toggleMap();
-  if (/^Digit[123]$/.test(e.code)) requestedWeapon = Number(e.code.slice(-1));
+  if (/^Digit[1-6]$/.test(e.code)) requestedWeapon = Number(e.code.slice(-1));
   keys.add(e.code);
 });
 document.addEventListener('keyup', e => keys.delete(e.code));

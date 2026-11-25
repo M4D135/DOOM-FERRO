@@ -34,3 +34,29 @@ test('interface generation is deterministic and cannot supply a world or weapon 
     assert.equal(proceduralPatch(name),null,name+' must use its 3D model');
   }
 });
+test('key card icons STKEYS0/1/2 are distinct, deterministic and valid',()=>{
+  const blue=valid('STKEYS0');
+  const yellow=valid('STKEYS1');
+  const red=valid('STKEYS2');
+  // All 7×5
+  assert.deepEqual([blue.width,blue.height],[7,5]);
+  assert.deepEqual([yellow.width,yellow.height],[7,5]);
+  assert.deepEqual([red.width,red.height],[7,5]);
+  // Distinct from each other
+  const digests = new Set([digest(blue),digest(yellow),digest(red)]);
+  assert.equal(digests.size,3,'key cards must be visually distinct');
+  // Deterministic
+  assert.equal(digest(proceduralPatch('STKEYS0')),digest(blue));
+  assert.equal(digest(proceduralPatch('STKEYS1')),digest(yellow));
+  assert.equal(digest(proceduralPatch('STKEYS2')),digest(red));
+  // hasProceduralPatch recognises them
+  assert.ok(hasProceduralPatch('STKEYS0'));
+  assert.ok(hasProceduralPatch('STKEYS1'));
+  assert.ok(hasProceduralPatch('STKEYS2'));
+  // Blue card has blue-dominant pixels
+  let blueSum=0,redSum=0;
+  for(let i=0;i<blue.pixels.length;i+=4){
+    if(blue.pixels[i+3]>0){blueSum+=blue.pixels[i+2];redSum+=red.pixels[i];}
+  }
+  assert.ok(blueSum>0,'blue card must have blue channel');
+});

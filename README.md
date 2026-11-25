@@ -1,10 +1,10 @@
-# DOOM · FERRO — Hangar procédural en 3D
+# DOOM · FERRO — Épisode 1 procédural en 3D
 
-**E1M1 reconstruit par le code et rendu par le moteur FERRO 0.3.33.** Version du jeu : **0.6.0**.
+**Les neuf missions d’Épisode 1 (*Knee-Deep in the Dead*, E1M1 à E1M9) reconstruites par le code et rendues par le moteur FERRO 0.3.33.** Version du jeu : **0.7.0**.
 
-Le runtime ne charge aucun WAD, fichier image, modèle ou enregistrement sonore. Les générateurs construisent la géométrie, les matériaux, le ciel, les personnages, les objets, les armes, le HUD, les effets sonores et une musique originale. Ils utilisent des calculs, des primitives et des graines déterministes ; aucun média encodé ne remplace les anciens fichiers.
+Le runtime ne charge aucun WAD, fichier image, modèle ou enregistrement sonore. Les générateurs construisent la géométrie, les matériaux, le ciel, les personnages, les objets, les armes, le HUD, les effets sonores et une musique originale par niveau. Ils utilisent des calculs, des primitives et des graines déterministes ; aucun média encodé ne remplace les anciens fichiers.
 
-Le **tracé d’E1M1 est un plan fixe de référence** : coordonnées des murs, hauteurs, connexions, mécanismes et placements constituent les paramètres de construction. Le niveau n’est donc pas aléatoire. Les surfaces et leur triangulation sont calculées au lancement depuis ces contours, sans reprendre le BSP ni les triangles originaux.
+Les **tracés d’E1M1 à E1M9 sont des plans fixes de référence** : coordonnées des murs, hauteurs, connexions, mécanismes et placements constituent les paramètres de construction. Les niveaux ne sont donc pas aléatoires. Les surfaces et leur triangulation sont calculées au lancement depuis ces contours, sans reprendre le BSP ni les triangles originaux.
 
 Les visuels prennent maintenant les **assets de Doom PC de 1993 comme références directes** : dimensions des textures, motifs des panneaux, palettes, silhouettes, vêtements, objets et armes. Les ennemis, les objets, les cadavres, les projectiles et l’arme tenue sont des **maillages 3D générés**, avec leurs propres faces, normales et profondeur. Aucun de ces éléments n’est une image tournée vers la caméra. Les parties non visibles dans les dessins d’origine sont reconstruites en volume ; les recettes ne revendiquent pas une identité pixel par pixel. La musique reste une composition procédurale originale.
 
@@ -28,15 +28,15 @@ Les sources de développement restent séparées dans `src/` pour garder les gé
 
 | Élément | Construction |
 |---|---|
-| Carte | Balayage des contours des 85 secteurs du plan, création de 295 cellules convexes ; triangulation et index spatial calculés |
-| Murs, sols et plafonds | Métal, rivets, panneaux, écrans, pierre, éclairages et fluides produits à partir de motifs et de bruits déterministes |
+| Carte | Balayage des contours des secteurs des 9 plans d’Épisode 1 (`E1M1`–`E1M9`), création de cellules convexes ; triangulation, états initiaux et index spatial calculés |
+| Murs, sols et plafonds | Métal, rivets, panneaux, écrans, pierre, éclairages et fluides produits à partir de motifs et de bruits déterministes (100 % des surfaces des 9 missions couvertes) |
 | Ciel | Nuages gris et crêtes rocheuses calculés d’après SKY1 |
-| Ennemis | Volumes triangulés des zombiemen, shotgun guys et imps ; marche, attaque, douleur et chute ; orientation propre à chaque acteur |
-| Objets et effets | Barils, lampes, colonnes, armures, bonus, caisses de soins, munitions, armes au sol, corps, boules de feu et explosions en 3D |
-| Armes en main | Pistolet, fusil à pompe et poing en 3D ; mains, recul, pompage et flashes en volume |
-| HUD et logo | Interface 2D calculée : barre grise, chiffres rouges, visage nu et logo bleu/or ; contours vectoriels sans police bitmap extraite |
+| Ennemis | Volumes triangulés des zombiemen, shotgun guys, sergents, imps, spectres et barons ; marche, attaque, douleur et chute ; orientation propre à chaque acteur |
+| Objets et effets | Barils, lampes, colonnes, armures, bonus, caisses de soins, munitions, clés, sac à dos, combinaison, lunettes, carte, armes au sol, corps, boules de feu, missiles et explosions en 3D |
+| Armes en main | Poing, pistolet, fusil à pompe, mitraillette, lance-missiles et tronçonneuse en 3D ; mains, recul, pompage et flashes en volume |
+| HUD et logo | Interface 2D calculée : barre grise, chiffres rouges/jaunes, cartes d’accès possédées (`STKEYS0–2`), visage nu et logo bleu/or ; contours vectoriels sans police bitmap extraite |
 | Sons | Oscillateurs, bruit déterministe, filtres et enveloppes ; spatialisation selon la position du joueur |
-| Musique | Composition originale par règles : basse, batterie, drone et mélodie ; aucune partition extraite |
+| Musique | Composition originale déterministe distincte pour chacune des neuf missions ; aucune partition extraite |
 
 Les ressources visuelles sont créées à la demande puis mises en cache. Les poses identiques partagent leur géométrie et sont rendues par instanciation. Changer l’angle de la caméra ne change ni le maillage ni l’orientation d’un acteur. Les effets sonores sont calculés une fois et réutilisés. La musique conserve sa position lors des pauses. Le nombre de voix simultanées est plafonné à 24.
 
@@ -89,7 +89,7 @@ Les buffers CPU conservés sont bornés : 32 Mio de pièces de personnages et 32
 | Tirer | Clic gauche / Ctrl | RT | TIR |
 | Ouvrir / utiliser | E / Espace | A ou X | UTILISER |
 | Courir | Maj | L3 ou LB | Activé avec le joystick |
-| Changer d’arme | 1 : poing, 2 : pistolet, 3 : fusil ; molette | Y / RB | ARME |
+| Changer d’arme | 1 : poing, 2 : pistolet, 3 : fusil, 4 : mitraillette, 5 : lance-missiles, 6 : tronçonneuse ; molette | Y / RB | ARME |
 | Carte | Tab | View / Select | CARTE |
 | Pause | Échap | Start | Ⅱ |
 | Diagnostic du rendu et position | F3 | — | — |
@@ -100,7 +100,7 @@ Au menu, la croix directionnelle ou le stick gauche de la manette choisit la dif
 
 ## Gameplay et portes
 
-Le jeu comprend déplacements et collisions, escaliers, portes, ascenseur secret, sol mobile, secrets, interrupteur de sortie, santé, armure, munitions, trois armes, ennemis et barils. Les collisions consultent les hauteurs courantes des secteurs, également utilisées pour reconstruire les surfaces visibles. Les cellules générées servent à la fois au rendu des sols et à la localisation des acteurs.
+Le jeu comprend déplacements et collisions, escaliers montants chaînés (`7`, `8`), donut d’E1M2 (`9`), portes simples, verrouillées par cartes et commandées par interrupteurs ou au tir (`46`), ponts montants avec neutralisation d’acide (`18`, `22`), plateformes rapides (`23`, `36`, `70`, `82`, `91`, `98`), pièges temporisés (`16`, `76`), extinction de lumière (`35`), ascenseurs (`62`, `88`), téléporteurs (`97`), ouverture `tag 666` à la mort des Barons d’E1M8, interrupteurs de sortie normale (`11`) et secrète (`51`, `E1M3 → E1M9 → E1M4`), santé, armure, sac à dos doublant les réserves, six armes, six types d’ennemis et barils explosifs. Les collisions consultent les hauteurs courantes des secteurs, également utilisées pour reconstruire les surfaces visibles. Les cellules générées servent à la fois au rendu des sols et à la localisation des acteurs, et chaque nouvelle partie restaure l’état géométrique et les textures d’origine du plan.
 
 Les tests traversent les huit faces des quatre portes en avançant pendant leur ouverture, avec les entités présentes. Un parcours du départ à la sortie utilise les déplacements et interactions réels de la simulation avec les six ennemis actifs. Un ennemi vivant ou un baril solide peut occuper un passage ; un cadavre ne doit plus le bloquer.
 
@@ -108,7 +108,7 @@ Les tests traversent les huit faces des quatre portes en avançant pendant leur 
 
 Les **trois secrets** de la référence shareware 1.9 sont vérifiés par un second parcours continu : accès à la cour et à l’armure bleue, alcôve du fusil après descente de la plateforme, puis ascenseur minuté et galerie haute avec retour par sa fenêtre. Il conserve tous les ennemis, les munitions, les objets et les collisions jusqu’à la sortie. La découverte exige le contact au sol, l’IA respecte la face de porte marquée secrète et les sons des mécanismes proviennent des secteurs mobiles. Les déclenchements, hauteurs et références sont détaillés dans [e1m1-secrets.md](docs/e1m1-secrets.md).
 
-La portée actuelle reste **E1M1 en solo**. La simulation est une réimplémentation : l’IA, les déplacements et les temporisations ne revendiquent pas une équivalence binaire avec l’exécutable original. Les autres niveaux, le multijoueur et la compatibilité avec les démos Doom ne font pas partie de cette version.
+La portée couvre désormais **les neuf missions d’Épisode 1 en solo** (`E1M1` à `E1M9`), accessibles en progression continue avec écran de résultats ou directement via le sélecteur de mission du menu principal. La simulation reste une réimplémentation : l’IA, les déplacements et les temporisations ne revendiquent pas une équivalence binaire avec l’exécutable original. Les épisodes 2 à 4, le multijoueur et la compatibilité avec les démos Doom ne font pas partie de cette version.
 
 ## Intégration de FERRO
 

@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
   <meta name="theme-color" content="#090b0b">
-  <meta name="description" content="Le Hangar, E1M1 reconstruit entièrement par le code avec le moteur FERRO. Clavier, souris, manette et tactile.">
-  <title>DOOM · FERRO — Hangar procédural</title>
+  <meta name="description" content="Épisode 1 de DOOM reconstruit entièrement par le code avec le moteur FERRO. Clavier, souris, manette et tactile.">
+  <title>DOOM · FERRO — Épisode 1 procédural</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230b0c0c'/%3E%3Cpath d='M14 10h24l12 12v20L38 54H14V10zm12 10v24h10l4-6V26l-4-6z' fill='%23af1a16'/%3E%3C/svg%3E">
   <style>:root{color-scheme:dark;font-family:"Courier New",monospace;background:#090b0b;color:#e9e6dc;font-synthesis:none;--red:#a52a21;--hud-height:clamp(48px,13.3vh,100px)}
 *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;overscroll-behavior:none}body{touch-action:none}button,select{font:inherit}button{color:inherit;cursor:pointer;border:1px solid #68635d;background:#20211f;padding:14px 20px;letter-spacing:.075em;font-weight:700;font-size:15px;min-height:44px;border-radius:0}button:hover{border-color:#cecbc1;background:#30312c}button:focus-visible,select:focus-visible{outline:2px solid #e9b577;outline-offset:4px}button:active{transform:translateY(1px)}[hidden]{display:none!important}#game{height:100dvh;width:100vw;position:relative;overflow:hidden;background:#070908}#viewport{height:calc(100% - var(--hud-height));width:100%;position:relative;overflow:hidden;background:#252723}canvas{display:block}#world{width:100%;height:100%;outline:0;image-rendering:auto}#overlay,#damage{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}#damage{background:#c4160b;opacity:0;mix-blend-mode:screen}#hud{position:absolute;bottom:0;left:0;width:100%;height:var(--hud-height);object-fit:contain;object-position:center;image-rendering:pixelated;background:#33322d;border-top:2px solid #080a08}#topbar{position:absolute;left:16px;right:12px;top:max(10px,env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;text-shadow:1px 2px 2px #000;color:#ddd5c0;font-size:12px;letter-spacing:.14em;pointer-events:none}#topbar span{padding:5px 8px;background:#1119}#topbar i{display:inline-block;width:3px;height:3px;background:#c6643b;margin:0 8px 3px}#topbar div{display:flex;gap:8px;pointer-events:auto}#topbar button{font-size:12px;padding:8px 12px;min-height:36px;background:#1119;border-color:#ffffff28}#topbar #pauseButton{font-size:20px;padding:5px 12px}#gameMessage{position:absolute;top:62px;left:18px;right:18px;text-align:center;color:#f1d4ae;text-shadow:2px 2px #111;font-weight:bold;font-size:18px;letter-spacing:.06em;pointer-events:none}#perf{position:absolute;left:10px;top:80px;color:#d7e08c;background:#000b;padding:8px;font-size:12px;pointer-events:none;white-space:pre-line}.screen{position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;background:#060807a6}.menuShade{position:absolute;inset:0;background:linear-gradient(90deg,#050706cf,#080a07a8 50%,#060807b5);backdrop-filter:blur(1px)}.menuContent{position:relative;display:flex;align-items:center;flex-direction:column;width:min(680px,92vw);padding:28px 12px;text-align:center;max-height:100%;overflow:auto}.eyebrow{font-size:12px;letter-spacing:.22em;color:#b5b1a6;margin:0 0 22px}#doomLogo{width:min(435px,70vw);height:auto;image-rendering:pixelated;filter:drop-shadow(0 10px 2px #0007)}.engineLabel{font-size:12px;letter-spacing:.27em;color:#a6a39a;margin:20px 0 32px;display:flex;gap:12px;align-items:center}.engineLabel strong{color:#eee8db;font-size:17px;letter-spacing:.28em}#menuActions{width:min(400px,100%)}.difficulty{display:flex;align-items:center;justify-content:space-between;font-size:12px;letter-spacing:.08em;color:#aaa69b;border-top:1px solid #c0b9a530;padding:14px 0;margin-bottom:12px}.difficulty select{background:#161815;color:#ddd9cd;border:1px solid #716d5d;padding:9px 26px 9px 12px;font-size:14px;max-width:65%}.primary{background:linear-gradient(#9f2b21,#711e18);border:1px solid #b9513b;color:#f4e9d5;padding:18px 22px;box-shadow:0 3px 0 #35100b;font-size:16px;width:100%;letter-spacing:.07em}.primary:hover{background:#a5392a;border-color:#e18256}.minorActions{display:flex;justify-content:center;gap:4px;margin-top:14px;flex-wrap:wrap}.minorActions button{background:none;border:0;padding:12px 6px;font-size:11px;min-height:40px;color:#aaa89b;letter-spacing:.04em}.minorActions button:hover{color:#f4e9d5}#help{font-size:13px;line-height:1.7;background:#090c08d9;border:1px solid #b5b1a630;padding:10px 16px;margin-top:12px;max-width:620px}#help p{margin:6px 0;color:#bfbdb2}#help b{color:#e9e6dc}.menuFoot{font-size:10px;letter-spacing:.08em;color:#8d8e80;margin:30px 0 0}.menuFoot span{margin:0 7px}.cornerNote{position:absolute;bottom:max(14px,env(safe-area-inset-bottom));right:20px;color:#7c7d71;font-size:11px;letter-spacing:.08em}#loading{font-size:14px;color:#d8ba8b}.dialog{width:min(420px,90vw);padding:28px;text-align:center;background:#151814f5;border:1px solid #595c4d;box-shadow:0 25px 80px #0008;max-height:90vh;overflow:auto}.dialog h1{font-size:32px;color:#d8c9a5;letter-spacing:.09em;margin:4px 0 26px;text-shadow:3px 3px #000}.dialog>button{display:block;width:100%;margin:12px 0}.dialog p{font-size:12px;color:#a3a191;line-height:1.7}#results{margin:16px 0 24px}#results p{font-size:16px;display:flex;justify-content:space-between;color:#cec7b3;border-bottom:1px solid #5556;padding:9px 0;margin:0}#results strong{color:#f0dac3}#error{position:absolute;z-index:100;inset:0;display:grid;align-content:center;justify-content:center;text-align:center;padding:30px;background:#13130f}#error h1{font-size:24px}#error p{line-height:1.7;color:#c6bc9e;max-width:720px;overflow-wrap:anywhere}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}#touchControls{display:none;position:absolute;inset:0;pointer-events:none}#movePad{position:absolute;left:max(22px,env(safe-area-inset-left));bottom:22px;width:116px;height:116px;border:1px solid #e8e2cb60;border-radius:50%;background:#10151040;pointer-events:auto;touch-action:none}#movePad span{position:absolute;left:38px;top:38px;width:40px;height:40px;border:1px solid #e5e0cf80;border-radius:50%;background:#d3c7a335}#lookPad{position:absolute;right:0;top:58px;bottom:0;width:53%;pointer-events:auto;touch-action:none}#touchActions{position:absolute;right:max(18px,env(safe-area-inset-right));bottom:18px;display:grid;grid-template-columns:70px 76px;gap:9px;align-items:end;pointer-events:auto}#touchActions button{background:#1519148c;border-color:#ddd4ba66;font-size:10px;padding:10px 6px;touch-action:none;border-radius:4px}#touchFire{grid-column:2;grid-row:1 / 3;height:78px!important;border-radius:50%!important;font-size:16px!important;background:#681d169c!important}#touchWeapon{grid-column:1;grid-row:2}body.playing .screen{display:none}body.touch #touchControls{display:block}body:not(.playing) #touchControls,body:not(.playing) #topbar{display:none}body.automap #touchControls{opacity:.5}
@@ -15,9 +15,9 @@
 </style>
 </head>
 <body>
-  <main id="game" aria-label="Doom E1M1">
+  <main id="game" aria-label="Doom Épisode 1">
     <div id="viewport">
-      <canvas id="world" tabindex="0" aria-label="Vue du joueur dans le Hangar"></canvas>
+      <canvas id="world" tabindex="0" aria-label="Vue du joueur"></canvas>
       <canvas id="overlay" aria-hidden="true"></canvas>
       <div id="damage" aria-hidden="true"></div>
       <div id="gameMessage" role="status" aria-live="polite"></div>
@@ -26,24 +26,25 @@
       <div id="touchControls" aria-label="Commandes tactiles">
         <div id="movePad" aria-label="Se déplacer"><span></span></div>
         <div id="lookPad" aria-label="Regarder autour de soi"></div>
-        <div id="touchActions"><button id="touchUse" aria-label="Ouvrir une porte ou utiliser">UTILISER</button><button id="touchFire" aria-label="Tirer">TIR</button><button id="touchWeapon" aria-label="Changer d’arme">ARME</button></div>
+        <div id="touchActions"><button id="touchUse" aria-label="Ouvrir une porte ou utiliser">UTILISER</button><button id="touchFire" aria-label="Tirer">TIR</button><button id="touchWeapon" aria-label="Changer d'arme">ARME</button></div>
       </div>
     </div>
     <canvas id="hud" width="320" height="32" aria-label="Munitions, santé et armure"></canvas>
     <section id="menu" class="screen" aria-label="Menu principal">
       <div class="menuShade"></div>
       <div class="menuContent">
-        <p class="eyebrow">LE HANGAR · ÉPISODE 1, MISSION 1</p>
+        <p class="eyebrow" id="menuEyebrow">KNEE-DEEP IN THE DEAD · ÉPISODE 1</p>
         <canvas id="doomLogo" width="136" height="56" aria-label="DOOM"></canvas>
         <div class="engineLabel">PROPULSÉ PAR <strong>FERRO</strong></div>
-        <p id="loading" role="status">Génération du Hangar…</p>
+        <p id="loading" role="status">Génération…</p>
         <div id="menuActions" hidden>
+          <label class="difficulty">MISSION<select id="mission"><option value="E1M1" selected>E1M1 · Hangar</option><option value="E1M2">E1M2 · Nuclear Plant</option><option value="E1M3">E1M3 · Toxin Refinery</option><option value="E1M4">E1M4 · Command Control</option><option value="E1M5">E1M5 · Phobos Lab</option><option value="E1M6">E1M6 · Central Processing</option><option value="E1M7">E1M7 · Computer Station</option><option value="E1M8">E1M8 · Phobos Anomaly</option><option value="E1M9">E1M9 · Military Base</option></select></label>
           <label class="difficulty">DIFFICULTÉ<select id="skill"><option value="1">Pas trop dur</option><option value="2" selected>Fais-moi mal</option><option value="3">Ultra-violence</option></select></label>
-          <button id="start" class="primary">ENTRER DANS LE HANGAR</button>
+          <button id="start" class="primary">ENTRER DANS LA MISSION</button>
           <div class="minorActions"><button id="helpButton">COMMANDES</button><button id="audioButton" aria-pressed="true">SON ACTIVÉ</button><button id="fullscreenButton">PLEIN ÉCRAN</button></div>
         </div>
-        <div id="help" hidden><p><b>ZQSD / WASD</b> se déplacer · <b>Souris</b> viser · <b>Clic / Ctrl</b> tirer</p><p><b>E / Espace</b> utiliser · <b>Maj</b> courir · <b>1 2 3</b> armes · <b>Tab</b> carte · <b>Échap</b> pause</p><p><b>Manette</b> croix ou stick gauche pour choisir la difficulté · A / Start pour démarrer</p><p><b>En jeu</b> sticks pour bouger / viser · RT tirer · A ouvrir · Y arme · Start pause</p><p><b>Tactile</b> joystick gauche pour avancer, glisser à droite pour regarder.</p></div>
-        <p class="menuFoot">3D PROCÉDURALE <span>·</span> VERSION 0.6.0 <span>·</span> FERRO 0.3.33</p>
+        <div id="help" hidden><p><b>ZQSD / WASD</b> se déplacer · <b>Souris</b> viser · <b>Clic / Ctrl</b> tirer</p><p><b>E / Espace</b> utiliser · <b>Maj</b> courir · <b>1–6</b> armes · <b>Tab</b> carte · <b>Échap</b> pause</p><p><b>Manette</b> croix ou stick gauche pour choisir la difficulté · A / Start pour démarrer</p><p><b>En jeu</b> sticks pour bouger / viser · RT tirer · A ouvrir · Y arme · Start pause</p><p><b>Tactile</b> joystick gauche pour avancer, glisser à droite pour regarder.</p></div>
+        <p class="menuFoot">3D PROCÉDURALE <span>·</span> VERSION 0.7.0 <span>·</span> FERRO 0.3.33</p>
       </div>
       <div class="cornerNote">id Software · 1993</div>
     </section>
@@ -53,10 +54,10 @@
     <section id="ending" class="screen" hidden aria-label="Fin de partie">
       <div class="dialog"><p class="eyebrow" id="levelEyebrow">E1M1 · HANGAR</p><h1 id="endingTitle">HANGAR TERMINÉ</h1><div id="results"></div><button id="playAgain" class="primary">REJOUER</button><button id="backMenu">MENU PRINCIPAL</button></div>
     </section>
-    <div id="error" role="alert" hidden><h1>Le Hangar n’a pas pu démarrer.</h1><p id="errorText"></p><button onclick="location.reload()">RÉESSAYER</button></div>
+    <div id="error" role="alert" hidden><h1>Le Hangar n'a pas pu démarrer.</h1><p id="errorText"></p><button onclick="location.reload()">RÉESSAYER</button></div>
     <p id="accessibleStatus" class="sr-only" aria-live="off"></p>
   </main>
-  <script id="build-info" type="application/json">{"version": "0.6.0", "revision": "0.6.0-27278c18ffdf", "generation": "procedural", "distribution": "single self-contained HTML", "offline": true, "runtimeFiles": 1, "levels": ["E1M1", "E1M2", "E1M3", "E1M4", "E1M5", "E1M6", "E1M7", "E1M8", "E1M9"], "level": "E1M1 / E1M2 / E1M3 / E1M4 / E1M5 / E1M6 / E1M7 / E1M8 / E1M9", "mapGenerator": "sector contour sweep", "importedMediaFiles": 0, "worldBillboards": 0, "worldRepresentation": "instanced procedural 3D triangle meshes", "runtimeModules": 38, "worldDetailLevels": 3, "proceduralSurfaceMaterials": true, "modelGpuCacheMiB": 64, "physicallyBasedMaterials": true, "surfaceMapsPerMaterial": 3, "surfaceCpuCacheMiB": 48, "shadowMaps": 2, "shadowFilter": "hardware bilinear comparison, 3x3 PCF", "smoothNormalBuffer": true, "contactAO": "12 samples, indirect fraction", "ferroVersion": "0.3.33", "ferroModules": [{"file": "fmath.js", "bytes": 19961, "sha256": "bb001302bd2d57239c86183615c921563cf21f0490d67eef42586d1fc3457c9f", "gitBlobSha": "a8020d15c3755e0bcdb475c624a76294a539f91f", "loaded": true}, {"file": "surface.js", "bytes": 3419, "sha256": "46915edee28daa0408ea1c18abd664babef76e2e6bce52c2990a431f90cee77e", "gitBlobSha": "017271a036bec6191a98ee92d8e5ed2004643490", "loaded": true}, {"file": "renderer.js", "bytes": 355730, "sha256": "415eda20f5a3629348b3bfde3bd9e2a0a6a6c8badb671415f14d87d0b9c778a0", "gitBlobSha": "2a7f9894ceaa1d903f22f851609f73e006142fc3", "loaded": true}, {"file": "engine.js", "bytes": 2025, "sha256": "bf8cb3e1e1bade027bc10a843c1e61d1cb930350cbcab092990b546ba447f631", "gitBlobSha": "9cfa70571cc8b3134a752b0ef84d6d52bc790403", "loaded": true}]}</script>
+  <script id="build-info" type="application/json">{"version": "0.7.0", "revision": "0.7.0-a73a70f1ec55", "generation": "procedural", "distribution": "single self-contained HTML", "offline": true, "runtimeFiles": 1, "levels": ["E1M1", "E1M2", "E1M3", "E1M4", "E1M5", "E1M6", "E1M7", "E1M8", "E1M9"], "level": "E1M1 / E1M2 / E1M3 / E1M4 / E1M5 / E1M6 / E1M7 / E1M8 / E1M9", "mapGenerator": "sector contour sweep", "importedMediaFiles": 0, "worldBillboards": 0, "worldRepresentation": "instanced procedural 3D triangle meshes", "runtimeModules": 38, "worldDetailLevels": 3, "proceduralSurfaceMaterials": true, "modelGpuCacheMiB": 64, "physicallyBasedMaterials": true, "surfaceMapsPerMaterial": 3, "surfaceCpuCacheMiB": 48, "shadowMaps": 2, "shadowFilter": "hardware bilinear comparison, 3x3 PCF", "smoothNormalBuffer": true, "contactAO": "12 samples, indirect fraction", "ferroVersion": "0.3.33", "ferroModules": [{"file": "fmath.js", "bytes": 19961, "sha256": "bb001302bd2d57239c86183615c921563cf21f0490d67eef42586d1fc3457c9f", "gitBlobSha": "a8020d15c3755e0bcdb475c624a76294a539f91f", "loaded": true}, {"file": "surface.js", "bytes": 3419, "sha256": "46915edee28daa0408ea1c18abd664babef76e2e6bce52c2990a431f90cee77e", "gitBlobSha": "017271a036bec6191a98ee92d8e5ed2004643490", "loaded": true}, {"file": "renderer.js", "bytes": 355730, "sha256": "415eda20f5a3629348b3bfde3bd9e2a0a6a6c8badb671415f14d87d0b9c778a0", "gitBlobSha": "2a7f9894ceaa1d903f22f851609f73e006142fc3", "loaded": true}, {"file": "engine.js", "bytes": 2025, "sha256": "bf8cb3e1e1bade027bc10a843c1e61d1cb930350cbcab092990b546ba447f631", "gitBlobSha": "9cfa70571cc8b3134a752b0ef84d6d52bc790403", "loaded": true}]}</script>
 <script data-ferro-module="fmath.js">/* FERRO — FMath: sin, cos, atan, atan2 and hypot identical on every platform.
  *
  * A plain-JavaScript port of fdlibm 5.3 as adapted by V8 (src/base/ieee754.cc):
@@ -33252,9 +33253,12 @@ function buildProceduralMap(plan) {
     if (![thing.x, thing.y, thing.angle, thing.type, thing.flags].every(finite)) fail(`object ${thing.id} has invalid placement`);
     if (!sectorAt(thing.x, thing.y)) fail(`object ${thing.id} lies outside the generated plan`);
   }
+  const initialSectors = sectors.map(s => ({...s}));
+  const initialSides = sides.map(s => ({...s}));
   return {
     name: plan.name || 'GENERATED', procedural: true, generator: 'sector-trapezoid-sweep-v1',
     planVersion: plan.version || 1, planVertexCount, vertices, lines, sides, sectors, things,
+    initialSectors, initialSides,
     floorPolygons, subsectors, segs, nodes: [], bounds, subsectorAt, subsectorSector, sectorAt,
     reject: null, blockmap: null, revision: 0
   };
@@ -34933,15 +34937,56 @@ function logo(name) {
   return image.result(name);
 }
 
+/**
+ * Procedural key card icon (7×5). Deterministic raster representing a Doom
+ * access card seen from the front: dark outline, bevelled coloured body,
+ * magnetic stripe and a bright notch.
+ */
+function keyIcon(name) {
+  const colourMap = {
+    STKEYS0: [48, 108, 235],   // blue
+    STKEYS1: [238, 200, 42],   // yellow
+    STKEYS2: [220, 44, 36],    // red
+  };
+  const body = colourMap[name] || [128, 128, 128];
+  const image = new Raster(7, 5);
+  const dark = [Math.round(body[0] * 0.3), Math.round(body[1] * 0.3), Math.round(body[2] * 0.3)];
+  const light = [Math.min(255, Math.round(body[0] * 1.3)), Math.min(255, Math.round(body[1] * 1.3)), Math.min(255, Math.round(body[2] * 1.3))];
+  // Dark outline (full perimeter)
+  image.rect(0, 0, 7, 1, dark);
+  image.rect(0, 4, 7, 1, dark);
+  image.rect(0, 0, 1, 5, dark);
+  image.rect(6, 0, 1, 5, dark);
+  // Body fill with bevel highlight on top-left, shadow on bottom-right
+  for (let y = 1; y < 4; y++) {
+    for (let x = 1; x < 6; x++) {
+      if (y === 1 || x === 1) image.pixel(x, y, light);
+      else if (y === 3 || x === 5) image.pixel(x, y, dark);
+      else image.pixel(x, y, body);
+    }
+  }
+  // Magnetic stripe (row 2, columns 1-4)
+  image.rect(1, 2, 4, 1, [20, 20, 30]);
+  // Bright notch (top-right corner area)
+  image.pixel(5, 1, [255, 255, 255]);
+  return image.result(name);
+}
+
 function hasProceduralPatch(value) {
-  return /^(?:STBAR|STTPRCNT|M_DOOM|ST(?:TNUM|YSNUM|GNUM)[0-9]|STFST[0-4][0-2]|STFOUCH[0-4]|STFDEAD0)$/.test(String(value||'').toUpperCase());
+  return /^(?:STBAR|STTPRCNT|M_DOOM|ST(?:TNUM|YSNUM|GNUM)[0-9]|STFST[0-4][0-2]|STFOUCH[0-4]|STFDEAD0|STKEYS[0-2])$/.test(String(value||'').toUpperCase());
 }
 
 function proceduralPatch(value) {
   const name=String(value||'').toUpperCase();
   if(!hasProceduralPatch(name))return null;
   if(cache.has(name))return cache.get(name);
-  const result=name==='STBAR'?statusBar(name):name==='M_DOOM'?logo(name):name.startsWith('STF')?face(name):name.startsWith('STT')?largeDigit(name):smallDigit(name);
+  let result;
+  if(name==='STBAR') result=statusBar(name);
+  else if(name==='M_DOOM') result=logo(name);
+  else if(name.startsWith('STF')) result=face(name);
+  else if(name.startsWith('STT')) result=largeDigit(name);
+  else if(name.startsWith('STKEYS')) result=keyIcon(name);
+  else result=smallDigit(name);
   cache.set(name,result);return result;
 }
 
@@ -39522,7 +39567,7 @@ __modules["src/game.js"] = (() => {
 /**
  * E1M1 gameplay on generated sector geometry, rendered separately by FERRO.
  * Coordinates and heights remain Doom units. This is a new simulation rather
- * than the original Doom executable; sector specials follow id's published
+ * than the original Doom executable; sector specials follow id’s published
  * p_spec.c / p_switch.c / p_doors.c data definitions.
  */
 const TAU = Math.PI * 2;
@@ -39577,10 +39622,10 @@ const DOOR_SPECIALS = new Map([[2, {closeAfter: true, once: true}], [5, {closeAf
   [10, {closeAfter: true, once: true}], [21, {closeAfter: true, once: true}],
   [20, {closeAfter: false, once: true}], [46, {closeAfter: false, once: true}], [103, {closeAfter: false, once: true}],
   [86, {closeAfter: false, once: false}], [90, {closeAfter: true, once: false}]]);
-const LOWER_FLOOR_SPECIALS = new Set([22, 48, 62, 63]);
+const LOWER_FLOOR_SPECIALS = new Set([62, 63, 82]);
 /** Line specials fired by crossing the line rather than by using it. */
-const CROSS_SPECIALS = new Set([2, 5, 10, 21, 36, 62, 63, 86, 88, 90, 91, 97, 98]);
-const W1_ONCE = new Set([2, 5, 10, 21]);
+const CROSS_SPECIALS = new Set([2, 5, 8, 10, 16, 21, 22, 35, 36, 62, 63, 76, 82, 86, 88, 90, 91, 97, 98]);
+const W1_ONCE = new Set([2, 5, 8, 10, 16, 21, 22, 35]);
 const SCENERY = {
   48: {sprite: 'ELECA0', solid: true, radius: 16, height: 128},
   2028: {sprite: 'COLUA0', solid: true, radius: 16, height: 48, fullbright: true},
@@ -39616,8 +39661,8 @@ class DoomGame {
     this.onSound = onSound;
     this.onMessage = onMessage;
     this.onComplete = onComplete;
-    this._originalSectors = map.sectors.map(s => ({...s}));
-    this._originalSides = map.sides.map(s => ({...s}));
+    this._originalSectors = (map.initialSectors || map.sectors).map(s => ({...s}));
+    this._originalSides = (map.initialSides || map.sides).map(s => ({...s}));
     this.lines = map.lines.map(line => {
       const a = map.vertices[line.v1], b = map.vertices[line.v2];
       return {...line, ax: a.x, ay: a.y, bx: b.x, by: b.y,
@@ -39646,7 +39691,7 @@ class DoomGame {
         this.neighbors[line.back].add(line.front);
       }
     }
-    // Doom places a sector's sound origin at the midpoint of its boundary bounds.
+    // Doom places a sector’s sound origin at the midpoint of its boundary bounds.
     // In particular, the timed lift must be heard at the lift, not its remote trigger.
     this._sectorSoundOrigins = soundBounds.map(b => ({x: (b.minX + b.maxX) / 2, y: (b.minY + b.maxY) / 2}));
     this.restart();
@@ -39674,7 +39719,7 @@ class DoomGame {
       angle: spawn.angle * Math.PI / 180, pitch: 0, health: 100, armor: 0, armorType: 0,
       ammo: 50, shells: 0, weapon: 'pistol', weapons: new Set(['fist', 'pistol']),
       keys: {blue: 0, yellow: 0, red: 0},
-      rockets: 0, suit: false, visor: false, mapShown: false, berserk: false,
+      rockets: 0, suit: false, visor: false, mapShown: false, berserk: false, backpack: false,
       sector: sector.id, vz: 0, alive: true, solid: true, moving: false, bob: 0};
     const flag = this.skill === 1 ? 1 : this.skill === 2 ? 2 : 4;
     this.entities = [];
@@ -39815,7 +39860,7 @@ class DoomGame {
     return Math.hypot(actor.x - startX, actor.y - startY);
   }
 
-  /** Trace geometry only, through all open sector portals at the ray's height. */
+  /** Trace geometry only, through all open sector portals at the ray’s height. */
   raycast(x, y, z, angle, maxDistance = 2048, slope = 0) {
     const ex = x + Math.cos(angle) * maxDistance, ey = y + Math.sin(angle) * maxDistance;
     let best = maxDistance, hitLine = null;
@@ -39834,6 +39879,18 @@ class DoomGame {
     const distance = Math.hypot(bx - ax, by - ay);
     if (distance < EPS) return true;
     return this.raycast(ax, ay, az, Math.atan2(by - ay, bx - ax), distance, (bz - az) / distance).distance >= distance - 0.05;
+  }
+
+  _flipSwitch(line) {
+    const side = line.right >= 0 ? this.map.sides[line.right] : (line.left >= 0 ? this.map.sides[line.left] : null);
+    if (!side) return;
+    let changed = false;
+    for (const name of ['upper', 'middle', 'lower']) {
+      if (typeof side[name] !== 'string') continue;
+      if (side[name].startsWith('SW1')) { side[name] = side[name].replace('SW1', 'SW2'); changed = true; }
+      else if (side[name].startsWith('SW2')) { side[name] = side[name].replace('SW2', 'SW1'); changed = true; }
+    }
+    if (changed) this.map.revision = (this.map.revision || 0) + 1;
   }
 
   use() {
@@ -39857,8 +39914,10 @@ class DoomGame {
         return this._openDoor(line);
       }
       if (DOOR_SPECIALS.has(line.special)) {
-        const opened = this._taggedDoor(line, DOOR_SPECIALS.get(line.special));
-        if (opened) return opened;
+        const cfg = DOOR_SPECIALS.get(line.special);
+        if (cfg.once && this._triggered.has(line.id)) continue;
+        const opened = this._taggedDoor(line, cfg);
+        if (opened) { this._flipSwitch(line); return opened; }
       }
       if (line.special === 11 || line.special === 51) {
         this.completed = true; this.exitSecret = line.special === 51;
@@ -39868,6 +39927,74 @@ class DoomGame {
         this._sound('DSSWTCHX'); this.onComplete(this.stats());
         return {type: 'exit', line: line.id};
       }
+      // S1 Build Stairs Up 8
+      if (line.special === 7) {
+        if (this._triggered.has(line.id)) continue;
+        const sectors = this._buildStairs(line);
+        if (sectors) { this._triggered.add(line.id); this._flipSwitch(line); this._sound('DSSWTCHN', p); return {type: 'stairs', sectors}; }
+      }
+      // S1 Donut
+      if (line.special === 9) {
+        if (this._triggered.has(line.id)) continue;
+        const sectors = this._donut(line);
+        if (sectors) { this._triggered.add(line.id); this._flipSwitch(line); this._sound('DSSWTCHN', p); return {type: 'donut', sectors}; }
+      }
+      // S1 Raise Floor to Nearest Higher Neighbour
+      if (line.special === 18) {
+        if (this._triggered.has(line.id)) continue;
+        const targets = this.map.sectors.filter(s => s.tag && s.tag === line.tag && !this.actions.has(s.id));
+        if (targets.length) {
+          for (const sector of targets) {
+            const floors = [...this.neighbors[sector.id]].map(i => this.map.sectors[i].floor).filter(f => f > sector.floor);
+            if (!floors.length) continue;
+            const target = Math.min(...floors);
+            this.actions.set(sector.id, {kind: 'floor', target, speed: 70});
+          }
+          this._triggered.add(line.id); this._flipSwitch(line);
+          this._sectorSound('DSPSTART', targets[0]);
+          return {type: 'floor', sectors: targets.map(s => s.id)};
+        }
+      }
+      // S1 Lower Floor to Lowest Neighbour
+      if (line.special === 23) {
+        if (this._triggered.has(line.id)) continue;
+        const result = this._taggedFloor(line, 'lower');
+        if (result) { this._triggered.add(line.id); this._flipSwitch(line); return result; }
+      }
+      // SR Lower Floor Turbo to Highest Neighbour < floor + 8
+      if (line.special === 70) {
+        const targets = this.map.sectors.filter(s => s.tag && s.tag === line.tag && !this.actions.has(s.id));
+        if (targets.length) {
+          for (const sector of targets) {
+            const floors = [...this.neighbors[sector.id]].map(i => this.map.sectors[i].floor);
+            const below = floors.filter(f => f < sector.floor);
+            const target = below.length ? Math.max(...below) + 8 : sector.floor;
+            this.actions.set(sector.id, {kind: 'floor', target, speed: 280});
+          }
+          this._flipSwitch(line);
+          this._sectorSound('DSPSTART', targets[0]);
+          return {type: 'floor', sectors: targets.map(s => s.id)};
+        }
+      }
+      // SR Lift Lower Wait Raise
+      if (line.special === 62) {
+        const targets = this.map.sectors.filter(s => s.tag && s.tag === line.tag && !this.actions.has(s.id));
+        if (targets.length) {
+          for (const sector of targets) {
+            const floors = [...this.neighbors[sector.id]].map(i => this.map.sectors[i].floor);
+            const target = floors.length ? Math.min(sector.floor, ...floors) : sector.floor;
+            this.actions.set(sector.id, {kind: 'lift', phase: 'down', target, base: sector.floor, wait: 0});
+          }
+          this._flipSwitch(line);
+          this._sectorSound('DSPSTART', targets[0]);
+          return {type: 'lift', sector: targets[0].id};
+        }
+      }
+      // SR Door Open Wait Close
+      if (line.special === 63) {
+        const opened = this._taggedDoor(line, {closeAfter: true, once: false});
+        if (opened) { this._flipSwitch(line); return opened; }
+      }
       const gap = this.opening(line);
       if (!gap || gap.top - gap.bottom < 56) break;
     }
@@ -39876,8 +40003,6 @@ class DoomGame {
   }
 
   _openDoor(line, actor = this.player) {
-    // ML_SECRET protects the concealed face of the courtyard door from monsters.
-    // Its ordinary reverse face remains usable on the return journey.
     if (line.back < 0 || (actor.enemy && line.flags & 32)) return false;
     const sector = this.map.sectors[line.back], old = this.actions.get(sector.id);
     if (old?.kind === 'door') {
@@ -39910,8 +40035,6 @@ class DoomGame {
       this.actions.set(sector.id, {kind: 'door', phase: 'up', target, base: sector.floor,
         wait: closeAfter ? 150 / 35 : Infinity});
     }
-    // A tagged sector already resting at its open height has nothing to raise,
-    // but the switch itself is still a valid, audible activation.
     if (once) this._triggered.add(line.id);
     this._sectorSound('DSDOROPN', targets[0]);
     return {type: 'door', sector: targets[0].id};
@@ -39949,6 +40072,102 @@ class DoomGame {
     return {type: 'teleport', sector: sector.id};
   }
 
+  /** Build stairs: chain sectors sharing floorTexture, each +8 above the previous. */
+  _buildStairs(line) {
+    const roots = this.map.sectors.filter(s => s.tag && s.tag === line.tag && !this.actions.has(s.id));
+    if (!roots.length) return false;
+    const moved = [];
+    for (const root of roots) {
+      const visited = new Set([root.id]);
+      let height = root.floor + 8;
+      const texture = root.floorTexture;
+      this.actions.set(root.id, {kind: 'floor', target: height, speed: 35});
+      moved.push(root.id);
+      let current = root;
+      for (;;) {
+        let found = false;
+        for (const l of this.lines) {
+          if (l.front !== current.id || l.back < 0) continue;
+          const next = this.map.sectors[l.back];
+          if (!next || visited.has(next.id) || this.actions.has(next.id)) continue;
+          if (next.floorTexture !== texture) continue;
+          visited.add(next.id);
+          height += 8;
+          this.actions.set(next.id, {kind: 'floor', target: height, speed: 35});
+          moved.push(next.id);
+          current = next;
+          found = true;
+          break;
+        }
+        if (!found) break;
+      }
+    }
+    if (!moved.length) return false;
+    this._sectorSound('DSPSTART', roots[0]);
+    return moved;
+  }
+
+  /** Donut: lower the inner pillar and raise the outer ring to the ring’s floor. */
+  _donut(line) {
+    const pillars = this.map.sectors.filter(s => s.tag && s.tag === line.tag && !this.actions.has(s.id));
+    if (!pillars.length) return false;
+    const moved = [];
+    for (const s1 of pillars) {
+      let s2 = null, s3 = null;
+      for (const l of this.lines) {
+        if (l.front !== s1.id && l.back !== s1.id) continue;
+        const neighborId = l.front === s1.id ? l.back : l.front;
+        if (neighborId < 0 || neighborId === s1.id) continue;
+        const candidate = this.map.sectors[neighborId];
+        if (!candidate) continue;
+        s2 = candidate;
+        break;
+      }
+      if (!s2) continue;
+      for (const l of this.lines) {
+        if (l.front !== s2.id && l.back !== s2.id) continue;
+        const neighborId = l.front === s2.id ? l.back : l.front;
+        if (neighborId < 0 || neighborId === s1.id || neighborId === s2.id) continue;
+        const candidate = this.map.sectors[neighborId];
+        if (!candidate) continue;
+        s3 = candidate;
+        break;
+      }
+      if (!s3) continue;
+      s2.floorTexture = s3.floorTexture;
+      s2.special = 0;
+      this.map.revision = (this.map.revision || 0) + 1;
+      this.actions.set(s1.id, {kind: 'floor', target: s3.floor, speed: 35});
+      moved.push(s1.id);
+      if (!this.actions.has(s2.id)) {
+        this.actions.set(s2.id, {kind: 'floor', target: s3.floor, speed: 35});
+        moved.push(s2.id);
+      }
+    }
+    if (!moved.length) return false;
+    this._sectorSound('DSPSTART', pillars[0]);
+    return moved;
+  }
+
+  /** Close a tagged door for 30 tics then reopen it (W1/WR close30ThenOpen). */
+  _closeDoor30(line, once) {
+    const targets = this.map.sectors.filter(s => s.tag && s.tag === line.tag && !this.actions.has(s.id));
+    if (!targets.length) return false;
+    for (const sector of targets) {
+      const neighborCeilingsAboveFloor = [...this.neighbors[sector.id]]
+        .map(i => this.map.sectors[i].ceiling)
+        .filter(c => c > sector.floor);
+      const openTarget = neighborCeilingsAboveFloor.length
+        ? Math.min(...neighborCeilingsAboveFloor) - 4
+        : sector.floor + 72;
+      this.actions.set(sector.id, {kind: 'closeDoor30', phase: 'down', base: sector.floor,
+        openTarget, wait: 30});
+      this._sectorSound('DSDORCLS', sector);
+    }
+    if (once) this._triggered.add(line.id);
+    return true;
+  }
+
   _crossLine(line, actor = this.player) {
     const special = line.special;
     // p_spec.c allows monsters to retrigger type 88, but type 36 is player-only.
@@ -39959,6 +40178,50 @@ class DoomGame {
     if (LOWER_FLOOR_SPECIALS.has(special)) { this._taggedFloor(line, 'lower'); return; }
     if (special === 91) { this._taggedFloor(line, 'raise'); return; }
     if (special === 98) { this._taggedFloor(line, 'lower', 280); return; }
+    // W1 Build Stairs Up 8
+    if (special === 8) {
+      if (this._buildStairs(line)) this._triggered.add(line.id);
+      return;
+    }
+    // W1 Raise to Next Higher Floor + Change Texture/Special
+    if (special === 22) {
+      const targets = this.map.sectors.filter(s => s.tag && s.tag === line.tag && !this.actions.has(s.id));
+      if (targets.length) {
+        for (const sector of targets) {
+          const floors = [...this.neighbors[sector.id]].map(i => this.map.sectors[i].floor);
+          const higher = floors.filter(f => f > sector.floor);
+          if (!higher.length) continue;
+          const target = Math.min(...higher);
+          this.actions.set(sector.id, {kind: 'floor', target, speed: 70});
+          if (line.front >= 0) {
+            const frontSector = this.map.sectors[line.front];
+            if (frontSector) sector.floorTexture = frontSector.floorTexture;
+          }
+          sector.special = 0;
+          this.map.revision = (this.map.revision || 0) + 1;
+          this._sectorSound('DSPSTART', sector);
+        }
+        this._triggered.add(line.id);
+      }
+      return;
+    }
+    // W1 Lights to 35
+    if (special === 35) {
+      const targets = this.map.sectors.filter(s => s.tag && s.tag === line.tag);
+      if (targets.length) {
+        for (const sector of targets) {
+          sector.light = 35;
+        }
+        this.map.revision = (this.map.revision || 0) + 1;
+        this._triggered.add(line.id);
+      }
+      return;
+    }
+    // W1/WR Close 30 Then Open
+    if (special === 16 || special === 76) {
+      this._closeDoor30(line, special === 16);
+      return;
+    }
     const targets = this.map.sectors.filter(s => s.tag && s.tag === line.tag);
     for (const sector of targets) {
       if (this.actions.has(sector.id)) continue;
@@ -39981,7 +40244,7 @@ class DoomGame {
       const occupants = [this.player, ...this.entities].filter(e => {
         if (!e.solid || e.removed) return false;
         if (e.sector === id) return true;
-        if (action.kind !== 'door') return false;
+        if (action.kind !== 'door' && action.kind !== 'closeDoor30') return false;
         for (const line of this.nearbyLines(e.x, e.y, e.radius + 1)) {
           if (line.front !== id && line.back !== id) continue;
           const point = closestPointOnSegment(e.x, e.y, line.ax, line.ay, line.bx, line.by);
@@ -40000,6 +40263,21 @@ class DoomGame {
           const next = Math.max(action.base, sector.ceiling - 70 * dt);
           if (occupants.some(e => e.z + e.height > next)) { action.phase = 'up'; this._sectorSound('DSDOROPN', sector); }
           else { sector.ceiling = next; if (next <= action.base) this.actions.delete(id); }
+        }
+      } else if (action.kind === 'closeDoor30') {
+        if (action.phase === 'down') {
+          const next = Math.max(action.base, sector.ceiling - 70 * dt);
+          if (occupants.some(e => e.z + e.height > next)) { /* wait for occupant to leave */ }
+          else {
+            sector.ceiling = next;
+            if (next <= action.base) { action.phase = 'wait'; action.wait = 30; }
+          }
+        } else if (action.phase === 'wait') {
+          action.wait -= dt;
+          if (action.wait <= 0) { action.phase = 'up'; this._sectorSound('DSDOROPN', sector); }
+        } else {
+          sector.ceiling = Math.min(action.openTarget, sector.ceiling + 70 * dt);
+          if (sector.ceiling >= action.openTarget) { this.actions.delete(id); }
         }
       } else if (action.kind === 'floor') {
         if (action.target < oldFloor) {
@@ -40072,7 +40350,7 @@ class DoomGame {
       this.entities.push({id: `rocket-${this.time.toFixed(4)}-${this.entities.length}`, type: 'rocket',
         projectile: true, owner: p, x: p.x + Math.cos(p.angle) * 24, y: p.y + Math.sin(p.angle) * 24,
         z: p.z + 28, vx: Math.cos(p.angle) * 700, vy: Math.sin(p.angle) * 700, vz: aimSlope * 700,
-        sprite: 'MISLA0', radius: 8, height: 14, damage: 20, splash: 128, scale: 1,
+        sprite: 'MISLA0', radius: 8, height: 14, damage: 20, splash: 128, splashDamage: 128, scale: 1,
         sector: p.sector, alive: true, solid: false, fullbright: true, flip: false, removed: false, age: 0});
     }
     let hitCount = 0;
@@ -40086,6 +40364,9 @@ class DoomGame {
           : (1 + Math.floor(this.random() * 3)) * 5;
         const hit = this._hitscan(p.x, p.y, shotZ, angle, range, aimSlope, p);
         if (hit.entity) { this.damageEntity(hit.entity, damage, p); hitCount++; }
+        else if (hit.line && hit.line.special === 46) {
+          this._taggedDoor(hit.line, DOOR_SPECIALS.get(46));
+        }
       }
     }
     if (kind === 'fist' && hitCount) this._sound('DSPUNCH', p);
@@ -40101,11 +40382,12 @@ class DoomGame {
   /** Rocket splash damage falls off linearly, as in the original. */
   _splash(projectile) {
     const radius = projectile.splash;
+    const peak = projectile.splashDamage ?? projectile.damage ?? 20;
     for (const target of [this.player, ...this.entities]) {
       if (target === projectile || target.projectile || target.removed || !target.solid) continue;
       const distance = Math.hypot(target.x - projectile.x, target.y - projectile.y);
       if (distance > radius + target.radius) continue;
-      const damage = Math.max(1, Math.round((projectile.damage ?? 20) * (1 - distance / (radius + target.radius))));
+      const damage = Math.max(1, Math.round(peak * (1 - distance / (radius + target.radius))));
       if (target === this.player) {
         if (projectile.owner !== this.player) this.damagePlayer(damage, projectile.owner);
       } else if (target.alive && (target.enemy || target.barrel)) this.damageEntity(target, damage, projectile.owner);
@@ -40170,33 +40452,56 @@ class DoomGame {
           z: entity.z, sector: entity.sector, angle: 0, sprite: pickup.sprite, pickup, removed: false,
           fullbright: false, flip: false, scale: 1, alive: true, solid: false, radius: 12, height: 16, vz: 0});
       }
+      // Boss trigger E1M8: when the last Baron dies, lower tag 666 sectors.
+      if (entity.type === 3003) {
+        const remainingBarons = this.entities.some(e => e.enemy && e.type === 3003 && e.alive && !e.removed);
+        if (!remainingBarons) {
+          for (const s of this.map.sectors) {
+            if (s.tag !== 666 || this.actions.has(s.id)) continue;
+            const floors = [...this.neighbors[s.id]].map(i => this.map.sectors[i].floor);
+            if (!floors.length) continue;
+            const target = Math.min(...floors);
+            if (target < s.floor) {
+              this.actions.set(s.id, {kind: 'floor', target, speed: 140});
+              this._sectorSound('DSPSTART', s);
+            }
+          }
+        }
+      }
     }
   }
 
   _pickup(entity) {
     const item = entity.pickup, p = this.player;
     let taken = false;
+    const cap = pool => pool === 'ammo' ? (p.backpack ? 400 : 200) : (p.backpack ? 100 : 50);
     switch (item.kind) {
       case 'weapon': {
         const owned = p.weapons.has(item.weapon);
-        const room = !item.ammo || p[item.ammo] < (item.ammo === 'rockets' ? 50 : 200);
+        const maxAmmo = item.ammo === 'rockets' ? (p.backpack ? 100 : 50) : (p.backpack ? 400 : 200);
+        const room = !item.ammo || p[item.ammo] < maxAmmo;
         if (!owned && !room) break;
         p.weapons.add(item.weapon);
-        if (item.ammo) p[item.ammo] = Math.min(item.ammo === 'rockets' ? 50 : 200, p[item.ammo] + item.amount);
+        if (item.ammo) p[item.ammo] = Math.min(maxAmmo, p[item.ammo] + item.amount);
         if (!owned) p.weapon = item.weapon;
         taken = true; break;
       }
       case 'key': if (!p.keys[item.colour]) { p.keys[item.colour] = 1; taken = true; } break;
       case 'health': {
-        const cap = item.cap || 100;
-        if (p.health < cap) { p.health = Math.min(cap, p.health + item.amount); taken = true; }
+        const healthCap = item.cap || 100;
+        if (p.health < healthCap) { p.health = Math.min(healthCap, p.health + item.amount); taken = true; }
         break;
       }
       case 'bucket': if (p.health < 200) { p.health = Math.min(200, p.health + item.amount); taken = true; } break;
-      case 'rockets': if (p.rockets < 50) { p.rockets = Math.min(50, p.rockets + item.amount); taken = true; } break;
+      case 'rockets': {
+        const maxRockets = p.backpack ? 100 : 50;
+        if (p.rockets < maxRockets) { p.rockets = Math.min(maxRockets, p.rockets + item.amount); taken = true; }
+        break;
+      }
       case 'backpack':
-        p.ammo = Math.min(200, p.ammo + 10); p.shells = Math.min(50, p.shells + 4);
-        p.rockets = Math.min(50, p.rockets + 5); taken = true; break;
+        p.backpack = true;
+        p.ammo = Math.min(400, p.ammo + 10); p.shells = Math.min(100, p.shells + 4);
+        p.rockets = Math.min(100, p.rockets + 5); taken = true; break;
       case 'berserk':
         p.berserk = true; p.health = Math.max(p.health, 100); p.weapon = 'fist'; taken = true; break;
       case 'suit': p.suit = true; taken = true; break;
@@ -40205,12 +40510,21 @@ class DoomGame {
       case 'healthBonus': p.health = Math.min(200, p.health + item.amount); taken = true; break;
       case 'armorBonus': p.armor = Math.min(200, p.armor + item.amount); p.armorType ||= 1; taken = true; break;
       case 'armor': if (p.armor < item.amount) { p.armor = item.amount; p.armorType = item.armorType; taken = true; } break;
-      case 'ammo': if (p.ammo < 200) { p.ammo = Math.min(200, p.ammo + item.amount); taken = true; } break;
-      case 'shells': if (p.shells < 50) { p.shells = Math.min(50, p.shells + item.amount); taken = true; } break;
+      case 'ammo': {
+        const maxAmmo = p.backpack ? 400 : 200;
+        if (p.ammo < maxAmmo) { p.ammo = Math.min(maxAmmo, p.ammo + item.amount); taken = true; }
+        break;
+      }
+      case 'shells': {
+        const maxShells = p.backpack ? 100 : 50;
+        if (p.shells < maxShells) { p.shells = Math.min(maxShells, p.shells + item.amount); taken = true; }
+        break;
+      }
       case 'shotgun': {
         const isNew = !p.weapons.has('shotgun');
-        if (isNew || p.shells < 50) {
-          p.weapons.add('shotgun'); p.shells = Math.min(50, p.shells + item.amount); taken = true;
+        const maxShells = p.backpack ? 100 : 50;
+        if (isNew || p.shells < maxShells) {
+          p.weapons.add('shotgun'); p.shells = Math.min(maxShells, p.shells + item.amount); taken = true;
           if (isNew) p.weapon = 'shotgun';
         }
         break;
@@ -40328,8 +40642,13 @@ class DoomGame {
   _updateProjectile(projectile, dt) {
     projectile.age += dt;
     if (!projectile.alive) {
-      projectile.sprite = `BAL1${'CDE'[Math.min(2, Math.floor(projectile.age * 12))]}0`;
-      if (projectile.age > 0.25) projectile.removed = true;
+      if (projectile.type === 'rocket') {
+        projectile.sprite = `BEXP${'ABCDE'[Math.min(4, Math.floor(projectile.age * 16))]}0`;
+        if (projectile.age > 0.32) projectile.removed = true;
+      } else {
+        projectile.sprite = `BAL1${'CDE'[Math.min(2, Math.floor(projectile.age * 12))]}0`;
+        if (projectile.age > 0.25) projectile.removed = true;
+      }
       return;
     }
     const dx = projectile.vx * dt, dy = projectile.vy * dt, dz = projectile.vz * dt;
@@ -40344,7 +40663,7 @@ class DoomGame {
         if (target === projectile.owner || target === projectile || target.projectile || target.removed || !target.solid) continue;
         if (Math.hypot(target.x - projectile.x, target.y - projectile.y) < target.radius + 6
           && projectile.z + 12 >= target.z && projectile.z <= target.z + target.height) {
-          // Doom's PIT_CheckThing stops missiles on solid decorations even
+          // Doom’s PIT_CheckThing stops missiles on solid decorations even
           // when they are not shootable. Such impacts deal no damage.
           if (target.alive && (target === this.player || target.enemy || target.barrel)) {
             const damage = projectile.damage ?? (1 + Math.floor(this.random() * 8)) * 3;
@@ -40357,8 +40676,9 @@ class DoomGame {
     if (collided || projectile.age > 8) {
       projectile.alive = false; projectile.age = 0; this._sound('DSFIRXPL', projectile);
       if (projectile.splash) this._splash(projectile);
+    } else if (projectile.type !== 'rocket') {
+      projectile.sprite = `BAL1${Math.floor(this.time * 8) % 2 ? 'B' : 'A'}0`;
     }
-    projectile.sprite = `BAL1${Math.floor(this.time * 8) % 2 ? 'B' : 'A'}0`;
   }
 
   update(dt, input = {}) {
@@ -41037,6 +41357,8 @@ function loadLevel(id) {
   visited.clear(); previousHealth = 100; damage = pickupFlash = 0;
   audio.stopMusic();
   audio.startMusic('D_' + levelId);
+  // Synchronise the mission selector to the loaded level.
+  if ($('mission') && 'value' in $('mission')) { try { $('mission').value = levelId; } catch {} }
   return map;
 }
 
@@ -41049,7 +41371,7 @@ async function start(restart = false, activateAudio = true, level = null) {
   screen('playing'); const revision = screenRevision;
   audio.setEnabled(soundEnabled);
   const unlocked = activateAudio ? unlockAudio() : Promise.resolve(false);
-  // Request capture during the user gesture, before audio's asynchronous resume.
+  // Request capture during the user gesture, before audio’s asynchronous resume.
   capturePointer(); world.focus({ preventScroll: true });
   await unlocked;
   if (mode === 'playing' && revision === screenRevision) audio.resumeMusic();
@@ -41153,7 +41475,7 @@ function drawHud(time) {
   const p = game.player;
   const faceLevel = Math.max(0, Math.min(4, Math.floor((100 - p.health) / 20)));
   const face = p.health <= 0 ? 'STFDEAD0' : damage > 0.2 ? `STFOUCH${faceLevel}` : `STFST${faceLevel}${Math.floor(time / 1.7) % 3}`;
-  const signature = [p.ammo, p.shells, p.health, p.armor, p.weapon, face, p.weapons.size].join('|');
+  const signature = [p.ammo, p.shells, p.rockets, p.health, p.armor, p.weapon, face, p.weapons.size, p.backpack ? 1 : 0, p.keys.blue, p.keys.yellow, p.keys.red].join('|');
   if (signature === lastHud) return; lastHud = signature;
   hctx.clearRect(0, 0, 320, 32); patch(hctx, 'STBAR', 0, 0);
   if (p.weapon !== 'fist' && p.weapon !== 'chainsaw')
@@ -41165,8 +41487,12 @@ function drawHud(time) {
     const slot = {2: 'pistol', 3: 'shotgun', 4: 'chaingun', 5: 'launcher', 6: 'chainsaw'}[n];
     patch(hctx, `${n === 2 || (slot && p.weapons.has(slot)) ? 'STYSNUM' : 'STGNUM'}${n}`, 111 + ((n - 2) % 3) * 12, 4 + Math.floor((n - 2) / 3) * 10);
   }
-  [p.ammo, p.shells, 0, 0].forEach((count, i) => number(count, 288, 5 + i * 6, 'STYSNUM'));
-  [200, 50, 50, 300].forEach((count, i) => number(count, 314, 5 + i * 6, 'STYSNUM'));
+  [p.ammo, p.shells, p.rockets, 0].forEach((count, i) => number(count, 288, 5 + i * 6, 'STYSNUM'));
+  [p.backpack ? 400 : 200, p.backpack ? 100 : 50, p.backpack ? 100 : 50, 300].forEach((count, i) => number(count, 314, 5 + i * 6, 'STYSNUM'));
+  // Key card icons in STBAR key slots
+  if (p.keys.blue) patch(hctx, 'STKEYS0', 239, 2);
+  if (p.keys.yellow) patch(hctx, 'STKEYS1', 239, 10);
+  if (p.keys.red) patch(hctx, 'STKEYS2', 239, 18);
   hud.setAttribute('aria-label', `Santé ${Math.round(p.health)} %, armure ${Math.round(p.armor)} %, `
     + `${p.ammo} balles, ${p.shells} cartouches, ${p.rockets} missiles, ${p.weapon}.`);
 }
@@ -41179,10 +41505,15 @@ function drawMap() {
   ctx.save(); ctx.translate(cx - p.x * scale, cy + p.y * scale); ctx.scale(scale, -scale); ctx.lineWidth = 1.25 / scale;
   for (const line of map.lines) {
     const front = map.sides[line.right]?.sector, back = map.sides[line.left]?.sector;
-    if (!visited.has(front) && !visited.has(back)) continue;
+    const seen = visited.has(front) || visited.has(back);
+    if (!seen && !p.mapShown) continue;
     if (line.flags & 128) continue;
     const a = map.vertices[line.v1], b = map.vertices[line.v2];
-    ctx.strokeStyle = line.special === 1 ? '#d6a44c' : back === undefined ? '#c64432' : map.sectors[front]?.floor !== map.sectors[back]?.floor ? '#7f572d' : '#46432e';
+    if (!seen && p.mapShown) {
+      ctx.strokeStyle = '#4c6672';
+    } else {
+      ctx.strokeStyle = line.special === 1 ? '#d6a44c' : back === undefined ? '#c64432' : map.sectors[front]?.floor !== map.sectors[back]?.floor ? '#7f572d' : '#46432e';
+    }
     ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
   }
   ctx.translate(p.x, p.y); ctx.rotate(p.angle); ctx.strokeStyle = '#f0e4bd'; ctx.lineWidth = 2 / scale;
@@ -41209,7 +41540,7 @@ function tick(timestamp) {
     }
     if (game && renderer) {
       const p = game.player;
-      renderer.draw({ x: p.x, y: p.y, z: p.z + (p.health <= 0 ? 12 : 41), angle: p.angle, pitch: p.pitch, fov: 70 }, { entities: game.entities, time: game.stats().time, flash: 0, damage: 0, weapon: mode === 'title' || mapOpen ? null : { kind: p.weapon, phase: game.time - game.lastShot, moving: p.moving, dead: p.health <= 0, light: (map.sectorAt(p.x, p.y)?.light ?? 192) / 255 } });
+      renderer.draw({ x: p.x, y: p.y, z: p.z + (p.health <= 0 ? 12 : 41), angle: p.angle, pitch: p.pitch, fov: 70 }, { entities: game.entities, time: game.stats().time, flash: 0, damage: 0, weapon: mode === 'title' || mapOpen ? null : { kind: p.weapon, phase: game.time - game.lastShot, moving: p.moving, dead: p.health <= 0, light: p.visor ? 1 : (map.sectorAt(p.x, p.y)?.light ?? 192) / 255 } });
       ctx.clearRect(0, 0, overlay.width, overlay.height);
       if (mode !== 'title') { if (mapOpen) drawMap(); drawHud(time); }
       $('damage').style.opacity = String(damage * 0.7);
@@ -41230,11 +41561,17 @@ function showError(error) {
   screen('error'); $('error').hidden = false; $('errorText').textContent = error?.message || String(error);
 }
 
-$('start').addEventListener('click', () => start(true, true, 'E1M1'));
+$('start').addEventListener('click', () => {
+  const chosen = $('mission')?.value || 'E1M1';
+  start(true, true, chosen);
+});
+$('mission')?.addEventListener('change', () => {
+  if (mode === 'title') loadLevel($('mission')?.value || 'E1M1');
+});
 $('resume').addEventListener('click', () => start(false));
 $('restart').addEventListener('click', () => start(true));
 $('playAgain').addEventListener('click', () => start(true));
-$('backMenu').addEventListener('click', () => { loadLevel('E1M1'); screen('title'); });
+$('backMenu').addEventListener('click', () => { loadLevel($('mission')?.value || 'E1M1'); screen('title'); });
 $('pauseButton').addEventListener('click', () => pause());
 $('mapButton').addEventListener('click', toggleMap);
 $('audioButton').addEventListener('click', toggleSound); $('pauseSound').addEventListener('click', toggleSound);
@@ -41249,7 +41586,7 @@ document.addEventListener('keydown', e => {
   controlMode('mouse');
   if (['Space', 'Tab', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ControlLeft', 'ControlRight'].includes(e.code)) e.preventDefault();
   if (!e.repeat && e.code === 'Tab') toggleMap();
-  if (/^Digit[123]$/.test(e.code)) requestedWeapon = Number(e.code.slice(-1));
+  if (/^Digit[1-6]$/.test(e.code)) requestedWeapon = Number(e.code.slice(-1));
   keys.add(e.code);
 });
 document.addEventListener('keyup', e => keys.delete(e.code));
